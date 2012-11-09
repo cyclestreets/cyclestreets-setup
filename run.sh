@@ -160,3 +160,20 @@ service apache2 reload >> ${setupLogFile}
 # |     |
 # -------
 # Milestone 2
+
+# Database setup
+# Shortcut
+mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
+
+# Create cyclestreets database
+${mysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+
+# Users are created by the grant command if they do not exist, making these idem potent.
+${mysql} -e "grant select, insert, update, delete, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'%' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'%' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+
+# Update-able blogs
+${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '${mysqlWebsiteUsername}'@'%' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+
+# The following is needed only to support OSM import
+${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'%';" >> ${setupLogFile}

@@ -36,7 +36,7 @@ asCS="sudo -u ${username}"
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
 setupLogFile=$(readlink -e $(dirname $0))/setupLog.txt
 touch ${setupLogFile}
-echo "#	CycleStreets installation in progress, follow log file with:\n#	tail -f ${setupLogFile}"
+echo "#	CycleStreets installation in progress, follow log file with: tail -f ${setupLogFile}"
 echo "#	CycleStreets installation $(date)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
@@ -70,7 +70,7 @@ fi
 apt-get -y install wget git emacs >> ${setupLogFile}
 
 # Install Apache, PHP
-echo "\n#	Installing Apache, MySQL, PHP" >> ${setupLogFile}
+echo "#	Installing Apache, MySQL, PHP" >> ${setupLogFile}
 
 # Provide the mysql root password - to avoid being prompted.
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
@@ -79,11 +79,11 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Python
-echo "\n#	Installing python" >> ${setupLogFile}
+echo "#	Installing python" >> ${setupLogFile}
 apt-get -y install python php5-xmlrpc php5-curl >> ${setupLogFile}
 
 # Utilities
-echo "\n#\Some utilities" >> ${setupLogFile}
+echo "#	Some utilities" >> ${setupLogFile}
 apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
@@ -148,10 +148,9 @@ fi
 a2enmod rewrite >> ${setupLogFile}
 
 # Virtual host configuration
-cslocalhost="${websitesContentFolder}/configuration/apache/sites-available/cslocalhost"
 # Create symbolic link if it doesn't already exist
-if [ ! -L ${cslocalhost} ]; then
-    ln -s ${cslocalhost} /etc/apache2/sites-available/
+if [ ! -L /etc/apache2/sites-available/cslocalhost ]; then
+    ln -s ${websitesContentFolder}/configuration/apache/sites-available/cslocalhost /etc/apache2/sites-available/
 fi
 a2ensite cslocalhost >> ${setupLogFile}
 

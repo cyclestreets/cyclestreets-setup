@@ -92,6 +92,7 @@ apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 
 # Check if the rollout group exists
 if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
+then
 
     # Create the roll out group
     addgroup rollout
@@ -100,6 +101,7 @@ fi
 
 # Check whether the user is alredy in the rollout group
 if ! groups simon | grep "\brollout\b" > /dev/null 2>&1
+then
     # Add users to it
     adduser ${username} rollout
 fi

@@ -148,7 +148,11 @@ fi
 a2enmod rewrite >> ${setupLogFile}
 
 # Virtual host configuration
-ln -s ${websitesContentFolder}/configuration/apache/sites-available/cslocalhost /etc/apache2/sites-available/
+cslocalhost="${websitesContentFolder}/configuration/apache/sites-available/cslocalhost"
+# Create symbolic link if it doesn't already exist
+if [ ! -L ${cslocalhost} ]; then
+    ln -s ${cslocalhost} /etc/apache2/sites-available/
+fi
 a2ensite cslocalhost >> ${setupLogFile}
 
 # Reload apache

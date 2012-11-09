@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Script to install CycleStreets on Ubuntu
 # Tested on 12.04 (View Ubuntu version using 'lsb_release -a') using Postgres 9.1
 # http://wiki.openstreetmap.org/wiki/Nominatim/Installation#Ubuntu.2FDebian

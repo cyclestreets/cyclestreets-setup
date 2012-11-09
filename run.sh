@@ -14,9 +14,6 @@ fi
 # Bomb out if something goes wrong
 set -e
 
-# Shortcut for running commands as the cyclestreets users
-asCS="sudo -u ${username}"
-
 ### CREDENTIALS ###
 # Name of the credentials file
 configFile=.config.sh
@@ -29,6 +26,9 @@ fi
 
 # Load the credentials
 . ./${configFile}
+
+# Shortcut for running commands as the cyclestreets users
+asCS="sudo -u ${username}"
 
 ### MAIN PROGRAM ###
 
@@ -100,7 +100,7 @@ then
 fi
 
 # Check whether the user is alredy in the rollout group
-if ! groups simon | grep "\brollout\b" > /dev/null 2>&1
+if ! groups ${username} | grep "\brollout\b" > /dev/null 2>&1
 then
     # Add users to it
     adduser ${username} rollout

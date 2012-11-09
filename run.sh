@@ -3,11 +3,11 @@
 # Tested on 12.04 (View Ubuntu version using 'lsb_release -a') using Postgres 9.1
 # http://wiki.openstreetmap.org/wiki/Nominatim/Installation#Ubuntu.2FDebian
 
-echo "#\tCycleStreets installation $(date)"
+echo "#	CycleStreets installation $(date)"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
-    echo "#\tThis script must be run as root." 1>&2
+    echo "#	This script must be run as root." 1>&2
     exit 1
 fi
 
@@ -20,7 +20,7 @@ configFile=.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -e ./${configFile} ]; then
-    echo "#\tThe config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
+    echo "#	The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
@@ -36,12 +36,12 @@ asCS="sudo -u ${username}"
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
 setupLogFile=$(readlink -e $(dirname $0))/setupLog.txt
 touch ${setupLogFile}
-echo "#\tCycleStreets installation in progress, follow log file with:\n#\ttail -f ${setupLogFile}"
-echo "#\tCycleStreets installation $(date)" >> ${setupLogFile}
+echo "#	CycleStreets installation in progress, follow log file with:\n#	tail -f ${setupLogFile}"
+echo "#	CycleStreets installation $(date)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if id -u ${username} >/dev/null 2>&1; then
-    echo "#\tUser ${username} exists already."
+    echo "#	User ${username} exists already."
 else
     echo "#\User ${username} does not exist: creating now."
 
@@ -56,21 +56,21 @@ else
 	printf "\n"
 	stty echo
 	if [ $password != $passwordconfirm ]; then
-	    echo "#\tThe passwords did not match"
+	    echo "#	The passwords did not match"
 	    exit 1
 	fi
     fi
 
     # Create the CycleStreets user
     useradd -m -p ${password} $username
-    echo "#\tCycleStreets user ${username} created" >> ${setupLogFile}
+    echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
 
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}
 
 # Install Apache, PHP
-echo "\n#\tInstalling Apache, MySQL, PHP" >> ${setupLogFile}
+echo "\n#	Installing Apache, MySQL, PHP" >> ${setupLogFile}
 
 # Provide the mysql root password - to avoid being prompted.
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
@@ -79,7 +79,7 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Python
-echo "\n#\tInstalling python" >> ${setupLogFile}
+echo "\n#	Installing python" >> ${setupLogFile}
 apt-get -y install python php5-xmlrpc php5-curl >> ${setupLogFile}
 
 # Utilities

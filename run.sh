@@ -63,7 +63,7 @@ else
 
     # Create the CycleStreets user
     useradd -m -p ${password} $username
-    echo "#\tNominatim user ${username} created" >> ${setupLogFile}
+    echo "#\tCycleStreets user ${username} created" >> ${setupLogFile}
 fi
 
 # Install basic software

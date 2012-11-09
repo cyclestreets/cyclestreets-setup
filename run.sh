@@ -39,25 +39,32 @@ touch ${setupLogFile}
 echo "#\tCycleStreets installation in progress, follow log file with:\n#\ttail -f ${setupLogFile}"
 echo "#\tCycleStreets installation $(date)" >> ${setupLogFile}
 
-# Request a password for the CycleStreets user account; see http://stackoverflow.com/questions/3980668/how-to-get-a-password-from-a-shell-script-without-echoing
-if [ ! ${password} ]; then
-    stty -echo
-    printf "Please enter a password that will be used to create the CycleStreets user account:"
-    read password
-    printf "\n"
-    printf "Confirm that password:"
-    read passwordconfirm
-    printf "\n"
-    stty echo
-    if [ $password != $passwordconfirm ]; then
-	echo "#\tThe passwords did not match"
-	exit 1
-    fi
-fi
+# Ensure there is a cyclestreets user account
+if id -u ${username} >/dev/null 2>&1; then
+    echo "#\tUser ${username} exists already."
+else
+    echo "#\User ${username} does not exist: creating now."
 
-# Create the CycleStreets user
-useradd -m -p $password $username
-echo "#\tNominatim user ${username} created" >> ${setupLogFile}
+    # Request a password for the CycleStreets user account; see http://stackoverflow.com/questions/3980668/how-to-get-a-password-from-a-shell-script-without-echoing
+    if [ ! ${password} ]; then
+	stty -echo
+	printf "Please enter a password that will be used to create the CycleStreets user account:"
+	read password
+	printf "\n"
+	printf "Confirm that password:"
+	read passwordconfirm
+	printf "\n"
+	stty echo
+	if [ $password != $passwordconfirm ]; then
+	    echo "#\tThe passwords did not match"
+	    exit 1
+	fi
+    fi
+
+    # Create the CycleStreets user
+    useradd -m -p $password $username
+    echo "#\tNominatim user ${username} created" >> ${setupLogFile}
+fi
 
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}

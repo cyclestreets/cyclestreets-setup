@@ -57,7 +57,7 @@ fi
 
 # Create the CycleStreets user
 useradd -m -p $password $username
-echo "#\tNominatim user ${username} created" >> ${setupLogFile}
+echo "#\CycleStreets user ${username} created" >> ${setupLogFile}
 
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}

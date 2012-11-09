@@ -73,8 +73,9 @@ apt-get -y install wget git emacs >> ${setupLogFile}
 echo "\n#\tInstalling Apache, MySQL, PHP" >> ${setupLogFile}
 
 # Provide the mysql root password - to avoid being prompted.
-debconf-set-selections <<< 'mysql-server-5.1 mysql-server/root_password password ${passwordMysqlRoot}'
-debconf-set-selections <<< 'mysql-server-5.1 mysql-server/root_password_again password ${passwordMysqlRoot}'
+echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
+echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
+
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Python
@@ -88,7 +89,12 @@ apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # apt-get -y install phpmyadmin
 
-# This should get us to milestone 1
+#   ___
+# /     \
+# |  1  | 
+# |     |
+# -------
+# Milestone 1
 
 # Check if the rollout group exists
 if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
@@ -110,7 +116,7 @@ fi
 mkdir -p /websites
 
 # Set the group for the containing folder to be rollout:
-chown nobody:rollout /websites
+chown ${username}:rollout /websites
 
 # Allow sharing of private groups
 umask 0002
@@ -120,7 +126,7 @@ umask 0002
 chmod g+ws /websites
 
 # Add the path to content (the -p option creates the intermediate www)
-mkdir -p /websites/www/content
+mkdir -p ${websitesContentFolder}
 
 # Create a folder for Apache to log access / errors:
 mkdir -p /websites/www/logs
@@ -129,17 +135,28 @@ mkdir -p /websites/www/logs
 mkdir -p /websites/www/backups
 
 # Switch to content folder
-cd /websites/www/content
+cd ${websitesContentFolder}
 
-# Populate with source code by checking out from the CycleStreets repository:
-${asCS} svn co http://svn.cyclestreets.net/cyclestreets /websites/www/content
+# Check if the repository has been created
+if [ ! -d ${websitesContentFolder}/.svn ]
+then
+    # Populate with source code by checking out from the CycleStreets repository:
+    ${asCS} svn co http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
+fi
 
 # Mod rewrite
-a2enmod rewrite
+a2enmod rewrite >> ${setupLogFile}
 
 # Virtual host configuration
-ln -s /websites/www/content/configuration/apache/sites-available/cslocalhost /etc/apache2/sites-available/
-a2ensite cslocalhost
+ln -s ${websitesContentFolder}/configuration/apache/sites-available/cslocalhost /etc/apache2/sites-available/
+a2ensite cslocalhost >> ${setupLogFile}
 
 # Reload apache
-service apache2 reload
+service apache2 reload >> ${setupLogFile}
+
+#   ___
+# /     \
+# |  2  | 
+# |     |
+# -------
+# Milestone 2

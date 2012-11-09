@@ -15,5 +15,14 @@ emailcontact=webmasterATcyclestreets.net
 username=cyclestreets
 password=
 
+## MySQL
 # The mysql root password - to avoid being prompted.
-passwordMysqlRoot=
+mysqlRootPassword=
+
+# Credentials for the website user
+mysqlWebsiteUsername=website
+mysqlWebsitePassword=
+
+
+## Working directory
+websitesContentFolder=/websites/www/content

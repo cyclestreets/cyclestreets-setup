@@ -183,7 +183,9 @@ ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsernam
 
 
 # Data
-# !! SKIPPED
+# !! SKIPPED - use something like this:
+# scp backupserver...:/websites/www/backups/www_cyclestreets.sql.gz ./
+# gunzip < .sql.gz | mysql cyclestreets -uroot -p...
 
 # Configure the settings file
 phpConfig=".config.php"

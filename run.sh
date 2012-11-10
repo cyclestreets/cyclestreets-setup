@@ -199,6 +199,9 @@ then
 -e "s/[#]*\$config\['administratorEmail'] = 'YOUR_EMAIL_HERE';/\$config\['administratorEmail'] = '${administratorEmail}';/" \
 -e "s/[#]*\$config\['mainEmail'] = 'YOUR_EMAIL_HERE';/\$config\['mainEmail'] = '${mainEmail}';/" \
 	.config.php.template > ${phpConfig}
+
+    # Make it executable
+    chmod a+x ${phpConfig}
 else
     echo "#	!! Re-using ${phpConfig} - which will miss any new settings";
 fi

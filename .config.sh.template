@@ -22,7 +22,7 @@ mysqlRootPassword=
 
 # Credentials for the website user
 mysqlWebsiteUsername=website
-mysqlWebsitePassword=
+mysqlWebsitePassword="${password}"
 
 
 ## Working directory

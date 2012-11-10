@@ -180,3 +180,23 @@ ${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '
 
 # The following is needed only to support OSM import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'%';" >> ${setupLogFile}
+
+
+# Data
+# !! SKIPPED
+
+# Configure the settings file
+phpConfig=".config.php"
+if [ ! -e ${websitesContentFolder}/${phpConfig} ]
+then
+    # !! Note this will miss any new configs - when the .config.php already exists
+    echo "#	Configuring a new ${phpConfig}";
+    sed \
+-e "s/[#]*\$config\['username'] = 'WEBSITE_USERNAME_HERE';/\$config\['username'] = '${mysqlWebsiteUsername}';/" \
+-e "s/[#]*\$config\['password'] = 'WEBSITE_PASSWORD_HERE';/\$config\['password'] = '${mysqlWebsitePassword}';/" \
+-e "s/[#]*\$config\['administratorEmail'] = 'YOUR_EMAIL_HERE';/\$config\['administratorEmail'] = '${administratorEmail}';/" \
+-e "s/[#]*\$config\['mainEmail'] = 'YOUR_EMAIL_HERE';/\$config\['mainEmail'] = '${mainEmail}';/" \
+	.config.php.template > ${phpConfig}
+else
+    echo "#	!! Re-using ${phpConfig} - which will miss any new settings";
+fi

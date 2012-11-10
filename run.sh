@@ -95,6 +95,7 @@ apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 # |     |
 # -------
 # Milestone 1
+echo "# Reached milestone 1"
 
 # Check if the rollout group exists
 if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
@@ -129,10 +130,10 @@ chmod g+ws /websites
 mkdir -p ${websitesContentFolder}
 
 # Create a folder for Apache to log access / errors:
-mkdir -p /websites/www/logs
+mkdir -p ${websitesLogsFolder}
 
 # Create a folder for schema backups
-mkdir -p /websites/www/backups
+mkdir -p ${websitesBackupsFolder}
 
 # Switch to content folder
 cd ${websitesContentFolder}
@@ -163,6 +164,7 @@ service apache2 reload >> ${setupLogFile}
 # |     |
 # -------
 # Milestone 2
+echo "# Reached milestone 2"
 
 # Database setup
 # Shortcut
@@ -183,8 +185,12 @@ ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsernam
 
 
 # Data
+
+# !! Had to add this step to make sure the folder is owned by cyclestreets - there must be a tidier way of dealing with these permissions
+chown ${username} ${websitesBackupsFolder}
+
 # !! SKIPPED - use something like this:
-# scp backupserver...:/websites/www/backups/www_cyclestreets.sql.gz ./
+# scp backupserver...:/websites/www/backups/www_cyclestreets.sql.gz ${websitesBackupsFolder}
 # gunzip < .sql.gz | mysql cyclestreets -uroot -p...
 
 # Configure the settings file
@@ -205,3 +211,6 @@ then
 else
     echo "#	!! Re-using ${phpConfig} - which will miss any new settings";
 fi
+
+# Narrate the end of script
+echo "# Reached end of installation script"

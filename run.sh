@@ -41,7 +41,7 @@ echo "#	CycleStreets installation $(date)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if id -u ${username} >/dev/null 2>&1; then
-    echo "#	User ${username} exists already."
+    echo "#	User ${username} exists already and will be used."
 else
     echo "#\User ${username} does not exist: creating now."
 
@@ -62,9 +62,9 @@ else
     fi
 
     # Create the CycleStreets user
-    # !! For some reason the password supplied here can't be used to log in, I think it may need to be supplied in crypted form.
+    # !! The password supplied here should be an enrcypted version.
     # The work-around is to set the password using passwd as super user afterwards.
-    useradd -m -p ${password} $username
+    useradd -m -p "EncryptedPassword" $username
     echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
 

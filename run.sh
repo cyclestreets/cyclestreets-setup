@@ -174,14 +174,15 @@ mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 ${mysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
 
 # Users are created by the grant command if they do not exist, making these idem potent.
-${mysql} -e "grant select, insert, update, delete, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'%' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
-${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'%' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+# The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
+${mysql} -e "grant select, insert, update, delete, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 
 # Update-able blogs
-${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '${mysqlWebsiteUsername}'@'%' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 
 # The following is needed only to support OSM import
-${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'%';" >> ${setupLogFile}
+${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
 
 # Data

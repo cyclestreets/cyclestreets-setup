@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Contains credentials
 # This is a template file, save as simply .config.sh and set your own values below.
 

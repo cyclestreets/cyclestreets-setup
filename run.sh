@@ -62,6 +62,8 @@ else
     fi
 
     # Create the CycleStreets user
+    # !! For some reason the password supplied here can't be used to log in, I think it may need to be supplied in crypted form.
+    # The work-around is to set the password using passwd as super user afterwards.
     useradd -m -p ${password} $username
     echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
@@ -198,7 +200,7 @@ chown ${username} ${websitesBackupsFolder}
 phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
 then
-    # !! Note this will miss any new configs - when the .config.php already exists
+    # !! Note: when the .config.php already exists any new settings will be skipped
     echo "#	Configuring a new ${phpConfig}";
     sed \
 -e "s/[#]*\$config\['username'] = 'WEBSITE_USERNAME_HERE';/\$config\['username'] = '${mysqlWebsiteUsername}';/" \

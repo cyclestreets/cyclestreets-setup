@@ -206,20 +206,28 @@ chown ${username} ${websitesBackupsFolder}
 phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
 then
-    # !! Note: when the .config.php already exists any new settings will be skipped
-    echo "#	Configuring a new ${phpConfig}";
-    sed \
+
+    # Instantiate from the template
+    cp .config.php.template ${phpConfig}
+
+    # Make it executable
+    chmod a+x ${phpConfig}
+fi
+
+# Setup the config?
+if grep WEBSITE_USERNAME_HERE ${phpConfig}  >/dev/null 2>&1;
+then
+
+    # Make the substitutions
+    echo "#	Configuring the ${phpConfig}";
+    sed -i \
 -e "s/[#]*\$config\['username'] = 'WEBSITE_USERNAME_HERE';/\$config\['username'] = '${mysqlWebsiteUsername}';/" \
 -e "s/[#]*\$config\['password'] = 'WEBSITE_PASSWORD_HERE';/\$config\['password'] = '${mysqlWebsitePassword}';/" \
 -e "s/[#]*\$config\['administratorEmail'] = 'YOUR_EMAIL_HERE';/\$config\['administratorEmail'] = '${administratorEmail}';/" \
 -e "s/[#]*\$config\['mainEmail'] = 'YOUR_EMAIL_HERE';/\$config\['mainEmail'] = '${mainEmail}';/" \
-	.config.php.template > ${phpConfig}
-
-    # Make it executable
-    chmod a+x ${phpConfig}
-else
-    echo "#	!! Re-using ${phpConfig} - which will miss any new settings";
+	${phpConfig}
 fi
+
 
 # Narrate the end of script
 echo "# Reached end of installation script"

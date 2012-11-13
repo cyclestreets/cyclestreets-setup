@@ -57,9 +57,9 @@ else
     fi
 
     # Create the CycleStreets user
-    # !! The password supplied here should be an enrcypted version.
-    # The work-around is to set the password using passwd as super user afterwards.
-    useradd -m -p "EncryptedPassword" $username
+    useradd -m $username >> ${setupLogFile}
+    # Assign the password - this technique hides it from process listings
+    echo $password | passwd $username --stdin
     echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
 
@@ -140,7 +140,7 @@ mkdir -p ${websitesContentFolder}
 # Create a folder for Apache to log access / errors:
 mkdir -p ${websitesLogsFolder}
 
-# Create a folder for schema backups
+# Create a folder for backups
 mkdir -p ${websitesBackupsFolder}
 
 # Switch to content folder
@@ -152,6 +152,9 @@ then
     # Populate with source code by checking out from the CycleStreets repository:
     ${asCS} svn co http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
 fi
+
+# Setup the permissions
+configuration/permissions.sh 
 
 # Mod rewrite
 a2enmod rewrite >> ${setupLogFile}
@@ -192,16 +195,6 @@ ${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '
 # The following is needed only to support OSM import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
-
-# Data
-
-# !! Had to add this step to make sure the folder is owned by cyclestreets - there must be a tidier way of dealing with these permissions
-chown ${username} ${websitesBackupsFolder}
-
-# !! SKIPPED - use something like this:
-# scp backupserver...:/websites/www/backups/www_cyclestreets.sql.gz ${websitesBackupsFolder}
-# gunzip < .sql.gz | mysql cyclestreets -uroot -p...
-
 # Configure the settings file
 phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
@@ -228,6 +221,13 @@ then
 	${phpConfig}
 fi
 
+
+# Data
+
+# A basic cyclestreets db needs to be created for this step.
+# !! SKIPPED - use something like this:
+# scp backupserver...:/websites/www/backups/www_cyclestreets.sql.gz ${websitesBackupsFolder}
+# gunzip < .sql.gz | mysql cyclestreets -uroot -p...
 
 # Narrate the end of script
 echo "# Reached end of installation script"

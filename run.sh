@@ -27,11 +27,6 @@ fi
 # Load the credentials
 . ./${configFile}
 
-# Shortcut for running commands as the cyclestreets users
-asCS="sudo -u ${username}"
-
-### MAIN PROGRAM ###
-
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
 setupLogFile=$(readlink -e $(dirname $0))/setupLog.txt
@@ -67,6 +62,17 @@ else
     useradd -m -p "EncryptedPassword" $username
     echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
+
+# Check whether the user is alredy in the sudo group
+if ! groups ${username} | grep "\bsudo\b" > /dev/null 2>&1
+then
+    # Add the user to it
+    adduser ${username} sudo
+fi
+
+
+# Shortcut for running commands as the cyclestreets users
+asCS="sudo -u ${username}"
 
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}
@@ -111,7 +117,7 @@ fi
 # Check whether the user is alredy in the rollout group
 if ! groups ${username} | grep "\brollout\b" > /dev/null 2>&1
 then
-    # Add users to it
+    # Add the user to it
     adduser ${username} rollout
 fi
 

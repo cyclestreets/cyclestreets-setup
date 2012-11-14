@@ -142,12 +142,13 @@ mkdir -p ${websitesBackupsFolder}
 # Switch to content folder
 cd ${websitesContentFolder}
 
-# Create/update the CycleStreets repository
+# Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account)
+currentActualUser=`who am i | awk '{print $1}'`
 if [ ! -d ${websitesContentFolder}/.svn ]
 then
-    ${asCS} svn co http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
+    ${asCS} svn co --username=${currentActualUser} --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
 else
-    ${asCS} svn update
+    ${asCS} svn update --username=${currentActualUser} --no-auth-cache
 fi
 
 # Setup the permissions

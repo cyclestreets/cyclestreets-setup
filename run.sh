@@ -250,6 +250,11 @@ fi
 if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
     ln -s routing121114 ${websitesContentFolder}/data/routing/current
 fi
+
+# Compile the C++ module
+echo "#	Follow the guide at: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring"
+echo "#	to build and install the C++ module for routing."
+
 echo "#	The routing service can be started from the command line via: cyclestreets@${websitesContentFolder}\$ python classes/routing_server.py"
 
 # Narrate the end of script

@@ -245,7 +245,7 @@ if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt-get install gcc g++ python-dev
+sudo apt-get -y install gcc g++ python-dev >> ${setupLogFile}
 if [ ! -e ${websitesContentFolder}/classes/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/classes/"
@@ -256,10 +256,11 @@ if [ ! -e ${websitesContentFolder}/classes/astar_impl.so ]; then
 fi
 
 # Add screen, which is needed for starting the routing server (until it can be daemonised)
-sudo apt-get install screen
+sudo apt-get -y install screen >> ${setupLogFile}
 
 
-echo "#	The routing service can be started from the command line via: cyclestreets@${websitesContentFolder}\$ python classes/routing_server.py"
+echo "#	The routing service can be started from the command line using:"
+echo "cd ${websitesContentFolder}; sudo -u cyclestreets python classes/routing_server.py"
 
 # Narrate the end of script
 echo "# Reached end of installation script"

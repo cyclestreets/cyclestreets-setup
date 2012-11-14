@@ -8,21 +8,21 @@
 #websiteurl=cyclestreets.localhost
 #emailcontact=cyclestreets@localhost
 # CycleStreets
-websiteurl=www.cyclestreets.net
-administratorEmail=webmasterATcyclestreets.net
+websiteurl=localhost
+administratorEmail=webmaster@example.com
 mainEmail="${administratorEmail}"
 
 # Define the username for CycleStreets to install/run under, so that it can run independent of any individual personal account on the machine
 username=cyclestreets
-password=
+password=???
 
 ## MySQL
 # The mysql root password - to avoid being prompted.
-mysqlRootPassword=
+mysqlRootPassword=???
 
 # Credentials for the website user
 mysqlWebsiteUsername=website
-mysqlWebsitePassword="${password}"
+mysqlWebsitePassword=???
 
 
 ## Working directories

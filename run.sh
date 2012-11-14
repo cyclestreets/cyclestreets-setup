@@ -208,7 +208,7 @@ then
 fi
 
 # Setup the config?
-if grep WEBSITE_USERNAME_HERE ${phpConfig}  >/dev/null 2>&1;
+if grep WEBSITE_USERNAME_HERE ${phpConfig} >/dev/null 2>&1;
 then
 
     # Make the substitutions
@@ -224,10 +224,27 @@ fi
 
 # Data
 
-# A basic cyclestreets db needs to be created for this step.
-# !! SKIPPED - use something like this:
-# scp backupserver...:/websites/www/backups/www_cyclestreets.sql.gz ${websitesBackupsFolder}
-# gunzip < .sql.gz | mysql cyclestreets -uroot -p...
+# Install a basic cyclestreets db from the repository
+# Unless the cyclestreets db has already been loaded (check for presence of map_config table)
+if ! mysql -uroot -pxXxXxXxXxXx --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyclestreets | grep map_config  > /dev/null 2>&1
+then
+    # Load cyclestreets data
+    echo "#	Load cyclestreets data"
+    gunzip < /websites/www/content/documentation/schema/cyclestreets.sql.gz | ${mysql} cyclestreets >> ${setupLogFile}
+fi
+
+# Install a basic routing db from the repository
+# Unless the database already exists:
+if ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE 'routing121114'" | grep routing121114 > /dev/null 2>&1
+then
+    # Create routing121114 database
+    echo "#	Create routing121114 database"
+    ${mysql} -e "create database if not exists routing121114 default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+
+    # Load data
+    echo "#	Load routing121114 data"
+    gunzip < /websites/www/content/documentation/schema/routing121114.sql.gz | ${mysql} routing121114 >> ${setupLogFile}
+fi
 
 # Narrate the end of script
 echo "# Reached end of installation script"

@@ -226,7 +226,7 @@ fi
 
 # Install a basic cyclestreets db from the repository
 # Unless the cyclestreets db has already been loaded (check for presence of map_config table)
-if ! mysql -uroot -pxXxXxXxXxXx --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyclestreets | grep map_config  > /dev/null 2>&1
+if ! ${mysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyclestreets | grep map_config  > /dev/null 2>&1
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
@@ -235,7 +235,7 @@ fi
 
 # Install a basic routing db from the repository
 # Unless the database already exists:
-if ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE 'routing121114'" | grep routing121114 > /dev/null 2>&1
+if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE 'routing121114'" | grep routing121114 > /dev/null 2>&1
 then
     # Create routing121114 database
     echo "#	Create routing121114 database"

@@ -258,9 +258,9 @@ fi
 # Add screen, which is needed for starting the routing server (until it can be daemonised)
 sudo apt-get -y install screen >> ${setupLogFile}
 
+# Confirm end of script
+echo -e "\n# All now installed\n"
 
-echo "#	The routing service can be started from the command line using:"
-echo "cd ${websitesContentFolder}; sudo -u cyclestreets python classes/routing_server.py"
-
-# Narrate the end of script
-echo "# Reached end of installation script"
+# Instruct the user how to start the routing service
+echo "#	The routing service can be started from the command line (ideally within a screen session) using:"
+echo "#	cd ${websitesContentFolder}; sudo -u cyclestreets python classes/routing_server.py"

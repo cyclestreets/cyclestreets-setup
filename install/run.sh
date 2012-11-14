@@ -99,25 +99,21 @@ apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 
 #   ___
 # /     \
-# |  1  | 
+# |  1  |
 # |     |
 # -------
 # Milestone 1
 echo "# Reached milestone 1"
 
-# Check if the rollout group exists
+# Create the rollout group, if it does not already exist
 if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
 then
-
-    # Create the roll out group
     addgroup rollout
-
 fi
 
-# Check whether the user is alredy in the rollout group
+# Add the user to the rollout group, if not already there
 if ! groups ${username} | grep "\brollout\b" > /dev/null 2>&1
 then
-    # Add the user to it
     adduser ${username} rollout
 fi
 
@@ -131,7 +127,7 @@ chown ${username}:rollout /websites
 umask 0002
 
 # This is the clever bit which adds the setgid bit, it relies on the value of umask.
-# It means that all files and folders that are descendants of this folder recursively inherit it's group, ie. rollout.
+# It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
 chmod g+ws /websites
 
 # Add the path to content (the -p option creates the intermediate www)
@@ -146,15 +142,16 @@ mkdir -p ${websitesBackupsFolder}
 # Switch to content folder
 cd ${websitesContentFolder}
 
-# Check if the repository has been created
+# Create/update the CycleStreets repository
 if [ ! -d ${websitesContentFolder}/.svn ]
 then
-    # Populate with source code by checking out from the CycleStreets repository:
     ${asCS} svn co http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
+else
+    ${asCS} svn update
 fi
 
 # Setup the permissions
-configuration/permissions.sh 
+configuration/permissions.sh
 
 # Mod rewrite
 a2enmod rewrite >> ${setupLogFile}
@@ -171,7 +168,7 @@ service apache2 reload >> ${setupLogFile}
 
 #   ___
 # /     \
-# |  2  | 
+# |  2  |
 # |     |
 # -------
 # Milestone 2
@@ -195,12 +192,10 @@ ${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '
 # The following is needed only to support OSM import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
-# Configure the settings file
+# Create the settings file if it doesn't exist
 phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
 then
-
-    # Instantiate from the template
     cp .config.php.template ${phpConfig}
 
     # Make it executable

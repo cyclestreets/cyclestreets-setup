@@ -254,6 +254,9 @@ sudo -u cyclestreets python setup.py build
 sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
 sudo -u cyclestreets rm -rf build/
 
+# Add screen, which is needed for starting the routing server (until it can be daemonised)
+sudo apt-get install screen
+
 
 echo "#	The routing service can be started from the command line via: cyclestreets@${websitesContentFolder}\$ python classes/routing_server.py"
 

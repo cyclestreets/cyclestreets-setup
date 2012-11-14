@@ -2,6 +2,7 @@
 # Script to install CycleStreets on Ubuntu
 # Tested on 12.04 (View Ubuntu version using 'lsb_release -a') using Postgres 9.1
 # http://wiki.openstreetmap.org/wiki/Nominatim/Installation#Ubuntu.2FDebian
+# This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets installation $(date)"
 
@@ -63,15 +64,13 @@ else
     echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
 
-# Check whether the user is alredy in the sudo group
+# Add the user to the sudo group, if they are not already present
 if ! groups ${username} | grep "\bsudo\b" > /dev/null 2>&1
 then
-    # Add the user to it
     adduser ${username} sudo
 fi
 
-
-# Shortcut for running commands as the cyclestreets users
+# Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
 # Install basic software
@@ -84,6 +83,7 @@ echo "#	Installing Apache, MySQL, PHP" >> ${setupLogFile}
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
+# Install core webserver software
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Python
@@ -197,9 +197,6 @@ phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
 then
     cp .config.php.template ${phpConfig}
-
-    # Make it executable
-    chmod a+x ${phpConfig}
 fi
 
 # Setup the config?
@@ -209,10 +206,10 @@ then
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
--e "s/[#]*\$config\['username'] = 'WEBSITE_USERNAME_HERE';/\$config\['username'] = '${mysqlWebsiteUsername}';/" \
--e "s/[#]*\$config\['password'] = 'WEBSITE_PASSWORD_HERE';/\$config\['password'] = '${mysqlWebsitePassword}';/" \
--e "s/[#]*\$config\['administratorEmail'] = 'YOUR_EMAIL_HERE';/\$config\['administratorEmail'] = '${administratorEmail}';/" \
--e "s/[#]*\$config\['mainEmail'] = 'YOUR_EMAIL_HERE';/\$config\['mainEmail'] = '${mainEmail}';/" \
+-e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
+-e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
+-e "s/YOUR_EMAIL_HERE/${administratorEmail}/" \
+-e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 	${phpConfig}
 fi
 

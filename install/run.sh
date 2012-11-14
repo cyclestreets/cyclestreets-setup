@@ -59,7 +59,7 @@ else
     # Create the CycleStreets user
     useradd -m $username >> ${setupLogFile}
     # Assign the password - this technique hides it from process listings
-    echo $password | passwd $username --stdin
+    echo "${username}:${password}" | /usr/sbin/chpasswd
     echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
 fi
 
@@ -251,9 +251,14 @@ if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
     ln -s routing121114 ${websitesContentFolder}/data/routing/current
 fi
 
-# Compile the C++ module
-echo "#	Follow the guide at: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring"
-echo "#	to build and install the C++ module for routing."
+# Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
+echo "Now building the C++ routing module..."
+sudo apt-get install gcc g++ python-dev
+cd "${websitesContentFolder}/classes/"
+sudo -u cyclestreets python setup.py build
+sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
+sudo -u cyclestreets rm -rf build/
+
 
 echo "#	The routing service can be started from the command line via: cyclestreets@${websitesContentFolder}\$ python classes/routing_server.py"
 

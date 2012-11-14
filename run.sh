@@ -230,7 +230,7 @@ if ! ${mysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyc
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    gunzip < /websites/www/content/documentation/schema/cyclestreets.sql.gz | ${mysql} cyclestreets >> ${setupLogFile}
+    gunzip < ${websitesContentFolder}/documentation/schema/cyclestreets.sql.gz | ${mysql} cyclestreets >> ${setupLogFile}
 fi
 
 # Install a basic routing db from the repository
@@ -243,8 +243,14 @@ then
 
     # Load data
     echo "#	Load routing121114 data"
-    gunzip < /websites/www/content/documentation/schema/routing121114.sql.gz | ${mysql} routing121114 >> ${setupLogFile}
+    gunzip < ${websitesContentFolder}/documentation/schema/routing121114.sql.gz | ${mysql} routing121114 >> ${setupLogFile}
 fi
+
+# Setup a symlink to the routing data if it doesn't already exist
+if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
+    ln -s routing121114 ${websitesContentFolder}/data/routing/current
+fi
+echo "#	The routing service can be started from the command line via: cyclestreets@${websitesContentFolder}\$ python classes/routing_server.py"
 
 # Narrate the end of script
 echo "# Reached end of installation script"

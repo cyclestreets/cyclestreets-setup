@@ -142,7 +142,7 @@ mkdir -p ${websitesBackupsFolder}
 # Switch to content folder
 cd ${websitesContentFolder}
 
-# Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account)
+# Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
 currentActualUser=`who am i | awk '{print $1}'`
 if [ ! -d ${websitesContentFolder}/.svn ]
 then
@@ -245,12 +245,15 @@ if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-echo "Now building the C++ routing module..."
 sudo apt-get install gcc g++ python-dev
-cd "${websitesContentFolder}/classes/"
-sudo -u cyclestreets python setup.py build
-sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
-sudo -u cyclestreets rm -rf build/
+if [ ! -e ${websitesContentFolder}/classes/astar_impl.so ]; then
+	echo "Now building the C++ routing module..."
+	cd "${websitesContentFolder}/classes/"
+	sudo -u cyclestreets python setup.py build
+	sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
+	sudo -u cyclestreets rm -rf build/
+	cd ${websitesContentFolder}
+fi
 
 # Add screen, which is needed for starting the routing server (until it can be daemonised)
 sudo apt-get install screen

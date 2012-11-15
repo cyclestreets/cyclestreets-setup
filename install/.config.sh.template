@@ -29,3 +29,12 @@ mysqlWebsitePassword='???'
 websitesContentFolder=/websites/www/content
 websitesBackupsFolder=/websites/www/backups
 websitesLogsFolder=/websites/www/logs
+
+
+## Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
+# Basically, use the 'internet' (direct delivery) mode here for a developer setup
+dc_eximconfig_configtype='internet'  # Use 'internet' for direct delivery, or 'satellite' if mail is delivered by your ISP
+dc_local_interfaces=''               # Use '' if using 'internet' or '127.0.0.1' if using 'satellite' above
+dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
+dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
+

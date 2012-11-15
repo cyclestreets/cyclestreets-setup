@@ -175,6 +175,10 @@ chmod -R g+w ${websitesContentFolder}/blog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
 chown www-data:rollout ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
 
+# Requested missing cities logging (will disappear when ticket 645 cleared up)
+touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
+chown www-data:rollout ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
+
 # Mod rewrite
 a2enmod rewrite >> ${setupLogFile}
 

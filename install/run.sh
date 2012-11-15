@@ -160,6 +160,13 @@ configuration/permissions.sh
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 
+# For gpsPhoto.pl (for geolocation by synchronization), add dependencies, and Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
+apt-get -y install libimage-exiftool-perlapt-get
+apt-get -y install libxml-dom-perl		# Might not actually be needed
+chown www-data ${websitesContentFolder}/scripts/gpsPhoto.pl
+chmod -x ${websitesContentFolder}/scripts/gpsPhoto.pl
+chmod ug+x ${websitesContentFolder}/scripts/gpsPhoto.pl
+
 # Mod rewrite
 a2enmod rewrite >> ${setupLogFile}
 

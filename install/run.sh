@@ -85,7 +85,11 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 
 # Install core webserver software
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
+
+# Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
 sudo a2enmod deflate
+apt-get install php-apc
+service apache2 restart
 
 # Install Python
 echo "#	Installing python" >> ${setupLogFile}

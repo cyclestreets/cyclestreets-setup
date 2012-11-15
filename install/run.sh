@@ -171,6 +171,10 @@ chmod ug+x ${websitesContentFolder}/scripts/gpsPhoto.pl
 chown -R www-data:rollout ${websitesContentFolder}/blog
 chmod -R g+w ${websitesContentFolder}/blog
 
+# Select changelog
+touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
+chown www-data:rollout ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
+
 # Mod rewrite
 a2enmod rewrite >> ${setupLogFile}
 

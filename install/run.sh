@@ -85,6 +85,7 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 
 # Install core webserver software
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
+sudo a2enmod deflate
 
 # Install Python
 echo "#	Installing python" >> ${setupLogFile}

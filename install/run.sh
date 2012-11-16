@@ -167,9 +167,6 @@ else
     ${asCS} svn update --username=${currentActualUser} --no-auth-cache
 fi
 
-# Setup the permissions
-configuration/permissions.sh
-
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 

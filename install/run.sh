@@ -122,7 +122,7 @@ then
     addgroup rollout
 fi
 
-# Add the user (and the person installing the software, for convenience) to the rollout group, if not already there
+# Add the user to the rollout group, if not already there
 if ! groups ${username} | grep "\brollout\b" > /dev/null 2>&1
 then
 	usermod -a -G rollout ${username}

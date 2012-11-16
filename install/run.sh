@@ -113,16 +113,25 @@ apt-get -y install ntp
 # Milestone 1
 echo "# Reached milestone 1"
 
+# Determine the current actual user
+currentActualUser=`who am i | awk '{print $1}'`
+
 # Create the rollout group, if it does not already exist
 if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
 then
     addgroup rollout
 fi
 
-# Add the user to the rollout group, if not already there
+# Add the user (and the person installing the software, for convenience) to the rollout group, if not already there
 if ! groups ${username} | grep "\brollout\b" > /dev/null 2>&1
 then
-    adduser ${username} rollout
+	usermod -a -G rollout ${username}
+fi
+
+# Add the person installing the software to the rollout group, for convenience, if not already there
+if ! groups ${currentActualUser} | grep "\brollout\b" > /dev/null 2>&1
+then
+	usermod -a -G rollout ${currentActualUser}
 fi
 
 # Working directory
@@ -151,7 +160,6 @@ mkdir -p ${websitesBackupsFolder}
 cd ${websitesContentFolder}
 
 # Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
-currentActualUser=`who am i | awk '{print $1}'`
 if [ ! -d ${websitesContentFolder}/.svn ]
 then
     ${asCS} svn co --username=${currentActualUser} --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}

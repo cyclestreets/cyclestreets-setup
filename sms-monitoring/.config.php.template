@@ -1,0 +1,15 @@
+<?php
+
+# E-mail address
+$emailAddress = '';
+
+# API key for the SMS provider
+$smsProviderApiKey = '';
+
+# Mobile number (international format)
+$smsNumber = '+44 ';
+
+# CycleStreets API key
+$cyclestreetsApiKey = '';
+
+?>

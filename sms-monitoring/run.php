@@ -7,7 +7,7 @@ new doCheck ();
 class doCheck
 {
 	# Class properties
-	private $debugging = true;
+	private $debugging = false;
 	private $timeoutSeconds = 15;
 	private $enableSms = true;
 	
@@ -87,7 +87,7 @@ class doCheck
 		# Compile the message
 		$message = $errorMessage;
 		if ($result) {
-			$message .= "\n\nThe HTTP response body was:\n" . $result;
+			$message .= "\n\nThe HTTP response body was:\n" . print_r ($result, true);
 		}
 		
 		# Send e-mail

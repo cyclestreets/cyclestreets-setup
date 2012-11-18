@@ -48,11 +48,15 @@ class doCheck
 			}
 		}
 		
-		# Run each test
+		# Run each test; if it fails, wait a short while then try again before reporting a problem
 		foreach ($tests as $test) {
 			if (!$this->{$test} ($errorMessage, $result)) {
-				$this->reportProblem ($errorMessage, $result);
-				return false;
+				// echo "Trying again for {$test}...";
+				sleep (20);
+				if (!$this->{$test} ($errorMessage, $result)) {
+					$this->reportProblem ($errorMessage, $result);
+					return false;
+				}
 			}
 		}
 		

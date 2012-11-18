@@ -111,7 +111,7 @@ class doCheck
 	/* Tests */
 	
 	
-	# Route-planning check
+	# Route-planning test
 	private function test_journey_new (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
@@ -158,7 +158,7 @@ class doCheck
 	}
 	
 	
-	# Route-retrieval check
+	# Route-retrieval test
 	private function test_journey_existing (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
@@ -197,6 +197,45 @@ class doCheck
 			// || !isSet ($result['doesnotexist'])
 		) {
 			$errorMessage = "The /api/journey call (retrieve journey) did not return the expected format.";
+			return false;
+		}
+		
+		# Return success
+		return true;
+	}
+	
+	
+	# Nearestpoint test
+	private function test_nearestpoint (&$errorMessage = false, &$result = false)
+	{
+		# Plan a route (the split is to avoid bots traversing a repository)
+		$routeUrl = "http://www.cyclestreets.net" . "/api/nearestpoint.json?key={$this->cyclestreetsApiKey}&longitude=0.117950&latitude=52.205302";
+		if (!$json = file_get_contents ($routeUrl)) {
+			$errorMessage = "Could not retrieve results of /api/nearestpoint call within {$this->timeoutSeconds} seconds.";
+			return false;
+		}
+		
+		# Decode the JSON
+		$result = json_decode ($json, true);
+		// print_r ($result);
+		// file_put_contents ('./results.txt', print_r ($result, 1));
+		
+		# Ensure the data is as expected
+		if (
+			# Check the marker structure has the first marker
+			   !isSet ($result['marker'])
+			|| !isSet ($result['marker']['@attributes'])
+			|| !isSet ($result['marker']['@attributes']['longitude'])
+			|| !isSet ($result['marker']['@attributes']['latitude'])
+			
+			# Check for a co-ordinate in the right area of the country
+			|| (!substr_count ($result['marker']['@attributes']['longitude'], '0.11'))
+			|| (!substr_count ($result['marker']['@attributes']['latitude'], '52.2'))
+			
+			# Testing..
+			// || !isSet ($result['doesnotexist'])
+		) {
+			$errorMessage = "The /api/nearestpoint call did not return the expected format.";
 			return false;
 		}
 		

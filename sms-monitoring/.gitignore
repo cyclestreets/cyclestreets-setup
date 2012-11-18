@@ -2,3 +2,5 @@
 *~
 # Ignore the instantiated copy of the config template
 .config.php
+# Debug files
+results.txt

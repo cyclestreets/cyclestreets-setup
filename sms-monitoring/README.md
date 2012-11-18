@@ -5,7 +5,11 @@ response and message to SMS and e-mail in the event of a problem.
 
 ## Installation
 
-    # Clone the repository
+	# Ensure dependencies (PHP, and a mail-sending program) installed
+	sudo apt-get install php5
+	sudo apt-get install exim4
+
+	# Clone the repository
 	cd ~
 	git clone https://github.com/cyclestreets/cyclestreets-setup.git
 	cd cyclestreets-setup/

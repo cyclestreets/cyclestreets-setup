@@ -284,6 +284,45 @@ class doCheck
 	}
 	
 	
+	# Photo (retrieval) test
+	private function test_photo (&$errorMessage = false, &$result = false)
+	{
+		# Plan a route (the split is to avoid bots traversing a repository)
+		$routeUrl = "http://www.cyclestreets.net" . "/api/photo.json?key={$this->cyclestreetsApiKey}&id=80";
+		if (!$json = file_get_contents ($routeUrl)) {
+			$errorMessage = "The /api/photo call did not respond within {$this->timeoutSeconds} seconds.";
+			return false;
+		}
+		
+		# Decode the JSON
+		$result = json_decode ($json, true);
+		// print_r ($result);
+		// file_put_contents ('./results.txt', print_r ($result, 1));
+		
+		# Ensure the data is as expected
+		if (
+			# Check the marker structure has the first marker
+			   !isSet ($result['request'])
+			|| !isSet ($result['result'])
+			|| !isSet ($result['result']['longitude'])
+			|| !isSet ($result['result']['caption'])
+			
+			# Check for a co-ordinate in the right area of the country
+			|| (!substr_count ($result['result']['longitude'], '0.141'))
+			|| (!substr_count ($result['result']['caption'], 'York Street'))
+			
+			# Testing..
+			// || !isSet ($result['doesnotexist'])
+		) {
+			$errorMessage = "The /api/photo call did not return the expected format.";
+			return false;
+		}
+		
+		# Return success
+		return true;
+	}
+	
+	
 }
 
 ?>

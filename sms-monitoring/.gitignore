@@ -1,0 +1,6 @@
+# Ignore emacs temporary files, which end in ~
+*~
+# Ignore the instantiated copy of the config template
+.config.php
+# Debug files
+results.txt

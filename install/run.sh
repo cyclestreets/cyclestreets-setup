@@ -1,7 +1,6 @@
 #!/bin/bash
 # Script to install CycleStreets on Ubuntu
-# Tested on 12.04 (View Ubuntu version using 'lsb_release -a') using Postgres 9.1
-# http://wiki.openstreetmap.org/wiki/Nominatim/Installation#Ubuntu.2FDebian
+# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets installation $(date)"
@@ -281,9 +280,9 @@ fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
 sudo apt-get -y install gcc g++ python-dev >> ${setupLogFile}
-if [ ! -e ${websitesContentFolder}/classes/astar_impl.so ]; then
+if [ ! -e ${websitesContentFolder}/cyclerouting/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
-	cd "${websitesContentFolder}/classes/"
+	cd "${websitesContentFolder}/cyclerouting/"
 	sudo -u cyclestreets python setup.py build
 	sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
 	sudo -u cyclestreets rm -rf build/
@@ -312,6 +311,10 @@ sudo service exim4 restart
 # Confirm end of script
 echo -e "\n# All now installed\n"
 
-# Instruct the user how to start the routing service
-echo "#	The routing service can be started from the command line (ideally within a screen session) using:"
-echo "#	cd ${websitesContentFolder}; sudo -u cyclestreets python classes/routing_server.py"
+# Install the routing daemon (service)
+# It can also be manually started from the command line (ideally within a screen session) using:
+# cd ${websitesContentFolder}; sudo -u cyclestreets routingengine/routing_server.py
+ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
+chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
+chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
+service cycleroutingd start

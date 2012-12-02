@@ -313,8 +313,9 @@ echo -e "\n# All now installed\n"
 
 # Install the routing daemon (service)
 # It can also be manually started from the command line (ideally within a screen session) using:
-# cd ${websitesContentFolder}; sudo -u cyclestreets routingengine/routing_server.py
+# sudo -u cyclestreets /websites/www/content/routingengine/routing_server.py
 ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
 chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
 chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
 service cycleroutingd start
+echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"

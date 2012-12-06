@@ -108,16 +108,60 @@ ${filepath}
 
 
 
+# This bit was irdb.sh, written out by the importer
+
+# Define the import edition
+#!# Replace with a reader in the script section above
+importEdition=routing121115
+md5Tsv=43cac953ce99b44bb4a23347fca0653c
+md5Tables=623950cc0a7e1a47c543d138e60be4bd
+
+
+# Narrate
+echo "#	Installing the routing database ${importEdition}."
+date
+if [ "$(whoami)" = "root" ]; then  echo "#	Do not run this script as root."; exit 1;fi
+echo "#	Installation - checking data integrity"
+if [ "$(openssl dgst -md5 /websites/www/backups/${importEdition}tsv.tar.gz)" != "MD5(/websites/www/backups/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then echo "#	Tsv md5 does not match"; exit 1;fi
+if [ "$(openssl dgst -md5 /websites/www/backups/${importEdition}tables.tar.gz)" != "MD5(/websites/www/backups/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then echo "#	Tables md5 does not match"; exit 1;fi
+echo "#	Script self-destruct (safety measure to stop the same one being run twice)."
+rm /websites/www/backups/irdb.sh
+date
+echo "#	Create the database and set default collation"
+#	As root@www:/websites/www/content# 
+mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
+mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "alter database ${importEdition} collate utf8_unicode_ci;"
+#	Load the procedures:
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < /websites/www/content/documentation/schema/photosEnRoute.sql
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < /websites/www/content/documentation/schema/nearestPoint.sql
+date
+echo "#	Unpack and install the tsv files."
+tar xf /websites/www/backups/${importEdition}tsv.tar.gz -C /websites/www/content/
+echo "#	Point current at new data:"
+rm /websites/www/content/data/routing/current
+ln -s ${importEdition}/ /websites/www/content/data/routing/current
+echo "#	Clean up the compressed tsv data."
+rm /websites/www/backups/${importEdition}tsv.tar.gz
+date
+echo "#	Installing the database tables"
+echo "#	Unpack the tables, install and clean up."
+sudo /websites/www/content/configuration/backup/www/installRouting.sh ${importEdition}
+date
+echo "#	Install the optimized nearestPoint table"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"
+echo "#	Install the sieve"
+mv /websites/www/backups/sieve.sql /websites/www/content/import/
+echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(true,0);"
+echo "#	Completed installation"
+date
 
 
 
 
 
-# If an import routing database install script is present, run it. (It should self destruct and so not run un-necessarily.)
-if [ -e "/websites/www/backups/irdb.sh" ]
-then
-	sudo -u cyclestreets /websites/www/backups/irdb.sh
-fi
+
+
 
 
 # This bit was installPhotoIndex.sh, written out by the importer
@@ -126,7 +170,6 @@ fi
 # If this script is present, run it. (It should self destruct and so not run un-necessarily.)
 
 
-importEdition=routing121115
 
 
 # Install photo index

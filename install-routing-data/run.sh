@@ -132,7 +132,22 @@ if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 fi
 
 
-### Stage 4 - create the routing database
+### Stage 4 - unpack and install the TSV files
+
+echo "#	Unpack and install the TSV files"
+sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
+
+echo "#	Point current at new data"
+#!# Replace/add the new daemon config file mechanism
+rm ${websitesContentFolder}/data/routing/current
+sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
+
+echo "#	Clean up the compressed TSV data"
+rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
+date
+
+
+### Stage 5 - create the routing database
 
 # Narrate
 echo "#	Installing the routing database ${importEdition}."
@@ -142,13 +157,8 @@ echo "#	Create the database (which will be empty for now) and set default collat
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
-echo "# Load the stored procedures into this new (empty) import database"
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
-date
 
-
-### Stage 5 - unpack the MySQL binary files; this is much faster than using a .sql import
+### Stage 6 - unpack the MySQL binary files; this is much faster than using a .sql import
 
 # Narrate
 echo "#	Installing the database tables"
@@ -173,56 +183,32 @@ mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
 rmdir ${websitesBackupsFolder}/${importEdition}
 
 
-### Stage 6 - unpack and install the TSV files
-
-echo "#	Unpack and install the TSV files"
-sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
-
-echo "#	Point current at new data"
-#!# Replace/add the new daemon config file mechanism
-rm ${websitesContentFolder}/data/routing/current
-sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
-
-echo "#	Clean up the compressed TSV data"
-rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
-date
-
-
-
-
-
-
-echo "#	Install the optimized nearestPoint table"
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"
+### Stage 7 - move the seive into place for the purposes of having visible documentation
 
 echo "#	Install the sieve"
 sudo -u $username mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
-echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(true,0);"
 
-echo "#	Completed installation"
-date
+### Stage 8 - run post-install stored procedures for nearestPoint
 
-
-
+echo "#	Install and run the optimized nearestPoint table"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL createPathForNearestPoint();"
 
 
+### Stage 9 - deal with photos-en-route
 
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
-# If this script is present, run it. (It should self destruct and so not run un-necessarily.)
-
-
-
+echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+#!# Not clear why this comes before installing the photo index?
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL indexPhotos(true,0);"
 
 # Install photo index
-#!# Some of these "sudo -u cyclestreets" are not required
 sudo -u $username gunzip ${websitesBackupsFolder}/photoIndex.gz
 #!# Fix this rename upstream
 sudo -u $username mv ${websitesBackupsFolder}/photoIndex ${websitesBackupsFolder}/photoIndex.sql
 mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBackupsFolder}/photoIndex.sql
-
-# Clean up
 rm ${websitesBackupsFolder}/photoIndex.sql
 
 

@@ -93,58 +93,8 @@ fi
 
 
 
+#!# Need to add a check here if the specified import has already been used, by reading the actual database
 
-
-# This file identifies the import transfer script
-filename=xfer.sh
-
-# Full path
-filepath=${websitesBackupsFolder}/${filename}
-
-# Get the last modified date of the current transfer script
-if [ -e ${filepath} ]
-then
-    lastMod=$(date -r ${filepath} +%s)
-else
-    lastMod=0
-fi
-
-# This test checks:
-# 1. Whether the filepath exists
-# 2. That it has size > 0
-# 3. That it is newer than $lastMod
-test="test -e ${filepath} -a \$(stat -c%s ${filepath}) -gt 0 -a \$(date -r ${filepath} +%s) -gt ${lastMod}"
-
-# Temporarily turn off break-on-error to run the following test
-set +e
-
-# Run the test - which will set $? to zero if it succeeds. Other values indicate failure or error.
-result=$(ssh ${importMachineAddress} ${test})
-
-# If the test succeeds, then check the second part
-if [ ! $? = 0 ]
-then
-    echo "#	Skipping: No newer import available."
-    exit
-fi
-
-# Resume break-on-error
-set -e
-
-# Download
-echo "#	Downloading new version"
-scp ${importMachineAddress}:${filepath} ${websitesBackupsFolder}/
-
-# Make sure it is executable
-chmod a+x ${filepath}
-
-
-
-# Define the import edition (i.e. the database name)
-#!# Replace with a reader in the script section above
-importEdition=routing121115
-md5Tsv=43cac953ce99b44bb4a23347fca0653c
-md5Tables=623950cc0a7e1a47c543d138e60be4bd
 
 
 

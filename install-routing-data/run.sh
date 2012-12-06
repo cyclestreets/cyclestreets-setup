@@ -3,6 +3,7 @@
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
+
 echo "#	CycleStreets routing data installation $(date)"
 
 # Ensure this script is run as root
@@ -48,23 +49,9 @@ fi
 
 
 
-#	CycleStreets hourly tasks for www
-# Installed using...
-# ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
-# Remove using...
-# rm /etc/cron.hourly/cyclestreetsHourly
-
 # Attempt to get the latest import
 
 
-
-# This section was /websites/www/content/configuration/backup/www/getLatestImport.sh
-
-
-# Check whether a new import is ready and if so, get it.
-
-# Break on errors
-set -e
 
 # Only allow this script to run in the small hours as the download can be large and disrupt main site performance.
 hour=$(date +%H)
@@ -73,17 +60,11 @@ then
 exit
 fi
 
-# Import sources come from this server
-importMachine=olivia.cyclestreets.net
-
-# Backups folder
-folder=/websites/www/backups/
-
 # This file identifies the import transfer script
 filename=xfer.sh
 
 # Full path
-filepath=${folder}${filename}
+filepath=${websitesBackupsFolder}/${filename}
 
 # Get the last modified date of the current transfer script
 if [ -e ${filepath} ]
@@ -117,7 +98,7 @@ set -e
 
 # Download
 echo "#	Downloading new version"
-scp ${importMachine}:${filepath} ${folder}
+scp ${importMachine}:${filepath} ${websitesBackupsFolder}/
 
 # Make sure it is executable
 chmod a+x ${filepath}
@@ -144,3 +125,11 @@ if [ -e "/websites/www/backups/installPhotoIndex.sh" ]
 then
 	sudo -u cyclestreets /websites/www/backups/installPhotoIndex.sh
 fi
+
+
+
+# Install using...
+# ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
+# Remove using...
+# rm /etc/cron.hourly/cyclestreetsHourly
+

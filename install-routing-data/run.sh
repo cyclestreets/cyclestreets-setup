@@ -25,7 +25,6 @@ set -e
 configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-tails
 if [ ! -e ./${configFile} ]; then
     echo "# The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
@@ -98,50 +97,46 @@ fi
 #!# Need to add a check here if the specified import has already been used, by reading the actual database
 
 
-### Stage 3 - get the routing files
+### Stage 3 - get the routing files and check data integrity
 
 # Begin the file transfer
 echo "#	Transferring the routing files from the import machine ${importMachineAddress}:"
 
 # TSV file
 echo "#	Transfer the TSV file"
-scp ${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
+sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
 date
 
 # Hot-copied tables file
 echo "#	Transfer the hot copied tables file"
-scp ${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
+sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
 date
 
 # Sieve file
 #!# This is in a different place and could presumably be out-of-sync
 echo "#	Transfer the sieve"
-scp ${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
+sudo -u $username scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
 # Photos index and installer file
 echo "#	File transfer stage complete"
-scp ${importMachineAddress}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
+sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
 
-
-### Stage 4- install the routing database
-
-
-
-
-
-# Narrate
-echo "#	Installing the routing database ${importEdition}."
-date
-
-echo "#	Installation - checking data integrity"
+echo "#	Checking data integrity"
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tsv.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then
-	echo "#	Tsv md5 does not match"
+	echo "#	TSV md5 does not match"
 	exit 1
 fi
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then
 	echo "#	Tables md5 does not match"
 	exit 1
 fi
+
+
+### Stage 4 - install the routing database
+
+# Narrate
+echo "#	Installing the routing database ${importEdition}."
+date
 
 echo "#	Create the database and set default collation"
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8

@@ -132,50 +132,36 @@ if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 fi
 
 
-### Stage 4 - install the routing database
+### Stage 4 - create the routing database
 
 # Narrate
 echo "#	Installing the routing database ${importEdition}."
 date
 
-echo "#	Create the database and set default collation"
+echo "#	Create the database (which will be empty for now) and set default collation"
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
-echo "# Load the stored procedures into this new import database"
+echo "# Load the stored procedures into this new (empty) import database"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 date
 
 
-### Stage 5 - install the TSV files
+### Stage 5 - unpack the MySQL binary files; this is much faster than using a .sql import
 
-echo "#	Unpack and install the TSV files."
-sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
-
-echo "#	Point current at new data:"
-#!# Replace/add the new daemon config file mechanism
-rm ${websitesContentFolder}/data/routing/current
-sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
-
-echo "#	Clean up the compressed TSV data."
-rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
-date
-
-
+# Narrate
 echo "#	Installing the database tables"
-echo "#	Unpack the tables, install and clean up."
 
-
-# Check for the existence of the directory
+# Ensure the MySQL directory has been created
 #!# Hard-coded location /var/lib/mysql/
 if [ ! -d /var/lib/mysql/${importEdition} ]; then
-   echo "# The database doesn't not seem to be installed correctly." 1>&2
+   echo "# The database does not seem to be installed correctly." 1>&2
    exit 1
 fi
 
-# Unpack the database
-tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+# Unpack the database files; options here are "tar extract, change directory to websitesBackupsFolder, preserve permissions, verbose, file is routingXXXXXXtables.tar.gz
+sudo -u $username tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Remove the zip
 rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
@@ -187,7 +173,24 @@ mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
 rmdir ${websitesBackupsFolder}/${importEdition}
 
 
+### Stage 6 - unpack and install the TSV files
+
+echo "#	Unpack and install the TSV files"
+sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
+
+echo "#	Point current at new data"
+#!# Replace/add the new daemon config file mechanism
+rm ${websitesContentFolder}/data/routing/current
+sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
+
+echo "#	Clean up the compressed TSV data"
+rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
 date
+
+
+
+
+
 
 echo "#	Install the optimized nearestPoint table"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"

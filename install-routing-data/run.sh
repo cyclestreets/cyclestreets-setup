@@ -113,7 +113,7 @@ ${filepath}
 
 # This bit was irdb.sh ('install routing database'), written out by the importer
 
-# Define the import edition
+# Define the import edition (i.e. the database name)
 #!# Replace with a reader in the script section above
 importEdition=routing121115
 md5Tsv=43cac953ce99b44bb4a23347fca0653c
@@ -147,6 +147,7 @@ echo "#	Unpack and install the tsv files."
 sudo -u cyclestreets tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C /websites/www/content/
 
 echo "#	Point current at new data:"
+#!# Replace/add the new daemon config file mechanism
 rm /websites/www/content/data/routing/current
 sudo -u cyclestreets ln -s ${importEdition}/ /websites/www/content/data/routing/current
 
@@ -156,7 +157,27 @@ date
 
 echo "#	Installing the database tables"
 echo "#	Unpack the tables, install and clean up."
-/websites/www/content/configuration/backup/www/installRouting.sh ${importEdition}
+
+# Check for the existence of the directory
+#!# Hard-coded location /var/lib/mysql/
+if [ ! -d /var/lib/mysql/${importEdition} ]; then
+   echo "# The database doesn't not seem to be installed correctly." 1>&2
+   exit 1
+fi
+
+# Unpack the database
+tar x -C /websites/www/backups -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+
+# Remove the zip
+rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+
+# Move the tables into mysql
+mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
+
+# Remove the empty folder
+rmdir ${websitesBackupsFolder}/${importEdition}
+
+
 date
 
 echo "#	Install the optimized nearestPoint table"

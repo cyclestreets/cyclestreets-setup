@@ -24,7 +24,7 @@ configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -e ./${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
+    echo "# The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
@@ -40,27 +40,24 @@ echo "#	CycleStreets routing data installation $(date)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "#\User ${username} must exist: please run the main website install script"
+	echo "# User ${username} must exist: please run the main website install script"
 	exit 1
 fi
 
 # Ensure the main website installation is present
-if [ ! -d ${websitesContentFolder}/data/routing ]; then
-	echo "#\The main website installation must exist: please run the main website install script"
+if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
+	echo "# The main website installation must exist: please run the main website install script"
 	exit 1
 fi
 
-
-
-# Attempt to get the latest import
-
-
+## Attempt to get the latest import
 
 # Only allow this script to run in the small hours as the download can be large and disrupt main site performance.
 hour=$(date +%H)
-if [ $hour -gt 4 -o $hour -lt 1 ]
+if [ $hour -gt $importStartHourLast -o $hour -lt $importStartHourFirst ]
 then
-exit
+	echo "# The import can only be downloaded between the times specified, to avoid disrupting main site performance; alternatively change the values in the config file"
+	exit
 fi
 
 # This file identifies the import transfer script

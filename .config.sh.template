@@ -39,5 +39,8 @@ dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
 dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
 
-## Specify the machine where you want to retrieve imported routing files from
+## Specify the machine where you want to retrieve imported routing files from, and any time limitations
 importMachine=imports.cyclestreets.net
+importMachine=imports.cyclestreets.net
+importStartHourFirst=0	# Set to 1 (1am) if using the main imports server
+importStartHourLast=23	# Set to 4 (i.e. 4.59pm) if using the main imports server

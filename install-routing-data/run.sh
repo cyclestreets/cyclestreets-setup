@@ -140,27 +140,32 @@ date
 
 echo "#	Create the database and set default collation"
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
-mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "alter database ${importEdition} collate utf8_unicode_ci;"
+mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
-echo "# Load the procedures"
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < /websites/www/content/documentation/schema/photosEnRoute.sql
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < /websites/www/content/documentation/schema/nearestPoint.sql
+echo "# Load the stored procedures into this new import database"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 date
 
-echo "#	Unpack and install the tsv files."
-sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C /websites/www/content/
+
+### Stage 5 - install the TSV files
+
+echo "#	Unpack and install the TSV files."
+sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
 
 echo "#	Point current at new data:"
 #!# Replace/add the new daemon config file mechanism
-rm /websites/www/content/data/routing/current
-sudo -u $username ln -s ${importEdition}/ /websites/www/content/data/routing/current
+rm ${websitesContentFolder}/data/routing/current
+sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
 
-echo "#	Clean up the compressed tsv data."
+echo "#	Clean up the compressed TSV data."
 rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
 date
 
+
 echo "#	Installing the database tables"
 echo "#	Unpack the tables, install and clean up."
+
 
 # Check for the existence of the directory
 #!# Hard-coded location /var/lib/mysql/
@@ -188,7 +193,7 @@ echo "#	Install the optimized nearestPoint table"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"
 
 echo "#	Install the sieve"
-sudo -u $username mv ${websitesBackupsFolder}/sieve.sql /websites/www/content/import/
+sudo -u $username mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
 echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(true,0);"

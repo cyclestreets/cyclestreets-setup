@@ -122,10 +122,10 @@ echo "#	Installing the routing database ${importEdition}."
 date
 if [ "$(whoami)" = "root" ]; then  echo "#	Do not run this script as root."; exit 1;fi
 echo "#	Installation - checking data integrity"
-if [ "$(openssl dgst -md5 /websites/www/backups/${importEdition}tsv.tar.gz)" != "MD5(/websites/www/backups/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then echo "#	Tsv md5 does not match"; exit 1;fi
-if [ "$(openssl dgst -md5 /websites/www/backups/${importEdition}tables.tar.gz)" != "MD5(/websites/www/backups/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then echo "#	Tables md5 does not match"; exit 1;fi
+if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tsv.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then echo "#	Tsv md5 does not match"; exit 1;fi
+if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then echo "#	Tables md5 does not match"; exit 1;fi
 echo "#	Script self-destruct (safety measure to stop the same one being run twice)."
-rm /websites/www/backups/irdb.sh
+rm ${websitesBackupsFolder}/irdb.sh
 date
 echo "#	Create the database and set default collation"
 #	As root@www:/websites/www/content# 
@@ -136,12 +136,12 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < /websites/www
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < /websites/www/content/documentation/schema/nearestPoint.sql
 date
 echo "#	Unpack and install the tsv files."
-tar xf /websites/www/backups/${importEdition}tsv.tar.gz -C /websites/www/content/
+tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C /websites/www/content/
 echo "#	Point current at new data:"
 rm /websites/www/content/data/routing/current
 ln -s ${importEdition}/ /websites/www/content/data/routing/current
 echo "#	Clean up the compressed tsv data."
-rm /websites/www/backups/${importEdition}tsv.tar.gz
+rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
 date
 echo "#	Installing the database tables"
 echo "#	Unpack the tables, install and clean up."
@@ -150,7 +150,7 @@ date
 echo "#	Install the optimized nearestPoint table"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"
 echo "#	Install the sieve"
-mv /websites/www/backups/sieve.sql /websites/www/content/import/
+mv ${websitesBackupsFolder}/sieve.sql /websites/www/content/import/
 echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(true,0);"
 echo "#	Completed installation"
@@ -173,11 +173,19 @@ date
 
 
 # Install photo index
-gunzip < /websites/www/backups/photoIndex.gz | mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword}
+#!# Some of these "sudo -u cyclestreets" are not required
+sudo -u cyclestreets gunzip ${websitesBackupsFolder}/photoIndex.gz
+#!# Fix this rename upstream
+sudo -u cyclestreets mv ${websitesBackupsFolder}/photoIndex ${websitesBackupsFolder}/photoIndex.sql
+sudo -u cyclestreets mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBackupsFolder}/photoIndex.sql
 
 # Clean up
-rm /websites/www/backups/installPhotoIndex.sh
-rm /websites/www/backups/photoIndex.gz
+sudo -u cyclestreets rm ${websitesBackupsFolder}/photoIndex.sql
+
+
+# Shell script files no longer actually used
+#!# Remove writing of these upstream
+sudo -u cyclestreets rm ${websitesBackupsFolder}/installPhotoIndex.sh
 
 
 

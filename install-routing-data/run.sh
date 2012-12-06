@@ -119,12 +119,22 @@ then
 	sudo -u cyclestreets /websites/www/backups/irdb.sh
 fi
 
+
+# This bit was installPhotoIndex.sh, written out by the importer
+
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
 # If this script is present, run it. (It should self destruct and so not run un-necessarily.)
-if [ -e "/websites/www/backups/installPhotoIndex.sh" ]
-then
-	sudo -u cyclestreets /websites/www/backups/installPhotoIndex.sh
-fi
+
+
+importEdition=routing121115
+
+
+# Install photo index
+gunzip < /websites/www/backups/photoIndex.gz | mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword}
+
+# Clean up
+rm /websites/www/backups/installPhotoIndex.sh
+rm /websites/www/backups/photoIndex.gz
 
 
 

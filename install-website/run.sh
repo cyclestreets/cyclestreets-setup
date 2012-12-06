@@ -16,7 +16,7 @@ set -e
 
 ### CREDENTIALS ###
 # Name of the credentials file
-configFile=.config.sh
+configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -e ./${configFile} ]; then
@@ -29,7 +29,7 @@ fi
 
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$(readlink -e $(dirname $0))/setupLog.txt
+setupLogFile=$(readlink -e $(dirname $0))/log.txt
 touch ${setupLogFile}
 echo "#	CycleStreets installation in progress, follow log file with: tail -f ${setupLogFile}"
 echo "#	CycleStreets installation $(date)" >> ${setupLogFile}

@@ -212,10 +212,13 @@ mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBacku
 rm ${websitesBackupsFolder}/photoIndex.sql
 
 
+### Stage 10 - update the map_config entry to switch to the new routing data, and restart the daemon
+
+#!# Todo
 
 
-# Install using...
+### Stage 11 - install the cron job for future updating
+
+#!# Todo
 # ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
-# Remove using...
-# rm /etc/cron.hourly/cyclestreetsHourly
 

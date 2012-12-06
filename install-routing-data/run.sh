@@ -7,6 +7,8 @@
 #!# Needs lockfile writing to prevent parallel running
 
 
+### Stage 1 - general setup
+
 echo "#	CycleStreets routing data installation $(date)"
 
 # Ensure this script is run as root
@@ -23,6 +25,7 @@ set -e
 configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
+tails
 if [ ! -e ./${configFile} ]; then
     echo "# The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
@@ -50,7 +53,8 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 	exit 1
 fi
 
-## Attempt to get the latest import
+
+### Stage 2 - obtain the routing import definition
 
 # Ensure import machine and definition file variables has been defined
 if [ -z "${importMachineAddress}" -o -z "${importMachineFile}" ]; then
@@ -91,17 +95,12 @@ if [ -n "$importStartHourLast" -a -n "$importStartHourFirst" ]; then
 	fi
 fi
 
-
-
 #!# Need to add a check here if the specified import has already been used, by reading the actual database
 
 
+### Stage 3 - get the routing files
 
-
-# This bit is from xfer.sh
-
-
-# Start the transfer
+# Begin the file transfer
 echo "#	Transferring the routing files from the import machine ${importMachineAddress}:"
 
 # TSV file
@@ -119,21 +118,15 @@ date
 echo "#	Transfer the sieve"
 scp ${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
-# Installation script
-echo "#	Installation script"
-scp -p ${importMachineAddress}:${websitesBackupsFolder}/irdb.sh ${websitesBackupsFolder}/
-date
-
 # Photos index and installer file
-scp ${importMachineAddress}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
-scp -p ${importMachineAddress}:${websitesBackupsFolder}/installPhotoIndex.sh ${websitesBackupsFolder}/
 echo "#	File transfer stage complete"
+scp ${importMachineAddress}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
+
+
+### Stage 4- install the routing database
 
 
 
-
-
-# This bit was irdb.sh ('install routing database'), written out by the importer
 
 
 # Narrate
@@ -212,7 +205,6 @@ date
 
 
 
-# This bit was installPhotoIndex.sh, written out by the importer
 
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
 # If this script is present, run it. (It should self destruct and so not run un-necessarily.)
@@ -230,11 +222,6 @@ mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBacku
 # Clean up
 rm ${websitesBackupsFolder}/photoIndex.sql
 
-
-# Shell script files no longer actually used
-#!# Remove writing of these upstream
-rm ${websitesBackupsFolder}/installPhotoIndex.sh
-rm ${websitesBackupsFolder}/irdb.sh
 
 
 

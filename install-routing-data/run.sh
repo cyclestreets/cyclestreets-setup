@@ -52,7 +52,7 @@ fi
 
 ## Attempt to get the latest import
 
-# Only allow this script to run in the small hours as the download can be large and disrupt main site performance.
+# Only allow this script to run between the specified times as the download can be large and disrupt main site performance.
 hour=$(date +%H)
 if [ $hour -gt $importStartHourLast -o $hour -lt $importStartHourFirst ]
 then
@@ -103,18 +103,52 @@ scp ${importMachine}:${filepath} ${websitesBackupsFolder}/
 # Make sure it is executable
 chmod a+x ${filepath}
 
-# Run the script, which will start the transfer
-${filepath}
 
-
-
-# This bit was irdb.sh ('install routing database'), written out by the importer
 
 # Define the import edition (i.e. the database name)
 #!# Replace with a reader in the script section above
 importEdition=routing121115
 md5Tsv=43cac953ce99b44bb4a23347fca0653c
 md5Tables=623950cc0a7e1a47c543d138e60be4bd
+
+
+
+# This bit is from xfer.sh
+
+
+# Start the transfer
+echo "#	Transferring the routing files from the import machine ${importMachine}:"
+
+# TSV file
+echo "#	Transfer the TSV file"
+scp ${importMachine}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
+date
+
+# Hot-copied tables file
+echo "#	Transfer the hot copied tables file"
+scp ${importMachine}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
+date
+
+# Sieve file
+#!# This is in a different place and could presumably be out-of-sync
+echo "#	Transfer the sieve"
+scp ${importMachine}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
+
+# Installation script
+echo "#	Installation script"
+scp -p ${importMachine}:${websitesBackupsFolder}/irdb.sh ${websitesBackupsFolder}/
+date
+
+# Photos index and installer file
+scp ${importMachine}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
+scp -p ${importMachine}:${websitesBackupsFolder}/installPhotoIndex.sh ${websitesBackupsFolder}/
+echo "#	File transfer stage complete"
+
+
+
+
+
+# This bit was irdb.sh ('install routing database'), written out by the importer
 
 
 # Narrate
@@ -163,7 +197,7 @@ if [ ! -d /var/lib/mysql/${importEdition} ]; then
 fi
 
 # Unpack the database
-tar x -C /websites/www/backups -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Remove the zip
 rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz

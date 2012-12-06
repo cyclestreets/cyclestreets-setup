@@ -46,3 +46,32 @@ if [ ! -d ${websitesContentFolder}/data/routing ]; then
 	exit 1
 fi
 
+
+
+#	CycleStreets hourly tasks for www
+# Installed using...
+# ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
+# Remove using...
+# rm /etc/cron.hourly/cyclestreetsHourly
+
+# Attempt to get the latest import
+if [ -e "/websites/www/content/configuration/backup/www/getLatestImport.sh" ] 
+then
+#	Note the install should not run as root
+sudo -u cyclestreets /websites/www/content/configuration/backup/www/getLatestImport.sh
+fi
+
+# If an import routing database install script is present, run it. (It should self destruct and so not run un-necessarily.)
+if [ -e "/websites/www/backups/irdb.sh" ] 
+then
+#	Note the install should not run as root
+sudo -u cyclestreets /websites/www/backups/irdb.sh
+fi
+
+# Installing the photo index (this usually lags behind production of the main routing database by about an hour)
+# If this script is present, run it. (It should self destruct and so not run un-necessarily.)
+if [ -e "/websites/www/backups/installPhotoIndex.sh" ] 
+then
+#	Note the install should not run as root (although it doesn't really matter in this case).
+sudo -u cyclestreets /websites/www/backups/installPhotoIndex.sh
+fi

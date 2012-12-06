@@ -55,23 +55,92 @@ fi
 # rm /etc/cron.hourly/cyclestreetsHourly
 
 # Attempt to get the latest import
-if [ -e "/websites/www/content/configuration/backup/www/getLatestImport.sh" ] 
+
+
+
+# This section was /websites/www/content/configuration/backup/www/getLatestImport.sh
+
+
+# Check whether a new import is ready and if so, get it.
+
+# Break on errors
+set -e
+
+# Only allow this script to run in the small hours as the download can be large and disrupt main site performance.
+hour=$(date +%H)
+if [ $hour -gt 4 -o $hour -lt 1 ]
 then
-#	Note the install should not run as root
-sudo -u cyclestreets /websites/www/content/configuration/backup/www/getLatestImport.sh
+exit
 fi
 
-# If an import routing database install script is present, run it. (It should self destruct and so not run un-necessarily.)
-if [ -e "/websites/www/backups/irdb.sh" ] 
+# Import sources come from this server
+importMachine=olivia.cyclestreets.net
+
+# Backups folder
+folder=/websites/www/backups/
+
+# This file identifies the import transfer script
+filename=xfer.sh
+
+# Full path
+filepath=${folder}${filename}
+
+# Get the last modified date of the current transfer script
+if [ -e ${filepath} ]
 then
-#	Note the install should not run as root
-sudo -u cyclestreets /websites/www/backups/irdb.sh
+    lastMod=$(date -r ${filepath} +%s)
+else
+    lastMod=0
+fi
+
+# This test checks:
+# 1. Whether the filepath exists
+# 2. That it has size > 0
+# 3. That it is newer than $lastMod
+test="test -e ${filepath} -a \$(stat -c%s ${filepath}) -gt 0 -a \$(date -r ${filepath} +%s) -gt ${lastMod}"
+
+# Temporarily turn off break-on-error to run the following test
+set +e
+
+# Run the test - which will set $? to zero if it succeeds. Other values indicate failure or error.
+result=$(ssh ${importMachine} ${test})
+
+# If the test succeeds, then check the second part
+if [ ! $? = 0 ]
+then
+    echo "#	Skipping: No newer import available."
+    exit
+fi
+
+# Resume break-on-error
+set -e
+
+# Download
+echo "#	Downloading new version"
+scp ${importMachine}:${filepath} ${folder}
+
+# Make sure it is executable
+chmod a+x ${filepath}
+
+# Run the script, which will start the transfer
+${filepath}
+
+
+
+
+
+
+
+
+# If an import routing database install script is present, run it. (It should self destruct and so not run un-necessarily.)
+if [ -e "/websites/www/backups/irdb.sh" ]
+then
+	sudo -u cyclestreets /websites/www/backups/irdb.sh
 fi
 
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
 # If this script is present, run it. (It should self destruct and so not run un-necessarily.)
-if [ -e "/websites/www/backups/installPhotoIndex.sh" ] 
+if [ -e "/websites/www/backups/installPhotoIndex.sh" ]
 then
-#	Note the install should not run as root (although it doesn't really matter in this case).
-sudo -u cyclestreets /websites/www/backups/installPhotoIndex.sh
+	sudo -u cyclestreets /websites/www/backups/installPhotoIndex.sh
 fi

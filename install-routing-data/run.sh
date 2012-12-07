@@ -4,8 +4,6 @@
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 
-#!# Needs lockfile writing to prevent parallel running
-
 
 ### Stage 1 - general setup
 
@@ -101,8 +99,8 @@ fi
 
 # Check to see if this routing database already exists
 if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
-   echo "There is already a routing database ${importEdition} so this cannot run"
-   exit 1
+	echo "There is already a routing database ${importEdition} so this cannot run"
+	exit 1
 fi
 
 # Check to see if a routing data file for this routing edition already exists
@@ -128,7 +126,7 @@ sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolde
 date
 
 # Sieve file
-#!# This is in a different place and could presumably be out-of-sync
+#!# This is in a different source folder and could presumably be out-of-sync; fix upstream to put with the routing files
 echo "#	Transfer the sieve"
 sudo -u $username scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 

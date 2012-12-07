@@ -139,7 +139,9 @@ sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C 
 
 echo "#	Point current at new data"
 #!# Replace/add the new daemon config file mechanism
-rm ${websitesContentFolder}/data/routing/current
+if [ -L ${websitesContentFolder}/data/routing/current ]; then
+	rm ${websitesContentFolder}/data/routing/current
+fi
 sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
 
 echo "#	Clean up the compressed TSV data"
@@ -157,12 +159,6 @@ echo "#	Create the database (which will be empty for now) and set default collat
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
-
-### Stage 6 - unpack the MySQL binary files; this is much faster than using a .sql import
-
-# Narrate
-echo "#	Installing the database tables"
-
 # Ensure the MySQL directory has been created
 #!# Hard-coded location /var/lib/mysql/
 if [ ! -d /var/lib/mysql/${importEdition} ]; then
@@ -179,24 +175,27 @@ rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 # Move the tables into mysql
 mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
 
+# Ensure the permissions are correct
+chown -R mysql.mysql /var/lib/mysql/${importEdition}
+
 # Remove the empty folder
 rmdir ${websitesBackupsFolder}/${importEdition}
 
 
-### Stage 7 - move the seive into place for the purposes of having visible documentation
+### Stage 6 - move the seive into place for the purposes of having visible documentation
 
 echo "#	Install the sieve"
 sudo -u $username mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
 
-### Stage 8 - run post-install stored procedures for nearestPoint
+### Stage 7 - run post-install stored procedures for nearestPoint
 
 echo "#	Install and run the optimized nearestPoint table"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL createPathForNearestPoint();"
 
 
-### Stage 9 - deal with photos-en-route
+### Stage 8 - deal with photos-en-route
 
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
 echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
@@ -212,12 +211,12 @@ mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBacku
 rm ${websitesBackupsFolder}/photoIndex.sql
 
 
-### Stage 10 - update the map_config entry to switch to the new routing data, and restart the daemon
+### Stage 9 - update the map_config entry to switch to the new routing data, and restart the daemon
 
 #!# Todo
 
 
-### Stage 11 - install the cron job for future updating
+### Stage 10 - install the cron job for future updating
 
 #!# Todo
 # ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly

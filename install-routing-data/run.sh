@@ -20,6 +20,11 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
+(
+	flock -n 9 || { echo 'An installation is already running' ; exit 1; }
+
+
 ### CREDENTIALS ###
 # Name of the credentials file
 configFile=../.config.sh
@@ -226,4 +231,16 @@ rm ${importMachineFile}
 
 #!# Todo
 # ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
+
+
+
+### Stage 12 - end
+
+# Finish
+date
+echo "All done"
+
+# Remove the lock file
+) 9>/var/lock/cyclestreetsimport
+
 

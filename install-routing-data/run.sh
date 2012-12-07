@@ -99,7 +99,11 @@ if [ -n "$importStartHourLast" -a -n "$importStartHourFirst" ]; then
 	fi
 fi
 
-#!# Need to add a check here if the specified import has already been used, by reading the actual database
+# Check to see if this routing database already exists
+if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
+   echo "There is already a routing database ${importEdition} so this cannot run"
+   exit 1
+fi
 
 
 ### Stage 3 - get the routing files and check data integrity

@@ -105,6 +105,12 @@ if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; th
    exit 1
 fi
 
+# Check to see if a routing data file for this routing edition already exists
+if [ -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
+	echo "There is already a routing data file ${importEdition} so this cannot run"
+	exit 1
+fi
+
 
 ### Stage 3 - get the routing files and check data integrity
 

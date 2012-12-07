@@ -198,7 +198,7 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL create
 ### Stage 8 - deal with photos-en-route
 
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
-echo "#	Building the photosEnRoute tables - but skipping the actual indexing"
+echo "#	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 #!# Not clear why this comes before installing the photo index?
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL indexPhotos(true,0);"
@@ -216,7 +216,13 @@ rm ${websitesBackupsFolder}/photoIndex.sql
 #!# Todo
 
 
-### Stage 10 - install the cron job for future updating
+### Stage 10 - remove the import definition file
+
+echo "# Removing the import definition file"
+rm ${importMachineFile}
+
+
+### Stage 11 - install the cron job for future updating
 
 #!# Todo
 # ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly

@@ -24,17 +24,19 @@ set -e
 
 
 ### CREDENTIALS ###
-# Name of the credentials file
+
+# Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
 configFile=../.config.sh
+SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -e ./${configFile} ]; then
+if [ ! -e $SCRIPTDIRECTORY/${configFile} ]; then
     echo "# The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
+. $SCRIPTDIRECTORY/${configFile}
 
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script

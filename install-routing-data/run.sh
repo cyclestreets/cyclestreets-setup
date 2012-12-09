@@ -77,6 +77,7 @@ set -e
 
 # Get the required variables from the routing definition file; this is not directly executed for security
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
+# NB the timestamp parameter is not really used yet in the script below
 timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $importMachineFile`
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $importMachineFile`
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $importMachineFile`
@@ -90,7 +91,7 @@ if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]
 	exit 1
 fi
 
-# If specified, only allow this script to run between the specified times as the download can be large and disrupt main site performance
+# If specified, only allow retrieval to run between the specified times as the download can be large and disrupt main site performance
 if [ -n "$importStartHourLast" -a -n "$importStartHourFirst" ]; then
 	hour=$(date +%H)
 	if [ $hour -gt $importStartHourLast -o $hour -lt $importStartHourFirst ]; then
@@ -152,12 +153,12 @@ fi
 echo "#	Unpack and install the TSV files"
 sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
 
-echo "#	Point current at new data"
-#!# Replace/add the new daemon config file mechanism
-if [ -L ${websitesContentFolder}/data/routing/current ]; then
-	rm ${websitesContentFolder}/data/routing/current
-fi
-sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
+#	echo "#	Point current at new data"
+#	!# Replace/add the new daemon config file mechanism
+#	if [ -L ${websitesContentFolder}/data/routing/current ]; then
+#		rm ${websitesContentFolder}/data/routing/current
+#	fi
+#	sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
 
 echo "#	Clean up the compressed TSV data"
 rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz

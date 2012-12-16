@@ -280,9 +280,9 @@ fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
 sudo apt-get -y install gcc g++ python-dev >> ${setupLogFile}
-if [ ! -e ${websitesContentFolder}/cyclerouting/astar_impl.so ]; then
+if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
-	cd "${websitesContentFolder}/cyclerouting/"
+	cd "${websitesContentFolder}/routingengine/"
 	sudo -u cyclestreets python setup.py build
 	sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
 	sudo -u cyclestreets rm -rf build/

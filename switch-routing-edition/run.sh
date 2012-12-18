@@ -104,11 +104,13 @@ if [ $? -eq 0 ]; then
 	service cycleroutingd stop
 fi
 
-#!# Needs to wait for it to start somehow
+#!# Update the service config here
 
 
 # Start the routing daemon (service)
 service cycleroutingd start
+
+#!# Needs to wait for confirmation that it is fully started, e.g. making a port 9000 GET request perhaps
 
 # Switch the website to the new routing database
 mysql cyclestreets -hlocalhost -uroot -p${mysqlWebsiteUsername} -e "UPDATE map_config SET routingDb = '${importEdition}' WHERE id = 1;";

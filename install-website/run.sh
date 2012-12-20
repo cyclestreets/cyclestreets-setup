@@ -322,3 +322,6 @@ chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
 chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
 service cycleroutingd start
 echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
+
+# Add the daemon to the system initialization, so that it will start on reboot
+update-rc.d cycleroutingd defaults

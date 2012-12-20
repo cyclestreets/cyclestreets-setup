@@ -292,6 +292,9 @@ fi
 # Add screen, which is needed for starting the routing server (until it can be daemonised)
 sudo apt-get -y install screen >> ${setupLogFile}
 
+# Add this python module which is needed by the routing_server.py script
+sudo apt-get install -y python-argparse
+
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
 # NB The config here is currently Debian/Ubuntu-specific
 sudo apt-get -y install exim4

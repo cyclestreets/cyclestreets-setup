@@ -204,13 +204,11 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL create
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
 echo "#	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-#!# Not clear why this comes before installing the photo index?
+# Creates the photo index tables, if they do not already exist, and skip the actual indexing (because the index built by the import process is loaded next).
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL indexPhotos(true,0);"
 
 # Install photo index
-sudo -u $username gunzip ${websitesBackupsFolder}/photoIndex.gz
-#!# Fix this rename upstream
-sudo -u $username mv ${websitesBackupsFolder}/photoIndex ${websitesBackupsFolder}/photoIndex.sql
+sudo -u $username gunzip ${websitesBackupsFolder}/photoIndex.sql.gz
 mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBackupsFolder}/photoIndex.sql
 rm ${websitesBackupsFolder}/photoIndex.sql
 

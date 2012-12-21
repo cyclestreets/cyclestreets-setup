@@ -59,7 +59,7 @@ fi
 
 # Ensure the routing daemon (service) is installed
 if [ ! -f /etc/init.d/cycleroutingd ]; then
-	echo "The routing daemon (service) is not installed"
+	echo "#	The routing daemon (service) is not installed"
 	exit 1
 fi
 
@@ -69,7 +69,7 @@ fi
 # Ensure there is a single argument, defining the routing edition, or end
 if [ $# -ne 1 ]
 then
-  echo "Usage: `basename $0` importedition"
+  echo "#	Usage: `basename $0` importedition"
   exit 1
 fi
 
@@ -81,13 +81,13 @@ importEdition=$1
 
 # Check to see that this routing database exists
 if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
-	echo "The routing database ${importEdition} is not present"
+	echo "#	The routing database ${importEdition} is not present"
 	exit 1
 fi
 
 # Check to see that the routing data file for this routing edition exists
 if [ ! -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
-	echo "The routing data file ${importEdition} is not present"
+	echo "#	The routing data file ${importEdition} is not present"
 	exit 1
 fi
 
@@ -98,14 +98,17 @@ fi
 sudo -u $username touch ${websitesContentFolder}/maintenance
 
 # Stop the service if running
+# !! Rather than clever stuff like this, strengthen the 'service cycleroutingd' options to start,stop or reload the routing system
 ps cax | grep routing_server.py > /dev/null
 if [ $? -eq 0 ]; then
-	echo "Stopping current routing service"
+	echo "#	Stopping current routing service"
 	service cycleroutingd stop
 fi
 
 #!# Update the service config here
 
+# Restarting the routing engine on the live CycleStreets machine can take around half-an-hour to complete.
+# To avoid loss of service, routing is temporarily diverted to the backup machine to provide routes.
 
 # Start the routing daemon (service)
 service cycleroutingd start
@@ -122,10 +125,9 @@ rm ${websitesContentFolder}/maintenance
 ### Stage 5 - end
 
 # Finish
-date
-echo "All done"
+echo "#	All done"
 
 # Remove the lock file
 ) 9>/var/lock/cyclestreetsimport
 
-
+# End of file

@@ -70,7 +70,7 @@ fi
 set +e
 sudo -u $username scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "# The import machine file could not be retrieved; please check the 'importMachineAddress' and 'importMachineFile' settings"
+	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress' and 'importMachineFile' settings."
 	exit 1
 fi
 set -e
@@ -78,6 +78,7 @@ set -e
 # Get the required variables from the routing definition file; this is not directly executed for security
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
 # NB the timestamp parameter is not really used yet in the script below
+# !! Note: the md5Dump option (which loads the database from a mysqldump generated file, and is an alternative to the hotcopy option md5Tables) is not yet supported
 timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $importMachineFile`
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $importMachineFile`
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $importMachineFile`
@@ -102,13 +103,13 @@ fi
 
 # Check to see if this routing database already exists
 if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
-	echo "There is already a routing database ${importEdition} so this cannot run"
+	echo "#	Stopping because the routing database ${importEdition} already exists."
 	exit 1
 fi
 
 # Check to see if a routing data file for this routing edition already exists
 if [ -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
-	echo "There is already a routing data file ${importEdition} so this cannot run"
+	echo "#	Stopping because the routing data folder ${importEdition} already exists."
 	exit 1
 fi
 
@@ -121,12 +122,11 @@ echo "#	Transferring the routing files from the import machine ${importMachineAd
 # TSV file
 echo "#	Transfer the TSV file"
 sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
-date
 
 # Hot-copied tables file
 echo "#	Transfer the hot copied tables file"
 sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
-date
+
 
 # Sieve file
 #!# This is in a different source folder and could presumably be out-of-sync; fix upstream to put with the routing files
@@ -134,16 +134,17 @@ echo "#	Transfer the sieve"
 sudo -u $username scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
 # Photos index and installer file
-echo "#	File transfer stage complete"
 sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
+echo "#	File transfer stage complete"
 
-echo "#	Checking data integrity"
+# MD5 checks
+echo "#	Checking transferred files"
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tsv.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then
-	echo "#	TSV md5 does not match"
+	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then
-	echo "#	Tables md5 does not match"
+	echo "#	Stopping: Tables md5 does not match"
 	exit 1
 fi
 
@@ -162,14 +163,12 @@ sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C 
 
 echo "#	Clean up the compressed TSV data"
 rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
-date
 
 
 ### Stage 5 - create the routing database
 
 # Narrate
-echo "#	Installing the routing database ${importEdition}."
-date
+echo "#	Installing the routing database: ${importEdition}"
 
 echo "#	Create the database (which will be empty for now) and set default collation"
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
@@ -198,7 +197,7 @@ chown -R mysql.mysql /var/lib/mysql/${importEdition}
 rmdir ${websitesBackupsFolder}/${importEdition}
 
 
-### Stage 6 - move the seive into place for the purposes of having visible documentation
+### Stage 6 - move the sieve into place for the purposes of having visible documentation
 
 echo "#	Install the sieve"
 sudo -u $username mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/

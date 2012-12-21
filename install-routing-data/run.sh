@@ -83,22 +83,11 @@ timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $importMachineFile`
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $importMachineFile`
 md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $importMachineFile`
-importStartHourFirst=`sed -n 's/^importStartHourFirst\s*=\s*\([0-9]*\)\s*$/\1/p'       $importMachineFile`
-importStartHourLast=`sed -n   's/^importStartHourLast\s*=\s*\([0-9]*\)\s*$/\1/p'       $importMachineFile`
 
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]; then
 	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables"
 	exit 1
-fi
-
-# If specified, only allow retrieval to run between the specified times as the download can be large and disrupt main site performance
-if [ -n "$importStartHourLast" -a -n "$importStartHourFirst" ]; then
-	hour=$(date +%H)
-	if [ $hour -gt $importStartHourLast -o $hour -lt $importStartHourFirst ]; then
-		echo "# The specified import machine only permits downloads between ${importStartHourFirst}:00 and ${importStartHourLast}:59, to avoid disrupting main site performance"
-		exit
-	fi
 fi
 
 # Check to see if this routing database already exists

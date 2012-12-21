@@ -123,7 +123,7 @@ echo "#	Transfer the sieve"
 sudo -u $username scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
 # Photos index and installer file
-sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.gz ${websitesBackupsFolder}/
+sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.sql.gz ${websitesBackupsFolder}/
 echo "#	File transfer stage complete"
 
 # MD5 checks

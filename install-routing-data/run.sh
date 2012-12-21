@@ -3,7 +3,7 @@
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
-
+# Requires password-less access to the import machine.
 
 ### Stage 1 - general setup
 
@@ -20,7 +20,7 @@ set -e
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'An installation is already running' ; exit 1; }
+	flock -n 9 || { echo '#	An installation is already running' ; exit 1; }
 
 
 ### CREDENTIALS ###
@@ -31,7 +31,7 @@ SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -e $SCRIPTDIRECTORY/${configFile} ]; then
-    echo "# The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
+    echo "#	The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 

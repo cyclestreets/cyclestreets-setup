@@ -1,7 +1,9 @@
 cyclestreets-setup
 ==================
 
-Scripts for installing CycleStreets
+Scripts for installing CycleStreets, developing for Ubuntu 12.10 / Debian Squeeze
+
+**Note this is work-in-progress and the CycleStreets repo which is needed is not yet publicly available.**
 
 A suggested place to clone this repository is into your `~/src` folder:
 

@@ -98,7 +98,7 @@ apt-get -y install python php5-xmlrpc php5-curl >> ${setupLogFile}
 echo "#	Some utilities" >> ${setupLogFile}
 apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 
-# Install NTP to keep the clock correct (e.g. to avoid wrong GPS syncronisation timings)
+# Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
 apt-get -y install ntp
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.

@@ -3,7 +3,7 @@ cyclestreets-install
 
 Bash script to install CycleStreets on Ubuntu
 
-Developing for Ubuntu 12.10
+Developing for Ubuntu 12.10 / Debian
 
 After the repository has been cloned from github, proceed by making your own *.config.sh* file based on the *.config.sh.template* file.
 

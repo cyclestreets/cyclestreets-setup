@@ -94,6 +94,9 @@ fi
 # Check if the failoverRoutingServer is running
 if [ -n "${failoverRoutingServer}" ]; then
 
+    # Check the local routing service is currently serving
+    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State: serving")
+
     # Required packages
     # apt-get -y install curl libxml-xpath-perl
 

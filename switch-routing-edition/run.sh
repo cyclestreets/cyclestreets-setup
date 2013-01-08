@@ -94,21 +94,29 @@ fi
 # Check if the failoverRoutingServer is running
 if [ -n "${failoverRoutingServer}" ]; then
 
-	# Required packages
-	#sudo apt-get -y install curl libxml-xpath-perl
+    # Required packages
+    # apt-get -y install curl libxml-xpath-perl
 
-	# XML for the call
-	xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+    # XML for the calls to get the routing edition
+    xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
-	# POST the request to the server
-	failoverRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${failoverRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    # Get the locally running service
+    locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" http://localhost:9000/ | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
-	# Check the failover routing edition is the same
-	if [ ${failoverRoutingEdition} != ${importEdition} ]; then
-	    echo "#	The failover server is running ${failoverRoutingEdition} where locally ${importEdition} is running"
-	    exit 1
-	fi
+    # POST the request to the server
+    failoverRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${failoverRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+
+    # Check the failover routing edition is the same
+    if [ ${locallyRunningEdition} != ${failoverRoutingEdition} ]; then
+	echo "#	The failover server is running: ${failoverRoutingEdition} which differs from the local edition: ${locallyRunningEdition}"
+	exit 1
+    fi
 fi
+
+
+# Developped and tested to this point
+echo "#	Reached the limit of tested development"
+exit 1
 
 ### Stage 4 - do switch-over
 

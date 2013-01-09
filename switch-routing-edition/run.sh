@@ -126,9 +126,10 @@ fi
 
 ### Stage 4 - do switch-over
 
-# Put the site into maintenance mode
-# !! This is not necessary, as the failover serves the routes.
-# sudo -u $username touch ${websitesContentFolder}/maintenance
+# When there is no failover server put the site into maintenance mode
+if [ -z "${failoverRoutingServer}" ]; then
+    sudo -u $username touch ${websitesContentFolder}/maintenance
+fi
 
 # Configure the routing engine to use the new edition
 routingEngineConfigFile=/websites/www/content/routingengine/.config.sh

@@ -130,6 +130,7 @@ fi
 # When there is no failover server put the site into maintenance mode
 if [ -z "${failoverRoutingServer}" ]; then
     sudo -u $username touch ${websitesContentFolder}/maintenance
+    echo "#	As there is no failover routing server the local site has entered maintenance mode"
 fi
 
 # Configure the routing engine to use the new edition
@@ -162,17 +163,11 @@ if [ ${locallyRunningEdition} != ${importEdition} ]; then
 	exit 1
 fi
 
-# Developped and tested to this point
-echo "#	Reached the limit of tested development"
-exit 1
-
-
-
 # Switch the website to the new routing database
-mysql cyclestreets -hlocalhost -uroot -p${mysqlWebsiteUsername} -e "UPDATE map_config SET routingDb = '${importEdition}' WHERE id = 1;";
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${importEdition}' WHERE id = 1;";
 
-# Restore the site by switching off maintenance mode
-rm ${websitesContentFolder}/maintenance
+# Restore the site by switching off maintenance mode (-f ignores if non existent)
+rm -f ${websitesContentFolder}/maintenance
 
 
 ### Stage 5 - end

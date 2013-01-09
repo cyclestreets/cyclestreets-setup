@@ -123,14 +123,22 @@ if [ -n "${failoverRoutingServer}" ]; then
 fi
 
 
-# Developped and tested to this point
-echo "#	Reached the limit of tested development"
-exit 1
 
 ### Stage 4 - do switch-over
 
 # Put the site into maintenance mode
-sudo -u $username touch ${websitesContentFolder}/maintenance
+# !! This is not necessary, as the failover serves the routes.
+# sudo -u $username touch ${websitesContentFolder}/maintenance
+
+# Configure the routing engine to use the new edition
+routingEngineConfigFile=/websites/www/content/routingengine/.config.sh
+echo -e "#!/bin/bash\nBASEDIR=/websites/www/content/data/routing/${importEdition}" > $routingEngineConfigFile
+# Ensure it is executable
+chmod a+x $routingEngineConfigFile
+
+# Developped and tested to this point
+echo "#	Reached the limit of tested development"
+exit 1
 
 # Stop the service if running
 # !! Rather than clever stuff like this, strengthen the 'service cycleroutingd' options to start,stop or reload the routing system

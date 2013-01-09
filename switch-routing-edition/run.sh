@@ -97,11 +97,11 @@ if [ ! -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
 	exit 1
 fi
 
+# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
+localRoutingStatus=$(/etc/init.d/cycleroutingd status)
+
 # Check if the failoverRoutingServer is running
 if [ -n "${failoverRoutingServer}" ]; then
-
-    # Check the local routing service is currently serving
-    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State: serving")
 
     # Required packages
     # apt-get -y install curl libxml-xpath-perl
@@ -134,28 +134,16 @@ fi
 # Configure the routing engine to use the new edition
 routingEngineConfigFile=/websites/www/content/routingengine/.config.sh
 echo -e "#!/bin/bash\nBASEDIR=/websites/www/content/data/routing/${importEdition}" > $routingEngineConfigFile
+
 # Ensure it is executable
 chmod a+x $routingEngineConfigFile
+
+# Restart the routing service
+service cycleroutingd restart
 
 # Developped and tested to this point
 echo "#	Reached the limit of tested development"
 exit 1
-
-# Stop the service if running
-# !! Rather than clever stuff like this, strengthen the 'service cycleroutingd' options to start,stop or reload the routing system
-ps cax | grep routing_server.py > /dev/null
-if [ $? -eq 0 ]; then
-	echo "#	Stopping current routing service"
-	service cycleroutingd stop
-fi
-
-#!# Update the service config here
-
-# Restarting the routing engine on the live CycleStreets machine can take around half-an-hour to complete.
-# To avoid loss of service, routing is temporarily diverted to the backup machine to provide routes.
-
-# Start the routing daemon (service)
-service cycleroutingd start
 
 #!# Needs to wait for confirmation that it is fully started, e.g. making a port 9000 GET request perhaps
 

@@ -1,4 +1,2 @@
-# Ignore emacs temporary files, which end in ~
-*~
 # Ignore the log file
 log.txt

@@ -142,19 +142,25 @@ chmod a+x $routingEngineConfigFile
 # Restart the routing service
 service cycleroutingd restart
 
-#!# Needs to wait for confirmation that it is fully started, e.g. making a port 9000 GET request perhaps
-
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
 localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has started
 while [[ ! $localRoutingStatus =~ serving ]]; do
-    sleep 0.1
+    sleep 2
     localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done
 
+# Get the locally running service
+locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" http://localhost:9000/ | xpath -q -e '/methodResponse/params/param/value/string/text()')
+
+# Check the local service is as requested
+if [ ${locallyRunningEdition} != ${importEdition} ]; then
+	echo "#	The local server is running: ${locallyRunningEdition} not the requested edition: ${importEdition}"
+	exit 1
+fi
 
 # Developped and tested to this point
 echo "#	Reached the limit of tested development"

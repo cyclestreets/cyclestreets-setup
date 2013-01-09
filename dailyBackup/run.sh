@@ -1,7 +1,8 @@
 #!/bin/bash
 # Script to backup CycleStreets on a daily basis
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
-# This script is idempotent - it can be safely re-run without destroying existing data
+
+# This script is NOT YET idempotent - it canNOT be safely re-run without destroying existing data (the repartition will over-write)
 
 ### Stage 1 - general setup
 
@@ -62,8 +63,11 @@ fi
 #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
 #
+#	Use date time to produce an edition number for the latest routes
+routesEdition=$(date +%y%m%d%H%M%S)
+#
 #	Archive the IJS tables
-mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${websitesBackupsFolder}/www_schema_ijs_tables.sql.gz
+mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${websitesBackupsFolder}/www_routes_${routesEdition}.sql.gz
 
 #
 #	Repartition, which moves the current to the archived tables. See: documentation/schema/repartition.sql
@@ -73,7 +77,7 @@ mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitio
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
 
 #	Create md5 hash
-openssl dgst -md5 ${websitesBackupsFolder}/www_schema_ijs_tables.sql.gz > ${websitesBackupsFolder}/www_schema_ijs_tables.sql.gz.md5
+openssl dgst -md5 ${websitesBackupsFolder}/www_routes_${routesEdition}.sql.gz > ${websitesBackupsFolder}/www_routes_${routesEdition}.sql.gz.md5
 
 #	Backup the CycleStreets database
 #	Option -R dumps stored procedures & functions

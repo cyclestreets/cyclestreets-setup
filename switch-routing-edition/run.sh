@@ -76,6 +76,12 @@ fi
 # Allocate that argument
 importEdition=$1
 
+# Check the format is routingYYMMDD
+if [[ ! $importEdition =~ routing[0-9]{6} ]]; then
+  echo "#	Arg importedition must specify a database of the form routingYYMMDD"
+  exit 1
+fi
+
 
 ### Stage 3 - confirm existence of the routing import database and files
 

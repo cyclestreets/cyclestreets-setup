@@ -316,7 +316,7 @@ echo -e "\n# All now installed\n"
 
 # Install the routing daemon (service)
 # It can also be manually started from the command line (ideally within a screen session) using:
-# sudo -u cyclestreets /websites/www/content/routingengine/routing_server.py
+# sudo -u cyclestreets ${websitesContentFolder}/routingengine/routing_server.py
 ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
 chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
 chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py

@@ -222,7 +222,7 @@ rm ${importMachineFile}
 ### Stage 10 - install the cron job for future updating
 
 #!# Todo
-# ln -s /websites/www/content/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
+# ln -s ${websitesContentFolder}/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
 
 
 

@@ -140,8 +140,8 @@ else
 fi
 
 # Configure the routing engine to use the new edition
-routingEngineConfigFile=/websites/www/content/routingengine/.config.sh
-echo -e "#!/bin/bash\nBASEDIR=/websites/www/content/data/routing/${importEdition}" > $routingEngineConfigFile
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
+echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${importEdition}" > $routingEngineConfigFile
 
 # Ensure it is executable
 chmod a+x $routingEngineConfigFile

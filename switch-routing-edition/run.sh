@@ -118,7 +118,8 @@ if [ -n "${failoverRoutingServer}" ]; then
     # Check the failover routing edition is the same
     if [ ${locallyRunningEdition} != ${failoverRoutingEdition} ]; then
 	echo "#	The failover server is running: ${failoverRoutingEdition} which differs from the local edition: ${locallyRunningEdition}"
-	exit 1
+# !! Ignore this while developping
+#	exit 1
     fi
 fi
 
@@ -141,11 +142,25 @@ chmod a+x $routingEngineConfigFile
 # Restart the routing service
 service cycleroutingd restart
 
+#!# Needs to wait for confirmation that it is fully started, e.g. making a port 9000 GET request perhaps
+
+# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
+localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+echo "#	Initial status: ${localRoutingStatus}"
+
+# Wait until it has started
+while [[ ! $localRoutingStatus =~ serving ]]; do
+    sleep 0.1
+    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+    echo "#	Status: ${localRoutingStatus}"
+done
+
+
 # Developped and tested to this point
 echo "#	Reached the limit of tested development"
 exit 1
 
-#!# Needs to wait for confirmation that it is fully started, e.g. making a port 9000 GET request perhaps
+
 
 # Switch the website to the new routing database
 mysql cyclestreets -hlocalhost -uroot -p${mysqlWebsiteUsername} -e "UPDATE map_config SET routingDb = '${importEdition}' WHERE id = 1;";

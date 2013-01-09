@@ -3,7 +3,10 @@
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
-
+# This file is only geared towards updating the locally served routes to a new edition.
+# Pre-requisites:
+# The local server must be currently serving routes - this script cannot be used to start a routing service.
+# If a failOverServer is specified, it must also be serving routes from the same edition.
 
 ### Stage 1 - general setup
 
@@ -21,9 +24,6 @@ set -e
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
 	flock -n 9 || { echo 'An installation is already running' ; exit 1; }
-
-# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(/etc/init.d/cycleroutingd status)
 
 ### CREDENTIALS ###
 
@@ -65,6 +65,8 @@ if [ ! -f /etc/init.d/cycleroutingd ]; then
 	exit 1
 fi
 
+# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
+localRoutingStatus=$(/etc/init.d/cycleroutingd status)
 
 ### Stage 2 - ensure required parameters are present
 
@@ -93,13 +95,13 @@ if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; 
 	exit 1
 fi
 
-# Check to see that the routing data file for this routing edition exists
+# Check that the data for this routing edition exists
 if [ ! -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
-	echo "#	The routing data file ${importEdition} is not present"
+	echo "#	The routing data ${importEdition} is not present"
 	exit 1
 fi
 
-# Check if the failoverRoutingServer is running
+# If a failoverRoutingServer is supplied, check it is running and using the same edition
 if [ -n "${failoverRoutingServer}" ]; then
 
     # Required packages
@@ -109,7 +111,7 @@ if [ -n "${failoverRoutingServer}" ]; then
     xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
     # Get the locally running service
-    locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" http://localhost:9000/ | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     # POST the request to the server
     failoverRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${failoverRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
@@ -117,8 +119,7 @@ if [ -n "${failoverRoutingServer}" ]; then
     # Check the failover routing edition is the same
     if [ ${locallyRunningEdition} != ${failoverRoutingEdition} ]; then
 	echo "#	The failover server is running: ${failoverRoutingEdition} which differs from the local edition: ${locallyRunningEdition}"
-# !! Ignore this while developping
-#	exit 1
+	exit 1
     fi
 fi
 
@@ -152,7 +153,7 @@ service cycleroutingd restart
 localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
-# Wait until it has started
+# Wait until it has restarted
 while [[ ! $localRoutingStatus =~ serving ]]; do
     sleep 10
     localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
@@ -160,7 +161,7 @@ while [[ ! $localRoutingStatus =~ serving ]]; do
 done
 
 # Get the locally running service
-locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" http://localhost:9000/ | xpath -q -e '/methodResponse/params/param/value/string/text()')
+locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
 # Check the local service is as requested
 if [ ${locallyRunningEdition} != ${importEdition} ]; then
@@ -169,7 +170,7 @@ if [ ${locallyRunningEdition} != ${importEdition} ]; then
 fi
 
 # Switch the website to the new routing database
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${importEdition}', routeServerUrl = 'http://localhost:9000/' WHERE id = 1;";
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${importEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
 
 # Restore the site by switching off maintenance mode (-f ignores if non existent)
 rm -f ${websitesContentFolder}/maintenance

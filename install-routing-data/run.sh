@@ -70,7 +70,7 @@ fi
 set +e
 sudo -u $username scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress' and 'importMachineFile' settings."
+	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings."
 	exit 1
 fi
 set -e

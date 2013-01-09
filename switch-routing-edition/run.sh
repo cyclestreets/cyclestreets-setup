@@ -22,6 +22,8 @@ set -e
 (
 	flock -n 9 || { echo 'An installation is already running' ; exit 1; }
 
+# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
+localRoutingStatus=$(/etc/init.d/cycleroutingd status)
 
 ### CREDENTIALS ###
 
@@ -97,9 +99,6 @@ if [ ! -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
 	exit 1
 fi
 
-# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(/etc/init.d/cycleroutingd status)
-
 # Check if the failoverRoutingServer is running
 if [ -n "${failoverRoutingServer}" ]; then
 
@@ -127,8 +126,14 @@ fi
 
 ### Stage 4 - do switch-over
 
-# When there is no failover server put the site into maintenance mode
-if [ -z "${failoverRoutingServer}" ]; then
+# Use the failover server during switch over
+if [ -n "${failoverRoutingServer}" ]; then
+
+    # Switch the website to the new routing database
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
+    echo "#	Now using failover routing service"
+else
+    # When there is no failover server put the site into maintenance mode
     sudo -u $username touch ${websitesContentFolder}/maintenance
     echo "#	As there is no failover routing server the local site has entered maintenance mode"
 fi
@@ -149,7 +154,7 @@ echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has started
 while [[ ! $localRoutingStatus =~ serving ]]; do
-    sleep 2
+    sleep 10
     localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done
@@ -164,7 +169,7 @@ if [ ${locallyRunningEdition} != ${importEdition} ]; then
 fi
 
 # Switch the website to the new routing database
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${importEdition}' WHERE id = 1;";
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${importEdition}', routeServerUrl = 'http://localhost:9000/' WHERE id = 1;";
 
 # Restore the site by switching off maintenance mode (-f ignores if non existent)
 rm -f ${websitesContentFolder}/maintenance

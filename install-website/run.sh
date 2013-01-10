@@ -87,7 +87,7 @@ apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-
 
 # Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
 sudo a2enmod deflate
-apt-get install php-apc
+apt-get -y install php-apc
 service apache2 restart
 
 # Install Python
@@ -293,7 +293,7 @@ fi
 sudo apt-get -y install screen >> ${setupLogFile}
 
 # Add this python module which is needed by the routing_server.py script
-sudo apt-get install -y python-argparse
+sudo apt-get -y install python-argparse
 
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
 # NB The config here is currently Debian/Ubuntu-specific

@@ -351,10 +351,23 @@ if $installCronJobs ; then
     # The echo adds the new job and the cat | pipes it to set the user's updated crontab
     cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
 
+
+    # Hourly zapping
+    command="${websitesContentFolder}/data/tempgenerated/zap.sh"
+
+    # At 13 mins past every hour
+    job="13 * * * * $command"
+
+    # Install/update the job
+    # frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
+    # The echo adds the new job and the cat | pipes it to set the user's updated crontab
+    cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
+
 else
 
     # Install the cron job here
     echo "#	Remove any installed cron jobs"
+    ${asCS} crontab -r
 
 fi
 

@@ -6,7 +6,8 @@
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets daily backup"
+## Use echo only during development
+# echo "#	CycleStreets daily backup"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -51,21 +52,20 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$(readlink -e $(dirname $0))/log.txt
+setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets daily backup $(date)" >> ${setupLogFile}
+#echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
+echo "$(date)	CycleStreets daily backup" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "# User ${username} must exist: please run the main website install script"
+	echo "$(date) User ${username} must exist: please run the main website install script" >> ${setupLogFile}
 	exit 1
 fi
 
 # Ensure the main website installation is present
 if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-	echo "# The main website installation must exist: please run the main website install script"
+	echo "$(date) The main website installation must exist: please run the main website install script" >> ${setupLogFile}
 	exit 1
 fi
 
@@ -128,7 +128,7 @@ sudo -u www-data ${websitesContentFolder}/data/tempgenerated/zap.sh
 ### Final Stage
 
 # Finish
-echo "#	All done"
+echo "$(date)	All done" >> ${setupLogFile}
 
 # Remove the lock file
 ) 9>/var/lock/cyclestreetsDailyBackup

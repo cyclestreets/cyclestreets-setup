@@ -308,17 +308,31 @@ sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.
 sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
 sudo service exim4 restart
 
-# Confirm end of script
-echo -e "\n# All now installed\n"
-
-# Install the routing daemon (service)
+# Install the cycle routing daemon (service)
 # It can also be manually started from the command line (ideally within a screen session) using:
 # sudo -u cyclestreets ${websitesContentFolder}/routingengine/routing_server.py
-ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
+
+# Setup a symlink from the etc init demons folder, if it doesn't already exist
+if [ ! -L /etc/init.d/cycleroutingd ]; then
+    ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
+fi
+# Ensure the relevant files are executable
 chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
 chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
-service cycleroutingd start
+
+# Start the service
+# Acutally uses the restart option, which is more idempotent
+service cycleroutingd restart
 echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 
 # Add the daemon to the system initialization, so that it will start on reboot
 update-rc.d cycleroutingd defaults
+
+# Cron jobs
+if $installCronJobs ; then
+    # Install the cron job here
+    echo "#	Install cron jobs"
+fi
+
+# Confirm end of script
+echo -e "#	All now installed $(date)"

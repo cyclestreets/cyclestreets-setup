@@ -23,9 +23,23 @@ set -e
 
 ### CREDENTIALS ###
 
-# Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
+
+
+# Get the script directory see: http://stackoverflow.com/a/246128/180733
+# The multi-line method of geting the script directory is needed because this script may be symlinked
+SOURCE="${BASH_SOURCE[0]}"
+DIR="$( dirname "$SOURCE" )"
+while [ -h "$SOURCE" ]
+do 
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+SCRIPTDIRECTORY=$DIR
+
+# Define the location of the credentials file relative to script directory
 configFile=../.config.sh
-SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -e $SCRIPTDIRECTORY/${configFile} ]; then

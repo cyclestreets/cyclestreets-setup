@@ -126,12 +126,6 @@ mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > ${we
 #	Hash
 openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sql.gz > ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sql.gz.md5
 
-#
-#	Clear out temp files which needs to be run as www-data for safety.
-# !! Come back to this later
-#sudo -u www-data ${websitesContentFolder}/data/tempgenerated/zap.sh
-
-
 ### Final Stage
 
 # Finish

@@ -289,9 +289,6 @@ if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	cd ${websitesContentFolder}
 fi
 
-# Add screen, which is needed for starting the routing server (until it can be daemonised)
-sudo apt-get -y install screen >> ${setupLogFile}
-
 # Add this python module which is needed by the routing_server.py script
 sudo apt-get -y install python-argparse
 

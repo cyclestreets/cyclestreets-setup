@@ -14,6 +14,7 @@ mainEmail="${administratorEmail}"
 
 # Define the username for CycleStreets to install/run under, so that it can run independent of any individual personal account on the machine
 username=cyclestreets
+# Tip: If passwords contain a $ or other characters that need escaping, wrap them in single quotes or use backslashes.
 password=
 
 ## MySQL

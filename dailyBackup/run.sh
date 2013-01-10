@@ -2,12 +2,9 @@
 # Script to backup CycleStreets on a daily basis
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 
-# This script is NOT YET idempotent - it canNOT be safely re-run without destroying existing data (the repartition will over-write)
+# This script is idempotent - it can be safely re-run without destroying existing data.
 
 ### Stage 1 - general setup
-
-## Use echo only during development
-# echo "#	CycleStreets daily backup"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -24,10 +21,8 @@ set -e
 
 ### CREDENTIALS ###
 
-
-
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The multi-line method of geting the script directory is needed because this script may be symlinked
+# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
 SOURCE="${BASH_SOURCE[0]}"
 DIR="$( dirname "$SOURCE" )"
 while [ -h "$SOURCE" ]
@@ -72,26 +67,37 @@ fi
 
 ### Stage 2 - CycleStreets regular tasks for www
 
-#	IJS tables
-#	Do this task first so that the closure of the journey planner has a predictable time - ie. the start of the cron job.
-#	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
-#
-#	Use date time to produce an edition number for the latest routes
-routesEdition=$(date +%y%m%d%H%M%S)
-#
-#	Archive the IJS tables
-mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${websitesBackupsFolder}/www_routes_${routesEdition}.sql.gz
+# The minimum itinerary id can be used as the handle for a batch of routes.
+# Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
+minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")
 
-#
-#	Repartition, which moves the current to the archived tables. See: documentation/schema/repartition.sql
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
-#
-#	Re-open the journey planner.
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
+# If the minItineraryId is NULL then the repartitioning can be skipped
+if [ $minItineraryId = "NULL" ]; then
 
-#	Create md5 hash
-openssl dgst -md5 ${websitesBackupsFolder}/www_routes_${routesEdition}.sql.gz > ${websitesBackupsFolder}/www_routes_${routesEdition}.sql.gz.md5
+    #	No new routes to partition (can happen e.g if the site is in a failover mode)
+    echo "$(date)	Skipping repartition" >> ${setupLogFile}
+
+else
+
+    #	Repartition latest routes
+    echo "$(date)	Repartition batch: $minItineraryId" >> ${setupLogFile}
+
+    #	Do this task first so that the closure of the journey planner has a predictable time - ie. the start of the cron job.
+    #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
+
+    #	Archive the IJS tables
+    mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz
+
+    #	Repartition, which moves the current to the archived tables. See: documentation/schema/repartition.sql
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
+
+    #	Re-open the journey planner.
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
+
+    #	Create md5 hash
+    openssl dgst -md5 ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz > ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz.md5
+fi
 
 #	Backup the CycleStreets database
 #	Option -R dumps stored procedures & functions

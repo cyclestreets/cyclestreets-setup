@@ -289,9 +289,9 @@ sudo apt-get -y install gcc g++ python-dev >> ${setupLogFile}
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/routingengine/"
-	sudo -u cyclestreets python setup.py build
-	sudo -u cyclestreets mv build/lib.*/astar_impl.so ./
-	sudo -u cyclestreets rm -rf build/
+	${asCS} python setup.py build
+	${asCS} mv build/lib.*/astar_impl.so ./
+	${asCS} rm -rf build/
 	cd ${websitesContentFolder}
 fi
 
@@ -341,19 +341,21 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Daily replication
-    if [ ! -L /etc/cron.daily/cyclestreetsDaily ]; then
-	ln -s $SCRIPTDIRECTORY/../replicate-data/run.sh /etc/cron.daily/cyclestreetsDaily
-    fi
+    command="$SCRIPTDIRECTORY/../replicate-data/run.sh"
+
+    # Every day at 4:04 am
+    job="4 4 * * * $command"
+
+    # Install/update the job
+    # frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
+    # The echo adds the new job and the cat | pipes it to set the user's updated crontab
+    cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
 
 else
 
     # Install the cron job here
     echo "#	Remove any installed cron jobs"
 
-    # Daily replication
-    if [ -L /etc/cron.daily/cyclestreetsDaily ]; then
-	rm /etc/cron.daily/cyclestreetsDaily
-    fi
 fi
 
 # Confirm end of script

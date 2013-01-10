@@ -6,9 +6,9 @@
 
 ### Stage 1 - general setup
 
-# Ensure this script is run as root
-if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run as root." 1>&2
+# Ensure this script is NOT run as root (it should be run as cyclestreets)
+if [ "$(id -u)" = "0" ]; then
+    echo "#	This script must NOT be run as root." 1>&2
     exit 1
 fi
 
@@ -50,7 +50,7 @@ fi
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
 #echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily backup" >> ${setupLogFile}
+echo "$(date)	CycleStreets daily backup $(id)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
@@ -128,7 +128,8 @@ openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sq
 
 #
 #	Clear out temp files which needs to be run as www-data for safety.
-sudo -u www-data ${websitesContentFolder}/data/tempgenerated/zap.sh
+# !! Come back to this later
+#sudo -u www-data ${websitesContentFolder}/data/tempgenerated/zap.sh
 
 
 ### Final Stage

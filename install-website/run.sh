@@ -15,6 +15,12 @@ fi
 set -e
 
 ### CREDENTIALS ###
+
+# Get the script directory see: http://stackoverflow.com/a/246128/180733
+# The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
+DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SCRIPTDIRECTORY=$DIR
+
 # Name of the credentials file
 configFile=../.config.sh
 
@@ -29,7 +35,7 @@ fi
 
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$(readlink -e $(dirname $0))/log.txt
+setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
 echo "#	CycleStreets installation in progress, follow log file with: tail -f ${setupLogFile}"
 echo "#	CycleStreets installation $(date)" >> ${setupLogFile}
@@ -330,8 +336,24 @@ update-rc.d cycleroutingd defaults
 
 # Cron jobs
 if $installCronJobs ; then
+
     # Install the cron job here
     echo "#	Install cron jobs"
+
+    # Daily replication
+    if [ ! -L /etc/cron.daily/cyclestreetsDaily ]; then
+	ln -s $SCRIPTDIRECTORY/../replicate-data/run.sh /etc/cron.daily/cyclestreetsDaily
+    fi
+
+else
+
+    # Install the cron job here
+    echo "#	Remove any installed cron jobs"
+
+    # Daily replication
+    if [ -L /etc/cron.daily/cyclestreetsDaily ]; then
+	rm /etc/cron.daily/cyclestreetsDaily
+    fi
 fi
 
 # Confirm end of script

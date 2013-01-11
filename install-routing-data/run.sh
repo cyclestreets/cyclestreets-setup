@@ -59,13 +59,13 @@ echo "$(date)	CycleStreets routing data installation" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "# User ${username} must exist: please run the main website install script"
+	echo "# User ${username} must exist: please run the main website install script" >> ${setupLogFile}
 	exit 1
 fi
 
 # Ensure the main website installation is present
 if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-	echo "# The main website installation must exist: please run the main website install script"
+	echo "# The main website installation must exist: please run the main website install script" >> ${setupLogFile}
 	exit 1
 fi
 
@@ -74,7 +74,7 @@ fi
 
 # Ensure import machine and definition file variables has been defined
 if [ -z "${importMachineAddress}" -o -z "${importMachineFile}" ]; then
-	echo "# An import machine and definition file must be defined in order to run an import"
+	echo "# An import machine and definition file must be defined in order to run an import" >> ${setupLogFile}
 	exit 1
 fi
 
@@ -82,7 +82,7 @@ fi
 set +e
 scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings."
+	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings." >> ${setupLogFile}
 	exit 1
 fi
 set -e
@@ -98,19 +98,19 @@ md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1
 
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]; then
-	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables"
+	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables" >> ${setupLogFile}
 	exit 1
 fi
 
 # Check to see if this routing database already exists
 if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
-	echo "#	Stopping because the routing database ${importEdition} already exists."
+	echo "#	Stopping because the routing database ${importEdition} already exists." >> ${setupLogFile}
 	exit 1
 fi
 
 # Check to see if a routing data file for this routing edition already exists
 if [ -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
-	echo "#	Stopping because the routing data folder ${importEdition} already exists."
+	echo "#	Stopping because the routing data folder ${importEdition} already exists." >> ${setupLogFile}
 	exit 1
 fi
 
@@ -118,53 +118,48 @@ fi
 ### Stage 3 - get the routing files and check data integrity
 
 # Begin the file transfer
-echo "#	Transferring the routing files from the import machine ${importMachineAddress}:"
+echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}:" >> ${setupLogFile}
 
-# TSV file
-echo "#	Transfer the TSV file"
+#	Transfer the TSV file
 scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
 
-# Hot-copied tables file
-echo "#	Transfer the hot copied tables file"
+#	Hot-copied tables file
 scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
 
 
 # Sieve file
 #!# This is in a different source folder and could presumably be out-of-sync; fix upstream to put with the routing files
-echo "#	Transfer the sieve"
 scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
 # Photos index and installer file
 scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.sql.gz ${websitesBackupsFolder}/
-echo "#	File transfer stage complete"
+echo "$(date)	File transfer stage complete" >> ${setupLogFile}
 
 # MD5 checks
-echo "#	Checking transferred files"
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tsv.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then
-	echo "#	Stopping: TSV md5 does not match"
+	echo "#	Stopping: TSV md5 does not match" >> ${setupLogFile}
 	exit 1
 fi
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then
-	echo "#	Stopping: Tables md5 does not match"
+	echo "#	Stopping: Tables md5 does not match" >> ${setupLogFile}
 	exit 1
 fi
 
 
 ### Stage 4 - unpack and install the TSV files
-
-echo "#	Unpack and install the TSV files"
+#	Unpack and install the TSV files
 tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
 
-echo "#	Clean up the compressed TSV data"
+#	Clean up the compressed TSV data
 rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
 
 
 ### Stage 5 - create the routing database
 
 # Narrate
-echo "#	Installing the routing database: ${importEdition}"
+echo "$(date)	Installing the routing database: ${importEdition}" >> ${setupLogFile}
 
-echo "#	Create the database (which will be empty for now) and set default collation"
+#	Create the database (which will be empty for now) and set default collation
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
@@ -173,7 +168,7 @@ mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEditi
 #!# Hard-coded location /var/lib/mysql/
 echo $password | sudo -S test -d /var/lib/mysql/${importEdition}
 if [ $? != 0 ]; then
-   echo "# The database does not seem to be installed correctly." 1>&2
+   echo "$(date) The database does not seem to be installed correctly." >> ${setupLogFile}
    exit 1
 fi
 
@@ -195,13 +190,13 @@ rmdir ${websitesBackupsFolder}/${importEdition}
 
 ### Stage 6 - move the sieve into place for the purposes of having visible documentation
 
-echo "#	Install the sieve"
+#	Install the sieve
 mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
 
 ### Stage 7 - run post-install stored procedures for nearestPoint
 
-echo "#	Install and run the optimized nearestPoint table"
+#	Install and run the optimized nearestPoint table
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL createPathForNearestPoint();"
 
@@ -221,8 +216,6 @@ rm ${websitesBackupsFolder}/photoIndex.sql
 
 
 ### Stage 9 - remove the import definition file
-
-echo "# Removing the import definition file"
 rm ${importMachineFile}
 
 

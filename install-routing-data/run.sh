@@ -118,7 +118,7 @@ fi
 ### Stage 3 - get the routing files and check data integrity
 
 # Begin the file transfer
-echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}:" >> ${setupLogFile}
+echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}" >> ${setupLogFile}
 
 #	Transfer the TSV file
 scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
@@ -216,6 +216,8 @@ rm ${websitesBackupsFolder}/photoIndex.sql
 
 
 ### Stage 9 - remove the import definition file
+
+# Note: this file can be left behind if the script has exited above.
 rm ${importMachineFile}
 
 

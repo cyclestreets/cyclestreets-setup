@@ -10,11 +10,11 @@
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets routing data installation switching"
+echo "#	CycleStreets switch routing edition"
 
-# Ensure this script is run as root
-if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run as root." 1>&2
+# Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
+if [ "$(id -u)" = "0" ]; then
+    echo "#	This script must NOT be run as root." 1>&2
     exit 1
 fi
 
@@ -28,6 +28,7 @@ set -e
 ### CREDENTIALS ###
 
 # Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
+# A more advanced technique will be required if this file is called via a symlink.
 configFile=../.config.sh
 SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
@@ -65,8 +66,17 @@ if [ ! -f /etc/init.d/cycleroutingd ]; then
 	exit 1
 fi
 
-# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(/etc/init.d/cycleroutingd status)
+# Check the local routing service is currently serving
+# The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
+set +e
+localRoutingStatus=$(service cycleroutingd status)
+if [ $? -ne 0 ]
+then
+  echo "#	Switchover expects the routing service to be running."
+  exit 1
+fi
+# Restore abandon-on-error
+set -e
 
 ### Stage 2 - ensure required parameters are present
 
@@ -147,16 +157,16 @@ echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${importEdit
 chmod a+x $routingEngineConfigFile
 
 # Restart the routing service
-service cycleroutingd restart
+echo $password | sudo -S service cycleroutingd restart
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+localRoutingStatus=$(service cycleroutingd status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has restarted
-while [[ ! $localRoutingStatus =~ serving ]]; do
+while [[ ! "$localRoutingStatus" =~ serving ]]; do
     sleep 10
-    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+    localRoutingStatus=$(service cycleroutingd status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done
 
@@ -182,6 +192,6 @@ rm -f ${websitesContentFolder}/maintenance
 echo "#	All done"
 
 # Remove the lock file
-) 9>/var/lock/cyclestreetsimport
+) 9>/var/lock/cyclestreetsimportswitchover
 
 # End of file

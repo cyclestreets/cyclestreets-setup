@@ -363,6 +363,17 @@ if $installCronJobs ; then
     # The echo adds the new job and the cat | pipes it to set the user's updated crontab
     cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
 
+    # Install routing data
+    command="$SCRIPTDIRECTORY/../replicate-data/run.sh"
+
+    # At 34 mins past every hour in the small hours
+    job="34 0,1,2,3,4,5 * * * $command"
+
+    # Install/update the job
+    # frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
+    # The echo adds the new job and the cat | pipes it to set the user's updated crontab
+    cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
+
 else
 
     # Install the cron job here

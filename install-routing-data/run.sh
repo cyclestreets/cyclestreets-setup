@@ -1,6 +1,6 @@
 #!/bin/bash
-# Script to install CycleStreets routing data on Ubuntu
-# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
+# Script to install CycleStreets routing data
+# Tested on Ubuntu 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # Requires password-less access to the import machine.
@@ -143,13 +143,6 @@ fi
 echo "#	Unpack and install the TSV files"
 sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
 
-#	echo "#	Point current at new data"
-#	!# Replace/add the new daemon config file mechanism
-#	if [ -L ${websitesContentFolder}/data/routing/current ]; then
-#		rm ${websitesContentFolder}/data/routing/current
-#	fi
-#	sudo -u $username ln -s ${importEdition}/ ${websitesContentFolder}/data/routing/current
-
 echo "#	Clean up the compressed TSV data"
 rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
 
@@ -164,6 +157,7 @@ mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --d
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
 # Ensure the MySQL directory has been created
+# !! Requires root permissions to check this
 #!# Hard-coded location /var/lib/mysql/
 if [ ! -d /var/lib/mysql/${importEdition} ]; then
    echo "# The database does not seem to be installed correctly." 1>&2
@@ -177,9 +171,11 @@ sudo -u $username tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder
 rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Move the tables into mysql
+# !! Requires root permissions 
 mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
 
 # Ensure the permissions are correct
+# !! Requires root permissions 
 chown -R mysql.mysql /var/lib/mysql/${importEdition}
 
 # Remove the empty folder
@@ -233,4 +229,4 @@ date
 echo "All done"
 
 # Remove the lock file
-) 9>/var/lock/cyclestreetsimport
+) 9>/var/lock/cyclestreetsinstallroutingdata

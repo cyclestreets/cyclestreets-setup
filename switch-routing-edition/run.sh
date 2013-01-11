@@ -1,7 +1,14 @@
 #!/bin/bash
-# Script to install CycleStreets routing data on Ubuntu
-# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
+# Script to change CycleStreets served routes
+# Tested on Ubuntu 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
+
+# SYNOPSIS
+#	run.sh importEdition
+#
+# DESCRIPTION
+#	importEdition
+#		Names a routing database of the form routingYYMMDD, eg. routing130111
 
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
@@ -23,7 +30,7 @@ set -e
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'An installation is already running' ; exit 1; }
+	flock -n 9 || { echo '#	A switchover is already running' ; exit 1; }
 
 ### CREDENTIALS ###
 
@@ -46,7 +53,7 @@ fi
 setupLogFile=$(readlink -e $(dirname $0))/log.txt
 touch ${setupLogFile}
 echo "#	CycleStreets routing data switchover in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets routing data switchover $(date)" >> ${setupLogFile}
+echo "$(date)	CycleStreets routing data switchover" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
@@ -91,7 +98,7 @@ fi
 importEdition=$1
 
 # Check the format is routingYYMMDD
-if [[ ! $importEdition =~ routing[0-9]{6} ]]; then
+if [[ ! "$importEdition" =~ routing[0-9]{6} ]]; then
   echo "#	Arg importedition must specify a database of the form routingYYMMDD"
   exit 1
 fi
@@ -118,7 +125,7 @@ xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>ge
 if [ -n "${failoverRoutingServer}" ]; then
 
     # Required packages
-    # apt-get -y install curl libxml-xpath-perl
+    # echo $password | sudo -S apt-get -y install curl libxml-xpath-perl
 
     # Get the locally running service
     locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
@@ -190,6 +197,7 @@ rm -f ${websitesContentFolder}/maintenance
 
 # Finish
 echo "#	All done"
+echo "$(date)	Completed switch to $importEdition" >> ${setupLogFile}
 
 # Remove the lock file
 ) 9>/var/lock/cyclestreetsimportswitchover

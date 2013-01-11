@@ -55,7 +55,7 @@ fi
 setupLogFile=$(readlink -e $(dirname $0))/log.txt
 touch ${setupLogFile}
 echo "#	CycleStreets routing data installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets routing data installation $(date)" >> ${setupLogFile}
+echo "$(date)	CycleStreets routing data installation" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
@@ -238,6 +238,7 @@ rm ${importMachineFile}
 # Finish
 date
 echo "All done"
+echo "$(date)	Completed routing data installation ${importEdition}" >> ${setupLogFile}
 
 # Remove the lock file
 ) 9>/var/lock/cyclestreetsinstallroutingdata

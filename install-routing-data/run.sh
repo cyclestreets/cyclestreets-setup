@@ -9,9 +9,9 @@
 
 echo "#	CycleStreets routing data installation $(date)"
 
-# Ensure this script is run as root
-if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run as root." 1>&2
+# Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
+if [ "$(id -u)" = "0" ]; then
+    echo "#	This script must NOT be run as root." 1>&2
     exit 1
 fi
 
@@ -25,9 +25,21 @@ set -e
 
 ### CREDENTIALS ###
 
-# Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
+# Get the script directory see: http://stackoverflow.com/a/246128/180733
+# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
+SOURCE="${BASH_SOURCE[0]}"
+DIR="$( dirname "$SOURCE" )"
+while [ -h "$SOURCE" ]
+do 
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+SCRIPTDIRECTORY=$DIR
+
+# Define the location of the credentials file relative to script directory
 configFile=../.config.sh
-SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -e $SCRIPTDIRECTORY/${configFile} ]; then
@@ -68,7 +80,7 @@ fi
 
 # Retrieve the routing definition file from the import machine
 set +e
-sudo -u $username scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
+scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings."
 	exit 1
@@ -110,20 +122,20 @@ echo "#	Transferring the routing files from the import machine ${importMachineAd
 
 # TSV file
 echo "#	Transfer the TSV file"
-sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
+scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
 
 # Hot-copied tables file
 echo "#	Transfer the hot copied tables file"
-sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
+scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
 
 
 # Sieve file
 #!# This is in a different source folder and could presumably be out-of-sync; fix upstream to put with the routing files
 echo "#	Transfer the sieve"
-sudo -u $username scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
+scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
 # Photos index and installer file
-sudo -u $username scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.sql.gz ${websitesBackupsFolder}/
+scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.sql.gz ${websitesBackupsFolder}/
 echo "#	File transfer stage complete"
 
 # MD5 checks
@@ -141,7 +153,7 @@ fi
 ### Stage 4 - unpack and install the TSV files
 
 echo "#	Unpack and install the TSV files"
-sudo -u $username tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
+tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
 
 echo "#	Clean up the compressed TSV data"
 rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
@@ -157,26 +169,25 @@ mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --d
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
 # Ensure the MySQL directory has been created
-# !! Requires root permissions to check this
+# Requires root permissions to check this and so sudo is used.
 #!# Hard-coded location /var/lib/mysql/
-if [ ! -d /var/lib/mysql/${importEdition} ]; then
+echo $password | sudo -S test -d /var/lib/mysql/${importEdition}
+if [ $? != 0 ]; then
    echo "# The database does not seem to be installed correctly." 1>&2
    exit 1
 fi
 
 # Unpack the database files; options here are "tar extract, change directory to websitesBackupsFolder, preserve permissions, verbose, file is routingXXXXXXtables.tar.gz
-sudo -u $username tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Remove the zip
 rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Move the tables into mysql
-# !! Requires root permissions 
-mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
+echo $password | sudo -S mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
 
 # Ensure the permissions are correct
-# !! Requires root permissions 
-chown -R mysql.mysql /var/lib/mysql/${importEdition}
+echo $password | sudo -S chown -R mysql.mysql /var/lib/mysql/${importEdition}
 
 # Remove the empty folder
 rmdir ${websitesBackupsFolder}/${importEdition}
@@ -185,7 +196,7 @@ rmdir ${websitesBackupsFolder}/${importEdition}
 ### Stage 6 - move the sieve into place for the purposes of having visible documentation
 
 echo "#	Install the sieve"
-sudo -u $username mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
+mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
 
 ### Stage 7 - run post-install stored procedures for nearestPoint
@@ -204,7 +215,7 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesCon
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL indexPhotos(true,0);"
 
 # Install photo index
-sudo -u $username gunzip ${websitesBackupsFolder}/photoIndex.sql.gz
+gunzip ${websitesBackupsFolder}/photoIndex.sql.gz
 mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBackupsFolder}/photoIndex.sql
 rm ${websitesBackupsFolder}/photoIndex.sql
 

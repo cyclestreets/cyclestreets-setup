@@ -76,7 +76,8 @@ fi
 # Check the local routing service is currently serving
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
 set +e
-localRoutingStatus=$(service cycleroutingd status)
+# Note: we must use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
+localRoutingStatus=$(/etc/init.d/cycleroutingd status)
 if [ $? -ne 0 ]
 then
   echo "#	Switchover expects the routing service to be running."
@@ -164,16 +165,17 @@ echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${importEdit
 chmod a+x $routingEngineConfigFile
 
 # Restart the routing service
+# Note: the service command is available to the root user on debian
 echo $password | sudo -S service cycleroutingd restart
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(service cycleroutingd status | grep "State:")
+localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has restarted
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
     sleep 10
-    localRoutingStatus=$(service cycleroutingd status | grep "State:")
+    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done
 

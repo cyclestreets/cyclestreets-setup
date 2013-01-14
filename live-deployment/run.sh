@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to install CycleStreets on Ubuntu
+# Script to deploy CycleStreets on Ubuntu
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
@@ -40,6 +40,7 @@ asCS="sudo -u ${username}"
 # Main body of script
 
 # Install the website
+## !! Turned off for testing
 #. ../install-website/run.sh
 
 # Cron jobs

@@ -351,4 +351,7 @@ fi
 # Confirm end of script
 echo -e "#	All now installed $(date)"
 
+# Return true to indicate success
+:
+
 # End of file

@@ -28,6 +28,10 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+# Lock directory
+lockdir=/var/lock/cyclestreets
+mkdir -p $lockdir
+
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
 	flock -n 9 || { echo '#	A switchover is already running' ; exit 1; }
@@ -221,6 +225,6 @@ echo "#	All done"
 echo "$(date)	Completed switch to $importEdition" >> ${setupLogFile}
 
 # Remove the lock file
-) 9>/var/lock/cyclestreetsimportswitchover
+) 9>$lockdir/switch-routing-edition
 
 # End of file

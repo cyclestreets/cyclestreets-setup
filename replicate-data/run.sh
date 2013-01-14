@@ -15,6 +15,10 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+# Lock directory
+lockdir=/var/lock/cyclestreets
+mkdir -p $lockdir
+
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
 	flock -n 9 || { echo 'CycleStreets daily backup is already running' ; exit 1; }
@@ -135,6 +139,6 @@ openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sq
 echo "$(date)	All done" >> ${setupLogFile}
 
 # Remove the lock file
-) 9>/var/lock/cyclestreetsDailyBackup
+) 9>$lockdir/replicate-data
 
 # End of file

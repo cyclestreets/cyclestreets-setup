@@ -204,6 +204,12 @@ if [ ! -L /etc/apache2/sites-available/cslocalhost ]; then
 fi
 a2ensite cslocalhost >> ${setupLogFile}
 
+# Add apache2/conf.d/ files such as zcsglobal
+if [ ! -L /etc/apache2/conf.d/zcsglobal ]; then
+    #	Include zcsglobal config which is so named as to be loaded last from the conf.d folder.
+    ln -s ${websitesContentFolder}/configuration/apache/conf.d/zcsglobal /etc/apache2/conf.d/zcsglobal
+fi
+
 # Reload apache
 service apache2 reload >> ${setupLogFile}
 

@@ -41,7 +41,7 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 
 
 ## Routing daemon
-installRoutingAsDaemon=yes
+installRoutingAsDaemon=true
 
 ## Local routing server
 localRoutingServer=http://localhost:9000/

@@ -306,8 +306,7 @@ sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.
 sudo service exim4 restart
 
 # Install the cycle routing daemon (service)
-if [ "${installRoutingAsDaemon}" = "yes" ];
-then
+if $installRoutingAsDaemon ; then
 
     # Setup a symlink from the etc init demons folder, if it doesn't already exist
     if [ ! -L /etc/init.d/cycleroutingd ]; then
@@ -348,11 +347,11 @@ else
 fi
 
 
-    # Cron jobs
-    if $installCronJobs ; then
+# Cron jobs
+if $installCronJobs ; then
 
-	# Install the cron job here
-	echo "#	Install cron jobs"
+    # Install the cron job here
+    echo "#	Install cron jobs"
 
     # Daily replication every day at 4:04 am
     jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../replicate-data/run.sh"

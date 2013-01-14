@@ -350,7 +350,7 @@ if $installCronJobs ; then
     jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../replicate-data/run.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[2]="13 * * * * ${websitesContentFolder}/remove-tempgenerated/run.sh"
+    jobs[2]="13 * * * * $SCRIPTDIRECTORY/../remove-tempgenerated/run.sh"
 
     # Install routing data at 34 mins past every hour in the small hours
     jobs[3]="34 0,1,2,3,4,5 * * * $SCRIPTDIRECTORY/../install-routing-data/run.sh"

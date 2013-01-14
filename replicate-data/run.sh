@@ -80,7 +80,7 @@ if [ $minItineraryId = "NULL" ]; then
 else
 
     #	Repartition latest routes
-    echo "$(date)	Repartition batch: $minItineraryId" >> ${setupLogFile}
+    echo "$(date)	Repartition batch: $minItineraryId. Now closing site to routing." >> ${setupLogFile}
 
     #	Do this task first so that the closure of the journey planner has a predictable time - ie. the start of the cron job.
     #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
@@ -94,6 +94,9 @@ else
 
     #	Re-open the journey planner.
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
+
+    #	Notify re-opened
+    echo "$(date)	Re-opened site to routing." >> ${setupLogFile}
 
     #	Create md5 hash
     openssl dgst -md5 ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz > ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz.md5

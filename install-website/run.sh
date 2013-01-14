@@ -110,14 +110,6 @@ apt-get -y install ntp
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # apt-get -y install phpmyadmin
 
-#   ___
-# /     \
-# |  1  |
-# |     |
-# -------
-# Milestone 1
-echo "# Reached milestone 1"
-
 # Determine the current actual user
 currentActualUser=`who am i | awk '{print $1}'`
 
@@ -213,16 +205,9 @@ fi
 # Reload apache
 service apache2 reload >> ${setupLogFile}
 
-#   ___
-# /     \
-# |  2  |
-# |     |
-# -------
-# Milestone 2
-echo "# Reached milestone 2"
 
 # Database setup
-# Shortcut
+# Useful binding
 mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 
 # Create cyclestreets database

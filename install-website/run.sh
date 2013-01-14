@@ -306,30 +306,53 @@ sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.
 sudo service exim4 restart
 
 # Install the cycle routing daemon (service)
-# It can also be manually started from the command line (ideally within a screen session) using:
-# sudo -u cyclestreets ${websitesContentFolder}/routingengine/routing_server.py
+if [ "${installRoutingAsDaemon}" = "yes" ];
+then
 
-# Setup a symlink from the etc init demons folder, if it doesn't already exist
-if [ ! -L /etc/init.d/cycleroutingd ]; then
-    ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
+    # Setup a symlink from the etc init demons folder, if it doesn't already exist
+    if [ ! -L /etc/init.d/cycleroutingd ]; then
+	ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
+    fi
+
+    # Ensure the relevant files are executable
+    chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
+    chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
+
+    # Start the service
+    # Acutally uses the restart option, which is more idempotent
+    service cycleroutingd restart
+    echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
+
+    # Add the daemon to the system initialization, so that it will start on reboot
+    update-rc.d cycleroutingd defaults
+
+else
+
+    echo "#	Routing service - (not installed as a daemon)"
+    echo "#	Can be manually started from the command line using:"
+    echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/routing_server.py"
+
+    # If it was previously setup as a daemon, remove it
+    if [ -L /etc/init.d/cycleroutingd ]; then
+
+	# Ensure it is stopped
+	service cycleroutingd stop
+
+	# Remove the symlink
+	rm /etc/init.d/cycleroutingd
+
+	# Remove the daemon from the system initialization
+	update-rc.d cycleroutingd remove
+    fi
+
 fi
-# Ensure the relevant files are executable
-chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
-chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
 
-# Start the service
-# Acutally uses the restart option, which is more idempotent
-service cycleroutingd restart
-echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 
-# Add the daemon to the system initialization, so that it will start on reboot
-update-rc.d cycleroutingd defaults
+    # Cron jobs
+    if $installCronJobs ; then
 
-# Cron jobs
-if $installCronJobs ; then
-
-    # Install the cron job here
-    echo "#	Install cron jobs"
+	# Install the cron job here
+	echo "#	Install cron jobs"
 
     # Daily replication every day at 4:04 am
     jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../replicate-data/run.sh"

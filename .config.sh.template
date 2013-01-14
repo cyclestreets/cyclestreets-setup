@@ -40,6 +40,9 @@ dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
 dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
 
+## Routing daemon
+installRoutingAsDaemon=yes
+
 ## Local routing server
 localRoutingServer=http://localhost:9000/
 

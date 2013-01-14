@@ -49,8 +49,8 @@ if $installCronJobs ; then
     # Install the cron job here
     echo "#	Install cron jobs"
 
-    # Daily replication every day at 4:04 am
-    jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../replicate-data/run.sh"
+    # Dump data every day at 4:04 am
+    jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../daily-dump/run.sh"
 
     # Hourly zapping at 13 mins past every hour
     jobs[2]="13 * * * * $SCRIPTDIRECTORY/../remove-tempgenerated/run.sh"

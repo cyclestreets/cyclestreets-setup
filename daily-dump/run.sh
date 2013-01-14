@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to replicate CycleStreets on a daily basis
+# Script to dump CycleStreets data on a daily basis
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 
 # This script is idempotent - it can be safely re-run without destroying existing data.
@@ -21,7 +21,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'CycleStreets daily replication is already running' ; exit 1; }
+	flock -n 9 || { echo 'CycleStreets daily dump is already running' ; exit 1; }
 
 ### CREDENTIALS ###
 
@@ -139,6 +139,6 @@ openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sq
 echo "$(date)	All done" >> ${setupLogFile}
 
 # Remove the lock file
-) 9>$lockdir/replicate-data
+) 9>$lockdir/daily-dump
 
 # End of file

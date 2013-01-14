@@ -165,8 +165,27 @@ echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${importEdit
 chmod a+x $routingEngineConfigFile
 
 # Restart the routing service
+# Rather than use the restart option to the service, it is stopped then started. This enables the script to verify that the service did stop properly in between.
+# This seems to be necessary when there are large amounts of memory being freed by stopping.
+
 # Note: the service command is available to the root user on debian
-echo $password | sudo -S service cycleroutingd restart
+# Stop
+echo $password | sudo -S -p"[sudo] Password for %p (this should be provided by the script)" service cycleroutingd stop
+
+# Check the local routing service has stopped
+localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+echo "#	Initial status: ${localRoutingStatus}"
+
+# Wait until it has stopped
+while [[ ! "$localRoutingStatus" =~ stopped ]]; do
+    sleep 10
+    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+    echo "#	Status: ${localRoutingStatus}"
+done
+
+# Start
+echo $password | sudo -S service cycleroutingd start
+
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
 localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")

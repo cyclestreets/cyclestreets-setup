@@ -340,39 +340,31 @@ if $installCronJobs ; then
     # Install the cron job here
     echo "#	Install cron jobs"
 
-    # Daily replication
-    command="$SCRIPTDIRECTORY/../replicate-data/run.sh"
+    # Daily replication every day at 4:04 am
+    jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../replicate-data/run.sh"
 
-    # Every day at 4:04 am
-    job="4 4 * * * $command"
+    # Hourly zapping at 13 mins past every hour
+    jobs[2]="13 * * * * ${websitesContentFolder}/data/tempgenerated/zap.sh"
 
-    # Install/update the job
-    # frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
-    # The echo adds the new job and the cat | pipes it to set the user's updated crontab
-    cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
+    # Install routing data at 34 mins past every hour in the small hours
+    jobs[3]="34 0,1,2,3,4,5 * * * $SCRIPTDIRECTORY/../install-routing-data/run.sh"
 
+    for job in "${jobs[@]}"
+    do
+	# Check the format which should be 5 timings followed by the script each separated by a single space
+	[[ ! $job =~ ^([^' ']+' '){5}([^' ']+)$ ]] && echo "# Crontab intallation incorrect job format (m h dom mon dow usercommand) for: $job" && exit 1
 
-    # Hourly zapping
-    command="${websitesContentFolder}/data/tempgenerated/zap.sh"
+	# Fish out the command which is the last component of the match
+	command="${BASH_REMATCH[2]}"
 
-    # At 13 mins past every hour
-    job="13 * * * * $command"
+	# Install/update the job
+	# frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
+	# The echo adds the new job and the cat | pipes it to set the user's updated crontab
+	cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
 
-    # Install/update the job
-    # frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
-    # The echo adds the new job and the cat | pipes it to set the user's updated crontab
-    cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
-
-    # Install routing data
-    command="$SCRIPTDIRECTORY/../replicate-data/run.sh"
-
-    # At 34 mins past every hour in the small hours
-    job="34 0,1,2,3,4,5 * * * $command"
-
-    # Install/update the job
-    # frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
-    # The echo adds the new job and the cat | pipes it to set the user's updated crontab
-    cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
+	# Installed
+	echo "#	Cron: $job"
+    done
 
 else
 

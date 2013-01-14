@@ -43,7 +43,10 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 ## Local routing server
 localRoutingServer=http://localhost:9000/
 
-## Specify the machine where you want to retrieve imported routing files from, and any time limitations
+## Specify the machine that provides backups of live data
+liveMachineAddress=
+
+## Specify the machine that provides routing data imported from openstreetmap
 importMachineAddress=imports.cyclestreets.net
 importMachineFile=${websitesBackupsFolder}/importdefinition.ini
 

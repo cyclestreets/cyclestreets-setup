@@ -374,7 +374,7 @@ if $installCronJobs ; then
 
 else
 
-    # Install the cron job here
+    # Remove the cron job here
     echo "#	Remove any installed cron jobs"
     ${asCS} crontab -r
 

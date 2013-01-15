@@ -30,7 +30,7 @@ log=${folder}/log.txt
 touch $log
 
 #	Notify
-email="info@cyclestreets.net"
+email="info" . "@cyclestreets.net"
 subject="CycleStreets cron scripts: A dump download issue on server: $server has arisen $0"
 
 #	A function to log and email its first argument, which should be a helpful message

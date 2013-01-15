@@ -68,7 +68,7 @@ if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	exit 1
 fi
 
-# Ensure this script is run as as cyclestreets user
+# Ensure this script is run as cyclestreets user
 if [ ! "$(id -nu)" = "${username}" ]; then
     echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
     exit 1

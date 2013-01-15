@@ -16,7 +16,9 @@ ${asCS} svn update /websites/www/content/
 # ! (which is escaped) negates the next test.
 # -mtime 0 finds files modified within the last 24 hours
 # -type f finds only files
-${asCS} find /websites/www/backups -maxdepth 1 -type f -name "routing*\.gz" \! -mtime 0 -type f -delete
+
+# !! Needs checking whether this is still a useful/relevant cleanup
+# ${asCS} find /websites/www/backups -maxdepth 1 -type f -name "routing*\.gz" \! -mtime 0 -type f -delete
 
 
 # End of file

@@ -56,6 +56,9 @@ if $installCronJobs ; then
     # Hourly zapping at 13 mins past every hour
     jobs[2]="13 * * * * $SCRIPTDIRECTORY/../remove-tempgenerated/run.sh"
 
+    # Daily update of code base and clearout of old routing files at 9:49am
+    jobs[3]="49 9 * * * $SCRIPTDIRECTORY/../remove-tempgenerated/backup-maintenance.sh"
+
     for job in "${jobs[@]}"
     do
 	# Check the format which should be 5 timings followed by the script each separated by a single space

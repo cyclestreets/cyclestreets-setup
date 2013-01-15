@@ -14,6 +14,9 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
+# Bomb out if something goes wrong
+set -e
+
 #	Folder locations
 server=$1
 folder=$2
@@ -115,7 +118,7 @@ if [ ! $download = 1 ]
 then
     # Notifiy problem
     logAndEmail "Abandoning the download of ${dump}, ${reason}."
-    exit
+    exit 1
 fi
 
 #	Download the md5, preserving timing data
@@ -130,22 +133,22 @@ rsync -t ${server}:${dump} ${folder}
 #	The dump must be readable
 if [ ! -r ${dump} ]
 then
-    logAndEmail "${dump} does not exist or is not readable, stopping rotation."
-    exit
+    logAndEmail "Dump: ${dump} does not exist or is not readable, stopping."
+    exit 1
 fi
 
 #	The md5 must be readable
 if [ ! -r ${md5} ]
 then
-    logAndEmail "${md5} does not exist or is not readable, stopping rotation."
-    exit
+    logAndEmail "MD5 checksum: ${md5} does not exist or is not readable, stopping."
+    exit 1
 fi
 
 #	Check the md5 matches
 if [ "$(openssl dgst -md5 ${dump})" != "$(cat ${md5})" ]
 then
-    logAndEmail "${dump} md5 does not match, stopping rotation."
-    exit
+    logAndEmail "The md5 checksum for dump: ${dump} does not match, stopping."
+    exit 1
 fi
 
 #	Warn if the dump has shrunk
@@ -153,5 +156,8 @@ if [ $(stat -c%s $dump) -lt $size80 ]
 then
     logAndEmail "${dump} has shrunk by more than 20% from ${size} to $(stat -c%s ${dump})"
 fi
+
+# Successful completion: return true
+:
 
 # End of file

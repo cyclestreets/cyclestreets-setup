@@ -3,10 +3,15 @@
 #	A helper script that downloads a dump file (and it's .md5 check) from a folder on a server.
 #	A key feature of this script is that it will wait (for up to: minutesWait minutes) for the dump file to become available.
 #
+#	SYNOPSIS
+#	downlodaDumpAndMd5.sh email server folder name
+#
+#	DESCRIPTION
 #	The arguments are:
-#	1. server e.g. www.cyclescape.org
-#	2. folder relative to root (not slash terminated) e.g. /websites/cyclescape/backup
-#	3. name of the archive file e.g. toolkitShared.tar.bz2
+#	email used to notify of any problems
+#	server e.g. www.cyclescape.org
+#	folder relative to root (not slash terminated) e.g. /websites/cyclescape/backup
+#	name of the archive file e.g. toolkitShared.tar.bz2
 
 # Ensure this script is NOT run as root (it should be run as cyclestreets)
 if [ "$(id -u)" = "0" ]; then
@@ -18,9 +23,10 @@ fi
 set -e
 
 #	Folder locations
-server=$1
-folder=$2
-archive=$3
+email=$1
+server=$2
+folder=$3
+archive=$4
 dump=${folder}/${archive}
 md5=${dump}.md5
 
@@ -30,7 +36,6 @@ log=${folder}/log.txt
 touch $log
 
 #	Notify
-email="info" . "@cyclestreets.net"
 subject="CycleStreets cron scripts: A dump download issue on server: $server has arisen $0"
 
 #	A function to log and email its first argument, which should be a helpful message

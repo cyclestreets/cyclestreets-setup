@@ -90,10 +90,10 @@ folder=${websitesBackupsFolder}
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 
 #	Download CyclesStreets Schema
-$download $server $folder www_schema_cyclestreets.sql.gz
+$download $administratorEmail $server $folder www_schema_cyclestreets.sql.gz
 
 #	Download & Restore CycleStreets database
-$download $server $folder www_cyclestreets.sql.gz
+$download $administratorEmail $server $folder www_cyclestreets.sql.gz
 
 # Replace the cyclestreets database
 # If an import run is in progress, skip this bit.
@@ -133,7 +133,7 @@ do
     fileName=$(basename $f)
 
     #	Get the latest copy of www's current IJS tables.
-    $download $server $folder $fileName
+    $download $administratorEmail $server $folder $fileName
 
     #	Add them
     gunzip < /websites/www/backups/$fileName | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
@@ -144,13 +144,13 @@ done
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
 
 #	CycleStreets Blog
-$download $server $folder www_schema_blog_database.sql.gz
+$download $administratorEmail $server $folder www_schema_blog_database.sql.gz
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blog;";
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blog DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
 gunzip < /websites/www/backups/www_schema_blog_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blog
 
 #	Cyclescape Blog
-$download $server $folder www_schema_blogcyclescape_database.sql.gz
+$download $administratorEmail $server $folder www_schema_blogcyclescape_database.sql.gz
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclescape;";
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
 gunzip < /websites/www/backups/www_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape

@@ -65,6 +65,9 @@ if $installCronJobs ; then
     # Daily rotate of Cyclescape
     jobs[5]="26 6 * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeRotateDaily.sh"
 
+    # Daily rotate of Cyclestreets
+    jobs[6]="26 6 * * * $SCRIPTDIRECTORY/../daily-backup/cyclestreetsRotateDaily.sh"
+
     for job in "${jobs[@]}"
     do
 	# Check the format which should be 5 timings followed by the script each separated by a single space

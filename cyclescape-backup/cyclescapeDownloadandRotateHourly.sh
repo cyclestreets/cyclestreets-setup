@@ -5,7 +5,7 @@
 #
 #	The server at www.cyclescape.org should generate backups of
 #	* database - less than 1M
-#	* toolkit assets - around 100M (Feb 2012) (500M Jan 2012)
+#	* toolkit assets - around 100M (Feb 2012) (500M Jan 2013)
 #	as zipped files.
 #	Both files should also have .md5 files containing the md5 strings associated with them.
 #	This script looks at the remote md5 files to determine whether they and the dumps are ready to download.

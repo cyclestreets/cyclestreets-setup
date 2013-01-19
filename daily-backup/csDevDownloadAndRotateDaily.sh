@@ -1,14 +1,16 @@
 #!/bin/bash
-#	This file is one of the cyclescape backup tasks that runs on the CycleStreets backup machine
+#	This file is one of the cyclestreets backup tasks that runs on the backup machine.
 #
-#	This file downloads dumps from www.cyclescape.org to the backup machine.
+#	This file downloads dumps from dev.cyclestreets.net to the backup machine.
 #
-#	The server at www.cyclescape.org should generate backups of
-#	* database - less than 1M
-#	* toolkit assets - around 100M (Feb 2012) (500M Jan 2013)
+#	The server should generate backups of
+#	* subversion repository
+#	* trac
 #	as zipped files.
 #	Both files should also have .md5 files containing the md5 strings associated with them.
 #	This script looks at the remote md5 files to determine whether they and the dumps are ready to download.
+
+# This script is idempotent - it can be safely re-run without destroying existing data.
 
 ### Stage 1 - general setup
 
@@ -27,7 +29,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'CycleStreets Cyclescape hourly backup is already in progress' ; exit 1; }
+	flock -n 9 || { echo 'CycleStreets Dev Download is already running' ; exit 1; }
 
 ### CREDENTIALS ###
 
@@ -56,24 +58,42 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
+# Logging
+setupLogFile=$SCRIPTDIRECTORY/log.txt
+touch ${setupLogFile}
+#echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
+echo "$(date)	CycleStreets Dev Download $(id)" >> ${setupLogFile}
 
-# Main body
+
+### Main body of file
+
+#	Download and restore the CycleStreets database.
+#	Folder locations
+server=dev.cyclestreets.net
+folder=${websitesBackupsFolder}
+download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
+rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Folder locations
-server=www.cyclescape.org
-folder=/websites/cyclescape/backup
-download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
-rotateHourly=${SCRIPTDIRECTORY}/../utility/rotateHourly.sh
 
-#	Download
-$download $administratorEmail $server $folder cyclescapeDB.sql.gz
-$download $administratorEmail $server $folder toolkitShared.tar.bz2
+#	Download CycleStreets repository backup
+$download $administratorEmail $server $folder cyclestreetsRepo.dump.bz2
+
+#	Download CycleStreets Trac backup
+$download $administratorEmail $server $folder csTracBackup.tar.bz2
+
 
 #	Rotate
-$rotateHourly $folder cyclescapeDB.sql.gz
-$rotateHourly $folder toolkitShared.tar.bz2
+$rotateDaily $folder cyclestreetsRepo.dump.bz2
+$rotateDaily $folder csTracBackup.tar.bz2
+
+
+### Final Stage
+
+# Finish
+echo "$(date)	All done" >> ${setupLogFile}
 
 # Remove the lock file
-) 9>$lockdir/cyclescapeDownloadandRotateHourly
+) 9>$lockdir/csDevDownload
 
 # End of file

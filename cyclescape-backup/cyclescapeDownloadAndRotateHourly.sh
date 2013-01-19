@@ -74,6 +74,6 @@ $rotateHourly $folder cyclescapeDB.sql.gz
 $rotateHourly $folder toolkitShared.tar.bz2
 
 # Remove the lock file
-) 9>$lockdir/cyclescapeDownloadandRotateHourly
+) 9>$lockdir/cyclescapeDownloadAndRotateHourly
 
 # End of file

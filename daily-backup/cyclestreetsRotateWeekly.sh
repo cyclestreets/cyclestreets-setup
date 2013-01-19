@@ -54,12 +54,19 @@ fi
 folder=${websitesBackupsFolder}
 rotateWeekly=${SCRIPTDIRECTORY}/../utility/rotateWeekly.sh
 
-#	Rotate
+#	CycleStreets Rotate
 $rotateWeekly $folder www_cyclestreets.sql.gz
 $rotateWeekly $folder www_schema_blog_database.sql.gz
 $rotateWeekly $folder www_schema_blogcyclescape_database.sql.gz
+#	CS Dev rotation
 $rotateWeekly $folder csTracBackup.tar.bz2
 $rotateWeekly $folder cyclestreetsRepo.dump.bz2
+
+#	Cyclescape Folder locations
+folder=/websites/cyclescape/backup
+$rotateWeekly $folder cyclescapeDB.sql.gz
+$rotateWeekly $folder toolkitShared.tar.bz2
+
 
 # Remove the lock file
 ) 9>$lockdir/cyclestreetsRotateWeekly

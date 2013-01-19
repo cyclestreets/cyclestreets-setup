@@ -56,17 +56,20 @@ if $installCronJobs ; then
     # Hourly zapping at 13 mins past every hour
     jobs[2]="13 * * * * $SCRIPTDIRECTORY/../remove-tempgenerated/run.sh"
 
-    # Daily update of code base and clearout of old routing files at 9:49am
-    jobs[3]="49 9 * * * $SCRIPTDIRECTORY/../remove-tempgenerated/backup-maintenance.sh"
-
     # Hourly backup of Cyclescape
-    jobs[4]="19 * * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeDownloadandRotateHourly.sh"
+    jobs[3]="19 * * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeDownloadandRotateHourly.sh"
+
+    # Daily download of Cyclestreets Dev - subversion repo and trac
+    jobs[4]="49 7 * * * $SCRIPTDIRECTORY/../daily-backup/csDevDownload.sh"
 
     # Daily rotate of Cyclescape
-    jobs[5]="26 6 * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeRotateDaily.sh"
+    jobs[5]="26 8 * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
-    jobs[6]="26 6 * * * $SCRIPTDIRECTORY/../daily-backup/cyclestreetsRotateDaily.sh"
+    jobs[6]="39 8 * * * $SCRIPTDIRECTORY/../daily-backup/cyclestreetsRotateDaily.sh"
+
+    # Daily update of code base and clearout of old routing files at 9:49am
+    jobs[7]="49 9 * * * $SCRIPTDIRECTORY/../remove-tempgenerated/backup-maintenance.sh"
 
     for job in "${jobs[@]}"
     do

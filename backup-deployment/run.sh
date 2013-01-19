@@ -71,6 +71,9 @@ if $installCronJobs ; then
     # Daily update of code base and clearout of old routing files at 9:49am
     jobs[7]="49 9 * * * $SCRIPTDIRECTORY/../remove-tempgenerated/backup-maintenance.sh"
 
+    # Weekly rotation of backups
+    jobs[8]="50 10 * * 7 $SCRIPTDIRECTORY/../daily-backup/cyclestreetsRotateWeekly.sh"
+
     for job in "${jobs[@]}"
     do
 	# Check the format which should be 5 timings followed by the script each separated by a single space

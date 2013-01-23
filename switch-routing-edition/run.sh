@@ -174,7 +174,8 @@ chmod a+x $routingEngineConfigFile
 
 # Note: the service command is available to the root user on debian
 # Stop
-echo $password | sudo -S -p"[sudo] Password for %p (this should be provided by the script)" service cycleroutingd stop
+# It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
+echo $password | sudo -S -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" service cycleroutingd stop
 
 # Check the local routing service has stopped
 localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")

@@ -89,6 +89,9 @@ if [ $minItineraryId = "NULL" ]; then
 
 else
 
+    #	Discard route batch files that are exactly 7 days old
+    find ${websitesBackupsFolder} -name 'www_routes_*.sql.gz' -type f -mtime 7 -delete
+
     #	Repartition latest routes
     echo "$(date)	Repartition batch: $minItineraryId. Now closing site to routing." >> ${setupLogFile}
 

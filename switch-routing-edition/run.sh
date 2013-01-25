@@ -44,8 +44,8 @@ configFile=../.config.sh
 SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -e $SCRIPTDIRECTORY/${configFile} ]; then
-    echo "# The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
+if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
+    echo "# The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 

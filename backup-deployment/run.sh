@@ -27,8 +27,8 @@ ScriptHome=$(readlink -f "${DIR}/..")
 configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -e ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
+if [ ! -x ${configFile} ]; then
+    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 

@@ -96,17 +96,10 @@ $download $administratorEmail $server $folder www_schema_cyclestreets.sql.gz
 $download $administratorEmail $server $folder www_cyclestreets.sql.gz
 
 # Replace the cyclestreets database
-# If an import run is in progress, skip this bit.
-( flock -n 9 || ! echo "# An import is in progress, skipping cyclestreets db replacement" || exit 0
-
-  # A lock has been obtained
-  echo "#	Replacing CycleStreets db"
-  mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cyclestreets;";
-  mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
-  gunzip < /websites/www/backups/www_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
-
-) 9>${lockdir}/importInProgress
-
+echo "#	Replacing CycleStreets db"
+mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cyclestreets;";
+mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
+gunzip < /websites/www/backups/www_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
 
 #	Turn off pseudoCron to stop duplicated cronning from the backup machine
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = null;";

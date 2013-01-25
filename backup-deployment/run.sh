@@ -19,19 +19,21 @@ set -e
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
 # The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
 DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
+
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
 
 # Name of the credentials file
-configFile=../.config.sh
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -e ./${configFile} ]; then
+if [ ! -e ${configFile} ]; then
     echo "#	The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
+. ${configFile}
 
 
 # Shortcut for running commands as the cyclestreets user
@@ -51,28 +53,28 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Backup data every day at 5:05 am
-    jobs[1]="5 5 * * * $SCRIPTDIRECTORY/../daily-backup/run.sh"
+    jobs[1]="5 5 * * * ${ScriptHome}/daily-backup/run.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[2]="13 * * * * $SCRIPTDIRECTORY/../remove-tempgenerated/run.sh"
+    jobs[2]="13 * * * * ${ScriptHome}/remove-tempgenerated/run.sh"
 
     # Hourly backup of Cyclescape
-    jobs[3]="19 * * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeDownloadAndRotateHourly.sh"
+    jobs[3]="19 * * * * ${ScriptHome}/cyclescape-backup/cyclescapeDownloadAndRotateHourly.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
-    jobs[4]="49 7 * * * $SCRIPTDIRECTORY/../daily-backup/csDevDownloadAndRotateDaily.sh"
+    jobs[4]="49 7 * * * ${ScriptHome}/daily-backup/csDevDownloadAndRotateDaily.sh"
 
     # Daily rotate of Cyclescape
-    jobs[5]="26 8 * * * $SCRIPTDIRECTORY/../cyclescape-backup/cyclescapeRotateDaily.sh"
+    jobs[5]="26 8 * * * ${ScriptHome}/cyclescape-backup/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
-    jobs[6]="39 8 * * * $SCRIPTDIRECTORY/../daily-backup/cyclestreetsRotateDaily.sh"
+    jobs[6]="39 8 * * * ${ScriptHome}/daily-backup/cyclestreetsRotateDaily.sh"
 
     # Daily update of code base and clearout of old routing files at 9:49am
-    jobs[7]="49 9 * * * $SCRIPTDIRECTORY/../remove-tempgenerated/backup-maintenance.sh"
+    jobs[7]="49 9 * * * ${ScriptHome}/remove-tempgenerated/backup-maintenance.sh"
 
     # Weekly rotation of backups
-    jobs[8]="50 10 * * 7 $SCRIPTDIRECTORY/../daily-backup/cyclestreetsRotateWeekly.sh"
+    jobs[8]="50 10 * * 7 ${ScriptHome}/daily-backup/cyclestreetsRotateWeekly.sh"
 
     for job in "${jobs[@]}"
     do

@@ -135,8 +135,7 @@ scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition
 #!# This is in a different source folder and could presumably be out-of-sync; fix upstream to put with the routing files
 scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
-# Photos index and installer file
-scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/photoIndex.sql.gz ${websitesBackupsFolder}/
+#	Note that all files are downloaded
 echo "$(date)	File transfer stage complete" >> ${setupLogFile}
 
 # MD5 checks
@@ -202,33 +201,20 @@ mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
 #	Install and run the optimized nearestPoint table
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL createPathForNearestPoint();"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"
 
 
 ### Stage 8 - deal with photos-en-route
 
-# Installing the photo index (this usually lags behind production of the main routing database by about an hour)
+# Build the photo index
 echo "#	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-
-# Build the photo index
-# !! Use a temporary limit of 200 photos while this is under test
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,200);"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 
 ### Stage 9 - remove the import definition file
 
 # Note: this file can be left behind if the script has exited above.
 rm ${importMachineFile}
-
-
-### Stage 10 - install the cron job for future updating
-
-#!# Todo
-# ln -s ${websitesContentFolder}/configuration/backup/www/cyclestreetsHourly /etc/cron.hourly/cyclestreetsHourly
-
-
-
-### Stage 11 - end
 
 # Finish
 date

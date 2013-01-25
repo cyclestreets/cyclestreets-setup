@@ -19,19 +19,21 @@ set -e
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
 # The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
 DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
+
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
 
 # Name of the credentials file
-configFile=../.config.sh
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -e ./${configFile} ]; then
+if [ ! -e ${configFile} ]; then
     echo "#	The config file, ${configFile}, does not exist - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
+. ${configFile}
 
 
 # Shortcut for running commands as the cyclestreets user
@@ -50,13 +52,13 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Dump data every day at 4:04 am
-    jobs[1]="4 4 * * * $SCRIPTDIRECTORY/../daily-dump/run.sh"
+    jobs[1]="4 4 * * * ${ScriptHome}/daily-dump/run.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[2]="13 * * * * $SCRIPTDIRECTORY/../remove-tempgenerated/run.sh"
+    jobs[2]="13 * * * * ${ScriptHome}/remove-tempgenerated/run.sh"
 
     # Install routing data at 34 mins past every hour in the small hours
-    jobs[3]="34 0,1,2,3,4,5 * * * $SCRIPTDIRECTORY/../install-routing-data/run.sh"
+    jobs[3]="34 0,1,2,3,4,5 * * * ${ScriptHome}/install-routing-data/run.sh"
 
     for job in "${jobs[@]}"
     do

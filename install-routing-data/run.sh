@@ -210,14 +210,10 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL create
 # Installing the photo index (this usually lags behind production of the main routing database by about an hour)
 echo "#	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-# Creates the photo index tables, if they do not already exist, and skip the actual indexing (because the index built by the import process is loaded next).
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "CALL indexPhotos(true,0);"
 
-# Install photo index
-gunzip ${websitesBackupsFolder}/photoIndex.sql.gz
-mysql $importEdition -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesBackupsFolder}/photoIndex.sql
-rm ${websitesBackupsFolder}/photoIndex.sql
-
+# Build the photo index
+# !! Use a temporary limit of 200 photos while this is under test
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,200);"
 
 ### Stage 9 - remove the import definition file
 

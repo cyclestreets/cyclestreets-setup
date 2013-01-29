@@ -37,6 +37,10 @@ fi
 
 # Main body of script
 
+# Remove the existing cron jobs here
+echo "#	Remove any installed cron jobs"
+${asCS} crontab -r
+
 # Cron jobs
 if $installCronJobs ; then
 
@@ -62,12 +66,6 @@ if $installCronJobs ; then
 	# Installed
 	echo "#	Cron: $job"
     done
-
-else
-
-    # Remove the cron job here
-    echo "#	Remove any installed cron jobs"
-    ${asCS} crontab -r
 
 fi
 

@@ -46,6 +46,10 @@ asCS="sudo -u ${username}"
 # !! Backup machine may also need different config options for the server - needs checking
 #. ../install-website/run.sh
 
+# Remove the existing cron jobs here
+echo "#	Remove any installed cron jobs"
+${asCS} crontab -r
+
 # Cron jobs
 if $installCronJobs ; then
 
@@ -53,7 +57,7 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Backup data every day at 5:05 am
-    jobs[1]="5 5 * * * ${ScriptHome}/daily-backup/run.sh"
+    jobs[1]="5 5 * * * ${ScriptHome}/failover-deployment/run.sh"
 
     # Hourly zapping at 13 mins past every hour
     jobs[2]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
@@ -62,19 +66,19 @@ if $installCronJobs ; then
     jobs[3]="19 * * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
-    jobs[4]="49 7 * * * ${ScriptHome}/daily-backup/csDevDownloadAndRotateDaily.sh"
+    jobs[4]="49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
 
     # Daily rotate of Cyclescape
     jobs[5]="26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
-    jobs[6]="39 8 * * * ${ScriptHome}/daily-backup/cyclestreetsRotateDaily.sh"
+    jobs[6]="39 8 * * * ${ScriptHome}/failover-deployment/cyclestreetsRotateDaily.sh"
 
     # Daily update of code base and clearout of old routing files at 9:49am
     jobs[7]="49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
 
     # Weekly rotation of backups
-    jobs[8]="50 10 * * 7 ${ScriptHome}/daily-backup/cyclestreetsRotateWeekly.sh"
+    jobs[8]="50 10 * * 7 ${ScriptHome}/failover-deployment/cyclestreetsRotateWeekly.sh"
 
     for job in "${jobs[@]}"
     do
@@ -92,12 +96,6 @@ if $installCronJobs ; then
 	# Installed
 	echo "#	Cron: $job"
     done
-
-else
-
-    # Remove the cron job here
-    echo "#	Remove any installed cron jobs"
-    ${asCS} crontab -r
 
 fi
 

@@ -64,9 +64,6 @@ if $installCronJobs ; then
     # Install routing data at 34 mins past every hour in the small hours
     jobs[3]="34 0,1,2,3,4,5 * * * ${ScriptHome}/live-deployment/install-routing-data.sh"
 
-    # SMS monitoring - every 15 mins
-    jobs[4]="0,15,30,45 * * * * ${ScriptHome}/live-deployment/sms-monitoring/run.php"
-
     for job in "${jobs[@]}"
     do
 	# Check the format which should be 5 timings followed by the script each separated by a single space

@@ -100,7 +100,8 @@ else
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
 
     #	Archive the IJS tables
-    mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz
+    dump=${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz
+    mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${dump}
 
     #	Repartition, which moves the current to the archived tables, and log the output. See: documentation/schema/repartition.sql
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
@@ -112,35 +113,48 @@ else
     echo "$(date)	Re-opened site to routing." >> ${setupLogFile}
 
     #	Create md5 hash
-    openssl dgst -md5 ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz > ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz.md5
+    openssl dgst -md5 ${dump} > ${dump}.md5
 fi
 
 #	Backup the CycleStreets database
 #	Option -R dumps stored procedures & functions
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} -R cyclestreets | gzip > ${websitesBackupsFolder}/www_cyclestreets.sql.gz
+dump=${websitesBackupsFolder}/www_cyclestreets.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} -R cyclestreets | gzip > ${dump}
 #	Create md5 hash
-openssl dgst -md5 ${websitesBackupsFolder}/www_cyclestreets.sql.gz > ${websitesBackupsFolder}/www_cyclestreets.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
 
 # 	Schema Structure (no data)
 #	This allows the schema to be viewed at the page: http://www.cyclestreets.net/schema/sql/
 #	Option -R dumps stored procedures & functions
-mysqldump -R --no-data -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets | gzip > ${websitesBackupsFolder}/www_schema_cyclestreets.sql.gz
+dump=${websitesBackupsFolder}/www_schema_cyclestreets.sql.gz
+mysqldump -R --no-data -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets | gzip > ${dump}
 #	Create md5 hash
-openssl dgst -md5 ${websitesBackupsFolder}/www_schema_cyclestreets.sql.gz > ${websitesBackupsFolder}/www_schema_cyclestreets.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
 
 
-#	Blogs
-#	These databases do not have any stored routines, so the -R option is not necessary
+##	Blogs
+#	The databases do not have any stored routines, so the -R option is not necessary
 
-#	Dump
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blog | gzip > ${websitesBackupsFolder}/www_schema_blog_database.sql.gz
+#	CycleStreets
+#	Database dump
+dump=${websitesBackupsFolder}/www_schema_blog_database.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blog | gzip > ${dump}
 #	Hash
-openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blog_database.sql.gz > ${websitesBackupsFolder}/www_schema_blog_database.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
 
-#	Dump
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sql.gz
+
+#	Cyclescape
+#	Database dump
+dump=${websitesBackupsFolder}/www_schema_blogcyclescape_database.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > ${dump}
 #	Hash
-openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sql.gz > ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
+
+#	Blog code dump
+dump=${websitesBackupsFolder}/www_blog_code.tgz
+tar czf ${dump} -C /websites/blog content
+#	Hash
+openssl dgst -md5 ${dump} > ${dump}.md5
 
 ### Final Stage
 

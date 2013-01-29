@@ -55,7 +55,7 @@ fi
 #       Move to the right place
 cd ${websitesContentFolder}
 
-#       Start the import
+#       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php import/run.php
 
 # End of file

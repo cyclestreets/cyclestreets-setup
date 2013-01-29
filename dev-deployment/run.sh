@@ -44,7 +44,7 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Backup data every day at 6:26 am
-    jobs[1]="26 6 * * * ${ScriptHome}/cyclestreets-dev/dailybackup.sh"
+    jobs[1]="26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
 
     for job in "${jobs[@]}"
     do

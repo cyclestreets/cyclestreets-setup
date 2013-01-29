@@ -57,7 +57,7 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Backup data every day at 5:05 am
-    jobs[1]="5 5 * * * ${ScriptHome}/failover-deployment/run.sh"
+    jobs[1]="5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh"
 
     # Hourly zapping at 13 mins past every hour
     jobs[2]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"

@@ -12,6 +12,14 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+# Lock directory
+lockdir=/var/lock/cyclestreets
+mkdir -p $lockdir
+
+# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
+(
+	flock -n 9 || { echo '#	An import is already running' ; exit 1; }
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
@@ -56,6 +64,11 @@ fi
 cd ${websitesContentFolder}
 
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
-php import/run.php
+# !! Can't test until the current import run is finished
+echo "#	WIP waiting until current import is finished."
+# php import/run.php
+
+# Remove the lock file - ${0##*/} extracts the scripts basename
+) 9>$lockdir/${0##*/}
 
 # End of file

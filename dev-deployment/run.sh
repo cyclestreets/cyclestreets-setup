@@ -44,7 +44,7 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Update scripts
-    jobs[1]="25 6 * * * cd ${ScriptHome} && git pull"
+    jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
 
     # Backup data every day at 6:26 am
     jobs[2]="26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"

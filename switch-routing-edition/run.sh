@@ -130,7 +130,7 @@ xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>ge
 if [ -n "${failoverRoutingServer}" ]; then
 
     # Required packages
-    # echo $password | sudo -S apt-get -y install curl libxml-xpath-perl
+    # echo $password | sudo -Sk apt-get -y install curl libxml-xpath-perl
 
     # Get the locally running service
     locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
@@ -175,7 +175,7 @@ chmod a+x $routingEngineConfigFile
 # Note: the service command is available to the root user on debian
 # Stop
 # It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
-echo $password | sudo -S -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" service cycleroutingd stop
+echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" service cycleroutingd stop
 
 # Check the local routing service has stopped
 localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
@@ -189,7 +189,7 @@ while [[ ! "$localRoutingStatus" =~ stopped ]]; do
 done
 
 # Start
-echo $password | sudo -S service cycleroutingd start
+echo $password | sudo -Sk service cycleroutingd start
 
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
@@ -225,7 +225,7 @@ rm -f ${websitesContentFolder}/maintenance
 echo "#	All done"
 echo "$(date)	Completed switch to $importEdition" >> ${setupLogFile}
 
-# Remove the lock file
-) 9>$lockdir/switch-routing-edition
+# Remove the lock file - ${0##*/} extracts the scripts basename
+) 9>$lockdir/${0##*/}
 
 # End of file

@@ -147,7 +147,7 @@ openssl dgst -md5 ${websitesBackupsFolder}/www_schema_blogcyclescape_database.sq
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 
-# Remove the lock file
-) 9>$lockdir/daily-dump
+# Remove the lock file - ${0##*/} extracts the scripts basename
+) 9>$lockdir/${0##*/}
 
 # End of file

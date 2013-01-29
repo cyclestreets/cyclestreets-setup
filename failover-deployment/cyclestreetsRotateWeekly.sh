@@ -68,7 +68,7 @@ $rotateWeekly $folder cyclescapeDB.sql.gz
 $rotateWeekly $folder toolkitShared.tar.bz2
 
 
-# Remove the lock file
-) 9>$lockdir/cyclestreetsRotateWeekly
+# Remove the lock file - ${0##*/} extracts the scripts basename
+) 9>$lockdir/${0##*/}
 
 # End of file

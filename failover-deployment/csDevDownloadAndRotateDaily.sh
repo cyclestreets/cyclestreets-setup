@@ -93,7 +93,7 @@ $rotateDaily $folder csTracBackup.tar.bz2
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 
-# Remove the lock file
-) 9>$lockdir/csDevDownload
+# Remove the lock file - ${0##*/} extracts the scripts basename
+) 9>$lockdir/${0##*/}
 
 # End of file

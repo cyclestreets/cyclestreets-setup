@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to backup CycleStreets on a daily basis
+# Script to update CycleStreets on a daily basis
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 
 # This script is idempotent - it can be safely re-run without destroying existing data.
@@ -21,7 +21,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'CycleStreets daily backup is already running' ; exit 1; }
+	flock -n 9 || { echo 'CycleStreets daily update is already running' ; exit 1; }
 
 ### CREDENTIALS ###
 
@@ -53,12 +53,12 @@ fi
 # Logging
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-#echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily backup $(id)" >> ${setupLogFile}
+#echo "#	CycleStreets daily update in progress, follow log file with: tail -f ${setupLogFile}"
+echo "$(date)	CycleStreets daily update $(id)" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineAddress}" ]; then
-    echo "# A live machine must be defined in order to run backups" >> ${setupLogFile}
+    echo "# A live machine must be defined in order to run updates" >> ${setupLogFile}
     exit 1
 fi
 
@@ -159,7 +159,7 @@ gunzip < /websites/www/backups/www_schema_blogcyclescape_database.sql.gz | mysql
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 
-# Remove the lock file
-) 9>$lockdir/daily-backup
+# Remove the lock file - ${0##*/} extracts the scripts basename
+) 9>$lockdir/${0##*/}
 
 # End of file

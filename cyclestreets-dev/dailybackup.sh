@@ -5,7 +5,8 @@
 #       http://dev.cyclestreets.net/wiki/BackupStrategy
 #
 
-echo "#	CycleStreets Dev machine backup $(date)"
+# Avoid echoing if possible as this generates cron messages
+# echo "#	CycleStreets Dev machine backup $(date)"
 
 # Ensure this script is NOT run as root
 if [ "$(id -u)" = "0" ]; then
@@ -34,21 +35,27 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Logging
+# Use an absolute path for the log file to be tolerant of the changing working directory in this script
+setupLogFile=$DIR/log.txt
+touch ${setupLogFile}
+echo "#	CycleStreets Dev backup $(date)" >> ${setupLogFile}
+
 # Bomb out if something goes wrong
 set -e
 
 #	Location of backup folder
 backups=/websites/www/backups
 
-#       Trac
+
+##       Trac
 dump=csTracBackup.tar.bz2
 
 #	Park the old dump
 mv ${backups}/trac ${backups}/tracOld
 
-
 #	Dump
-echo $password | sudo -S trac-admin /websites/dev/trac/cyclestreets hotcopy ${backups}/trac
+echo $password | sudo -S trac-admin /websites/dev/trac/cyclestreets hotcopy ${backups}/trac >> ${setupLogFile}
 echo $password | sudo -S chown -R cyclestreets ${backups}/trac
 
 #	Archive
@@ -61,7 +68,7 @@ openssl dgst -md5 ${backups}/${dump} > ${backups}/${dump}.md5
 rm -rf ${backups}/tracOld
 
 
-#	Subversion
+##	Subversion
 dump=cyclestreetsRepo.dump.bz2
 
 #      Dump
@@ -69,5 +76,9 @@ dump=cyclestreetsRepo.dump.bz2
 echo $password | sudo -S svnadmin dump /websites/svn/svn/cyclestreets -q | bzip2 > ${backups}/${dump}
 #	Hash
 openssl dgst -md5 ${backups}/${dump} > ${backups}/${dump}.md5
+
+
+#	Finally
+echo "#	Completed at $(date)" >> ${setupLogFile}
 
 #	Ends

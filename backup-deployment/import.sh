@@ -52,7 +52,10 @@ then
     exit 1
 fi
 
-#	Start the import
-php ${websitesContentFolder}/import/run.php
+#       Move to the right place
+cd ${websitesContentFolder}
+
+#       Start the import
+php import/run.php
 
 # End of file

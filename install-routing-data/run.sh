@@ -7,7 +7,8 @@
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets routing data installation $(date)"
+# Avoid echo if possible as this generates cron emails
+# echo "#	CycleStreets routing data installation $(date)"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
@@ -58,7 +59,9 @@ fi
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
 setupLogFile=$(readlink -e $(dirname $0))/log.txt
 touch ${setupLogFile}
-echo "#	CycleStreets routing data installation in progress, follow log file with: tail -f ${setupLogFile}"
+
+# Avoid echo if possible as this generates cron emails
+# echo "#	CycleStreets routing data installation in progress, follow log file with: tail -f ${setupLogFile}"
 echo "$(date)	CycleStreets routing data installation" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account

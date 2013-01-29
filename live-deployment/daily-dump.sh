@@ -150,12 +150,6 @@ mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > ${du
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 
-#	Blog code dump
-dump=${websitesBackupsFolder}/www_blog_code.tgz
-tar czf ${dump} -C /websites/blog content
-#	Hash
-openssl dgst -md5 ${dump} > ${dump}.md5
-
 ### Final Stage
 
 # Finish

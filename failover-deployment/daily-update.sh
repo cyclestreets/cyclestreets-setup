@@ -114,6 +114,10 @@ mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_conf
 set +e
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
+
+#	Also sync the blog code
+# !! Hardwired location
+rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
 # Resume exit on error
 set -e
 

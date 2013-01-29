@@ -135,8 +135,8 @@ do
 done
 
 #
-#	Repartition, which copies the current to the archived tables.
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
+#	Repartition, which copies the current to the archived tables, and log output.
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
 
 #	Discard route batch files that are exactly 7 days old
 find ${folder} -name '${batchRoutes}' -type f -mtime 7 -delete

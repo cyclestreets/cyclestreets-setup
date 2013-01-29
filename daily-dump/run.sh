@@ -102,8 +102,8 @@ else
     #	Archive the IJS tables
     mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${websitesBackupsFolder}/www_routes_${minItineraryId}.sql.gz
 
-    #	Repartition, which moves the current to the archived tables. See: documentation/schema/repartition.sql
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
+    #	Repartition, which moves the current to the archived tables, and log the output. See: documentation/schema/repartition.sql
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
 
     #	Re-open the journey planner.
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";

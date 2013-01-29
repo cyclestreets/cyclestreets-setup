@@ -52,7 +52,7 @@ if $installCronJobs ; then
     for job in "${jobs[@]}"
     do
 	# Check the format which should be 5 timings followed by the script each separated by a single space
-	[[ ! $job =~ ^([^' ']+' '){5}([^' ']+)$ ]] && echo "# Crontab intallation incorrect job format (m h dom mon dow usercommand) for: $job" && exit 1
+	[[ ! $job =~ ^([^' ']+' '){5}(.+)$ ]] && echo "# Crontab intallation incorrect job format (m h dom mon dow usercommand) for: $job" && exit 1
 
 	# Fish out the command which is the last component of the match
 	command="${BASH_REMATCH[2]}"

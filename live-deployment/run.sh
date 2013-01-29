@@ -52,7 +52,7 @@ if $installCronJobs ; then
     echo "#	Install cron jobs"
 
     # Dump data every day at 4:04 am
-    jobs[1]="4 4 * * * ${ScriptHome}/daily-dump/run.sh"
+    jobs[1]="4 4 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
 
     # Hourly zapping at 13 mins past every hour
     jobs[2]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"

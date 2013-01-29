@@ -56,7 +56,7 @@ if $installCronJobs ; then
     jobs[1]="5 5 * * * ${ScriptHome}/daily-backup/run.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[2]="13 * * * * ${ScriptHome}/remove-tempgenerated/run.sh"
+    jobs[2]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
     # Hourly backup of Cyclescape
     jobs[3]="19 * * * * ${ScriptHome}/cyclescape-backup/cyclescapeDownloadAndRotateHourly.sh"
@@ -71,7 +71,7 @@ if $installCronJobs ; then
     jobs[6]="39 8 * * * ${ScriptHome}/daily-backup/cyclestreetsRotateDaily.sh"
 
     # Daily update of code base and clearout of old routing files at 9:49am
-    jobs[7]="49 9 * * * ${ScriptHome}/remove-tempgenerated/backup-maintenance.sh"
+    jobs[7]="49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
 
     # Weekly rotation of backups
     jobs[8]="50 10 * * 7 ${ScriptHome}/daily-backup/cyclestreetsRotateWeekly.sh"

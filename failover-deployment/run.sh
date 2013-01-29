@@ -46,10 +46,6 @@ asCS="sudo -u ${username}"
 # !! Backup machine may also need different config options for the server - needs checking
 #. ../install-website/run.sh
 
-# Remove the existing cron jobs here
-echo "#	Remove any installed cron jobs"
-${asCS} crontab -r
-
 # Cron jobs
 if $installCronJobs ; then
 

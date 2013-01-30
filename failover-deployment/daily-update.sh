@@ -163,7 +163,7 @@ gunzip < /websites/www/backups/www_schema_blogcyclescape_database.sql.gz | mysql
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 
-# Remove the lock file - ${0##*/} extracts the scripts basename
+# Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}
 
 # End of file

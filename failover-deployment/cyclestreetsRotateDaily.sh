@@ -59,7 +59,7 @@ $rotateDaily $folder www_cyclestreets.sql.gz
 $rotateDaily $folder www_schema_blog_database.sql.gz
 $rotateDaily $folder www_schema_blogcyclescape_database.sql.gz
 
-# Remove the lock file - ${0##*/} extracts the scripts basename
+# Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}
 
 # End of file

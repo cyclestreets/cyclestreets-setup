@@ -64,11 +64,9 @@ fi
 cd ${websitesContentFolder}
 
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
-# !! Can't test until the current import run is finished
-echo "#	WIP waiting until current import is finished."
-# php import/run.php
+php import/run.php
 
-# Remove the lock file - ${0##*/} extracts the scripts basename
+# Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}
 
 # End of file

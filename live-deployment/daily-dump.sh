@@ -155,7 +155,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 
-# Remove the lock file - ${0##*/} extracts the scripts basename
+# Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}
 
 # End of file

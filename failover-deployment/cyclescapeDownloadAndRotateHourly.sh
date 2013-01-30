@@ -73,7 +73,7 @@ $download $administratorEmail $server $folder toolkitShared.tar.bz2
 $rotateHourly $folder cyclescapeDB.sql.gz
 $rotateHourly $folder toolkitShared.tar.bz2
 
-# Remove the lock file - ${0##*/} extracts the scripts basename
+# Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}
 
 # End of file

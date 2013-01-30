@@ -96,7 +96,7 @@ $download $administratorEmail $server $folder www_schema_cyclestreets.sql.gz
 $download $administratorEmail $server $folder www_cyclestreets.sql.gz
 
 # Replace the cyclestreets database
-echo "#	Replacing CycleStreets db"
+echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cyclestreets;";
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
 gunzip < /websites/www/backups/www_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets

@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to change CycleStreets served routes
-# Tested on Ubuntu 12.10 (View Ubuntu version using 'lsb_release -a')
+# Tested on Ubuntu 12.10 & Debian Squeeze (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # SYNOPSIS
@@ -13,7 +13,7 @@
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
 # The local server must be currently serving routes - this script cannot be used to start a routing service.
-# If a failOverServer is specified, it must also be serving routes from the same edition.
+# If a failOverServer is specified, it must already be serving routes for the new edition.
 
 ### Stage 1 - general setup
 
@@ -40,17 +40,23 @@ mkdir -p $lockdir
 
 # Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
 # A more advanced technique will be required if this file is called via a symlink.
-configFile=../.config.sh
-SCRIPTDIRECTORY="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
+# Name of the credentials file
+configFile=${ScriptHome}/.config.sh
+
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
+if [ ! -x ${configFile} ]; then
     echo "# The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. $SCRIPTDIRECTORY/${configFile}
+. ${configFile}
 
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script

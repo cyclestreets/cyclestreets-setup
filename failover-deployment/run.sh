@@ -35,9 +35,8 @@ fi
 # Load the credentials
 . ${configFile}
 
-
-# Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
+# Load helper functions
+. ${ScriptHome}/utility/helper.sh
 
 # Main body of script
 
@@ -49,50 +48,35 @@ asCS="sudo -u ${username}"
 # Cron jobs
 if $installCronJobs ; then
 
-    # Install the cron job here
-    echo "#	Install cron jobs"
+    # Update scripts
+    jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
 
     # Backup data every day at 5:05 am
-    jobs[1]="5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh"
+    jobs[2]="5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[2]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
+    jobs[3]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
     # Hourly backup of Cyclescape
-    jobs[3]="19 * * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh"
+    jobs[4]="19 * * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
-    jobs[4]="49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
+    jobs[5]="49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
 
     # Daily rotate of Cyclescape
-    jobs[5]="26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"
+    jobs[6]="26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
-    jobs[6]="39 8 * * * ${ScriptHome}/failover-deployment/cyclestreetsRotateDaily.sh"
+    jobs[7]="39 8 * * * ${ScriptHome}/failover-deployment/cyclestreetsRotateDaily.sh"
 
     # Daily update of code base and clearout of old routing files at 9:49am
-    jobs[7]="49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
+    jobs[8]="49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
 
     # Weekly rotation of backups
-    jobs[8]="50 10 * * 7 ${ScriptHome}/failover-deployment/cyclestreetsRotateWeekly.sh"
+    jobs[9]="50 10 * * 7 ${ScriptHome}/failover-deployment/cyclestreetsRotateWeekly.sh"
 
-    for job in "${jobs[@]}"
-    do
-	# Check the format which should be 5 timings followed by the script each separated by a single space
-	[[ ! $job =~ ^([^' ']+' '){5}([^' ']+)$ ]] && echo "# Crontab intallation incorrect job format (m h dom mon dow usercommand) for: $job" && exit 1
-
-	# Fish out the command which is the last component of the match
-	command="${BASH_REMATCH[2]}"
-
-	# Install/update the job
-	# frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
-	# The echo adds the new job and the cat | pipes it to set the user's updated crontab
-	cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
-
-	# Installed
-	echo "#	Cron: $job"
-    done
-
+    # Install the jobs
+    installCronJobs ${username} jobs[@]
 fi
 
 # Confirm end of script

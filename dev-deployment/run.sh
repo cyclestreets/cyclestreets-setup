@@ -5,9 +5,9 @@
 
 echo "#	CycleStreets Dev machine deployment $(date)"
 
-# Ensure this script is NOT run as root
-if [ "$(id -u)" = "0" ]; then
-    echo "#	This script must NOT be run as root." 1>&2
+# Ensure this script is run as root
+if [ "$(id -u)" != "0" ]; then
+    echo "#	This script must be run as root." 1>&2
     exit 1
 fi
 
@@ -49,10 +49,8 @@ if $installCronJobs ; then
     # Backup data every day at 6:26 am
     jobs[2]="26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
 
-    # Pass jobs array without $ reference as an indirection technique is used to access it's contents
-    # http://stackoverflow.com/questions/1063347/passing-arrays-as-parameters-in-bash
-    installCronJobs jobs[@]
-
+    # Install the jobs
+    installCronJobs ${username} jobs[@]
 fi
 
 # Confirm end of script

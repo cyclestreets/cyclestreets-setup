@@ -10,7 +10,7 @@ installCronJobs ()
     # Uses the ${!...} notation to indirectly refer to the value of $1, the first argument.
     declare -a jobs=("${!1}")
 
-    # Trace - Indicate number of jobs
+    # Indicate number of jobs
     echo "#	Installing ${#jobs[@]} cron jobs"
 
     for job in "${jobs[@]}"
@@ -27,7 +27,7 @@ installCronJobs ()
 	# The echo adds the new job and the cat | pipes it to set the user's updated crontab
 	cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
 
-	# Trace - Indicate number of jobs
+	# Report installed job
 	echo "#	Installed ${job}"
     done
 }

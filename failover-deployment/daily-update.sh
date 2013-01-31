@@ -143,7 +143,8 @@ done
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
 
 #	Discard route batch files that are exactly 7 days old
-find ${folder} -name '${batchRoutes}' -type f -mtime 7 -delete
+find ${folder} -name "${batchRoutes}" -type f -mtime 7 -delete
+find ${folder} -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
 #	CycleStreets Blog
 $download $administratorEmail $server $folder www_schema_blog_database.sql.gz

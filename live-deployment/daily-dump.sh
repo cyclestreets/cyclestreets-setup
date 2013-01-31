@@ -81,6 +81,9 @@ fi
 # Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
 minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")
 
+#	Latest routes
+batchRoutes=www_routes_*.sql.gz
+
 # If the minItineraryId is NULL then the repartitioning can be skipped
 if [ $minItineraryId = "NULL" ]; then
 
@@ -90,8 +93,8 @@ if [ $minItineraryId = "NULL" ]; then
 else
 
     #	Discard route batch files that are exactly 7 days old
-    find ${websitesBackupsFolder} -name 'www_routes_*.sql.gz' -type f -mtime 7 -delete
-    find ${websitesBackupsFolder} -name 'www_routes_*.sql.gz.md5' -type f -mtime 7 -delete
+    find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime 7 -delete
+    find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
     #	Repartition latest routes
     echo "$(date)	Repartition batch: $minItineraryId. Now closing site to routing." >> ${setupLogFile}

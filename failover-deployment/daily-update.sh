@@ -122,7 +122,7 @@ rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
 set -e
 
 #	Latest routes
-batchRoutes=www_routes_*.sql.gz
+batchRoutes='www_routes_*.sql.gz'
 
 #	Find all route files with the named pattern that have been modified within the last 24 hours.
 files=$(ssh ${server} "find ${folder} -name '${batchRoutes}' -type f -mtime 0 -print")

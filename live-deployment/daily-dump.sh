@@ -82,7 +82,7 @@ fi
 minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")
 
 #	Latest routes
-batchRoutes=www_routes_*.sql.gz
+batchRoutes='www_routes_*.sql.gz'
 
 # If the minItineraryId is NULL then the repartitioning can be skipped
 if [ $minItineraryId = "NULL" ]; then

@@ -4,10 +4,10 @@
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # SYNOPSIS
-#	run.sh importEdition
+#	run.sh newEdition
 #
 # DESCRIPTION
-#	importEdition
+#	newEdition
 #		Names a routing database of the form routingYYMMDD, eg. routing130111
 
 # This file is only geared towards updating the locally served routes to a new edition.
@@ -47,7 +47,6 @@ ScriptHome=$(readlink -f "${DIR}/..")
 
 # Name of the credentials file
 configFile=${ScriptHome}/.config.sh
-
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
@@ -106,10 +105,10 @@ then
 fi
 
 # Allocate that argument
-importEdition=$1
+newEdition=$1
 
 # Check the format is routingYYMMDD
-if [[ ! "$importEdition" =~ routing[0-9]{6} ]]; then
+if [[ ! "$newEdition" =~ routing[0-9]{6} ]]; then
   echo "#	Arg importedition must specify a database of the form routingYYMMDD"
   exit 1
 fi
@@ -118,48 +117,39 @@ fi
 ### Stage 3 - confirm existence of the routing import database and files
 
 # Check to see that this routing database exists
-if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
-	echo "#	The routing database ${importEdition} is not present"
+if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${newEdition}"; then
+	echo "#	The routing database ${newEdition} is not present"
 	exit 1
 fi
 
 # Check that the data for this routing edition exists
-if [ ! -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
-	echo "#	The routing data ${importEdition} is not present"
+if [ ! -d "${websitesContentFolder}/data/routing/${newEdition}" ]; then
+	echo "#	The routing data ${newEdition} is not present"
 	exit 1
 fi
+
+### Stage 4 - do switch-over
 
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
-# If a failoverRoutingServer is supplied, check it is running and using the same edition
+# If a failoverRoutingServer is supplied, check it is running and using the proposed edition
 if [ -n "${failoverRoutingServer}" ]; then
 
     # Required packages
     # echo $password | sudo -Sk apt-get -y install curl libxml-xpath-perl
 
-    # Get the locally running service
-    locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
-
     # POST the request to the server
     failoverRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${failoverRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
-    # Check the failover routing edition is the same
-    if [ "${locallyRunningEdition}" != "${failoverRoutingEdition}" ]; then
-	echo "#	The failover server is running: ${failoverRoutingEdition} which differs from the local edition: ${locallyRunningEdition}"
+    # Check the failover routing edition is the same as the proposed edition
+    if [ "${newEdition}" != "${failoverRoutingEdition}" ]; then
+	echo "#	The failover server is running: ${failoverRoutingEdition} which differs from the proposed edition: ${newEdition}"
 	exit 1
     fi
-fi
 
-
-
-### Stage 4 - do switch-over
-
-# Use the failover server during switch over
-if [ -n "${failoverRoutingServer}" ]; then
-
-    # Switch the website to the new routing database
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
+    # Use the failover server during switch over
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
     echo "#	Now using failover routing service"
 else
     # When there is no failover server put the site into maintenance mode
@@ -169,7 +159,7 @@ fi
 
 # Configure the routing engine to use the new edition
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
-echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${importEdition}" > $routingEngineConfigFile
+echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
 
 # Ensure it is executable
 chmod a+x $routingEngineConfigFile
@@ -213,13 +203,13 @@ done
 locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
 # Check the local service is as requested
-if [ "${locallyRunningEdition}" != "${importEdition}" ]; then
-	echo "#	The local server is running: ${locallyRunningEdition} not the requested edition: ${importEdition}"
+if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
+	echo "#	The local server is running: ${locallyRunningEdition} not the requested edition: ${newEdition}"
 	exit 1
 fi
 
-# Switch the website to the new routing database
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${importEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
+# Switch the website to the local server and ensure the routingDb is also set
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
 
 # Restore the site by switching off maintenance mode (-f ignores if non existent)
 rm -f ${websitesContentFolder}/maintenance
@@ -229,7 +219,7 @@ rm -f ${websitesContentFolder}/maintenance
 
 # Finish
 echo "#	All done"
-echo "$(date)	Completed switch to $importEdition" >> ${setupLogFile}
+echo "$(date)	Completed switch to $newEdition" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

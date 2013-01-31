@@ -11,7 +11,7 @@ installCronJobs ()
     declare -a jobs=("${!1}")
 
     # Trace - Indicate number of jobs
-    # echo "#	Installing "${#jobs[@]}" jobs"
+    echo "#	Installing ${#jobs[@]} cron jobs"
 
     for job in "${jobs[@]}"
     do
@@ -27,6 +27,8 @@ installCronJobs ()
 	# The echo adds the new job and the cat | pipes it to set the user's updated crontab
 	cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
 
+	# Trace - Indicate number of jobs
+	echo "#	Installed ${job}"
     done
 }
 

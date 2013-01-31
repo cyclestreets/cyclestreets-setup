@@ -35,13 +35,13 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Load helper functions
+. ${ScriptHome}/utility/helper.sh
+
 # Main body of script
 
 # Cron jobs
 if $installCronJobs ; then
-
-    # Install the cron job here
-    echo "#	Install cron jobs"
 
     # Update scripts
     jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
@@ -49,22 +49,9 @@ if $installCronJobs ; then
     # Backup data every day at 6:26 am
     jobs[2]="26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
 
-    for job in "${jobs[@]}"
-    do
-	# Check the format which should be 5 timings followed by the script each separated by a single space
-	[[ ! $job =~ ^([^' ']+' '){5}(.+)$ ]] && echo "# Crontab intallation incorrect job format (m h dom mon dow usercommand) for: $job" && exit 1
-
-	# Fish out the command which is the last component of the match
-	command="${BASH_REMATCH[2]}"
-
-	# Install/update the job
-	# frgrep -v .. <(${} crontab -l) filters out any previous occurrences from the user's crontab listing
-	# The echo adds the new job and the cat | pipes it to set the user's updated crontab
-	cat <(fgrep -i -v "$command" <(${asCS} crontab -l)) <(echo "$job") | ${asCS} crontab -
-
-	# Installed
-	echo "#	Cron: $job"
-    done
+    # Pass jobs array without $ reference as an indirection technique is used to access it's contents
+    # http://stackoverflow.com/questions/1063347/passing-arrays-as-parameters-in-bash
+    installCronJobs jobs[@]
 
 fi
 

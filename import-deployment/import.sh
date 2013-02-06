@@ -45,6 +45,7 @@ fi
 
 # Get free disk space in Gigabytes
 # http://www.cyberciti.biz/tips/shell-script-to-watch-the-disk-space.html
+# !! Note: this check is rather machine-specific as it happens that on our machine the key disk is at /dev/sda1 which will not be true in general.
 freeSpace=$(df -BG /dev/sda1 | grep -vE '^Filesystem' | awk '{ print $4 }')
 
 # Remove the G                                                                                                                                                            

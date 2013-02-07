@@ -73,7 +73,6 @@ cd "${tilecacheContentFolder}"
 # Make sure the webserver user can write to the tilecache, by setting this as the owner
 #!# The group name should be a setting
 chown -R www-data.rollout "${tilecacheContentFolder}"
-chmod -R g+w "${tilecacheContentFolder}"
 
 # Create/update the tilecache repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
 if [ ! -d "${tilecacheContentFolder}/.git" ]
@@ -82,6 +81,9 @@ then
 else
 	${asCS} git pull
 fi
+
+# Make the repository writable to avoid permissions problems when manually editing
+chmod -R g+w "${tilecacheContentFolder}"
 
 # Create the config file if it doesn't exist, and write in the configuration
 if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then

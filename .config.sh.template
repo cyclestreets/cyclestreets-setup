@@ -38,6 +38,7 @@ websitesLogsFolder=/websites/www/logs
 configureExim=false
 
 # Basically, use the 'internet' (direct delivery) mode here for a developer setup
+#!# Simplify this block to be a single setting like profile='developer'/'deployment' and write out settings (based on those below) accordingly
 dc_eximconfig_configtype='internet'  # Use 'internet' for direct delivery, or 'satellite' if mail is delivered by your ISP
 dc_local_interfaces=''               # Use '' if using 'internet' or '127.0.0.1' if using 'satellite' above
 dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
@@ -59,6 +60,12 @@ importMachineFile=${websitesBackupsFolder}/importdefinition.ini
 
 # An alternative machine that can provide routing services, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
 failoverRoutingServer=''
+
+# Tilecache
+tilecacheUrl=tile.cyclestreets.net
+tilecacheContentFolder=/websites/tile/content
+tilecacheKeyCloudmade=
+
 
 # Cron jobs
 installCronJobs=false

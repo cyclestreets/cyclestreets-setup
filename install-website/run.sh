@@ -114,6 +114,7 @@ apt-get -y install ntp
 currentActualUser=`who am i | awk '{print $1}'`
 
 # Create the rollout group, if it does not already exist
+#!# The group name should be a setting
 if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
 then
     addgroup rollout

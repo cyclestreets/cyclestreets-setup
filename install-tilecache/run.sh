@@ -102,6 +102,9 @@ if [ ! -L /etc/apache2/sites-enabled/700-tile ]; then
     ln -s ${websitesContentFolder}/configuration/apache/sites-available/tile /etc/apache2/sites-enabled/700-tile
 fi
 
+# Enable mod_headers, so that the Access-Control-Allow-Origin header is sent
+a2enmod headers
+
 # Reload apache
 service apache2 reload >> ${setupLogFile}
 

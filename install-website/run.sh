@@ -175,10 +175,6 @@ chown www-data ${websitesContentFolder}/scripts/gpsPhoto.pl
 chmod -x ${websitesContentFolder}/scripts/gpsPhoto.pl
 chmod ug+x ${websitesContentFolder}/scripts/gpsPhoto.pl
 
-# Blog must be able to upload content, and to upgrade make it group-writable for the rollout group
-chown -R www-data:rollout ${websitesContentFolder}/blog
-chmod -R g+w ${websitesContentFolder}/blog
-
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
 chown www-data:rollout ${websitesContentFolder}/documentation/schema/selectChangeLog.sql

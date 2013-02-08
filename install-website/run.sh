@@ -165,8 +165,8 @@ else
     ${asCS} svn update --username=${currentActualUser} --no-auth-cache
 fi
 
-# Allow the Apache webserver process to write / add to the data/ folder
-chown -R www-data ${websitesContentFolder}/data
+# Allow the Apache webserver process to write / add to the data/ folder, avoiding the .svn folders
+find ${websitesContentFolder}/data -name .svn -a -type d -prune -print0 | xargs -0 chown www-data
 
 # For gpsPhoto.pl (for geolocation by synchronization), add dependencies, and Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
 apt-get -y install libimage-exiftool-perl
@@ -174,10 +174,6 @@ apt-get -y install libxml-dom-perl		# Might not actually be needed
 chown www-data ${websitesContentFolder}/scripts/gpsPhoto.pl
 chmod -x ${websitesContentFolder}/scripts/gpsPhoto.pl
 chmod ug+x ${websitesContentFolder}/scripts/gpsPhoto.pl
-
-# Blog must be able to upload content, and to upgrade make it group-writable for the rollout group
-chown -R www-data:rollout ${websitesContentFolder}/blog
-chmod -R g+w ${websitesContentFolder}/blog
 
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql

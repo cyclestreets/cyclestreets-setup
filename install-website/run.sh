@@ -227,7 +227,7 @@ ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsernam
 phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
 then
-    cp .config.php.template ${phpConfig}
+    cp -p .config.php.template ${phpConfig}
 fi
 
 # Setup the config?

@@ -255,21 +255,30 @@ then
 fi
 
 # Install a basic routing db from the repository
+basicRoutingDb=routing121114
 # Unless the database already exists:
-if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE 'routing121114'" | grep routing121114 > /dev/null 2>&1
+if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${basicRoutingDb}'" | grep ${basicRoutingDb} > /dev/null 2>&1
 then
-    # Create routing121114 database
-    echo "#	Create routing121114 database"
-    ${mysql} -e "create database if not exists routing121114 default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+    # Create basicRoutingDb database
+    echo "#	Create ${basicRoutingDb} database"
+    ${mysql} -e "create database if not exists ${basicRoutingDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
 
     # Load data
-    echo "#	Load routing121114 data"
-    gunzip < ${websitesContentFolder}/documentation/schema/routing121114.sql.gz | ${mysql} routing121114 >> ${setupLogFile}
+    echo "#	Load ${basicRoutingDb} data"
+    gunzip < ${websitesContentFolder}/documentation/schema/${basicRoutingDb}.sql.gz | ${mysql} ${basicRoutingDb} >> ${setupLogFile}
 fi
 
 # Setup a symlink to the routing data if it doesn't already exist
 if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
-    ln -s routing121114 ${websitesContentFolder}/data/routing/current
+    ln -s ${basicRoutingDb} ${websitesContentFolder}/data/routing/current
+fi
+
+# Create a config if not already present
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
+if [ ! -x $routingEngineConfigFile ]; then
+	echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${basicRoutingDb}" > ${routingEngineConfigFile}
+	# Ensure it is executable
+	chmod a+x $routingEngineConfigFile
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring

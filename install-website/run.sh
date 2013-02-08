@@ -277,10 +277,12 @@ fi
 
 # Create a config if not already present
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
-if [ ! -x $routingEngineConfigFile ]; then
-	echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${basicRoutingDb}" > ${routingEngineConfigFile}
+if [ ! -x "${routingEngineConfigFile}" ]; then
+	# Create the config for the basic routing db, as cyclestreets user
+	${asCS} touch "${routingEngineConfigFile}"
+	${asCS} echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${basicRoutingDb}" > "${routingEngineConfigFile}"
 	# Ensure it is executable
-	chmod a+x $routingEngineConfigFile
+	chmod a+x "${routingEngineConfigFile}"
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring

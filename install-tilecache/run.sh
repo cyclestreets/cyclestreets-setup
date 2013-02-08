@@ -94,10 +94,10 @@ fi
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
 if [ ! -f ${websitesContentFolder}/configuration/apache/sites-available/tile ]; then
-	${asCS} cp -pr .apache-vhost.conf.template ${websitesContentFolder}/configuration/apache/sites-available/tile
-	${asCS} sed -i "s|tile.example.com|${tilecacheUrl}|g" ${websitesContentFolder}/configuration/apache/sites-available/tile
-	${asCS} sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${websitesContentFolder}/configuration/apache/sites-available/tile
-	${asCS} sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${websitesContentFolder}/configuration/apache/sites-available/tile
+	cp -pr .apache-vhost.conf.template /etc/apache2/sites-available/tile
+	sed -i "s|tile.example.com|${tilecacheUrl}|g" /etc/apache2/sites-available/tile
+	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" /etc/apache2/sites-available/tile
+	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" /etc/apache2/sites-available/tile
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct

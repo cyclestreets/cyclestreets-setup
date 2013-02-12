@@ -210,7 +210,7 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call create
 ### Stage 8 - deal with photos-en-route
 
 # Build the photo index
-echo "#	Building the photosEnRoute tables"
+echo "#	Building the photosEnRoute tables" >> ${setupLogFile}
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 

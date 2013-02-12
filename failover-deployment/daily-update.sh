@@ -125,7 +125,7 @@ set -e
 batchRoutes='www_routes_*.sql.gz'
 
 #	Find all route files with the named pattern that have been modified within the last 24 hours.
-files=$(ssh ${server} "find ${folder} -name '${batchRoutes}' -type f -mtime 0 -print")
+files=$(ssh ${server} "find ${folder} -maxdepth 1 -name '${batchRoutes}' -type f -mtime 0 -print")
 for f in $files
 do
     #	Get only the name component
@@ -143,8 +143,8 @@ done
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
 
 #	Discard route batch files that are exactly 7 days old
-find ${folder} -name "${batchRoutes}" -type f -mtime 7 -delete
-find ${folder} -name "${batchRoutes}.md5" -type f -mtime 7 -delete
+find ${folder} -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
+find ${folder} -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
 #	CycleStreets Blog
 $download $administratorEmail $server $folder www_schema_blog_database.sql.gz

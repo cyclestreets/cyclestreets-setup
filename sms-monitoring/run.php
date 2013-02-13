@@ -19,8 +19,7 @@ class doCheck
 		ini_set ('date.timezone', 'Europe/London');
 		
 		# Ensure there is a .config.php file
-		ini_set ('include_path', '.' . PATH_SEPARATOR . ini_get ('include_path'));	// Ensure current directory is in the include_path
-		require_once ('.config.php');
+		require_once (dirname (__FILE__) . '/.config.php');
 		
 		# Ensure an e-mail address is defined
 		if (!isSet ($emailAddress)) {
@@ -30,8 +29,8 @@ class doCheck
 		
 		# Ensure that the settings have been defined
 		if (!isSet ($smsProviderApiKey))	{$this->email ('$smsProviderApiKey is not defined');}
-		if (!isSet ($smsNumbers))			{$this->email ('$smsNumbers is not not defined');}
-		if (!isSet ($cyclestreetsApiKey))	{$this->email ('$cyclestreetsApiKey is not not defined');}
+		if (!isSet ($smsNumbers))		{$this->email ('$smsNumbers is not defined');}
+		if (!isSet ($cyclestreetsApiKey))	{$this->email ('$cyclestreetsApiKey is not defined');}
 		$this->smsProviderApiKey	= $smsProviderApiKey;
 		if (is_string ($smsNumbers)) {$smsNumbers = array ($smsNumbers);}
 		foreach ($smsNumbers as $index => $smsNumber) {

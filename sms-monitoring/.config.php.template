@@ -6,7 +6,7 @@ $emailAddress = '';
 # API key for the SMS provider
 $smsProviderApiKey = '';
 
-# Mobile number (international format)
+# Mobile number(s) (international format) - string or array of numbers
 $smsNumber = '+44 ';
 
 # CycleStreets API key

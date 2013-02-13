@@ -30,10 +30,14 @@ class doCheck
 		
 		# Ensure that the settings have been defined
 		if (!isSet ($smsProviderApiKey))	{$this->email ('$smsProviderApiKey is not defined');}
-		if (!isSet ($smsNumber))			{$this->email ('$smsNumber is not not defined');}
+		if (!isSet ($smsNumbers))			{$this->email ('$smsNumbers is not not defined');}
 		if (!isSet ($cyclestreetsApiKey))	{$this->email ('$cyclestreetsApiKey is not not defined');}
 		$this->smsProviderApiKey	= $smsProviderApiKey;
-		$this->smsNumber			= str_replace (array (' ', '+'), '', $smsNumber);
+		if (is_string ($smsNumbers)) {$smsNumbers = array ($smsNumbers);}
+		foreach ($smsNumbers as $index => $smsNumber) {
+			$smsNumbers[$index] = str_replace (array (' ', '+'), '', $smsNumber);
+		}
+		$this->smsNumbers			= $smsNumbers;
 		$this->cyclestreetsApiKey	= $cyclestreetsApiKey;
 		
 		# Set the timeout for URL requests
@@ -104,11 +108,13 @@ class doCheck
 	{
 		# End if not enabled
 		if (!$this->enableSms) {return;}
-		if (!strlen ($this->smsNumber)) {return;}
+		if (!$this->smsNumbers) {return;}
 		
 		# Send the message
-		$url = "https://api.clockworksms.com/http/send.aspx?key={$this->smsProviderApiKey}&to={$this->smsNumber}&content=" . urlencode ($errorMessage);
-		file_get_contents ($url);
+		foreach ($this->smsNumbers as $smsNumber) {
+			$url = "https://api.clockworksms.com/http/send.aspx?key={$this->smsProviderApiKey}&to={$smsNumber}&content=" . urlencode ($errorMessage);
+			file_get_contents ($url);
+		}
 	}
 	
 	

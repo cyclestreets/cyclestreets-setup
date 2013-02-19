@@ -115,7 +115,7 @@ service apache2 reload >> ${setupLogFile}
 # Report completion
 echo "#	Installing tilecache completed"
 
-# Remove the lock file
-) 9>$lockdir/install-tilecache
+# Remove the lock file - ${0##*/} extracts the script's basename
+) 9>$lockdir/${0##*/}
 
 # End of file

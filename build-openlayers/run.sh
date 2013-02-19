@@ -74,7 +74,7 @@ mv ${olf}/build/OpenLayers.js ${olf}/
 # Report completion
 echo "#	Building OpenLayers.js completed"
 
-# Remove the lock file
-) 9>$lockdir/build-openlayers
+# Remove the lock file - ${0##*/} extracts the script's basename
+) 9>$lockdir/${0##*/}
 
 # End of file

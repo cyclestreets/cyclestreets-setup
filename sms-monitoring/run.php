@@ -28,9 +28,9 @@ class doCheck
 		$this->emailAddress = $emailAddress;
 		
 		# Ensure that the settings have been defined
-		if (!isSet ($smsProviderApiKey))	{$this->email ('$smsProviderApiKey is not defined');}
-		if (!isSet ($smsNumbers))		{$this->email ('$smsNumbers is not defined');}
-		if (!isSet ($cyclestreetsApiKey))	{$this->email ('$cyclestreetsApiKey is not defined');}
+		if (!isSet ($smsProviderApiKey))	{$this->email ('Setup', $smsProviderApiKey is not defined');}
+		if (!isSet ($smsNumbers))		{$this->email ('Setup', $smsNumbers is not defined');}
+		if (!isSet ($cyclestreetsApiKey))	{$this->email ('Setup', $cyclestreetsApiKey is not defined');}
 		$this->smsProviderApiKey	= $smsProviderApiKey;
 		if (is_string ($smsNumbers)) {$smsNumbers = array ($smsNumbers);}
 		foreach ($smsNumbers as $index => $smsNumber) {
@@ -57,7 +57,7 @@ class doCheck
 				// echo "Trying again for {$test}...";
 				sleep (20);
 				if (!$this->{$test} ($errorMessage, $result)) {
-					$this->reportProblem ($errorMessage, $result);
+					$this->reportProblem ($test, $errorMessage, $result);
 					return false;
 				}
 			}
@@ -69,7 +69,7 @@ class doCheck
 	
 	
 	# Function to report a problem
-	private function reportProblem ($errorMessage, $result)
+	private function reportProblem ($test, $errorMessage, $result)
 	{
 		# Echo (debugging)
 		if ($this->debugging) {
@@ -81,7 +81,7 @@ class doCheck
 		$errorMessage = $date . ': ' . $errorMessage;
 		
 		# Send e-mail
-		$this->email ($errorMessage, $result);
+		$this->email ($test, $errorMessage, $result);
 		
 		# Send SMS
 		$this->sendSms ($errorMessage);
@@ -89,7 +89,7 @@ class doCheck
 	
 	
 	# E-mail wrapper function
-	private function email ($errorMessage, $result = false)
+	private function email ($test, $errorMessage, $result = false)
 	{
 		# Compile the message
 		$message = $errorMessage;
@@ -98,7 +98,7 @@ class doCheck
 		}
 		
 		# Send e-mail
-		mail ($this->emailAddress, '*** CycleStreets automated checks - problem ***', $message, 'From: ' . $this->emailAddress);
+		mail ($this->emailAddress, "*** CycleStreets automated checks with {$test} ***", $message, 'From: ' . $this->emailAddress);
 	}
 	
 	

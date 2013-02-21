@@ -7,9 +7,7 @@ $emailAddress = '';
 $smsProviderApiKey = '';
 
 # Mobile number(s) (international format) - string or array of numbers
-$smsNumber = '+44 ';
+$smsNumbers = '+44 ';
 
 # CycleStreets API key
 $cyclestreetsApiKey = '';
-
-?>

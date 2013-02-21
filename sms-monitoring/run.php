@@ -28,9 +28,9 @@ class doCheck
 		$this->emailAddress = $emailAddress;
 		
 		# Ensure that the settings have been defined
-		if (!isSet ($smsProviderApiKey))	{$this->email ('Setup', $smsProviderApiKey is not defined');}
-		if (!isSet ($smsNumbers))		{$this->email ('Setup', $smsNumbers is not defined');}
-		if (!isSet ($cyclestreetsApiKey))	{$this->email ('Setup', $cyclestreetsApiKey is not defined');}
+		if (!isSet ($smsProviderApiKey))	{$this->email ('Setup', '$smsProviderApiKey is not defined');}
+		if (!isSet ($smsNumbers))		{$this->email ('Setup', '$smsNumbers is not defined');}
+		if (!isSet ($cyclestreetsApiKey))	{$this->email ('Setup', '$cyclestreetsApiKey is not defined');}
 		$this->smsProviderApiKey	= $smsProviderApiKey;
 		if (is_string ($smsNumbers)) {$smsNumbers = array ($smsNumbers);}
 		foreach ($smsNumbers as $index => $smsNumber) {

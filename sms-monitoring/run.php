@@ -98,7 +98,7 @@ class doCheck
 		}
 		
 		# Send e-mail
-		mail ($this->emailAddress, "*** CycleStreets automated checks with {$test} ***", $message, 'From: ' . $this->emailAddress);
+		mail ($this->emailAddress, "*** CycleStreets problem with {$test} ***", $message, 'From: ' . $this->emailAddress);
 	}
 	
 	

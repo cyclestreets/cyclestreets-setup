@@ -49,6 +49,9 @@ if $installCronJobs ; then
     # Backup data every day at 6:26 am
     jobs[2]="26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
 
+    # SMS monitoring every 15 minutes
+    jobs[3]="0,15,30,45 * * * * php ${ScriptHome}/sms-monitoring/run.php"
+
     # Install the jobs
     installCronJobs ${username} jobs[@]
 fi

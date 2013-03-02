@@ -54,7 +54,7 @@ if $installCronJobs ; then
     # Update scripts
     jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
 
-    # Import data every day at 11 am
+    # Import data every day
     jobs[2]="0 10 * * * ${ScriptHome}/import-deployment/import.sh"
 
     # Install the jobs

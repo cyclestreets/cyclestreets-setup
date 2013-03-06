@@ -68,8 +68,6 @@ if [ ! -r ONSdata.csv ]; then
  exit 1;
 fi
 
-# WIP
-
 # Load the table definitions
 mysql --user=root --password=${mysqlRootPassword} cyclestreets < tableDefinitions.sql
 
@@ -83,7 +81,7 @@ mysqlimport --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lin
 
 # Create an eastings northings file, which has to be done in a tmp location first otherwise there are privilege problems
 echo "#	Creating eastings northings file"
-rm /tmp/eastingsnorthings.csv
+rm -f /tmp/eastingsnorthings.csv
 mysql -u root -p${mysqlRootPassword} cyclestreets -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
 mv /tmp/eastingsnorthings.csv ${onsFolder}
 

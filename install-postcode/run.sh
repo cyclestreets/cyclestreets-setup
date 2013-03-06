@@ -70,6 +70,33 @@ fi
 
 # WIP
 
+# Load the table definitions
+mysql --user=root --password=${mysqlRootPassword} cyclestreets < tableDefinitions.sql
+
+# Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege. The --local option is needed in some situations.
+mysqlimport --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --user=root --password=${mysqlRootPassword} --local cyclestreets ${onsFolder}/ONSdata.csv
+
+# NB Mysql equivalent is:
+## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
+## SHOW WARNINGS;
+
+
+# Create an eastings northings file, which has to be done in a tmp location first otherwise there are privilege problems
+echo "#	Creating eastings northings file"
+rm /tmp/eastingsnorthings.csv
+mysql -u root -p${mysqlRootPassword} cyclestreets -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
+mv /tmp/eastingsnorthings.csv ${onsFolder}
+
+# Convert all (takes a few minutes)
+echo "#	Converting eastings northings to lon/lat"
+php -d memory_limit=1000M  converteastingsnorthings.php
+mv latlons.csv ONSdata_latlonlookups.csv
+# The --local option is needed in some situations.
+mysqlimport --fields-terminated-by=',' --lines-terminated-by="\n" --user=root --password=${mysqlRootPassword} --local cyclestreets ${onsFolder}/ONSdata_latlonlookups.csv
+
+# Move the data around
+echo "#	Creating new postcode table"
+mysql --user=root --password=${mysqlRootPassword} cyclestreets < newPostcodeTable.sql
 
 # Confirm end of script
 echo -e "#	All now installed $(date)"

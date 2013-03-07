@@ -68,37 +68,55 @@ if [ ! -r ONSdata.csv ]; then
  exit 1;
 fi
 
+# External databse
+externalDb=csExternal
+
+# Useful bindings
+myopt="-uroot -p${mysqlRootPassword} -hlocalhost"
+mysql="mysql ${myopt}"
+
+# Check the database already exists
+if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
+then
+    echo "#	Stopping: external database ${externalDb} must exist."
+    # Terminate the script
+    exit 1;
+fi
+
 # Load the table definitions
-mysql --user=root --password=${mysqlRootPassword} cyclestreets < tableDefinitions.sql
+${mysql} ${externalDb} < tableDefinitions.sql
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege. The --local option is needed in some situations.
-mysqlimport --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --user=root --password=${mysqlRootPassword} --local cyclestreets ${onsFolder}/ONSdata.csv
+mysqlimport ${myopt} --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
 ## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
 ## SHOW WARNINGS;
 
-
 # Create an eastings northings file, which has to be done in a tmp location first otherwise there are privilege problems
 echo "#	Creating eastings northings file"
 rm -f /tmp/eastingsnorthings.csv
-mysql -u root -p${mysqlRootPassword} cyclestreets -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
+
+# Exclude the 22,000+ broken postcodes that lie at the origin of the (east|north)ing grid.
+${mysql} ${externalDb} -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata where OSEAST1M > 0 and OSNRTH1M > 0 INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
 mv /tmp/eastingsnorthings.csv ${onsFolder}
 
 # Convert all (takes a few minutes)
 echo "#	Converting eastings northings to lon/lat"
 php -d memory_limit=1000M  converteastingsnorthings.php
+rm eastingsnorthings.csv
 mv latlons.csv ONSdata_latlonlookups.csv
 # The --local option is needed in some situations.
-mysqlimport --fields-terminated-by=',' --lines-terminated-by="\n" --user=root --password=${mysqlRootPassword} --local cyclestreets ${onsFolder}/ONSdata_latlonlookups.csv
+mysqlimport ${myopt} --fields-terminated-by=',' --lines-terminated-by="\n" --local ${externalDb} ${onsFolder}/ONSdata_latlonlookups.csv
+rm ONSdata_latlonlookups.csv
 
-# Move the data around
+# Tidy extracted data into postcode table
 echo "#	Creating new postcode table"
-mysql --user=root --password=${mysqlRootPassword} cyclestreets < newPostcodeTable.sql
+${mysql} ${externalDb} < newPostcodeTable.sql
 
-# Create the short postcodes
+# Create the short district postcodes
 echo "#	Creating short postcode table"
-mysql --user=root --password=${mysqlRootPassword} cyclestreets < shortPostcode.sql
+${mysql} ${externalDb} < shortPostcode.sql
 
 # Confirm end of script
 echo -e "#	All now installed $(date)"

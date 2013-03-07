@@ -105,10 +105,10 @@ mv /tmp/eastingsnorthings.csv ${onsFolder}
 echo "#	Converting eastings northings to lon/lat"
 php -d memory_limit=1000M  converteastingsnorthings.php
 rm eastingsnorthings.csv
-mv latlons.csv ONSdata_latlonlookups.csv
+mv latlons.csv map_postcodes.csv
 # The --local option is needed in some situations.
-mysqlimport ${myopt} --fields-terminated-by=',' --lines-terminated-by="\n" --local ${externalDb} ${onsFolder}/ONSdata_latlonlookups.csv
-rm ONSdata_latlonlookups.csv
+mysqlimport ${myopt} --fields-terminated-by=',' --lines-terminated-by="\n" --local ${externalDb} ${onsFolder}/map_postcodes.csv
+rm map_postcodes.csv
 
 # Tidy extracted data into postcode table
 echo "#	Creating new postcode table"

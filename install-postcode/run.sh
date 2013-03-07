@@ -96,6 +96,10 @@ mysqlimport --fields-terminated-by=',' --lines-terminated-by="\n" --user=root --
 echo "#	Creating new postcode table"
 mysql --user=root --password=${mysqlRootPassword} cyclestreets < newPostcodeTable.sql
 
+# Create the short postcodes
+echo "#	Creating short postcode table"
+mysql --user=root --password=${mysqlRootPassword} cyclestreets < shortPostcode.sql
+
 # Confirm end of script
 echo -e "#	All now installed $(date)"
 

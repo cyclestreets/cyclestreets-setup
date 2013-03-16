@@ -78,6 +78,9 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
+# Prepare the apt index; it may be practically non-existent on a fresh VM
+apt-get update
+
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}
 

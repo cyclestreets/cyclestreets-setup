@@ -79,7 +79,7 @@ fi
 asCS="sudo -u ${username}"
 
 # Prepare the apt index; it may be practically non-existent on a fresh VM
-apt-get update
+apt-get update > /dev/null
 
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}

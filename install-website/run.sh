@@ -78,13 +78,27 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
+# Prepare the apt index; it may be practically non-existent on a fresh VM
+apt-get update > /dev/null
+
 # Install basic software
 apt-get -y install wget git emacs >> ${setupLogFile}
 
 # Install Apache, PHP
 echo "#	Installing Apache, MySQL, PHP" >> ${setupLogFile}
 
+is_installed () {
+	dpkg -s "$1" | grep -q '^Status:.*installed'
+}
+
 # Provide the mysql root password - to avoid being prompted.
+if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
+	echo "# You have apparently not specified a MySQL root password"
+	echo "# This means the install script would get stuck prompting for one"
+	echo "# .. aborting"
+	exit 1
+fi
+
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 

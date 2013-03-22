@@ -67,6 +67,11 @@ cd ${websitesContentFolder}
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php import/run.php
 
+# Start the routing service
+# Note: the service command is available to the root user on debian
+# It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
+echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" service cycleroutingd start
+
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}
 

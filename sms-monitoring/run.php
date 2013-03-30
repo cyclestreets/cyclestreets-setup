@@ -150,7 +150,7 @@ class doCheck
 			|| !isSet ($result['marker'][0])
 			|| !isSet ($result['marker'][0]['@attributes'])
 			|| !isSet ($result['marker'][0]['@attributes']['start'])
-			|| ($result['marker'][0]['@attributes']['start'] != '_Buckingham Palace')
+			|| ($result['marker'][0]['@attributes']['start'] != 'Buckingham Palace')
 			
 			# Check for a co-ordinate in the right area of the country
 			|| !isSet ($result['marker'][0]['@attributes']['coordinates'])

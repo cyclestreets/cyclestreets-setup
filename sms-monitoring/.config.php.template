@@ -11,3 +11,6 @@ $smsNumbers = '+44 ';
 
 # CycleStreets API key
 $cyclestreetsApiKey = '';
+
+# Times not to run checks, e.g. 0415 (4.15am) or 2345 (11.45pm)
+$ignoreTimes = array ();

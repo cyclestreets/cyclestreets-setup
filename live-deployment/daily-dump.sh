@@ -92,12 +92,12 @@ if [ $minItineraryId = "NULL" ]; then
 
 else
 
-    #	Discard route batch files that are exactly 7 days old
-    find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime 7 -delete
-    find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime 7 -delete
+    #	Discard route batch files that are more than 7 days old
+    find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime +7 -delete
+    find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime +7 -delete
 
     #	Repartition latest routes
-    echo "$(date)	Repartition batch: $minItineraryId. Now closing site to routing." >> ${setupLogFile}
+    echo "$(date)	Repartition batch: ${minItineraryId}. Now closing site to routing." >> ${setupLogFile}
 
     #	Do this task first so that the closure of the journey planner has a predictable time - ie. the start of the cron job.
     #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables

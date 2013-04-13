@@ -44,7 +44,7 @@ echo "#	CycleStreets installation $(date)" >> ${setupLogFile}
 if id -u ${username} >/dev/null 2>&1; then
     echo "#	User ${username} exists already and will be used."
 else
-    echo "#\User ${username} does not exist: creating now."
+    echo "#	User ${username} does not exist: creating now."
 
     # Request a password for the CycleStreets user account; see http://stackoverflow.com/questions/3980668/how-to-get-a-password-from-a-shell-script-without-echoing
     if [ ! ${password} ]; then

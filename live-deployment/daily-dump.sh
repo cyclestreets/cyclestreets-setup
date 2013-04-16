@@ -76,7 +76,7 @@ fi
 
 
 ### Stage 2 - CycleStreets regular tasks for www
-
+# Procedures here are similar to failover-deployment/toViola.sh
 # The minimum itinerary id can be used as the handle for a batch of routes.
 # Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
 minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")

@@ -71,55 +71,76 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 fi
 
 ### Stage 2
+# This next section is similar to live-deployment/daily-dump.sh
+# The minimum itinerary id can be used as the handle for a batch of routes.
+# Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
+minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")
 
-#	IJS tables
-#	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
-#
-#	Archive the IJS tables
-mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > /websites/www/backups/www_schema_ijs_tables.sql.gz
-#
-#	Repartition, which moves the current to the archived tables. See: documentation/schema/repartition.sql
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
-#
-#	Re-open the journey planner.
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
+# If the minItineraryId is NULL then the repartitioning can be skipped
+if [ $minItineraryId = "NULL" ]; then
 
-#	Create md5 hash
-openssl dgst -md5 /websites/www/backups/www_schema_ijs_tables.sql.gz > /websites/www/backups/www_schema_ijs_tables.sql.gz.md5
+    #	No new routes to partition (can happen e.g if the site is in a failover mode)
+    echo "$(date)	Skipping repartition" >> ${setupLogFile}
 
-# Tested to here
-exit 1
+else
+    #	Repartition latest routes
+    echo "$(date)	Repartition batch: ${minItineraryId}. Now closing site to routing." >> ${setupLogFile}
+
+    #	Do this task first so that the closure of the journey planner has a predictable time - ie. the start of the cron job.
+    #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
+
+    #	Archive the IJS tables
+    dump=${websitesBackupsFolder}/olivia_routes_${minItineraryId}.sql.gz
+    mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_street_hurdle map_error | gzip > ${dump}
+
+    #	Repartition, which moves the current to the archived tables, and log the output. See: documentation/schema/repartition.sql
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
+
+    #	Re-open the journey planner.
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
+
+    #	Notify re-opened
+    echo "$(date)	Re-opened site to routing." >> ${setupLogFile}
+
+    #	Create md5 hash
+    openssl dgst -md5 ${dump} > ${dump}.md5
+fi
+
+
 #	Backup the CycleStreets database
 #	Option -R dumps stored procedures & functions
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} -R cyclestreets | gzip > /websites/www/backups/www_cyclestreets.sql.gz
+dump=${websitesBackupsFolder}/olivia_cyclestreets.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} -R cyclestreets | gzip > ${dump}
 #	Create md5 hash
-openssl dgst -md5 /websites/www/backups/www_cyclestreets.sql.gz > /websites/www/backups/www_cyclestreets.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
 
 # 	Schema Structure (no data)
 #	This allows the schema to be viewed at the page: http://www.cyclestreets.net/schema/sql/
 #	Option -R dumps stored procedures & functions
-mysqldump -R --no-data -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets | gzip > /websites/www/backups/www_schema_cyclestreets.sql.gz
+dump=${websitesBackupsFolder}/olivia_schema_cyclestreets.sql.gz
+mysqldump -R --no-data -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets | gzip > ${dump}
 #	Create md5 hash
-openssl dgst -md5 /websites/www/backups/www_schema_cyclestreets.sql.gz > /websites/www/backups/www_schema_cyclestreets.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
 
 
-#	Blogs
-#	These databases do not have any stored routines, so the -R option is not necessary
+##	Blogs
+#	The databases do not have any stored routines, so the -R option is not necessary
 
-#	Dump
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blog | gzip > /websites/www/backups/www_schema_blog_database.sql.gz
+#	CycleStreets
+#	Database dump
+dump=${websitesBackupsFolder}/olivia_schema_blog_database.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blog | gzip > ${dump}
 #	Hash
-openssl dgst -md5 /websites/www/backups/www_schema_blog_database.sql.gz > /websites/www/backups/www_schema_blog_database.sql.gz.md5
+openssl dgst -md5 ${dump} > ${dump}.md5
 
-#	Dump
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > /websites/www/backups/www_schema_blogcyclescape_database.sql.gz
+
+#	Cyclescape
+#	Database dump
+dump=${websitesBackupsFolder}/olivia_schema_blogcyclescape_database.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > ${dump}
 #	Hash
-openssl dgst -md5 /websites/www/backups/www_schema_blogcyclescape_database.sql.gz > /websites/www/backups/www_schema_blogcyclescape_database.sql.gz.md5
-
-#
-#	Clear out temp files which needs to be run as www-data for safety.
-sudo -u www-data ${websitesContentFolder}/data/tempgenerated/zap.sh
+openssl dgst -md5 ${dump} > ${dump}.md5
 
 ### Final Stage
 

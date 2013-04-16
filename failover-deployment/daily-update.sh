@@ -101,7 +101,7 @@ mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cycl
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
 gunzip < /websites/www/backups/www_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
 
-#	Turn off pseudoCron to stop duplicated cronning from the backup machine
+#	Stop duplicated cronning from the backup machine
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = null;";
 
 #	Sync the photomap

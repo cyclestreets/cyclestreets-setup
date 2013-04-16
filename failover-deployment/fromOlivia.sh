@@ -56,16 +56,16 @@ folder=/websites/www/backups
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 
 #	Download CyclesStreets Schema
-$download $administratorEmail $server $folder www_schema_cyclestreets.sql.gz
+$download $administratorEmail $server $folder olivia_schema_cyclestreets.sql.gz
 
 #	Download & Restore CycleStreets database
-$download $administratorEmail $server $folder www_cyclestreets.sql.gz
+$download $administratorEmail $server $folder olivia_cyclestreets.sql.gz
 
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cyclestreets;";
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
+gunzip < /websites/www/backups/olivia_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
 
-#	Turn off pseudoCron to stop duplicated cronning from the backup machine
+#	Stop duplicated cronning from the backup machine
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = null;";
 
 #	Sync the photomap
@@ -75,30 +75,39 @@ sudo -u cyclestreets rsync -rt --cvs-exclude ${server}:${websitesContentFolder}/
 #	Synchronization photos
 sudo -u cyclestreets rsync -rt --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
 
-#	IJS tables
-#
-#	Get the latest copy of www's current IJS tables.
-$download $administratorEmail $server $folder www_schema_ijs_tables.sql.gz
+#	Latest routes
+batchRoutes='olivia_routes_*.sql.gz'
 
-#	Add them
-gunzip < /websites/www/backups/www_schema_ijs_tables.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
+#	Find all route files with the named pattern that have been modified within the last 24 hours.
+files=$(ssh ${server} "find ${folder} -maxdepth 1 -name '${batchRoutes}' -type f -mtime 0 -print")
+for f in $files
+do
+    #	Get only the name component
+    fileName=$(basename $f)
+
+    #	Get the latest copy of www's current IJS tables.
+    $download $administratorEmail $server $folder $fileName
+
+    #	Add them
+    gunzip < /websites/www/backups/$fileName | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
+done
+
+
 #
-#	Repartition, which copies the current to the archived tables.
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()";
+#	Repartition, which copies the current to the archived tables, and log output.
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
+
 
 #	CycleStreets Blog
-$download $administratorEmail $server $folder www_schema_blog_database.sql.gz
+$download $administratorEmail $server $folder olivia_schema_blog_database.sql.gz
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blog;";
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blog DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_schema_blog_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blog
+gunzip < /websites/www/backups/olivia_schema_blog_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blog
 
 #	Cyclescape Blog
-$download $administratorEmail $server $folder www_schema_blogcyclescape_database.sql.gz
+$download $administratorEmail $server $folder olivia_schema_blogcyclescape_database.sql.gz
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclescape;";
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape
-
-#	Clear out temp files which needs to be run as www-data for safety.
-sudo -u www-data ${websitesContentFolder}/data/tempgenerated/zap.sh
+gunzip < /websites/www/backups/olivia_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape
 
 # End of file

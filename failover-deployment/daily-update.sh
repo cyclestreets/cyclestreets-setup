@@ -115,6 +115,9 @@ set +e
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
 
+# GeoSynchronization photos
+rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
+
 #	Also sync the blog code
 # !! Hardwired location
 rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog

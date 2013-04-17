@@ -50,6 +50,7 @@ echo "$(date)	CycleStreets fromOlivia $(id)" >> ${setupLogFile}
 
 
 #	Download and restore the CycleStreets database.
+#	This section is simlar to failover-deployment/daily-update.sh
 #	Folder locations
 server=olivia.cyclestreets.net
 folder=/websites/www/backups
@@ -69,11 +70,19 @@ gunzip < /websites/www/backups/olivia_cyclestreets.sql.gz | mysql -hlocalhost -u
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = null;";
 
 #	Sync the photomap
+# Tolerate errors from rsync
+set +e
 sudo -u cyclestreets rsync -rt --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
 sudo -u cyclestreets rsync -rt --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
 
 #	Synchronization photos
 sudo -u cyclestreets rsync -rt --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
+
+#	Also sync the blog code
+# !! Hardwired location
+rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
+# Resume exit on error
+set -e
 
 #	Latest routes
 batchRoutes='olivia_routes_*.sql.gz'

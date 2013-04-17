@@ -110,4 +110,9 @@ mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database i
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
 gunzip < /websites/www/backups/olivia_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape
 
+### Final Stage
+
+# Finish
+echo "$(date)	All done" >> ${setupLogFile}
+
 # End of file

@@ -9,7 +9,10 @@
 #	Without the config argument the values of those parameters are returned.
 #
 # Configure
-# sudo ln -s ~/src/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+# sudo ln -s /home/cyclestreets/src/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+# Then restart munin
+# sudo service munin-node restart
+#
 # Remove
 # sudo rm /etc/munin/plugins/cyclestreets
 

@@ -74,15 +74,16 @@ if [ ! "$(id -nu)" = "${username}" ]; then
     exit 1
 fi
 
+#	Discard route batch files that are more than 7 days old
+batchRoutes='www_routes_*.sql.gz'
+find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime +7 -delete
+find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime +7 -delete
 
 ### Stage 2 - CycleStreets regular tasks for www
 # Procedures here are similar to failover-deployment/toViola.sh
 # The minimum itinerary id can be used as the handle for a batch of routes.
 # Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
 minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")
-
-#	Latest routes
-batchRoutes='www_routes_*.sql.gz'
 
 # If the minItineraryId is NULL then the repartitioning can be skipped
 if [ $minItineraryId = "NULL" ]; then
@@ -91,11 +92,6 @@ if [ $minItineraryId = "NULL" ]; then
     echo "$(date)	Skipping repartition" >> ${setupLogFile}
 
 else
-
-    #	Discard route batch files that are more than 7 days old
-    find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime +7 -delete
-    find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime +7 -delete
-
     #	Repartition latest routes
     echo "$(date)	Repartition batch: ${minItineraryId}. Now closing site to routing." >> ${setupLogFile}
 

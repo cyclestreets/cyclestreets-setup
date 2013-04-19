@@ -151,10 +151,10 @@ find ${folder} -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
 find ${folder} -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
 #	CycleStreets Blog
-$download $administratorEmail $server $folder www_schema_blog_database.sql.gz
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blog;";
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blog DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_schema_blog_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blog
+$download $administratorEmail $server $folder www_schema_blogcyclestreets_database.sql.gz
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclestreets;";
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+gunzip < /websites/www/backups/www_schema_blogcyclestreets_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclestreets
 
 #	Cyclescape Blog
 $download $administratorEmail $server $folder www_schema_blogcyclescape_database.sql.gz

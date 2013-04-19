@@ -108,10 +108,10 @@ mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitio
 
 
 #	CycleStreets Blog
-$download $administratorEmail $server $folder olivia_schema_blog_database.sql.gz
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blog;";
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blog DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/olivia_schema_blog_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blog
+$download $administratorEmail $server $folder olivia_schema_blogcyclestreets_database.sql.gz
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclestreets;";
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+gunzip < /websites/www/backups/olivia_schema_blogcyclestreets_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclestreets
 
 #	Cyclescape Blog
 $download $administratorEmail $server $folder olivia_schema_blogcyclescape_database.sql.gz

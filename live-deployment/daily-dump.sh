@@ -140,8 +140,8 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 
 #	CycleStreets
 #	Database dump
-dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blog_database.sql.gz
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blog | gzip > ${dump}
+dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
+mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclestreets | gzip > ${dump}
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 

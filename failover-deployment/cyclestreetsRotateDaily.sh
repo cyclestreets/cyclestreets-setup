@@ -56,7 +56,7 @@ rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Rotate
 $rotateDaily $folder www_cyclestreets.sql.gz
-$rotateDaily $folder www_schema_blog_database.sql.gz
+$rotateDaily $folder www_schema_blogcyclestreets_database.sql.gz
 $rotateDaily $folder www_schema_blogcyclescape_database.sql.gz
 
 # Remove the lock file - ${0##*/} extracts the script's basename

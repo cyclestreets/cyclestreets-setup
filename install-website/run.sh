@@ -232,7 +232,10 @@ ${mysql} -e "grant select, insert, update, delete, execute on cyclestreets.* to 
 ${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 
 # Update-able blogs
-${mysql} -e "grant select, insert, update, delete, execute on \`blog%\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+# http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
+blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
+${mysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
+${mysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
 
 # The following is needed only to support OSM import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}

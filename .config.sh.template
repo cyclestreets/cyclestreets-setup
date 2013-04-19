@@ -25,6 +25,16 @@ mysqlRootPassword=
 mysqlWebsiteUsername=website
 mysqlWebsitePassword=
 
+# Credentials for the blog user
+blogDatabasename=
+blogUsername=
+blogPassword=
+
+# Credentials for the cyclescape blog user
+# !! Temporary - as this block should move over to a new script
+cyclescapeBlogDatabasename=
+cyclescapeBlogUsername=
+cyclescapeBlogPassword=
 
 ## Working directories
 websitesContentFolder=/websites/www/content

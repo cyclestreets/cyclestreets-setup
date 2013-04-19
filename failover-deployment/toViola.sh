@@ -72,6 +72,8 @@ fi
 
 ### Stage 2
 # This next section is similar to live-deployment/daily-dump.sh
+dumpPrefix=olivia
+
 # The minimum itinerary id can be used as the handle for a batch of routes.
 # Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
 minItineraryId=$(mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -Nse "select min(id) from map_itinerary")
@@ -91,7 +93,7 @@ else
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
 
     #	Archive the IJS tables
-    dump=${websitesBackupsFolder}/olivia_routes_${minItineraryId}.sql.gz
+    dump=${websitesBackupsFolder}/${dumpPrefix}_routes_${minItineraryId}.sql.gz
     #	Skip disable keys because renabling them takes a long time on the archive
     mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_error | gzip > ${dump}
 
@@ -108,10 +110,9 @@ else
     openssl dgst -md5 ${dump} > ${dump}.md5
 fi
 
-
 #	Backup the CycleStreets database
 #	Option -R dumps stored procedures & functions
-dump=${websitesBackupsFolder}/olivia_cyclestreets.sql.gz
+dump=${websitesBackupsFolder}/${dumpPrefix}_cyclestreets.sql.gz
 mysqldump -hlocalhost -uroot -p${mysqlRootPassword} -R cyclestreets | gzip > ${dump}
 #	Create md5 hash
 openssl dgst -md5 ${dump} > ${dump}.md5
@@ -119,7 +120,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 # 	Schema Structure (no data)
 #	This allows the schema to be viewed at the page: http://www.cyclestreets.net/schema/sql/
 #	Option -R dumps stored procedures & functions
-dump=${websitesBackupsFolder}/olivia_schema_cyclestreets.sql.gz
+dump=${websitesBackupsFolder}/${dumpPrefix}_schema_cyclestreets.sql.gz
 mysqldump -R --no-data -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets | gzip > ${dump}
 #	Create md5 hash
 openssl dgst -md5 ${dump} > ${dump}.md5
@@ -130,7 +131,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 
 #	CycleStreets
 #	Database dump
-dump=${websitesBackupsFolder}/olivia_schema_blog_database.sql.gz
+dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blog_database.sql.gz
 mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blog | gzip > ${dump}
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5
@@ -138,7 +139,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 
 #	Cyclescape
 #	Database dump
-dump=${websitesBackupsFolder}/olivia_schema_blogcyclescape_database.sql.gz
+dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blogcyclescape_database.sql.gz
 mysqldump -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape | gzip > ${dump}
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5

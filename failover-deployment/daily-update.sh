@@ -87,20 +87,21 @@ fi
 #	This section is simlar to failover-deployment/fromOlivia.sh
 #	Folder locations
 server=${liveMachineAddress}
+dumpPrefix=www
 folder=${websitesBackupsFolder}
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 
 #	Download CyclesStreets Schema
-$download $administratorEmail $server $folder www_schema_cyclestreets.sql.gz
+$download $administratorEmail $server $folder ${dumpPrefix}_schema_cyclestreets.sql.gz
 
 #	Download & Restore CycleStreets database
-$download $administratorEmail $server $folder www_cyclestreets.sql.gz
+$download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
 
 # Replace the cyclestreets database
 echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cyclestreets;";
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
+gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
 
 #	Stop duplicated cronning from the backup machine
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = null;";
@@ -122,11 +123,12 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization
 #	Also sync the blog code
 # !! Hardwired location
 rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
+
 # Resume exit on error
 set -e
 
 #	Latest routes
-batchRoutes='www_routes_*.sql.gz'
+batchRoutes="${dumpPrefix}_routes_*.sql.gz"
 
 #	Find all route files with the named pattern that have been modified within the last 24 hours.
 files=$(ssh ${server} "find ${folder} -maxdepth 1 -name '${batchRoutes}' -type f -mtime 0 -print")
@@ -146,24 +148,24 @@ done
 #	Repartition, which copies the current to the archived tables, and log output.
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
 
-#	Discard route batch files that are exactly 7 days old
-find ${folder} -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
-find ${folder} -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
-
 #	CycleStreets Blog
-$download $administratorEmail $server $folder www_schema_blogcyclestreets_database.sql.gz
+$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclestreets;";
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_schema_blogcyclestreets_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclestreets
+gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclestreets
 
 #	Cyclescape Blog
-$download $administratorEmail $server $folder www_schema_blogcyclescape_database.sql.gz
+$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclescape_database.sql.gz
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclescape;";
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/www_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape
+gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape
 
 
 ### Final Stage
+
+#	Discard route batch files that are exactly 7 days old
+find ${folder} -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
+find ${folder} -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

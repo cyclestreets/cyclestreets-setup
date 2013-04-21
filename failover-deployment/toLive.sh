@@ -71,7 +71,6 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 fi
 
 ### Stage 2
-# This next section is similar to live-deployment/daily-dump.sh
 dumpPrefix=olivia
 
 # Dump recent data

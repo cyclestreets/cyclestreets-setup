@@ -80,7 +80,6 @@ find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime +7 -delete
 find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime +7 -delete
 
 ### Stage 2 - CycleStreets regular tasks for www
-# Procedures here are similar to failover-deployment/toViola.sh
 dumpPrefix=www
 
 # Dump recent data

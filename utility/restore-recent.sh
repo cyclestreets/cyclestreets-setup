@@ -1,3 +1,9 @@
+#!/bin/bash
+# Description
+#	Utility to restore recent CycleStreets data
+# Synopsis
+#	dumpPrefix should be setup by the caller and is used as a prefix for all the dump files
+
 folder=${websitesBackupsFolder}
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 

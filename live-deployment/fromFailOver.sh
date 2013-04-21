@@ -54,79 +54,9 @@ echo "$(date)	CycleStreets fromOlivia $(id)" >> ${setupLogFile}
 #	Folder locations
 server=olivia.cyclestreets.net
 dumpPrefix=olivia
-folder=${websitesBackupsFolder}
-download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 
-#	Download CyclesStreets Schema
-$download $administratorEmail $server $folder ${dumpPrefix}_schema_cyclestreets.sql.gz
-
-#	Download & Restore CycleStreets database
-$download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
-
-# Replace the cyclestreets database
-echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
-mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists cyclestreets;";
-mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
-
-#	Stop duplicated cronning from the backup machine
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = null;";
-
-#	Sync the photomap
-# Use option -O (omit directories from --times), necessary because apparently only owner (or root) can set a directory's mtime.
-# rsync can produce other errors such as:
-# rsync: mkstemp "/websites/www/content/data/photomap2/46302/.original.jpg.H3xy2f" failed: Permission denied (13)
-# rsync: mkstemp "/websites/www/content/data/photomap2/46302/.rotated.jpg.Y3sb28" failed: Permission denied (13)
-# these appear to be temporary files, possibly generated and owned by the system. Hard to track down and probably safe to ignore.
-# Tolerate errors from rsync
-set +e
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
-
-# GeoSynchronization photos
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
-
-#	Also sync the blog code
-# !! Hardwired location
-rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
-
-# Resume exit on error
-set -e
-
-#	Latest routes
-batchRoutes="${dumpPrefix}_routes_*.sql.gz"
-
-#	Find all route files with the named pattern that have been modified within the last 24 hours.
-files=$(ssh ${server} "find ${folder} -maxdepth 1 -name '${batchRoutes}' -type f -mtime 0 -print")
-for f in $files
-do
-    #	Get only the name component
-    fileName=$(basename $f)
-
-    #	Get the latest copy of www's current IJS tables.
-    $download $administratorEmail $server $folder $fileName
-
-    #	Add them
-    gunzip < /websites/www/backups/$fileName | mysql -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets
-done
-
-#
-#	Repartition, which copies the current to the archived tables, and log output.
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
-
-#	CycleStreets Blog
-$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclestreets;";
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclestreets
-
-#	Cyclescape Blog
-$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclescape_database.sql.gz
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "drop database if exists blogcyclescape;";
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclescape_database.sql.gz | mysql -hlocalhost -uroot -p${mysqlRootPassword} blogcyclescape
-
-### Final Stage
+# Restore recent data
+. ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

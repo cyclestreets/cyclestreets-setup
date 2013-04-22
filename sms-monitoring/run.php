@@ -161,7 +161,7 @@ class doCheck
 			|| !isSet ($result['waypoint'][0])
 			|| !isSet ($result['waypoint'][0]['@attributes'])
 			|| !isSet ($result['waypoint'][0]['@attributes']['longitude'])
-			|| ($result['waypoint'][0]['@attributes']['longitude'] != '-0.140085')
+			|| ($result['waypoint'][0]['@attributes']['longitude'] != '-0.140059')
 			
 			# Testing..
 			// || !isSet ($result['doesnotexist'])

@@ -36,6 +36,8 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${web
 # GeoSynchronization photos
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
 
+# !! Need to fix the ownership after the rsync above using the same fixups as applied by failover-deploymnet/install-website.sh - but that requires root user.
+
 #	Also sync the blog code
 # !! Hardwired location
 rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog

@@ -278,16 +278,18 @@ class doCheck
 		
 		# Ensure the data is as expected
 		if (
-			# Check the marker structure has the first marker
+			# Check the marker structure
 			   !isSet ($result['query'])
 			|| !isSet ($result['results'])
 			|| !isSet ($result['results']['result'])
-			|| !isSet ($result['results']['result']['name'])
+			# When there are more then one result for Thoday Street check the first
+			|| !isSet ($result['results']['result'][0])
+			|| !isSet ($result['results']['result'][0]['name'])
 			
 			# Check for a co-ordinate in the right area of the country
-			|| (!substr_count ($result['results']['result']['name'], 'Thoday'))
-			|| (!substr_count ($result['results']['result']['longitude'], '0.14'))
-			|| (!substr_count ($result['results']['result']['latitude'], '52.20'))
+			|| (!substr_count ($result['results']['result'][0]['name'], 'Thoday'))
+			|| (!substr_count ($result['results']['result'][0]['longitude'], '0.14'))
+			|| (!substr_count ($result['results']['result'][0]['latitude'], '52.20'))
 			
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
@@ -299,8 +301,8 @@ class doCheck
 		# Return success
 		return true;
 	}
-	
-	
+
+
 	# Photo (retrieval) test
 	private function test_photo (&$errorMessage = false, &$result = false)
 	{

@@ -132,9 +132,9 @@ class doCheck
 	private function test_journey_new (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$routeUrl = "http://www.cyclestreets.net" . "/api/journey.json?key={$this->cyclestreetsApiKey}&plan=quietest&itinerarypoints=-0.140085,51.502022,Buckingham+Palace|-0.129204,51.504353,Horse+Guards+Parade|-0.129394,51.499496,Westminster+Abbey";
-		if (!$json = @file_get_contents ($routeUrl)) {
-			$errorMessage = "The /api/journey call (new journey) did not respond within {$this->timeoutSeconds} seconds.";
+		$apiUrl = "http://www.cyclestreets.net" . "/api/journey.json?key={$this->cyclestreetsApiKey}&plan=quietest&itinerarypoints=-0.140085,51.502022,Buckingham+Palace|-0.129204,51.504353,Horse+Guards+Parade|-0.129394,51.499496,Westminster+Abbey";
+		if (!$json = @file_get_contents ($apiUrl)) {
+			$errorMessage = "The /api/journey call (new journey) did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -166,7 +166,7 @@ class doCheck
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/journey call (new journey) did not return the expected format.";
+			$errorMessage = "The /api/journey call (new journey) did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -179,9 +179,9 @@ class doCheck
 	private function test_journey_existing (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$routeUrl = "http://www.cyclestreets.net" . "/api/journey.json?key={$this->cyclestreetsApiKey}&plan=fastest&itinerary=345529";
-		if (!$json = @file_get_contents ($routeUrl)) {
-			$errorMessage = "The /api/journey call (retrieve journey) did not respond within {$this->timeoutSeconds} seconds.";
+		$apiUrl = "http://www.cyclestreets.net" . "/api/journey.json?key={$this->cyclestreetsApiKey}&plan=fastest&itinerary=345529";
+		if (!$json = @file_get_contents ($apiUrl)) {
+			$errorMessage = "The /api/journey call (retrieve journey) did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -213,7 +213,7 @@ class doCheck
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/journey call (retrieve journey) did not return the expected format.";
+			$errorMessage = "The /api/journey call (retrieve journey) did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -226,9 +226,9 @@ class doCheck
 	private function test_nearestpoint (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$routeUrl = "http://www.cyclestreets.net" . "/api/nearestpoint.json?key={$this->cyclestreetsApiKey}&longitude=0.117950&latitude=52.205302";
-		if (!$json = @file_get_contents ($routeUrl)) {
-			$errorMessage = "The /api/nearestpoint call did not respond within {$this->timeoutSeconds} seconds.";
+		$apiUrl = "http://www.cyclestreets.net" . "/api/nearestpoint.json?key={$this->cyclestreetsApiKey}&longitude=0.117950&latitude=52.205302";
+		if (!$json = @file_get_contents ($apiUrl)) {
+			$errorMessage = "The /api/nearestpoint call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -252,7 +252,7 @@ class doCheck
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/nearestpoint call did not return the expected format. URL: {$routeUrl}";
+			$errorMessage = "The /api/nearestpoint call did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -265,9 +265,9 @@ class doCheck
 	private function test_geocoder (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$routeUrl = "http://www.cyclestreets.net" . "/api/geocoder.json?key={$this->cyclestreetsApiKey}&w=0.113937&s=52.201937&e=0.121963&n=52.208669&zoom=16&street=thoday%20street";
-		if (!$json = @file_get_contents ($routeUrl)) {
-			$errorMessage = "The /api/geocoder call did not respond within {$this->timeoutSeconds} seconds.";
+		$apiUrl = "http://www.cyclestreets.net" . "/api/geocoder.json?key={$this->cyclestreetsApiKey}&w=0.113937&s=52.201937&e=0.121963&n=52.208669&zoom=16&street=thoday%20street";
+		if (!$json = @file_get_contents ($apiUrl)) {
+			$errorMessage = "The /api/geocoder call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -292,7 +292,7 @@ class doCheck
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/geocoder call did not return the expected format. URL: {$routeUrl}";
+			$errorMessage = "The /api/geocoder call did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -305,9 +305,9 @@ class doCheck
 	private function test_photo (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$routeUrl = "http://www.cyclestreets.net" . "/api/photo.json?key={$this->cyclestreetsApiKey}&id=80";
-		if (!$json = @file_get_contents ($routeUrl)) {
-			$errorMessage = "The /api/photo call did not respond within {$this->timeoutSeconds} seconds.";
+		$apiUrl = "http://www.cyclestreets.net" . "/api/photo.json?key={$this->cyclestreetsApiKey}&id=80";
+		if (!$json = @file_get_contents ($apiUrl)) {
+			$errorMessage = "The /api/photo call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -331,15 +331,12 @@ class doCheck
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/photo call did not return the expected format.";
+			$errorMessage = "The /api/photo call did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		
 		# Return success
 		return true;
 	}
-	
-	
-}
 
-?>
+}

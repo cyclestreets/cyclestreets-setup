@@ -292,7 +292,7 @@ class doCheck
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/geocoder call did not return the expected format.";
+			$errorMessage = "The /api/geocoder call did not return the expected format. URL: {$routeUrl}";
 			return false;
 		}
 		

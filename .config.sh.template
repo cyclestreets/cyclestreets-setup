@@ -25,6 +25,15 @@ mysqlRootPassword=
 mysqlWebsiteUsername=website
 mysqlWebsitePassword=
 
+# IP bans from proven nuisance/spam hosts
+ipbans=$(cat << EOF
+# IP bans from proven nuisance/spam hosts
+<Directory />
+	# deny from xxx.xxx.xxx.xxx
+</Directory>
+EOF)
+
+
 # Credentials for the blog user
 blogDatabasename=
 blogUsername=

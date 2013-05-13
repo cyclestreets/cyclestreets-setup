@@ -231,20 +231,100 @@ if [ ! -r ${localVirtualHostFile} ]; then
 
 </VirtualHost>
 EOF
+else
+    echo "#	Virtual host already exists: ${localVirtualHostFile}"
 fi
 
 # Enable this virtual host
 a2ensite cslocalhost >> ${setupLogFile}
 
-# Add apache2/conf.d/ files such as zcsglobal
-if [ ! -L /etc/apache2/conf.d/zcsglobal ]; then
-    #	Include zcsglobal config which is so named as to be loaded last from the conf.d folder.
-    ln -s ${websitesContentFolder}/configuration/apache/conf.d/zcsglobal /etc/apache2/conf.d/zcsglobal
+globalApacheConfigFile=/etc/apache2/conf.d/zcsglobal
+
+# Check if the local global apache config file exists already
+if [ ! -r ${globalApacheConfigFile} ]; then
+    # Create the global apache config file
+    cat > ${globalApacheConfigFile} << EOF
+# Provides local configuration that affects all hosted sites.
+
+# This file is loaded from the /etc/apache2/conf.d folder, it's name begins with a z so that it is loaded last from that folder.
+# The files in the conf.d folder are all loaded before any VirtualHost files.
+
+# Avoid giving away unnecessary information about the webserver configuration
+ServerSignature Off
+ServerTokens ProductOnly
+php_admin_value expose_php 0
+
+# ServerAdmin
+ServerAdmin ${administratorEmail}
+
+# PHP environment
+php_value short_open_tag off
+
+# Unicode UTF-8
+AddDefaultCharset utf-8
+
+# Disallow /somepage.php/Foo to load somepage.php
+AcceptPathInfo Off
+
+# Logging
+LogLevel warn
+
+# Statistics
+Alias /images/statsicons /websites/configuration/analog/images
+
+# Ensure FCKeditor .xml files have the correct MIME type
+<Location /_fckeditor/>
+	AddType application/xml .xml
+</Location>
+
+# Deny photomap file reading directly
+<Directory /websites/www/content/data/photomap/>
+	deny from all
+</Directory>
+<Directory /websites/www/content/data/photomap2/>
+	deny from all
+</Directory>
+
+# Disallow loading of .svn folder contents
+<DirectoryMatch .*\.svn/.*>
+	Deny From All
+</DirectoryMatch>
+
+# Deny access to areas not intended to be public
+<LocationMatch ^/(archive|configuration|documentation|import|classes|libraries|scripts)>
+	order deny,allow
+	deny from all
+</LocationMatch>
+
+# Disallow use of .htaccess file directives by default
+<Directory />
+	# Options FollowSymLinks
+	AllowOverride None
+</Directory>
+
+#<Directory /websites/www/content/>
+#	Options Indexes FollowSymLinks MultiViews
+#	AllowOverride None
+#	Order allow,deny
+#	allow from all
+#</Directory>
+
+
+# Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area
+<Directory /websites/www/content/blog/>
+	AllowOverride FileInfo
+</Directory>
+
+EOF
+
+    # Add IP bans - quoted to preserve newlines
+    echo "${ipbans}" >> ${globalApacheConfigFile}
+else
+    echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
 fi
 
 # Reload apache
 service apache2 reload >> ${setupLogFile}
-
 
 # Database setup
 # Useful binding
@@ -403,9 +483,10 @@ else
 fi
 
 
-
 # Confirm end of script
-echo -e "#	All now installed $(date)"
+msg="#	All now installed $(date)"
+echo $msg >> ${setupLogFile}
+echo $msg
 
 # Return true to indicate success
 :

@@ -185,9 +185,9 @@ chown -R www-data ${websitesContentFolder}/data
 # For gpsPhoto.pl (for geolocation by synchronization), add dependencies, and Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
 apt-get -y install libimage-exiftool-perl
 apt-get -y install libxml-dom-perl		# Might not actually be needed
-chown www-data ${websitesContentFolder}/scripts/gpsPhoto.pl
-chmod -x ${websitesContentFolder}/scripts/gpsPhoto.pl
-chmod ug+x ${websitesContentFolder}/scripts/gpsPhoto.pl
+chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
+chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
+chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql

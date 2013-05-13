@@ -25,7 +25,7 @@ mysqlRootPassword=
 mysqlWebsiteUsername=website
 mysqlWebsitePassword=
 
-# A value use to encrypt user passwords
+# A string used to encrypt user passwords
 signinSalt=
 
 # Include any IP bans

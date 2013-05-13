@@ -176,13 +176,11 @@ if [ ! -d ${websitesContentFolder}/.svn ]
 then
     ${asCS} svn co --username=${currentActualUser} --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
 else
-    ${asCS} svn update --username=${currentActualUser} --no-auth-cache
+    ${asCS} svn update --username=${currentActualUser} --no-auth-cache >> ${setupLogFile}
 fi
 
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
-# Fix ownership of the svn folder and its contents back to username, to allow svn updating
-find ${websitesContentFolder}/data -name .svn -a -type d -print0 | xargs -0 chown -R ${username}
 
 # For gpsPhoto.pl (for geolocation by synchronization), add dependencies, and Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
 apt-get -y install libimage-exiftool-perl

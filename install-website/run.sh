@@ -149,15 +149,19 @@ fi
 # Working directory
 mkdir -p /websites
 
-# Set the group for the containing folder to be rollout:
+# Own the folder and set the group to be rollout:
 chown ${username}:rollout /websites
 
-# Allow sharing of private groups
+# Allow sharing of private groups (i.e. new files are created group writeable)
+# !! This won't work for any sections run using ${asCS} because in those cases the umask will be inherited from the cyclestreets user's login profile.
 umask 0002
 
 # This is the clever bit which adds the setgid bit, it relies on the value of umask.
 # It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
+# (The equivalent for the setuid bit does not work because of security issues and so file owners are set later on in the script.)
 chmod g+ws /websites
+
+# The following folders and files are be created with root as owner, but that is fixed later on in the script.
 
 # Add the path to content (the -p option creates the intermediate www)
 mkdir -p ${websitesContentFolder}
@@ -178,6 +182,9 @@ then
 else
     ${asCS} svn update --username=${currentActualUser} --no-auth-cache >> ${setupLogFile}
 fi
+
+# Assume ownership of all the new files and folders
+chown -R ${username} /websites
 
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data

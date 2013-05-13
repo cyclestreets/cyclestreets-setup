@@ -201,10 +201,39 @@ chown www-data:rollout ${websitesContentFolder}/documentation/RequestedMissingCi
 a2enmod rewrite >> ${setupLogFile}
 
 # Virtual host configuration
-# Create symbolic link if it doesn't already exist
-if [ ! -L /etc/apache2/sites-available/cslocalhost ]; then
-    ln -s ${websitesContentFolder}/configuration/apache/sites-available/cslocalhost /etc/apache2/sites-available/
+localVirtualHostFile=/etc/apache2/sites-available/cslocalhost
+
+# Check if the local virtual host exists already
+if [ ! -r ${localVirtualHostFile} ]; then
+    # Create the local virtual host
+    cat > ${localVirtualHostFile} << EOF
+<VirtualHost *:80>
+
+	# Available URL(s)
+	# Note: ServerName should not use wildcards, use ServerAlias for that.
+	ServerName localhost
+	ServerAlias *.localhost
+
+	# Logging
+	CustomLog /websites/www/logs/access.log combined
+	ErrorLog /websites/www/logs/error.log
+
+	# Where the files are
+	DocumentRoot /websites/www/content/
+		
+	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit rescans
+	Include /websites/www/content/.htaccess-base
+	Include /websites/www/content/.htaccess-cyclestreets
+
+	# This is necessary to enable cookies to work on the domain http://localhost/ 
+	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
+	php_admin_value session.cookie_domain none
+
+</VirtualHost>
+EOF
 fi
+
+# Enable this virtual host
 a2ensite cslocalhost >> ${setupLogFile}
 
 # Add apache2/conf.d/ files such as zcsglobal

@@ -25,6 +25,9 @@ mysqlRootPassword=
 mysqlWebsiteUsername=website
 mysqlWebsitePassword=
 
+# A value use to encrypt user passwords
+signinSalt=
+
 # Include any IP bans
 # These are commented out by default to avoid overruling any other sections matching: <directory />
 ipbans=$(cat << EOF

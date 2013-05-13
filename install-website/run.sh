@@ -372,6 +372,7 @@ then
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
 -e "s/YOUR_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
+-e "s/YOUR_SALT_HERE/${signinSalt}/" \
 	${phpConfig}
 fi
 

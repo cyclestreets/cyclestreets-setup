@@ -103,11 +103,15 @@ echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | deb
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
 # Install core webserver software
+echo "#	Installing core webserver packages" >> ${setupLogFile}
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
+
+# ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
+apt-get -y install imagemagick php5-imagick >> ${setupLogFile}
 
 # Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
 sudo a2enmod deflate
-apt-get -y install php-apc
+apt-get -y install php-apc >> ${setupLogFile}
 service apache2 restart
 
 # Install Python
@@ -119,7 +123,7 @@ echo "#	Some utilities" >> ${setupLogFile}
 apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
 
 # Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
-apt-get -y install ntp
+apt-get -y install ntp >> ${setupLogFile}
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # apt-get -y install phpmyadmin

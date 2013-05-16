@@ -30,7 +30,7 @@ signinSalt=
 
 # Include any IP bans
 # These are commented out by default to avoid overruling any other sections matching: <directory />
-# Note: rather than $(cat ..) use backticks, see http://www.krenger.ch/blog/bash-here-document-at-line-n-delimited-by-end-of-file-wanted-eof/
+# Note: rather than $(cat ..) use backticks around the heredoc, see http://www.krenger.ch/blog/bash-here-document-at-line-n-delimited-by-end-of-file-wanted-eof/
 ipbans=`cat << EOF
 # IP bans from proven nuisance/spam hosts
 #<Directory />

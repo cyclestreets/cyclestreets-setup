@@ -30,12 +30,13 @@ signinSalt=
 
 # Include any IP bans
 # These are commented out by default to avoid overruling any other sections matching: <directory />
-ipbans=$(cat << EOF
+# Note: rather than $(cat ..) use backticks, see http://www.krenger.ch/blog/bash-here-document-at-line-n-delimited-by-end-of-file-wanted-eof/
+ipbans=`cat << EOF
 # IP bans from proven nuisance/spam hosts
 #<Directory />
 #	# deny from xxx.xxx.xxx.xxx
 #</Directory>
-EOF)
+EOF`
 
 
 # Credentials for the blog user

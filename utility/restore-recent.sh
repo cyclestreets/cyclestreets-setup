@@ -39,8 +39,9 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization
 # !! Need to fix the ownership after the rsync above using the same fixups as applied by failover-deploymnet/install-website.sh - but that requires root user.
 
 #	Also sync the blog code
-# !! Hardwired location
+# !! Hardwired locations
 rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
+rsync -rtO --cvs-exclude ${server}:/websites/cyclescape-blog/content /websites/cyclescape-blog
 
 # Resume exit on error
 set -e

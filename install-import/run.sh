@@ -72,6 +72,7 @@ then
 -e "s/MYSQL_ROOT_PASSWORD_HERE/${mysqlRootPassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
+-e "s/YOUR_SALT_HERE/${signinSalt}/" \
 	${phpConfig}
 fi
 
@@ -90,8 +91,13 @@ ${mysql} -e "grant select , insert , update , delete , create , drop , index , a
 
 ${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`map_elevation\` to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}';" >> ${setupLogFile}
 
-echo "#	Reached limit of testing"
 
+# Elevation data
+msg="#	Elevation data - not yet part of in this installation script - setup manually"
+echo $msg >> ${setupLogFile}
+echo $msg
+
+echo "#	Reached limit of testing"
 
 
 # Confirm end of script

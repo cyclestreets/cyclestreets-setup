@@ -76,19 +76,13 @@ then
 fi
 
 
-
-
 # Database setup
 # Useful binding
 mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 
-
-
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
-#${mysql} -e "CREATE USER 'import'@'%' IDENTIFIED BY '***';
-#grant select, insert, update, delete, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
-
+${mysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword} with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0';" >> ${setupLogFile}
 
 echo "#	Reached limit of testing"
 

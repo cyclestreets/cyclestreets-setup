@@ -405,6 +405,21 @@ then
     ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 fi
 
+# External db
+externalDb=csExternal
+# Unless the database already exists:
+if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
+then
+    # Create basicRoutingDb database
+    echo "#	Create ${externalDb} database"
+    # !! Need to provide a place from where a full version can be downloaded.
+    echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately."
+    ${mysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql >> ${setupLogFile}
+
+    # Allow website read only access
+    ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+fi
+
 # Install a basic routing db from the repository
 basicRoutingDb=routing121114
 # Unless the database already exists:

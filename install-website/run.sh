@@ -374,7 +374,7 @@ then
     sed -i \
 -e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
--e "s/YOUR_EMAIL_HERE/${administratorEmail}/" \
+-e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
 	${phpConfig}

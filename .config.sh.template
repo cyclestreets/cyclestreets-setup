@@ -25,6 +25,10 @@ mysqlRootPassword=
 mysqlWebsiteUsername=website
 mysqlWebsitePassword=
 
+# Credentials for the import user
+mysqlImportUsername=import
+mysqlImportPassword=
+
 # A string used to encrypt user passwords
 signinSalt=
 

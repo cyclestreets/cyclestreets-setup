@@ -392,6 +392,19 @@ then
     gunzip < ${websitesContentFolder}/documentation/schema/cyclestreets.sql.gz | ${mysql} cyclestreets >> ${setupLogFile}
 fi
 
+# Archive db
+archiveDb=csArchive
+# Unless the database already exists:
+if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'" | grep ${archiveDb} > /dev/null 2>&1
+then
+    # Create basicRoutingDb database
+    echo "#	Create ${archiveDb} database"
+    ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql >> ${setupLogFile}
+
+    # Allow website read only access
+    ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+fi
+
 # Install a basic routing db from the repository
 basicRoutingDb=routing121114
 # Unless the database already exists:

@@ -193,9 +193,13 @@ chown -R ${username} /websites
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 
-# For gpsPhoto.pl (for geolocation by synchronization), add dependencies, and Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
+# Geolocation by synchronization
+# https://github.com/cyclestreets/cyclestreets/wiki/GPS-Syncronization
+# For gpsPhoto.pl, add dependencies
 apt-get -y install libimage-exiftool-perl
-apt-get -y install libxml-dom-perl		# Might not actually be needed
+# This one might not actually be needed
+apt-get -y install libxml-dom-perl
+# Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
 chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
 chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
 chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl

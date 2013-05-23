@@ -116,10 +116,19 @@ class doCheck
 		# End if not enabled
 		if (!$this->enableSms) {return;}
 		if (!$this->smsNumbers) {return;}
-		
+
+		# Messages should be limited to 140 chars (to avoid being charged multiple times), but as urlencoding is likely to add a few more choose a safer limit
+		$limit = 120;
+
+		# Trim if necessary
+		if (strlen ($errorMessage) > $limit) {$errorMessage = substr ($errorMessage, 0, $limit);}
+
+		# Encode
+		$urlEncodedMessage = urlencode ($errorMessage);
+
 		# Send the message
 		foreach ($this->smsNumbers as $smsNumber) {
-			$url = "https://api.clockworksms.com/http/send.aspx?key={$this->smsProviderApiKey}&to={$smsNumber}&content=" . urlencode ($errorMessage);
+			$url = "https://api.clockworksms.com/http/send.aspx?key={$this->smsProviderApiKey}&to={$smsNumber}&content=" . $urlEncodedMessage;
 			file_get_contents ($url);
 		}
 	}

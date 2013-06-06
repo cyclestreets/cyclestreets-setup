@@ -52,7 +52,9 @@ backups=/websites/www/backups
 dump=csTracBackup.tar.bz2
 
 #	Park the old dump
-mv ${backups}/trac ${backups}/tracOld
+if [ -d ${backups}/trac ]; then
+    mv ${backups}/trac ${backups}/tracOld
+fi
 
 #	Dump
 echo $password | sudo -S trac-admin /websites/dev/trac/cyclestreets hotcopy ${backups}/trac >> ${setupLogFile}
@@ -65,8 +67,9 @@ tar cjf ${backups}/${dump} -C ${backups} trac
 openssl dgst -md5 ${backups}/${dump} > ${backups}/${dump}.md5
 
 #	Tidyup
-rm -rf ${backups}/tracOld
-
+if [ -d ${backups}/tracOld ]; then
+    rm -rf ${backups}/tracOld
+fi
 
 ##	Subversion
 dump=cyclestreetsRepo.dump.bz2

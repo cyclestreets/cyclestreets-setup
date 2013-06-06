@@ -5,6 +5,10 @@
 
 # Requires password-less access to the import machine.
 
+# When in failover mode uncomment the next two lines:
+#echo "# Skipping in failover mode"
+#exit 1
+
 ### Stage 1 - general setup
 
 # Avoid echo if possible as this generates cron emails

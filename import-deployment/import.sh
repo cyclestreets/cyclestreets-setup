@@ -1,4 +1,9 @@
 #!/bin/bash
+
+# When in failover mode uncomment the next two lines:
+#echo "# Skipping in failover mode"
+#exit 1
+
 # Start an import run
 
 echo "#	CycleStreets import $(date)"

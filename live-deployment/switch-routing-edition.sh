@@ -130,6 +130,9 @@ fi
 
 ### Stage 4 - do switch-over
 
+# Clear this cache - (whose rows relate to a specific routing edition)
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
+
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 

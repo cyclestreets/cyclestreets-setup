@@ -53,6 +53,8 @@ importFolder=${websitesContentFolder}/import
 # Ensure the downloads folder is group writable
 # !! Hardwired folder
 chmod g+w ${websitesContentFolder}/data/osm/downloads
+# Enable new routing folders
+chmod g+w ${websitesContentFolder}/data/routing
 
 # Switch to import folder
 cd ${importFolder}

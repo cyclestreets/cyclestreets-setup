@@ -43,12 +43,12 @@ ipbans=`cat << EOF
 EOF`
 
 
-# Credentials for the blog user
+# Credentials for the blog user (leave empty if not setting up a blog)
 blogDatabasename=
 blogUsername=
 blogPassword=
 
-# Credentials for the cyclescape blog user
+# Credentials for the cyclescape blog user (leave empty if not setting up a blog)
 # !! Temporary - as this block should move over to a new script
 cyclescapeBlogDatabasename=
 cyclescapeBlogUsername=

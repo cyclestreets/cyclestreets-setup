@@ -50,6 +50,10 @@ fi
 # Define import folder
 importFolder=${websitesContentFolder}/import
 
+# Ensure the downloads folder is group writable
+# !! Hardwired folder
+chmod g+w ${websitesContentFolder}/data/osm/downloads
+
 # Switch to import folder
 cd ${importFolder}
 

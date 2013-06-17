@@ -176,6 +176,11 @@ mkdir -p ${websitesLogsFolder}
 # Create a folder for backups
 mkdir -p ${websitesBackupsFolder}
 
+# Setup a file to record unarchived itineraries
+touch ${websitesBackupsFolder}/itinerariesUnarchived.csv
+chown www-data ${websitesBackupsFolder}/itinerariesUnarchived.csv
+
+
 # Switch to content folder
 cd ${websitesContentFolder}
 

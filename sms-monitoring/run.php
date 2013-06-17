@@ -291,14 +291,16 @@ class doCheck
 			   !isSet ($result['query'])
 			|| !isSet ($result['results'])
 			|| !isSet ($result['results']['result'])
-			# When there are more then one result for Thoday Street check the first
-			|| !isSet ($result['results']['result'][0])
-			|| !isSet ($result['results']['result'][0]['name'])
+
+			# When there is more then one result for Thoday Street check the first
+			|| $thodayResult = (isset ($result['results']['result']['name']) ? $result['results']['result'] : $result['results']['result'][0])
+			|| !isSet ($thodayResult)
+			|| !isSet ($thodayResult['name'])
 			
 			# Check for a co-ordinate in the right area of the country
-			|| (!substr_count ($result['results']['result'][0]['name'], 'Thoday'))
-			|| (!substr_count ($result['results']['result'][0]['longitude'], '0.14'))
-			|| (!substr_count ($result['results']['result'][0]['latitude'], '52.20'))
+			|| (!substr_count ($thodayResult['name'], 'Thoday'))
+			|| (!substr_count ($thodayResult['longitude'], '0.14'))
+			|| (!substr_count ($thodayResult['latitude'], '52.20'))
 			
 			# Testing..
 			// || !isSet ($result['doesnotexist'])

@@ -285,16 +285,26 @@ class doCheck
 		// print_r ($result);
 		// file_put_contents ('./results.txt', print_r ($result, 1));
 
+		 // Initialise this flag
+		 $testFailed = false;
 
 		# Ensure the data is as expected
 		if (
 			# Check the marker structure
 			   !isSet ($result['query'])
 			|| !isSet ($result['results'])
-			|| !isSet ($result['results']['result'])
+			|| !isSet ($result['results']['result'])) {
+
+			// Test will fail
+			$testFailed = true;
+
+		} else {
 
 			# When there is more then one result for Thoday Street check the first
-			|| !(isset ($result['results']['result']['name']) ? $thodayResult = $result['results']['result'] : $thodayResult = $result['results']['result'][0])
+			$thodayResult = (isset ($result['results']['result']['name']) ? $result['results']['result'] : $result['results']['result'][0]);
+		}
+
+		if ($testFailed
 			|| !isSet ($thodayResult['name'])
 			
 			# Check for a co-ordinate in the right area of the country
@@ -303,7 +313,7 @@ class doCheck
 			|| (!substr_count ($thodayResult['latitude'], '52.20'))
 			
 			# Testing...
-			# || true
+		    #|| true
 		) {
 			$errorMessage = "The /api/geocoder call did not return the expected format. URL: {$apiUrl}";
 			return false;

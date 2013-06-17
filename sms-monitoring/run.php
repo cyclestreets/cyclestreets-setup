@@ -58,7 +58,7 @@ class doCheck
 				$tests[] = $method;
 			}
 		}
-		
+
 		# Run each test; if it fails, wait a short while then try again before reporting a problem
 		foreach ($tests as $test) {
 			if (!$this->{$test} ($errorMessage, $result)) {
@@ -284,7 +284,8 @@ class doCheck
 		$result = json_decode ($json, true);
 		// print_r ($result);
 		// file_put_contents ('./results.txt', print_r ($result, 1));
-		
+
+
 		# Ensure the data is as expected
 		if (
 			# Check the marker structure
@@ -293,8 +294,7 @@ class doCheck
 			|| !isSet ($result['results']['result'])
 
 			# When there is more then one result for Thoday Street check the first
-			|| $thodayResult = (isset ($result['results']['result']['name']) ? $result['results']['result'] : $result['results']['result'][0])
-			|| !isSet ($thodayResult)
+			|| !(isset ($result['results']['result']['name']) ? $thodayResult = $result['results']['result'] : $thodayResult = $result['results']['result'][0])
 			|| !isSet ($thodayResult['name'])
 			
 			# Check for a co-ordinate in the right area of the country
@@ -302,13 +302,13 @@ class doCheck
 			|| (!substr_count ($thodayResult['longitude'], '0.14'))
 			|| (!substr_count ($thodayResult['latitude'], '52.20'))
 			
-			# Testing..
-			// || !isSet ($result['doesnotexist'])
+			# Testing...
+			# || true
 		) {
 			$errorMessage = "The /api/geocoder call did not return the expected format. URL: {$apiUrl}";
 			return false;
-		}
-		
+			}
+
 		# Return success
 		return true;
 	}

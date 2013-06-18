@@ -30,6 +30,12 @@ else
     #	Repartition, which moves the current to the archived tables, and log the output. See: documentation/schema/repartition.sql
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}
 
+    #	Add unidentifiedItineraries to the archive database
+    mysqlimport --local --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\n" --columns=guiId,cityId,userId,apiUserId,clientRouteId,start,finish,startBearing,startSpeed,crow_fly_distance,event,speed,dismount,whence,itineraryPoints -uroot -p${mysqlRootPassword} csArchive ${websitesBackupsFolder}/map_unidentifiedItinerary_archive.csv
+
+    #	Clear the unidentifiedItineraries file
+    echo -n > ${websitesBackupsFolder}/map_unidentifiedItinerary_archive.csv
+
     #	Re-open the journey planner.
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set journeyPlannerStatus='live',notice=''";
 

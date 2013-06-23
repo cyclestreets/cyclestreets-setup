@@ -77,6 +77,9 @@ cd ${websitesContentFolder}
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php import/run.php
 
+# Clear this cache - (whose rows relate to a specific routing edition)
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
+
 # Start the routing service
 # Note: the service command is available to the root user on debian
 # It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.

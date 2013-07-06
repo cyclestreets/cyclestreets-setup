@@ -195,6 +195,10 @@ fi
 # Assume ownership of all the new files and folders
 chown -R ${username} /websites
 
+# Add group writability.
+# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
+chmod -R g+w /websites
+
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 

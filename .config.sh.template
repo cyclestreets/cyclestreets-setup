@@ -27,6 +27,7 @@ mysqlWebsitePassword=
 
 # Credentials for the import user
 mysqlImportUsername=import
+# Avoid using a % in this password because that won't survive being passed to version 0.43.1 of osmosis (this problem has been flagged with them)
 mysqlImportPassword=
 
 # A string used to encrypt user passwords

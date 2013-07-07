@@ -9,8 +9,8 @@ $smsProviderApiKey = '';
 # Mobile number(s) (international format) - string or array of numbers
 $smsNumbers = '+44 ';
 
-# CycleStreets API key
-$cyclestreetsApiKey = '';
+# API keys to use for the tests - usually the cyclestreets test API key, but include others that need special testing
+$testApiKeys = array ();
 
 # Times not to run checks, e.g. 0415 (4.15am) or 2345 (11.45pm)
 $ignoreTimes = array ();

@@ -59,13 +59,22 @@ class doCheck
 		}
 
 		// Apply the test to each of the apiKeys
-		foreach ($testApiKeys as $testApiKey) {
+		// $testSpec is false to skip all tests, true to apply all test, or an array of only those tests to apply
+		foreach ($testApiKeys as $testApiKey => $testSpec) {
+
+			// Skip tests for this apiKey
+			if (!$testSpec) {continue;}
 
 			// Bind
-			$this->testApiKey	= $testApiKey;
+			$this->testApiKey = $testApiKey;
 
 			# Run each test; if it fails, wait a short while then try again before reporting a problem
 			foreach ($tests as $test) {
+
+				// Skip tests not specified for this api key
+				if (is_array ($testSpec) && !in_array ($test, $testSpec)) {continue;}
+
+				// Run the test
 				if (!$this->{$test} ($errorMessage, $result)) {
 					// echo "Trying again for {$test}...";
 					sleep (20);

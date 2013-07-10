@@ -10,6 +10,7 @@ $smsProviderApiKey = '';
 $smsNumbers = '+44 ';
 
 # API keys to use for the tests - usually the cyclestreets test API key, but include others that need special testing
+# An array of apiKey => testSpec, where testSpec is one of false to skip all tests, true to apply all test, or an array of only those tests to apply
 $testApiKeys = array ();
 
 # Times not to run checks, e.g. 0415 (4.15am) or 2345 (11.45pm)

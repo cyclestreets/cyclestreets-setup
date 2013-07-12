@@ -46,24 +46,26 @@ fi
 # Load the credentials
 . ${configFile}
 
+# When an import disk has been specified in the config, check it has enough free space
+if [ ! -n "${importDisk}" ]; then
 
+    # Get free disk space in Gigabytes
+    # http://www.cyberciti.biz/tips/shell-script-to-watch-the-disk-space.html
+    # !! Note: this check is rather machine-specific as it happens that on our machine the key disk is at /dev/sda1 which will not be true in general.
+    freeSpace=$(df -BG ${importDisk} | grep -vE '^Filesystem' | awk '{ print $4 }')
 
-# Get free disk space in Gigabytes
-# http://www.cyberciti.biz/tips/shell-script-to-watch-the-disk-space.html
-# !! Note: this check is rather machine-specific as it happens that on our machine the key disk is at /dev/sda1 which will not be true in general.
-freeSpace=$(df -BG /dev/sda1 | grep -vE '^Filesystem' | awk '{ print $4 }')
+    # Remove the G                                                                                                                                                            
+    # http://www.cyberciti.biz/faq/bash-remove-last-character-from-string-line-word/
+    freeSpace="${freeSpace%?}"
 
-# Remove the G                                                                                                                                                            
-# http://www.cyberciti.biz/faq/bash-remove-last-character-from-string-line-word/
-freeSpace="${freeSpace%?}"
+    # Amount of free space required in Gigabytes
+    needSpace=80
 
-# Amount of free space required in Gigabytes
-needSpace=80
-
-if [ "${freeSpace}" -lt "${needSpace}" ];
-then
-    echo "#	Import: freespace is ${freeSpace}G, but at least ${needSpace}G are required."
-    exit 1
+    if [ "${freeSpace}" -lt "${needSpace}" ];
+    then
+        echo "#	Import: freespace is ${freeSpace}G, but at least ${needSpace}G are required."
+        exit 1
+    fi
 fi
 
 # Stop the routing service

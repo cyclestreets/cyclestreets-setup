@@ -114,6 +114,8 @@ if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]
 fi
 
 # Check to see if this routing database already exists
+# !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
+# but in fact that is the condition desired.
 if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
 	echo "#	Stopping because the routing database ${importEdition} already exists." >> ${setupLogFile}
 	exit 1

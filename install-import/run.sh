@@ -91,6 +91,7 @@ ${mysql} -e "grant select , insert , update , delete , create , drop , index , a
 
 ${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`map_elevation\` to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}';" >> ${setupLogFile}
 
+${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}';" >> ${setupLogFile}
 
 # Elevation data
 msg="#	Elevation data - not yet part of in this installation script - setup manually"

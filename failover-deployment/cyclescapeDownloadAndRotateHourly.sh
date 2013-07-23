@@ -67,15 +67,15 @@ fi
 server=www.cyclescape.org
 folder=/websites/cyclescape/backup
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
-rotateHourly=${SCRIPTDIRECTORY}/../utility/rotateHourly.sh
+rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Download
 $download $administratorEmail $server $folder cyclescapeDB.sql.gz
 $download $administratorEmail $server $folder toolkitShared.tar.bz2
 
 #	Rotate
-$rotateHourly $folder cyclescapeDB.sql.gz
-$rotateHourly $folder toolkitShared.tar.bz2
+$rotateDaily $folder cyclescapeDB.sql.gz
+$rotateDaily $folder toolkitShared.tar.bz2
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

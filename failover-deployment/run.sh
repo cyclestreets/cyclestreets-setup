@@ -58,7 +58,7 @@ if $installCronJobs ; then
     jobs[3]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
     # Hourly backup of Cyclescape
-    jobs[4]="19 * * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh"
+    jobs[4]="42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
     jobs[5]="49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"

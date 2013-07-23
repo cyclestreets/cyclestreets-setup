@@ -81,7 +81,7 @@ dumpPrefix=failover
 
 # Restore these cronjobs
 cat <(crontab -l) <(echo "49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
-cat <(crontab -l) <(echo "19 * * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh") | crontab -
+cat <(crontab -l) <(echo "42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh") | crontab -
 cat <(crontab -l) <(echo "5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh") | crontab -
 cat <(crontab -l) <(echo "0 10 * * * ${ScriptHome}/import-deployment/import.sh") | crontab -
 

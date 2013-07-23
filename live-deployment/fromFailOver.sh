@@ -30,6 +30,9 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 SCRIPTDIRECTORY=$DIR
 
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
 # Define the location of the credentials file relative to script directory
 configFile=../.config.sh
 
@@ -59,8 +62,8 @@ dumpPrefix=failover
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
 # Restore these cronjobs
-cat <(crontab -l) <(echo "4 4 * * * /home/cyclestreets/src/cyclestreets-setup/live-deployment/daily-dump.sh") | crontab -
-cat <(crontab -l) <(echo "34 1,2,3,4 * * * /home/cyclestreets/src/cyclestreets-setup/live-deployment/install-routing-data.sh") | crontab -
+cat <(crontab -l) <(echo "4 4 * * * ${ScriptHome}/live-deployment/daily-dump.sh") | crontab -
+cat <(crontab -l) <(echo "34 1,2,3,4 * * * ${ScriptHome}/live-deployment/install-routing-data.sh") | crontab -
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

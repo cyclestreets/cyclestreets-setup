@@ -28,6 +28,9 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 SCRIPTDIRECTORY=$DIR
 
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
 # Define the location of the credentials file relative to script directory
 configFile=../.config.sh
 
@@ -77,10 +80,10 @@ dumpPrefix=failover
 . ${SCRIPTDIRECTORY}/../utility/dump-recent.sh
 
 # Restore these cronjobs
-cat <(crontab -l) <(echo "49 7 * * * /home/cyclestreets/src/cyclestreets-setup/failover-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
-cat <(crontab -l) <(echo "19 * * * * /home/cyclestreets/src/cyclestreets-setup/failover-deployment/cyclescapeDownloadAndRotateHourly.sh") | crontab -
-cat <(crontab -l) <(echo "5 5 * * * /home/cyclestreets/src/cyclestreets-setup/failover-deployment/daily-update.sh") | crontab -
-cat <(crontab -l) <(echo "0 10 * * * /home/cyclestreets/src/cyclestreets-setup/import-deployment/import.sh") | crontab -
+cat <(crontab -l) <(echo "49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
+cat <(crontab -l) <(echo "19 * * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateHourly.sh") | crontab -
+cat <(crontab -l) <(echo "5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh") | crontab -
+cat <(crontab -l) <(echo "0 10 * * * ${ScriptHome}/import-deployment/import.sh") | crontab -
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

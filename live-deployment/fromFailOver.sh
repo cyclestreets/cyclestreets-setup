@@ -58,6 +58,10 @@ dumpPrefix=failover
 # Restore recent data
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
+# Restore these cronjobs
+cat <(crontab -l) <(echo "4 4 * * * /home/cyclestreets/src/cyclestreets-setup/live-deployment/daily-dump.sh") | crontab -
+cat <(crontab -l) <(echo "34 1,2,3,4 * * * /home/cyclestreets/src/cyclestreets-setup/live-deployment/install-routing-data.sh") | crontab -
+
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 

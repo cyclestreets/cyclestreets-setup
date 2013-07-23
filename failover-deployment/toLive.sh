@@ -76,6 +76,12 @@ dumpPrefix=failover
 # Dump recent data
 . ${SCRIPTDIRECTORY}/../utility/dump-recent.sh
 
+# Restore these cronjobs
+cat <(crontab -l) <(echo "49 7 * * * /home/cyclestreets/src/cyclestreets-setup/failover-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
+cat <(crontab -l) <(echo "19 * * * * /home/cyclestreets/src/cyclestreets-setup/failover-deployment/cyclescapeDownloadAndRotateHourly.sh") | crontab -
+cat <(crontab -l) <(echo "5 5 * * * /home/cyclestreets/src/cyclestreets-setup/failover-deployment/daily-update.sh") | crontab -
+cat <(crontab -l) <(echo "0 10 * * * /home/cyclestreets/src/cyclestreets-setup/import-deployment/import.sh") | crontab -
+
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 

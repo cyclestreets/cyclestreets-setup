@@ -1,6 +1,6 @@
 #!/bin/bash
-#	When olivia is running as the live server, this script can be used to generate files to keep viola in sync.
-#	And should be run manually on olivia, as cyclestreets
+#	When the failover is running as the live server, this script can be used to generate files to keep live machine in sync.
+#	It should be run manually on the failover machine, as user cyclestreets.
 
 ### Stage 1 - general setup
 
@@ -43,8 +43,8 @@ fi
 # Logging
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-echo "#	CycleStreets toViola in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets toViola $(id)" >> ${setupLogFile}
+echo "#	CycleStreets toLive in progress, follow log file with: tail -f ${setupLogFile}"
+echo "$(date)	CycleStreets toLive $(id)" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineAddress}" ]; then
@@ -71,7 +71,7 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 fi
 
 ### Stage 2
-dumpPrefix=olivia
+dumpPrefix=failover
 
 # Dump recent data
 . ${SCRIPTDIRECTORY}/../utility/dump-recent.sh

@@ -91,7 +91,10 @@ importMachineFile=${websitesBackupsFolder}/importdefinition.ini
 importDisk=
 
 # An alternative machine that can provide routing services, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
-failoverRoutingServer=''
+failoverRoutingServer=
+
+# Failover server
+failoverServer=
 
 # Tilecache
 tilecacheUrl=tile.cyclestreets.net

@@ -88,7 +88,7 @@ fi
 ### Stage 2 - CycleStreets regular tasks for www
 
 #	Download and restore the CycleStreets database.
-#	This section is simlar to failover-deployment/fromOlivia.sh
+#	This section is simlar to failover-deployment/fromFailOver.sh
 #	Folder locations
 server=${liveMachineAddress}
 dumpPrefix=www

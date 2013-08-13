@@ -452,11 +452,6 @@ then
     gunzip < ${websitesContentFolder}/documentation/schema/${basicRoutingDb}.sql.gz | ${mysql} ${basicRoutingDb} >> ${setupLogFile}
 fi
 
-# Setup a symlink to the routing data if it doesn't already exist
-if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
-    ln -s ${basicRoutingDb} ${websitesContentFolder}/data/routing/current
-fi
-
 # Create a config if not already present
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 if [ ! -x "${routingEngineConfigFile}" ]; then

@@ -265,7 +265,15 @@ if [ ! -L /etc/apache2/sites-enabled/cslocalhost ]; then
    ln -s ../sites-available/cslocalhost /etc/apache2/sites-enabled/cslocalhost
 fi
 
-globalApacheConfigFile=/etc/apache2/conf.d/zcsglobal
+# Determine location of apache global configuration files
+if [ -d /etc/apache2/conf.d ]; then
+    globalApacheConfigFile=/etc/apache2/conf.d/zcsglobal
+elif [ -d /etc/apache2/conf-available ]; then
+    globalApacheConfigFile=/etc/apache2/conf-available/zcsglobal
+else
+    echo "#	Could not decide where to put global virtual host configuration"
+    exit 1
+fi
 
 # Check if the local global apache config file exists already
 if [ ! -r ${globalApacheConfigFile} ]; then
@@ -348,6 +356,11 @@ EOF
     echo "${ipbans}" >> ${globalApacheConfigFile}
 else
     echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
+fi
+
+# Enable the configuration file
+if [ -d /etc/apache2/conf-available ]; then
+   a2enconf zcsglobal >> ${setupLogFile}
 fi
 
 # Reload apache

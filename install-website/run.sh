@@ -275,6 +275,8 @@ else
     exit 1
 fi
 
+echo "#	Setting global virtual host configuration in ${globalApacheConfigFile}"
+
 # Check if the local global apache config file exists already
 if [ ! -r ${globalApacheConfigFile} ]; then
     # Create the global apache config file
@@ -359,8 +361,9 @@ else
 fi
 
 # Enable the configuration file
-if [ -d /etc/apache2/conf-available ]; then
-   a2enconf zcsglobal >> ${setupLogFile}
+# Instead of using a2enconf (which expects config files of the form *.conf) create the link directly
+if [ -d /etc/apache2/conf-available -a ! -L /etc/apache2/conf-enabled/zcsglobal ]; then
+   ln -s ../conf-available/zcsglobal /etc/apache2/conf-enabled/zcsglobal
 fi
 
 # Reload apache

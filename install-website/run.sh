@@ -260,7 +260,10 @@ else
 fi
 
 # Enable this virtual host
-a2ensite cslocalhost >> ${setupLogFile}
+# Instead of using a2ensite (which expects config files of the form *.conf) create the link directly
+if [ ! -L /etc/apache2/sites-enabled/cslocalhost ]; then
+   ln -s ../sites-available/cslocalhost /etc/apache2/sites-enabled/cslocalhost
+fi
 
 globalApacheConfigFile=/etc/apache2/conf.d/zcsglobal
 

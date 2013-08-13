@@ -5,6 +5,8 @@
 
 # WIP - many parts of the import setup are yet to be completed in here
 # e.g external libraries and databases setup (elevations, postcodes, railways etc)
+# Permissions for the import user
+# Some of that data cannot be included in this repo because it is owned by others.
 
 echo "#	CycleStreets import deployment $(date)"
 
@@ -31,7 +33,7 @@ configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 

@@ -260,7 +260,10 @@ else
 fi
 
 # Enable this virtual host
-a2ensite cslocalhost >> ${setupLogFile}
+# Instead of using a2ensite (which expects config files of the form *.conf) create the link directly
+if [ ! -L /etc/apache2/sites-enabled/cslocalhost ]; then
+   ln -s ../sites-available/cslocalhost /etc/apache2/sites-enabled/cslocalhost
+fi
 
 globalApacheConfigFile=/etc/apache2/conf.d/zcsglobal
 
@@ -447,11 +450,6 @@ then
     # Load data
     echo "#	Load ${basicRoutingDb} data"
     gunzip < ${websitesContentFolder}/documentation/schema/${basicRoutingDb}.sql.gz | ${mysql} ${basicRoutingDb} >> ${setupLogFile}
-fi
-
-# Setup a symlink to the routing data if it doesn't already exist
-if [ ! -L ${websitesContentFolder}/data/routing/current ]; then
-    ln -s ${basicRoutingDb} ${websitesContentFolder}/data/routing/current
 fi
 
 # Create a config if not already present

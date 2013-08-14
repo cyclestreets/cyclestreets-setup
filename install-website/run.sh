@@ -381,7 +381,7 @@ ${mysql} -e "create database if not exists cyclestreets default character set ut
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${mysql} -e "grant select, insert, update, delete, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
-${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
 # Update-able blogs
 if [ -n "${blogDatabasename}" ]; then
@@ -438,7 +438,7 @@ then
     ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql >> ${setupLogFile}
 
     # Allow website read only access
-    ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+    ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 fi
 
 # External db
@@ -453,7 +453,7 @@ then
     ${mysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql >> ${setupLogFile}
 
     # Allow website read only access
-    ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
+    ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 fi
 
 # Install a basic routing db from the repository

@@ -262,6 +262,7 @@ fi
 # Enable this virtual host
 # Instead of using a2ensite (which expects config files of the form *.conf) create the link directly
 if [ ! -L /etc/apache2/sites-enabled/cslocalhost ]; then
+   # !! This is still not good enough because apache 2.4 expects files of the form *.conf
    ln -s ../sites-available/cslocalhost /etc/apache2/sites-enabled/cslocalhost
 fi
 
@@ -363,6 +364,7 @@ fi
 # Enable the configuration file
 # Instead of using a2enconf (which expects config files of the form *.conf) create the link directly
 if [ -d /etc/apache2/conf-available -a ! -L /etc/apache2/conf-enabled/zcsglobal ]; then
+   # !! This is still not good enough because apache 2.4 expects files of the form *.conf
    ln -s ../conf-available/zcsglobal /etc/apache2/conf-enabled/zcsglobal
 fi
 

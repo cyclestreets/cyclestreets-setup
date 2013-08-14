@@ -106,6 +106,8 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 echo "#	Installing core webserver packages" >> ${setupLogFile}
 apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
+# Note: some new versions of php5.5 are missing json functions. This can be easily remedied by including the package: php5-json
+
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
 apt-get -y install imagemagick php5-imagick >> ${setupLogFile}
 

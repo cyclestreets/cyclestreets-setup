@@ -263,11 +263,16 @@ fi
 # Enable this virtual host
 a2ensite ${cslocalconf}
 
+# Global conf file
+zcsGlobalConf=zcsglobal.conf
+
 # Determine location of apache global configuration files
 if [ -d /etc/apache2/conf.d ]; then
-    globalApacheConfigFile=/etc/apache2/conf.d/zcsglobal
+    # Apache 2.2 location
+    globalApacheConfigFile=/etc/apache2/conf.d/${zcsGlobalConf}
 elif [ -d /etc/apache2/conf-available ]; then
-    globalApacheConfigFile=/etc/apache2/conf-available/zcsglobal
+    # Apache 2.4 location
+    globalApacheConfigFile=/etc/apache2/conf-available/${zcsGlobalConf}
 else
     echo "#	Could not decide where to put global virtual host configuration"
     exit 1
@@ -358,11 +363,9 @@ else
     echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
 fi
 
-# Enable the configuration file
-# Instead of using a2enconf (which expects config files of the form *.conf) create the link directly
-if [ -d /etc/apache2/conf-available -a ! -L /etc/apache2/conf-enabled/zcsglobal ]; then
-   # !! This is still not good enough because apache 2.4 expects files of the form *.conf
-   ln -s ../conf-available/zcsglobal /etc/apache2/conf-enabled/zcsglobal
+# Enable the configuration file (only necessary in Apache 2.4)
+if [ -d /etc/apache2/conf-available ]; then
+    a2enconf ${zcsGlobalConf}
 fi
 
 # Reload apache

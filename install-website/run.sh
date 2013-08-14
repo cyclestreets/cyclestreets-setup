@@ -340,15 +340,9 @@ Alias /images/statsicons /websites/configuration/analog/images
 <Directory />
 	# Options FollowSymLinks
 	AllowOverride None
+	# In Apache 2.4 uncomment this next line
+	# Require all granted
 </Directory>
-
-#<Directory /websites/www/content/>
-#	Options Indexes FollowSymLinks MultiViews
-#	AllowOverride None
-#	Order allow,deny
-#	allow from all
-#</Directory>
-
 
 # Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area
 <Directory /websites/www/content/blog/>

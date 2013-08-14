@@ -224,8 +224,9 @@ chown www-data:rollout ${websitesContentFolder}/documentation/RequestedMissingCi
 # Mod rewrite
 a2enmod rewrite >> ${setupLogFile}
 
-# Virtual host configuration
-localVirtualHostFile=/etc/apache2/sites-available/cslocalhost
+# Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
+cslocalconf=cslocalhost.conf
+localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 
 # Check if the local virtual host exists already
 if [ ! -r ${localVirtualHostFile} ]; then
@@ -260,11 +261,7 @@ else
 fi
 
 # Enable this virtual host
-# Instead of using a2ensite (which expects config files of the form *.conf) create the link directly
-if [ ! -L /etc/apache2/sites-enabled/cslocalhost ]; then
-   # !! This is still not good enough because apache 2.4 expects files of the form *.conf
-   ln -s ../sites-available/cslocalhost /etc/apache2/sites-enabled/cslocalhost
-fi
+a2ensite ${cslocalconf}
 
 # Determine location of apache global configuration files
 if [ -d /etc/apache2/conf.d ]; then

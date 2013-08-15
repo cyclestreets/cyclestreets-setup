@@ -220,10 +220,10 @@ echo "#	Building the photosEnRoute tables" >> ${setupLogFile}
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 
-### Stage 9 - remove the import definition file
+### Stage 9 - park the import definition file
 
-# Note: this file can be left behind if the script has exited above.
-rm ${importMachineFile}
+# Rename the file by appending the edition
+mv ${importMachineFile} ${importMachineFile}${importEdition}
 
 # Finish
 date

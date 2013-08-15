@@ -422,6 +422,13 @@ then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
     gunzip < ${websitesContentFolder}/documentation/schema/cyclestreets.sql.gz | ${mysql} cyclestreets >> ${setupLogFile}
+
+    # Create an admin user with the password admin (please change after setup has completed)
+    encryption=`php -r"echo crypt('admin', \"${signinSalt}\");"`
+    ${mysql} cyclestreets -e "insert user_user (username, email, name, privileges, encryption, validated) values ('admin', 'cyclestreets@example.com', 'Admin Account', 'administrator', '${encryption}', '2013-08-15 09:45:18');" >> ${setupLogFile}
+
+    # Create a welcome tinkle
+    ${mysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');" >> ${setupLogFile}
 fi
 
 # Archive db

@@ -460,7 +460,7 @@ then
 fi
 
 # Install a basic routing db from the repository
-basicRoutingDb=routing121114
+basicRoutingDb=routing130815
 # Unless the database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${basicRoutingDb}'" | grep ${basicRoutingDb} > /dev/null 2>&1
 then

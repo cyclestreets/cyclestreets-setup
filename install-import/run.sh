@@ -92,12 +92,15 @@ ${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`ma
 
 ${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost'';"
 
-# Elevation data
+# Elevation data - download 33GB of data, which expands to 180G.
+# Tip: These are big files use this to resume a broken copy
+# rsync --partial --progress --rsh=ssh user@host:remote_file local_file
+
 # Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
 if [ ! -z "${ordnanceSurveyDataFile}" && ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then
 
 	# Report
-	echo "#	Starting download of OS NTF data"
+	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
 	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile}
@@ -114,7 +117,7 @@ fi
 if [ ! -z "${srtmData}" && ! -x ${websitesBackupsFolder}/external/${srtmData} ]; then
 
 	# Report
-	echo "#	Starting download of SRTM data"
+	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
 	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/${srtmData}
@@ -131,7 +134,7 @@ fi
 if [ ! -z "${asterDataFile}" && ! -x ${websitesBackupsFolder}/external/${asterDataFile} ]; then
 
 	# Report
-	echo "#	Starting download of ASTER data"
+	echo "#	Starting download of ASTER data 25G"
 
 	# Download
 	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/${asterDataFile}

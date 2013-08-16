@@ -34,6 +34,9 @@ fi
 # Load the credentials
 . ./${configFile}
 
+# Shortcut for running commands as the cyclestreets user
+asCS="sudo -u ${username}"
+
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
 setupLogFile=$SCRIPTDIRECTORY/log.txt
@@ -106,7 +109,7 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/
 	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
-	scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/
+	${asCS} scp {importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of OS NTF data"
@@ -123,7 +126,7 @@ if [ ! -z "${srtmData}" -a ! -x ${websitesBackupsFolder}/external/${srtmData} ];
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/
+	${asCS} scp {importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of SRTM data"
@@ -140,7 +143,7 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 	echo "#	Starting download of ASTER data 25G"
 
 	# Download
-	scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/
+	${asCS} scp {importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of ASTER data"

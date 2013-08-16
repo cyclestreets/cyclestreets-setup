@@ -84,13 +84,13 @@ mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${mysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"
 
-${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost'';"
+${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost';"
 
-${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`routing%\` . * to '${mysqlImportUsername}'@'localhost'';"
+${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`routing%\` . * to '${mysqlImportUsername}'@'localhost';"
 
-${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`map_elevation\` to '${mysqlImportUsername}'@'localhost'';"
+${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`map_elevation\` to '${mysqlImportUsername}'@'localhost';"
 
-${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost'';"
+${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost';"
 
 # Elevation data - download 33GB of data, which expands to 180G.
 # Tip: These are big files use this to resume a broken copy

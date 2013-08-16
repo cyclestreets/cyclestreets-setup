@@ -93,6 +93,23 @@ ${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`ma
 ${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost'';"
 
 # Elevation data
+# Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
+if [ ! -z "${ordnanceSurveyDataFile}" && ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then
+
+	# Report
+	echo "#	Starting download of OS NTF data"
+
+	# Download
+	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile}
+
+	# Report
+	echo "#	Starting installation of OS NTF data"
+
+	# Create folder and unpack
+	mkdir -p ${websitesContentFolder}/data/elevation/srtmV4.1/tiff
+	tar xf ${websitesBackupsFolder}/external/srtm4.1.tiff.tar.bz2 -C ${websitesContentFolder}/data/elevation/ordnanceSurvey
+fi
+
 # Check if srtm data is desired and that it has not already been downloaded
 if [ ! -z "${srtmData}" && ! -x ${websitesBackupsFolder}/external/${srtmData} ]; then
 

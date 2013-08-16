@@ -120,20 +120,20 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/
 fi
 
 # Check if srtm data is desired and that it has not already been downloaded
-if [ ! -z "${srtmData}" -a ! -x ${websitesBackupsFolder}/external/${srtmData} ]; then
+if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/external/${srtmDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/
+	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/external/${srtmDataFile} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of SRTM data"
 
 	# Create folder and unpack
 	mkdir -p ${websitesContentFolder}/data/elevation/srtmV4.1/tiff
-	tar xf ${websitesBackupsFolder}/external/${srtmData} -C ${websitesContentFolder}/data/elevation/srtmV4.1
+	tar xf ${websitesBackupsFolder}/external/${srtmDataFile} -C ${websitesContentFolder}/data/elevation/srtmV4.1
 fi
 
 # Check if ASTER data is desired and that it has not already been downloaded

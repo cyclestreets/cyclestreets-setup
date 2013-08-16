@@ -2,7 +2,7 @@
 # Script to install CycleStreets Import on Ubuntu
 #
 # Tested on 13.04 View Ubuntu version using: lsb_release -a
-# This script is (NOT YET) idempotent - it can be safely re-run without destroying existing data
+# This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets Import System installation $(date)"
 
@@ -38,8 +38,7 @@ fi
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-echo "#	CycleStreets import installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets import installation $(date)" >> ${setupLogFile}
+echo "#	CycleStreets import installation starting"
 
 # Check Osmosis has been installed
 if [ ! -L /usr/local/bin/osmosis ]; then
@@ -83,19 +82,36 @@ mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
-${mysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;" >> ${setupLogFile}
+${mysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"
 
-${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost'';" >> ${setupLogFile}
+${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost'';"
 
-${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`routing%\` . * to '${mysqlImportUsername}'@'localhost'';" >> ${setupLogFile}
+${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`routing%\` . * to '${mysqlImportUsername}'@'localhost'';"
 
-${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`map_elevation\` to '${mysqlImportUsername}'@'localhost'';" >> ${setupLogFile}
+${mysql} -e "grant select, insert, update, delete, drop on \`cyclestreets\`.\`map_elevation\` to '${mysqlImportUsername}'@'localhost'';"
 
-${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost'';" >> ${setupLogFile}
+${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost'';"
 
 # Elevation data
-msg="#	Elevation data - not yet part of in this installation script - setup manually"
-echo $msg >> ${setupLogFile}
+# Check if srtm data is desired and that it has not already been downloaded
+if [ ! -z "${srtmData}" && ! -x ${websitesBackupsFolder}/external/${srtmData} ]; then
+
+	# Report
+	echo "#	Starting download of SRTM data"
+
+	# Download
+	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/${srtmData}
+
+	# Report
+	echo "#	Starting installation of SRTM data"
+
+	# Create folder and unpack
+	mkdir -p ${websitesContentFolder}/data/elevation/srtmV4.1/tiff
+	tar xf ${websitesBackupsFolder}/external/srtm4.1.tiff.tar.bz2 -C ${websitesContentFolder}/data/elevation/srtmV4.1
+fi
+
+
+msg="#	Other elevation data - not yet part of in this installation script - setup manually"
 echo $msg
 
 echo "#	Reached limit of testing"
@@ -103,7 +119,6 @@ echo "#	Reached limit of testing"
 
 # Confirm end of script
 msg="#	All now installed $(date)"
-echo $msg >> ${setupLogFile}
 echo $msg
 
 # Return true to indicate success

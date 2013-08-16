@@ -106,4 +106,8 @@ tilecacheKeyCloudmade=
 # Cron jobs
 installCronJobs=false
 
+# Import installation
+# Options for installing the import - leave blank to skip these steps
+srtmDataFile=
+
 # End of file

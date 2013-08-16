@@ -103,7 +103,7 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/
 	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
-	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile}
+	scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile}
 
 	# Report
 	echo "#	Starting installation of OS NTF data"
@@ -120,7 +120,7 @@ if [ ! -z "${srtmData}" -a ! -x ${websitesBackupsFolder}/external/${srtmData} ];
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/${srtmData}
+	scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/external/${srtmData} ${websitesBackupsFolder}/external/${srtmData}
 
 	# Report
 	echo "#	Starting installation of SRTM data"
@@ -137,7 +137,7 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 	echo "#	Starting download of ASTER data 25G"
 
 	# Download
-	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/${asterDataFile}
+	scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/${asterDataFile}
 
 	# Report
 	echo "#	Starting installation of ASTER data"
@@ -147,10 +147,7 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 	tar xf ${websitesBackupsFolder}/external/${asterDataFile} -C ${websitesContentFolder}/data/elevation/asterV2
 fi
 
-
-msg="#	Other elevation data - not yet part of in this installation script - setup manually"
-echo $msg
-
+# WIP
 echo "#	Reached limit of testing"
 
 

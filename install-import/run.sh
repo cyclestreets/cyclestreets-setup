@@ -96,6 +96,9 @@ ${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUse
 # Tip: These are big files use this to resume a broken copy
 # rsync --partial --progress --rsh=ssh user@host:remote_file local_file
 
+# Make sure the target folder exists
+mkdir -p ${websitesBackupsFolder}/external
+
 # Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
 if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then
 

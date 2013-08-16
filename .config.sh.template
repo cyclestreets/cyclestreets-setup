@@ -13,6 +13,7 @@ administratorEmail=webmaster@example.com
 mainEmail="${administratorEmail}"
 
 # Define the username for CycleStreets to install/run under, so that it can run independent of any individual personal account on the machine
+# No spaces, all lower case, minimum five chars - so that can also be used as a cyclestreets sign in username.
 username=cyclestreets
 # Tip: If passwords contain a $ or other characters that need escaping, wrap them in single quotes or use backslashes.
 password=
@@ -23,7 +24,7 @@ mysqlRootPassword=
 
 # Credentials for the website user
 mysqlWebsiteUsername=website
-mysqlWebsitePassword=
+mysqlWebsitePassword="${password}"
 
 # Credentials for the import user
 mysqlImportUsername=import

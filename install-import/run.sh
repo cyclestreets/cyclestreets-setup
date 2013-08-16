@@ -106,8 +106,8 @@ if [ ! -z "${ordnanceSurveyDataFile}" && ! -x ${websitesBackupsFolder}/external/
 	echo "#	Starting installation of OS NTF data"
 
 	# Create folder and unpack
-	mkdir -p ${websitesContentFolder}/data/elevation/srtmV4.1/tiff
-	tar xf ${websitesBackupsFolder}/external/srtm4.1.tiff.tar.bz2 -C ${websitesContentFolder}/data/elevation/ordnanceSurvey
+	mkdir -p ${websitesContentFolder}/data/elevation/ordnanceSurvey
+	tar xf ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} -C ${websitesContentFolder}/data/elevation/ordnanceSurvey
 fi
 
 # Check if srtm data is desired and that it has not already been downloaded
@@ -124,7 +124,24 @@ if [ ! -z "${srtmData}" && ! -x ${websitesBackupsFolder}/external/${srtmData} ];
 
 	# Create folder and unpack
 	mkdir -p ${websitesContentFolder}/data/elevation/srtmV4.1/tiff
-	tar xf ${websitesBackupsFolder}/external/srtm4.1.tiff.tar.bz2 -C ${websitesContentFolder}/data/elevation/srtmV4.1
+	tar xf ${websitesBackupsFolder}/external/${srtmData} -C ${websitesContentFolder}/data/elevation/srtmV4.1
+fi
+
+# Check if ASTER data is desired and that it has not already been downloaded
+if [ ! -z "${asterDataFile}" && ! -x ${websitesBackupsFolder}/external/${asterDataFile} ]; then
+
+	# Report
+	echo "#	Starting download of ASTER data"
+
+	# Download
+	scp ${importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/${asterDataFile}
+
+	# Report
+	echo "#	Starting installation of ASTER data"
+
+	# Create folder and unpack
+	mkdir -p ${websitesContentFolder}/data/elevation/asterV2/tiff
+	tar xf ${websitesBackupsFolder}/external/${asterDataFile} -C ${websitesContentFolder}/data/elevation/asterV2
 fi
 
 

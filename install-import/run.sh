@@ -97,7 +97,7 @@ ${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUse
 # rsync --partial --progress --rsh=ssh user@host:remote_file local_file
 
 # Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
-if [ ! -z "${ordnanceSurveyDataFile}" && ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then
+if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of OS NTF data 48M"
@@ -114,7 +114,7 @@ if [ ! -z "${ordnanceSurveyDataFile}" && ! -x ${websitesBackupsFolder}/external/
 fi
 
 # Check if srtm data is desired and that it has not already been downloaded
-if [ ! -z "${srtmData}" && ! -x ${websitesBackupsFolder}/external/${srtmData} ]; then
+if [ ! -z "${srtmData}" -a ! -x ${websitesBackupsFolder}/external/${srtmData} ]; then
 
 	# Report
 	echo "#	Starting download of SRTM data 8.2G"
@@ -131,7 +131,7 @@ if [ ! -z "${srtmData}" && ! -x ${websitesBackupsFolder}/external/${srtmData} ];
 fi
 
 # Check if ASTER data is desired and that it has not already been downloaded
-if [ ! -z "${asterDataFile}" && ! -x ${websitesBackupsFolder}/external/${asterDataFile} ]; then
+if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of ASTER data 25G"

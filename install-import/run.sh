@@ -153,6 +153,23 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 	tar xf ${websitesBackupsFolder}/external/${asterDataFile} -C ${websitesContentFolder}/data/elevation/asterV2
 fi
 
+# External database
+# A skeleton schema is created by the website installation - override that it if has not previously been downloaded
+if [ ! -z "${csExternalDataFile}" -a ! -x ${websitesBackupsFolder}/${csExternalDataFile} ]; then
+
+	# Report
+	echo "#	Starting download of external database 125M"
+
+	# Download
+	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/${csExternalDataFile} ${websitesBackupsFolder}/
+
+	# Report
+	echo "#	Starting installation of external database"
+
+	# Unpack into the skeleton db
+	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${mysql} ${externalDb}
+fi
+
 # WIP
 echo "#	Reached limit of testing"
 

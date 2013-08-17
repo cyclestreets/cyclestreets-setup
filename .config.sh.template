@@ -112,4 +112,8 @@ ordnanceSurveyDataFile=
 srtmDataFile=
 asterDataFile=
 
+# External database
+externalDb=csExternal
+csExternalDataFile=
+
 # End of file

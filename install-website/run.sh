@@ -445,7 +445,7 @@ then
 fi
 
 # External db
-externalDb=csExternal
+# This creates only a skeleton and sets up grant permissions. The full installation is done by a script in install-import folder.
 # Unless the database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
 then

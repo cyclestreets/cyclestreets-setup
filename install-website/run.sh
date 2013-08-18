@@ -333,7 +333,7 @@ Alias /images/statsicons /websites/configuration/analog/images
 </DirectoryMatch>
 
 # Deny access to areas not intended to be public
-<LocationMatch ^/(archive|configuration|documentation|import|classes|libraries|scripts)>
+<LocationMatch ^/(archive|configuration|documentation|import|classes|libraries|scripts|routingengine)>
 	order deny,allow
 	deny from all
 </LocationMatch>

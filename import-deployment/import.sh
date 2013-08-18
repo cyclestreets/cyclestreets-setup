@@ -47,7 +47,7 @@ fi
 . ${configFile}
 
 # When an import disk has been specified in the config, check it has enough free space
-if [ ! -n "${importDisk}" ]; then
+if [ -n "${importDisk}" ]; then
 
     # Get free disk space in Gigabytes
     # http://www.cyberciti.biz/tips/shell-script-to-watch-the-disk-space.html

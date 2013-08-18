@@ -36,8 +36,7 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
+# Report
 echo "#	CycleStreets schema script starting"
 
 # Main Body
@@ -48,7 +47,16 @@ mysqldump -hlocalhost -uroot -p${mysqlRootPassword} csExternal --databases --no-
 
 # Create the version with data
 if [ ! -z "${csExternalDataFile}" ]; then
+
+    # Report
+    echo "#	CycleStreets schema script starting"
+
+    # Dump
     mysqldump -hlocalhost -uroot -p${mysqlRootPassword} csExternal | gzip > ${websitesBackupsFolder}/${csExternalDataFile}
+
+    # Advise
+    echo "#	Advise: on the backup machine copy this dump:"
+    echo "#	scp www.cyclestreets.net:${websitesBackupsFolder}/${csExternalDataFile} ${websitesBackupsFolder}"
 fi
 
 # Confirm end of script

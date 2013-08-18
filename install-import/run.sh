@@ -170,6 +170,11 @@ if [ ! -z "${csExternalDataFile}" -a ! -x ${websitesBackupsFolder}/${csExternalD
 	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${mysql} ${externalDb}
 fi
 
+
+
+# MySQL
+echo "#	For best performance your MySQL will need configuring, this is not currently handled by this script. Refer to the notes in this repo about that."
+
 # WIP
 echo "#	Reached limit of testing"
 

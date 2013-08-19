@@ -155,7 +155,7 @@ fi
 
 # External database
 # A skeleton schema is created by the website installation - override that it if has not previously been downloaded
-if [ ! -z "${csExternalDataFile}" -a ! -x ${websitesBackupsFolder}/${csExternalDataFile} ]; then
+if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of external database 125M"

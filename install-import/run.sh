@@ -1,7 +1,7 @@
 #!/bin/bash
-# Script to install CycleStreets Import on Ubuntu
+# Script to install CycleStreets import sources and data on Ubuntu
 #
-# Tested on 13.04 View Ubuntu version using: lsb_release -a
+# Tested on 13.04. View Ubuntu version using: lsb_release -a
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets Import System installation $(date)"
@@ -171,10 +171,10 @@ if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDat
 fi
 
 
-
 # MySQL configuration
 mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf
 if [ ! -r ${mysqlConfFile} ]; then
+
     # Create the file (avoid any backquotes in the text as they'll spawn sub-processes)
     cat > ${mysqlConfFile} <<EOF
 # MySQL Configuration for import server
@@ -221,15 +221,13 @@ innodb_buffer_pool_size=64MB
 character_set_server=utf8
 collation_server=utf8_unicode_ci
 EOF
+
+    # Allow the user to edit this file
+    chown ${username}:rollout ${mysqlConfFile}
 fi
 
-# WIP
-echo "#	Reached limit of testing"
-
-
 # Confirm end of script
-msg="#	All now installed $(date)"
-echo $msg
+echo "#	All now installed $(date)"
 
 # Return true to indicate success
 :

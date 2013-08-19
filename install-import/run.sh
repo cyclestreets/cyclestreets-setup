@@ -214,7 +214,7 @@ long_query_time = 3
 innodb_buffer_pool_size=64MB
 
 # CHARACTER SET
-# It is simplest (and quickest, due to no translation overhead) if all text uses the `utf8` character set and collation `utf8_unicode_ci` (case-insensitive).
+# It is simplest (and quickest, due to no translation overhead) if all text uses the utf8 character set and collation utf8_unicode_ci (case-insensitive).
 # Set these in the mysql server configuration so that the osmosis program which reads the OpenStreetMap planet extracts also uses this character set.
 
 # Set default character set and collation

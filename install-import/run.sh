@@ -172,8 +172,56 @@ fi
 
 
 
-# MySQL
-echo "#	For best performance your MySQL will need configuring, this is not currently handled by this script. Refer to the notes in this repo about that."
+# MySQL configuration
+mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf
+if [ ! -x ${mysqlConfFile} ]; then
+    # Create the file
+    cat > ${mysqlConfFile} <<EOF
+# MySQL Configuration for import server
+# This config should be loaded via a symlink from: /etc/mysql/conf.d/
+# On systems running apparmor the symlinks need to be enabled via /etc/apparmor.d/usr.sbin.mysqld
+
+# Main characteristics
+# * Handle very large tables
+# * Long group_concat
+
+[mysqld]
+
+# General options as recommended by
+# http://www.percona.com/pdf-canonical-header?path=files/presentations/percona-live/dc-2012/PLDC2012-optimizing-mysql-configuration.pdf
+# mysqltuner
+# select @@thread_cache_size, @@table_open_cache, @@open_files_limit;
+thread_cache_size = 100
+table_open_cache = 4096
+open_files_limit = 65535
+
+# This should be set to about 20 - 50% of available memory. On our 8GB www machine a good size is probably 1G. (The default is only 16M is a performance killer.)  
+key_buffer		= 4G
+
+max_allowed_packet	= 16M
+group_concat_max_len	= 50K
+
+# These are quite big
+query_cache_limit	= 1M
+query_cache_size        = 50M
+
+log_slow_queries	= /var/log/mysql/mysql-slow.log
+long_query_time = 3
+
+# The following setting was added following getting this error during an import run:
+#     ERROR 1206 (HY000): The total number of locks exceeds the lock table size
+# Even though the database did not contain any innodb tables, it did fix the problem with an update to text columns in a table with almost 9 million rows.
+innodb_buffer_pool_size=64MB
+
+# CHARACTER SET
+# It is simplest (and quickest, due to no translation overhead) if all text uses the `utf8` character set and collation `utf8_unicode_ci` (case-insensitive).
+# Set these in the mysql server configuration so that the `osmosis` program which reads the OpenStreetMap planet extracts also uses this character set.
+
+# Set default character set and collation
+character_set_server=utf8
+collation_server=utf8_unicode_ci
+EOF
+fi
 
 # WIP
 echo "#	Reached limit of testing"

@@ -232,7 +232,7 @@ localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 
 # Check if the local virtual host exists already
 if [ ! -r ${localVirtualHostFile} ]; then
-    # Create the local virtual host
+    # Create the local virtual host (avoid any backquotes in the text as they'll spawn sub-processes)
     cat > ${localVirtualHostFile} << EOF
 <VirtualHost *:80>
 

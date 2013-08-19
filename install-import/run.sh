@@ -174,8 +174,8 @@ fi
 
 # MySQL configuration
 mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf
-if [ ! -x ${mysqlConfFile} ]; then
-    # Create the file
+if [ ! -r ${mysqlConfFile} ]; then
+    # Create the file (avoid any backquotes in the text as they'll spawn sub-processes)
     cat > ${mysqlConfFile} <<EOF
 # MySQL Configuration for import server
 # This config should be loaded via a symlink from: /etc/mysql/conf.d/
@@ -215,7 +215,7 @@ innodb_buffer_pool_size=64MB
 
 # CHARACTER SET
 # It is simplest (and quickest, due to no translation overhead) if all text uses the `utf8` character set and collation `utf8_unicode_ci` (case-insensitive).
-# Set these in the mysql server configuration so that the `osmosis` program which reads the OpenStreetMap planet extracts also uses this character set.
+# Set these in the mysql server configuration so that the osmosis program which reads the OpenStreetMap planet extracts also uses this character set.
 
 # Set default character set and collation
 character_set_server=utf8

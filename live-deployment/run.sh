@@ -61,6 +61,9 @@ if [ ! -r ${mysqlConfFile} ]; then
 
 [mysqld]
 
+# All CycleStreets tables use MyISAM storage
+default-storage-engine = myisam
+
 # General options as recommended by
 # http://www.percona.com/pdf-canonical-header?path=files/presentations/percona-live/dc-2012/PLDC2012-optimizing-mysql-configuration.pdf
 # mysqltuner

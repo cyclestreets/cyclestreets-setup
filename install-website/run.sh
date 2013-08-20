@@ -258,6 +258,10 @@ if [ ! -r ${localVirtualHostFile} ]; then
 
 </VirtualHost>
 EOF
+
+    # Allow the user to edit this file
+    chown ${username}:rollout ${localVirtualHostFile}
+
 else
     echo "#	Virtual host already exists: ${localVirtualHostFile}"
 fi

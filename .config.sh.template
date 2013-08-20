@@ -103,7 +103,7 @@ tilecacheContentFolder=/websites/tile/content
 tilecacheKeyCloudmade=
 
 
-# Cron jobs
+# Cron jobs boolean: true|false
 installCronJobs=false
 
 # Import installation

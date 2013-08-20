@@ -226,6 +226,10 @@ EOF
     chown ${username}:rollout ${mysqlConfFile}
 fi
 
+
+# Advise
+echo "#	MySQL configured, but consider running the following security step from the command line: mysql_secure_installation"
+
 # Confirm end of script
 echo "#	All now installed $(date)"
 

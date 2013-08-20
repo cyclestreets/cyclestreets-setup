@@ -91,11 +91,6 @@ query_cache_size        = 50M
 log_slow_queries	= /var/log/mysql/mysql-slow.log
 long_query_time = 3
 
-# The following setting was added following getting this error during an import run:
-#     ERROR 1206 (HY000): The total number of locks exceeds the lock table size
-# Even though the database did not contain any innodb tables, it did fix the problem with an update to text columns in a table with almost 9 million rows.
-innodb_buffer_pool_size=64MB
-
 # CHARACTER SET
 # It is simplest (and quickest, due to no translation overhead) if all text uses the utf8 character set and collation utf8_unicode_ci (case-insensitive).
 # Set these in the mysql server configuration so that the osmosis program which reads the OpenStreetMap planet extracts also uses this character set.

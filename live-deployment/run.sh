@@ -51,7 +51,7 @@ if [ ! -r ${mysqlConfFile} ]; then
 
     # Create the file (avoid any backquotes in the text as they'll spawn sub-processes)
     cat > ${mysqlConfFile} <<EOF
-# MySQL Configuration for import server
+# MySQL Configuration for live server
 # This config should be loaded via a symlink from: /etc/mysql/conf.d/
 # On systems running apparmor the symlinks need to be enabled via /etc/apparmor.d/usr.sbin.mysqld
 

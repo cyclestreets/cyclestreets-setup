@@ -1,7 +1,5 @@
 #!/bin/bash
 # Script to produce a sample routing database dump for use in a repository
-#
-# Tested on 13.04 View Ubuntu version using: lsb_release -a
 
 echo "#	CycleStreets schema script $(date)"
 
@@ -39,9 +37,9 @@ asCS="sudo -u ${username}"
 # Report
 echo "#	CycleStreets schema script starting"
 
+
 # Main Body
 credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
-csBackup=/websites/www/backups/www_cyclestreets.sql.gz
 
 #	Use a routing database that has been built for a small sized city.
 sampleDb=routing130815
@@ -58,7 +56,7 @@ mysqldump ${sampleDb} ${credentials} --routines --no-create-db | gzip > ${websit
 
 #	Advise
 echo "#	Actions required next:"
-echo "#	Add the new file to the repo and remove the old one from the repo, then commit."
+echo "#	Add the new file (/documentation/schema/${sampleDb}.sql.gz) to the repo and remove the old one, then commit."
 echo "#	Fixup the install-website script from https://github.com/cyclestreets/cyclestreets-setup to refer to the new db."
 
 # Confirm end of script

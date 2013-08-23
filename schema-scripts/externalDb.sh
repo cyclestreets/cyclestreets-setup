@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to manage CycleStreets schema
+# Script to create a dump of the csExternal database - as used by import-deployment
 #
 # Tested on 13.04 View Ubuntu version using: lsb_release -a
 

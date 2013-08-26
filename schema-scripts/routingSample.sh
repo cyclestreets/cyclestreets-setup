@@ -52,7 +52,7 @@ mysql ${credentials} ${sampleDb} < ${websitesContentFolder}/documentation/schema
 mysql ${credentials} ${sampleDb} -e "call cleanSampleRouting();"
 
 #	Write
-mysqldump ${sampleDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/${sampleDb}.sql.gz
+mysqldump ${sampleDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
 
 #	Advise
 echo "#	Actions required next:"

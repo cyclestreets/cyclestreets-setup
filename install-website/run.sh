@@ -474,7 +474,7 @@ then
 
     # Load data
     echo "#	Load ${basicRoutingDb} data"
-    gunzip < ${websitesContentFolder}/documentation/schema/${basicRoutingDb}.sql.gz | ${mysql} ${basicRoutingDb} >> ${setupLogFile}
+    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${basicRoutingDb} >> ${setupLogFile}
 fi
 
 # Create a config if not already present

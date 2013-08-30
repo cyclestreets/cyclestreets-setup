@@ -78,12 +78,17 @@ key_buffer		= 2G
 max_allowed_packet	= 16M
 group_concat_max_len	= 50K
 
+# Query Cache - on demand
+query_cache_type        = 2
 # These are quite big
 query_cache_limit	= 1M
 query_cache_size        = 50M
 
+# Useful for performance monitoring
 log_slow_queries	= /var/log/mysql/mysql-slow.log
 long_query_time = 2
+# Enable this only for a session focussing on performance enhancement
+# log_queries_not_using_indexes = 1
 
 # CHARACTER SET
 # It is simplest (and quickest, due to no translation overhead) if all text uses the utf8 character set and collation utf8_unicode_ci (case-insensitive).

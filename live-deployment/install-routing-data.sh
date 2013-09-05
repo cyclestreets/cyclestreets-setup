@@ -163,7 +163,8 @@ fi
 tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
 
 #	Clean up the compressed TSV data
-rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
+# !! Temporarily turned off (September 2013) as uploaded files can then quickly be copied to fallback machine.
+#rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
 
 
 ### Stage 5 - create the routing database
@@ -188,7 +189,8 @@ fi
 tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Remove the zip
-rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+# !! Temporarily turned off (September 2013) as uploaded files can then quickly be copied to fallback machine.
+#rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
 
 # Move the tables into mysql
 echo $password | sudo -S mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
@@ -196,7 +198,7 @@ echo $password | sudo -S mv ${websitesBackupsFolder}/${importEdition}/* /var/lib
 # Ensure the permissions are correct
 echo $password | sudo -S chown -R mysql.mysql /var/lib/mysql/${importEdition}
 
-# Remove the empty folder
+# Remove the now empty folder
 rmdir ${websitesBackupsFolder}/${importEdition}
 
 

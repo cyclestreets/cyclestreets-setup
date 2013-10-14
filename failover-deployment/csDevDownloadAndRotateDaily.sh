@@ -78,18 +78,21 @@ folder=${websitesBackupsFolder}
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
-#	Folder locations
 
-#	Download CycleStreets repository backup
+#       Download CycleStreets repository backup
 $download $administratorEmail $server $folder cyclestreetsRepo.dump.bz2
+echo "$(date)   ... downloaded CycleStreets Dev Repo" >> ${setupLogFile}
 
-#	Download CycleStreets Trac backup
+#       Download CycleStreets Trac backup
 $download $administratorEmail $server $folder csTracBackup.tar.bz2
+echo "$(date)   ... downloaded CycleStreets Dev Trac" >> ${setupLogFile}
 
-
-#	Rotate
+#       Rotate
 $rotateDaily $folder cyclestreetsRepo.dump.bz2
+echo "$(date)   ... rotated CycleStreets Dev Repo" >> ${setupLogFile}
+
 $rotateDaily $folder csTracBackup.tar.bz2
+echo "$(date)   ... rotated CycleStreets Dev trac" >> ${setupLogFile}
 
 
 ### Final Stage

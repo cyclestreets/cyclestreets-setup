@@ -61,7 +61,7 @@ if $installCronJobs ; then
     jobs[4]="42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateDaily.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
-    jobs[5]="49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
+    jobs[5]="19 9 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
 
     # Daily rotate of Cyclescape
     jobs[6]="26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"

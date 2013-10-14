@@ -37,7 +37,7 @@ fi
 asCS="sudo -u ${username}"
 
 # Report
-echo "#	CycleStreets schema script starting"
+echo "#	CycleStreets creating a dump of the external schema only (no data)"
 
 # Main Body
 
@@ -49,13 +49,13 @@ mysqldump -hlocalhost -uroot -p${mysqlRootPassword} csExternal --databases --no-
 if [ ! -z "${csExternalDataFile}" ]; then
 
     # Report
-    echo "#	CycleStreets schema script starting"
+    echo "#	CycleStreets creating a full external database dump"
 
     # Dump
     mysqldump -hlocalhost -uroot -p${mysqlRootPassword} csExternal | gzip > ${websitesBackupsFolder}/${csExternalDataFile}
 
     # Advise
-    echo "#	Advise: on the backup machine copy this dump:"
+    echo "#	Advise: on the backup machine run this to copy the dump:"
     echo "#	scp www.cyclestreets.net:${websitesBackupsFolder}/${csExternalDataFile} ${websitesBackupsFolder}"
 fi
 

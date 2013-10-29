@@ -273,12 +273,12 @@ a2ensite ${cslocalconf}
 zcsGlobalConf=zcsglobal.conf
 
 # Determine location of apache global configuration files
-if [ -d /etc/apache2/conf.d ]; then
-    # Apache 2.2 location
-    globalApacheConfigFile=/etc/apache2/conf.d/${zcsGlobalConf}
-elif [ -d /etc/apache2/conf-available ]; then
+if [ -d /etc/apache2/conf-available ]; then
     # Apache 2.4 location
     globalApacheConfigFile=/etc/apache2/conf-available/${zcsGlobalConf}
+elif [ -d /etc/apache2/conf.d ]; then
+    # Apache 2.2 location
+    globalApacheConfigFile=/etc/apache2/conf.d/${zcsGlobalConf}
 else
     echo "#	Could not decide where to put global virtual host configuration"
     exit 1

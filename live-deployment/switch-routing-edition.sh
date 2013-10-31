@@ -128,6 +128,12 @@ if [ ! -d "${websitesContentFolder}/data/routing/${newEdition}" ]; then
 	exit 1
 fi
 
+# Check that the installation completed
+if [ ! -e "${websitesContentFolder}/data/routing/${newEdition}/installationCompleted.txt" ]; then
+	echo "#	Switching cannot continue because the routing installation did not appear to complete."
+	exit 1
+fi
+
 ### Stage 4 - do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)

@@ -233,6 +233,8 @@ mv ${importMachineFile} ${importMachineFile}${importEdition}
 # Finish
 date
 echo "All done"
+# Create a file that indicates the end of the script was reached - this can be tested for by the switching script
+touch "${websitesContentFolder}/data/routing/installationCompleted.txt"
 echo "$(date)	Completed routing data installation ${importEdition}" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename

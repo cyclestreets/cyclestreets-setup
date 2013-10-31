@@ -181,7 +181,7 @@ mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEditi
 #!# Hard-coded location /var/lib/mysql/
 echo $password | sudo -S test -d /var/lib/mysql/${importEdition}
 if [ $? != 0 ]; then
-   echo "$(date) The database does not seem to be installed correctly." >> ${setupLogFile}
+   echo "#$(date) !! The database does not seem to be installed correctly." >> ${setupLogFile}
    exit 1
 fi
 
@@ -211,6 +211,7 @@ mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 ### Stage 7 - run post-install stored procedures for nearestPoint
 
 #	Install and run the optimized nearestPoint table
+echo "$(date)	Loading nearestPoint technology" >> ${setupLogFile}
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createWayForNearestPoint();"
 # Need to optimize separately (see the stored procedure for why it can't be done in there)
@@ -220,7 +221,7 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "optimize ta
 ### Stage 8 - deal with photos-en-route
 
 # Build the photo index
-echo "#	Building the photosEnRoute tables" >> ${setupLogFile}
+echo "$(date)	Building the photosEnRoute tables" >> ${setupLogFile}
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 

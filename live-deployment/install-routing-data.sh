@@ -212,9 +212,9 @@ mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 
 #	Install and run the optimized nearestPoint table
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createPathForNearestPoint();"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call createWayForNearestPoint();"
 # Need to optimize separately (see the stored procedure for why it can't be done in there)
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "optimize table map_path_for_nearestPoint;"
+mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "optimize table map_way_for_nearestPoint;"
 
 
 ### Stage 8 - deal with photos-en-route

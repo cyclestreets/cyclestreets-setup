@@ -65,10 +65,15 @@ if [ ! -r ${mysqlConfFile} ]; then
 # * Handle very large tables
 # * Long group_concat
 
+# On some versions this file needs to be read-only for mysql to use the values.
+
 [mysqld]
 
-# All CycleStreets tables use MyISAM storage
+# Most CycleStreets tables use MyISAM storage
 default-storage-engine = myisam
+
+# Memory tables are also used
+max_heap_table_size = 1G
 
 # General options as recommended by
 # http://www.percona.com/pdf-canonical-header?path=files/presentations/percona-live/dc-2012/PLDC2012-optimizing-mysql-configuration.pdf

@@ -59,9 +59,11 @@ if [ ! -r ${mysqlConfFile} ]; then
 # * Concurrency
 # * Responsiveness
 
+# On some versions this file needs to be read-only for mysql to use the values.
+
 [mysqld]
 
-# All CycleStreets tables use MyISAM storage
+# Most CycleStreets tables use MyISAM storage
 default-storage-engine = myisam
 
 # General options as recommended by

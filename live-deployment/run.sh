@@ -59,7 +59,7 @@ if [ ! -r ${mysqlConfFile} ]; then
 # * Concurrency
 # * Responsiveness
 
-# On some versions this file needs to be read-only for mysql to use the values.
+# On some versions of mysql any *.cnf files that are world-writable are ignored.
 
 [mysqld]
 

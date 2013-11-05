@@ -65,7 +65,7 @@ if [ ! -r ${mysqlConfFile} ]; then
 # * Handle very large tables
 # * Long group_concat
 
-# On some versions this file needs to be read-only for mysql to use the values.
+# On some versions of mysql any *.cnf files that are world-writable are ignored.
 
 [mysqld]
 

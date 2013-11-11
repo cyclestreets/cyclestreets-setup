@@ -25,7 +25,7 @@ else
     #	Archive the IJS tables
     dump=${websitesBackupsFolder}/${dumpPrefix}_routes_${minItineraryId}.sql.gz
     #	Skip disable keys because renabling them takes a long time on the archive
-    mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_segment map_wpt map_jny_poi map_error | gzip > ${dump}
+    mysqldump --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys -hlocalhost -uroot -p${mysqlRootPassword} cyclestreets map_itinerary map_journey map_street map_wpt map_jny_poi map_error | gzip > ${dump}
 
     #	Repartition, which moves the current to the archived tables, and log the output. See: documentation/schema/repartition.sql
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "call repartitionIJS()" >> ${setupLogFile}

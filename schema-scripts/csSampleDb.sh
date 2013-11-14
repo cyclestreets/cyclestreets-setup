@@ -66,7 +66,11 @@ mysql ${credentials} ${sampleDb} < ${websitesContentFolder}/documentation/schema
 mysql ${credentials} ${sampleDb} -e "call prepareSampleCycleStreetsDB();"
 
 #	Write (requires a subsequent commit to become part of the repo)
-mysqldump ${sampleDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/cyclestreets.sql.gz
+mysqldump ${sampleDb} ${credentials} --routines --no-create-db > ${websitesContentFolder}/documentation/schema/cyclestreets.sql
+
+#	Advise
+echo "#	Actions required next:"
+echo "#	Commit the updated schema to the repository."
 
 # Confirm end of script
 echo "#	Script completed $(date)"

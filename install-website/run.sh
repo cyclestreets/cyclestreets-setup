@@ -425,7 +425,7 @@ if ! ${mysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyc
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    gunzip < ${websitesContentFolder}/documentation/schema/cyclestreets.sql.gz | ${mysql} cyclestreets >> ${setupLogFile}
+    ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreets.sql >> ${setupLogFile}
 
     # Create an admin user
     encryption=`php -r"echo crypt(\"${password}\", \"${signinSalt}\");"`

@@ -74,6 +74,7 @@ default-storage-engine = myisam
 
 # Memory tables are also used
 max_heap_table_size = 1G
+tmp_table_size = 1G
 
 # General options as recommended by
 # http://www.percona.com/pdf-canonical-header?path=files/presentations/percona-live/dc-2012/PLDC2012-optimizing-mysql-configuration.pdf

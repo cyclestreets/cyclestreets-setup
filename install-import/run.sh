@@ -91,8 +91,6 @@ ${mysql} -e "grant select , insert , update , delete , create , drop , index , a
 
 ${mysql} -e "grant select , insert , update , delete , create , drop , index , alter , create temporary tables , lock tables , create view , show view , create routine, alter routine, execute on \`routing%\` . * to '${mysqlImportUsername}'@'localhost';"
 
-${mysql} -e "grant insert on \`cyclestreets\`.\`map_error\` to '${mysqlImportUsername}'@'localhost';"
-
 # Elevation data - download 33GB of data, which expands to 180G.
 # Tip: These are big files use this to resume a broken copy
 # rsync --partial --progress --rsh=ssh user@host:remote_file local_file

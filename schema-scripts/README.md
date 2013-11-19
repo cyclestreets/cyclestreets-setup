@@ -9,7 +9,7 @@ Creates the sample cyclestreets database for shipping with new installations.
 It contains the essential data for building a CycleStreets instance.
 It is created from a the latest daily cyclestreets backup copy (itself produced by `../live-deployment/daily-dump.sh`) by stripping all but the essential tables and rows.
 Changes to the live cyclestreets database appear in the cyclestreets backup the next day.
-Only running the script after that will process the changes into: `/documentation/schema/cyclestreets.sql`.
+Only running the script after that will process the changes into: `/documentation/schema/cyclestreetsSample.sql`.
 
 ## externalDb.sh
 

@@ -121,8 +121,8 @@ if $installCronJobs ; then
     # Hourly zapping at 13 mins past every hour
     jobs[3]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
-    # Install routing data at 34 mins past every hour in the small hours
-    jobs[4]="34 1,2,3,4 * * * ${ScriptHome}/live-deployment/install-routing-data.sh"
+    # Install routing data at 01:34
+    jobs[4]="34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh"
 
     # Install the jobs
     installCronJobs ${username} jobs[@]

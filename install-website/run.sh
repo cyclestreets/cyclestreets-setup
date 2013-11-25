@@ -178,10 +178,6 @@ mkdir -p ${websitesLogsFolder}
 # Create a folder for backups
 mkdir -p ${websitesBackupsFolder}
 
-# Setup a file to record unidentified itineraries
-touch ${websitesBackupsFolder}/map_unidentifiedItinerary_archive.csv
-chown www-data ${websitesBackupsFolder}/map_unidentifiedItinerary_archive.csv
-
 
 # Switch to content folder
 cd ${websitesContentFolder}

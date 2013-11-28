@@ -109,7 +109,7 @@ fi
 # Advise
 echo "#	MySQL configured, but consider running the following security step from the command line: mysql_secure_installation"
 
-# Cron jobs
+# Cron jobs - note the timings of these should be the same as in the fromFailOver.sh
 if $installCronJobs ; then
 
     # Update scripts

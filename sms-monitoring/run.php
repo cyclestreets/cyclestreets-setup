@@ -324,8 +324,8 @@ class doCheck
 			
 			# Check for a co-ordinate in the right area of the country
 			|| (!substr_count ($thodayResult['name'], 'Thoday'))
-			|| abs ($thodayResult['longitude'] - 0.14) < 0.1
-			|| abs ($thodayResult['latitude'] - 52.20) < 0.1
+			|| abs ($thodayResult['longitude'] - 0.14) > 0.1
+			|| abs ($thodayResult['latitude'] - 52.20) > 0.1
 			
 			# Testing...
 		    #|| true

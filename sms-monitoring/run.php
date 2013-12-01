@@ -10,8 +10,8 @@ class doCheck
 	private $debugging = false;
 	private $timeoutSeconds = 15;
 	private $enableSms = true;
-	
-	
+	private $serverUrl = 'http://www.cyclestreets.net';
+
 	# Constructor
 	public function __construct ()
 	{
@@ -156,7 +156,7 @@ class doCheck
 	private function test_journey_new (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = "http://www.cyclestreets.net" . "/api/journey.json?key={$this->testApiKey}&plan=quietest&itinerarypoints=-0.140085,51.502022,Buckingham+Palace|-0.129204,51.504353,Horse+Guards+Parade|-0.129394,51.499496,Westminster+Abbey";
+		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&plan=quietest&itinerarypoints=-0.140085,51.502022,Buckingham+Palace|-0.129204,51.504353,Horse+Guards+Parade|-0.129394,51.499496,Westminster+Abbey";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /api/journey call (new journey) did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
@@ -203,7 +203,7 @@ class doCheck
 	private function test_journey_existing (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = "http://www.cyclestreets.net" . "/api/journey.json?key={$this->testApiKey}&plan=fastest&itinerary=345529";
+		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&plan=fastest&itinerary=345529";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /api/journey call (retrieve journey) did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
@@ -250,7 +250,7 @@ class doCheck
 	private function test_nearestpoint (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = "http://www.cyclestreets.net" . "/api/nearestpoint.json?key={$this->testApiKey}&longitude=0.117950&latitude=52.205302";
+		$apiUrl = $this->serverUrl . "/api/nearestpoint.json?key={$this->testApiKey}&longitude=0.117950&latitude=52.205302";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /api/nearestpoint call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
@@ -289,7 +289,7 @@ class doCheck
 	private function test_geocoder (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = "http://www.cyclestreets.net" . "/api/geocoder.json?key={$this->testApiKey}&w=0.113937&s=52.201937&e=0.121963&n=52.208669&zoom=16&street=thoday%20street";
+		$apiUrl = $this->serverUrl . "/api/geocoder.json?key={$this->testApiKey}&w=0.113937&s=52.201937&e=0.121963&n=52.208669&zoom=16&street=thoday%20street";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /api/geocoder call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
@@ -343,7 +343,7 @@ class doCheck
 	private function test_photo (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = "http://www.cyclestreets.net" . "/api/photo.json?key={$this->testApiKey}&id=80";
+		$apiUrl = $this->serverUrl . "/api/photo.json?key={$this->testApiKey}&id=80";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /api/photo call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;

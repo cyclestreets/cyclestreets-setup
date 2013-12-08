@@ -74,20 +74,32 @@ class doCheck
 				// Skip tests not specified for this api key
 				if (is_array ($testSpec) && !in_array ($test, $testSpec)) {continue;}
 
+				// Reset the test result
+				$result = false;
+
 				// Run the test
 				if (!$this->{$test} ($errorMessage, $result)) {
-					// echo "Trying again for {$test}...";
+
+					// Wait
 					sleep (20);
+
+					// Reset the test result
+					$result = false;
+
+					// Retry
 					if (!$this->{$test} ($errorMessage, $result)) {
+
+						// Report
 						$this->reportProblem ($test, $errorMessage, $result);
+
+						// Abandon
 						return false;
 					}
 				}
 			}
 		}
-		
+
 		// No return value
-		
 	}
 	
 	

@@ -226,6 +226,9 @@ rm -f ${websitesContentFolder}/maintenance
 
 ### Stage 5 - end
 
+# Tinkle the update
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (1, 'Routing data updated to ${newEdition} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+
 # Finish
 echo "#	All done"
 echo "$(date)	Completed switch to $newEdition" >> ${setupLogFile}

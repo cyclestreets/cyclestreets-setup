@@ -109,7 +109,7 @@ fi
 a2enmod headers
 
 # Reload apache
-service apache2 reload >> ${setupLogFile}
+/etc/init.d/apache2 reload >> ${setupLogFile}
 
 
 # Report completion

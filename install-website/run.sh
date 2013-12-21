@@ -114,7 +114,7 @@ apt-get -y install imagemagick php5-imagick >> ${setupLogFile}
 # Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
 sudo a2enmod deflate
 apt-get -y install php-apc >> ${setupLogFile}
-service apache2 restart
+/etc/init.d/apache2 restart
 
 # Install Python
 echo "#	Installing python" >> ${setupLogFile}
@@ -365,7 +365,7 @@ if [ -d /etc/apache2/conf-available ]; then
 fi
 
 # Reload apache
-service apache2 reload >> ${setupLogFile}
+/etc/init.d/apache2 reload >> ${setupLogFile}
 
 # Database setup
 # Useful binding
@@ -512,7 +512,7 @@ if $configureExim ; then
     # NB These two are the same in any CycleStreets installation but different from the default Debian installation:
     sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
     sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
-    sudo service exim4 restart
+    sudo /etc/init.d/exim4 restart
 fi
 
 # Install the cycle routing daemon (service)
@@ -529,7 +529,7 @@ if $installRoutingAsDaemon ; then
 
     # Start the service
     # Acutally uses the restart option, which is more idempotent
-    service cycleroutingd restart
+    /etc/init.d/cycleroutingd restart
     echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 
     # Add the daemon to the system initialization, so that it will start on reboot
@@ -545,7 +545,7 @@ else
     if [ -L /etc/init.d/cycleroutingd ]; then
 
 	# Ensure it is stopped
-	service cycleroutingd stop
+	/etc/init.d/cycleroutingd stop
 
 	# Remove the symlink
 	rm /etc/init.d/cycleroutingd

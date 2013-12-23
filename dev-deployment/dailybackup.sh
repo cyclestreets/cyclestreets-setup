@@ -68,7 +68,7 @@ openssl dgst -md5 ${backups}/${dump} > ${backups}/${dump}.md5
 
 #	Tidyup
 if [ -d ${backups}/tracOld ]; then
-    rm -rf ${backups}/tracOld
+    echo $password | sudo -S rm -rf ${backups}/tracOld
 fi
 
 ##	Subversion

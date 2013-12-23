@@ -11,7 +11,7 @@
 # Configure
 # sudo ln -s /home/cyclestreets/src/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
 # Then restart munin
-# sudo service munin-node restart
+# sudo /etc/init.d/munin-node restart
 #
 # Remove
 # sudo rm /etc/munin/plugins/cyclestreets

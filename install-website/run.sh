@@ -425,7 +425,7 @@ then
 
     # Create an admin user
     encryption=`php -r"echo crypt(\"${password}\", \"${signinSalt}\");"`
-    ${mysql} cyclestreets -e "insert user_user (username, email, name, privileges, encryption, validated) values ('${username}', '${administratorEmail}', 'Admin Account', 'administrator', '${encryption}', '2013-08-15 09:45:18');" >> ${setupLogFile}
+    ${mysql} cyclestreets -e "insert user_user (username, email, \`password\`, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());" >> ${setupLogFile}
 
     # Create a welcome tinkle
     ${mysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');" >> ${setupLogFile}

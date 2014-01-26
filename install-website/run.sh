@@ -265,6 +265,49 @@ fi
 # Enable this virtual host
 a2ensite ${cslocalconf}
 
+# Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
+apilocalconf=apilocalhost.conf
+apiLocalVirtualHostFile=/etc/apache2/sites-available/${apilocalconf}
+
+# Check if the local virtual host exists already
+if [ ! -r ${apiLocalVirtualHostFile} ]; then
+    # Create the local virtual host (avoid any backquotes in the text as they'll spawn sub-processes)
+    cat > ${apiLocalVirtualHostFile} << EOF
+<VirtualHost *:80>
+
+	ServerName api.localhost
+	
+	# Logging
+	CustomLog /websites/www/logs/api.localhost.access.log combined
+	ErrorLog /websites/www/logs/api.localhost.error.log
+	
+	# Where the files are
+	DocumentRoot /websites/www/content/
+	
+	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit
+	Include /websites/www/content/.htaccess-base
+	Include /websites/www/content/.htaccess-api
+	
+	# Development environment
+	# Use MacroDevelopmentEnvironment '/'
+	# Force use of https
+	SetEnv HTTPS on
+
+</VirtualHost>
+EOF
+
+    # Allow the user to edit this file
+    chown ${username}:rollout ${apiLocalVirtualHostFile}
+
+else
+    echo "#	Virtual host already exists: ${apiLocalVirtualHostFile}"
+fi
+
+# Enable this virtual host
+a2ensite ${apilocalconf}
+
+
+
 # Global conf file
 zcsGlobalConf=zcsglobal.conf
 

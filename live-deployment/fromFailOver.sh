@@ -61,6 +61,9 @@ dumpPrefix=failover
 # Restore recent data
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
+# Restart the pseudoCron at today's date
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "update map_config set pseudoCron = curdate();";
+
 # Restore these cronjobs - note the timings of these should be the same as in the run.sh
 cat <(crontab -l) <(echo "4 4 * * * ${ScriptHome}/live-deployment/daily-dump.sh") | crontab -
 cat <(crontab -l) <(echo "34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh") | crontab -

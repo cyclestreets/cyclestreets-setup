@@ -82,6 +82,15 @@ php import/run.php
 # Clear this cache - (whose rows relate to a specific routing edition)
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
 
+# Check that the import finished correctly
+if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep cellOptimised > /dev/null 2>&1
+then
+    echo "# The import process did not complete. The routing service will not be started."
+    exit 1
+else
+    echo "# Now starting the routing service for the new import"
+fi
+
 # Start the routing service
 # Note: the service command is available to the root user on debian
 # It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.

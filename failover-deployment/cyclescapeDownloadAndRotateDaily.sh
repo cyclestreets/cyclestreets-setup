@@ -31,7 +31,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'CycleStreets Cyclescape hourly backup is already in progress' ; exit 1; }
+	flock -n 9 || { echo '#	CycleStreets Cyclescape backup is already in progress' ; exit 1; }
 
 ### CREDENTIALS ###
 

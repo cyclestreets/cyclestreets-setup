@@ -192,12 +192,14 @@ class doCheck
 			|| !isSet ($result['marker'][0]['@attributes']['coordinates'])
 			|| (!substr_count ($result['marker'][0]['@attributes']['coordinates'], ' -0.131'))
 			
-			# Check for a valid waypoint
+			# Check for a valid waypoint - check to four decimal places of lon/lat (about 100 metres) as nodes can move a bit
 			|| !isSet ($result['waypoint'])
 			|| !isSet ($result['waypoint'][0])
 			|| !isSet ($result['waypoint'][0]['@attributes'])
 			|| !isSet ($result['waypoint'][0]['@attributes']['longitude'])
-			|| ($result['waypoint'][0]['@attributes']['longitude'] != '-0.140059')
+			|| (!substr_count ($result['waypoint'][0]['@attributes']['longitude'], '-0.1400'))
+			|| !isSet ($result['waypoint'][0]['@attributes']['latitude'])
+			|| (!substr_count ($result['waypoint'][0]['@attributes']['latitude'], '51.5020'))
 			
 			# Testing..
 			// || !isSet ($result['doesnotexist'])

@@ -83,7 +83,7 @@ php import/run.php
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
 
 # Check that the import finished correctly
-if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep cellOptimised > /dev/null 2>&1
+if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
 then
     echo "# The import process did not complete. The routing service will not be started."
     exit 1

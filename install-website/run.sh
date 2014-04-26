@@ -485,7 +485,7 @@ archiveDb=csArchive
 # Unless the database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'" | grep ${archiveDb} > /dev/null 2>&1
 then
-    # Create sampleRoutingDb database
+    # Create archive database
     echo "#	Create ${archiveDb} database"
     ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql >> ${setupLogFile}
 
@@ -498,7 +498,7 @@ fi
 # Unless the database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
 then
-    # Create sampleRoutingDb database
+    # Create external database
     echo "#	Create ${externalDb} database"
     # !! Need to provide a place from where a full version can be downloaded.
     echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately."
@@ -507,6 +507,9 @@ then
     # Allow website read only access
     ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 fi
+
+# Identify the sample database
+sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
 
 # Unless the sample routing database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRoutingDb}'" | grep ${sampleRoutingDb} > /dev/null 2>&1

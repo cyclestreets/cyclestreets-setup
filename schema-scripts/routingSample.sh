@@ -36,10 +36,14 @@ asCS="sudo -u ${username}"
 
 # Report
 echo "#	CycleStreets schema script starting"
-echo "# Creating sample routing database for data built with the db named: ${sampleRoutingDb}"
 
 # Main Body
 credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
+
+# The current database name will be the sample database
+sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
+echo "# Creating sample routing database for data built with the db named: ${sampleRoutingDb}"
+
 
 #	Load the zapper
 mysql ${credentials} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema/cleanSampleRouting.sql

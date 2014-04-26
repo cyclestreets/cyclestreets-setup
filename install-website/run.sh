@@ -473,7 +473,7 @@ then
     ${mysql} cyclestreets -e "update map_gui set server='${websiteurl}' where id = 1;" >> ${setupLogFile}
 
     # Create an admin user
-    encryption=`php -r"echo crypt(\"${password}\", \"${signinSalt}\");"`
+    encryption=`php -r"echo crypt('${password}', '${signinSalt}');"`
     ${mysql} cyclestreets -e "insert user_user (username, email, \`password\`, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());" >> ${setupLogFile}
 
     # Create a welcome tinkle

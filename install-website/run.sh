@@ -125,7 +125,8 @@ apt-get -y install python php5-xmlrpc php5-curl >> ${setupLogFile}
 
 # Utilities
 echo "#	Some utilities" >> ${setupLogFile}
-apt-get -y install subversion openjdk-6-jre bzip2 ffmpeg >> ${setupLogFile}
+# ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
+apt-get -y install subversion openjdk-6-jre bzip2 >> ${setupLogFile}
 
 # Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
 apt-get -y install ntp >> ${setupLogFile}

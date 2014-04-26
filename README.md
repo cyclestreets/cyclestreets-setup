@@ -15,6 +15,8 @@ The *root* user is required to install the packages, but most of the installatio
 
     cyclestreets@machine:~/src/cyclestreets-setup/install-website$ sudo ./run.sh
 
+With apache 2.4 there's a line to uncomment in `/etc/apache2/conf-available/zcsglobal.conf`
+
 Use
 ===
 

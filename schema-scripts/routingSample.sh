@@ -36,7 +36,7 @@ asCS="sudo -u ${username}"
 
 # Report
 echo "#	CycleStreets schema script starting"
-
+echo "# Creating sample routing database for data built with the db named: ${sampleRoutingDb}"
 
 # Main Body
 credentials="-hlocalhost -uroot -p${mysqlRootPassword}"

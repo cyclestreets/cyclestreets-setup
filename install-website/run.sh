@@ -520,6 +520,12 @@ then
     gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${sampleRoutingDb} >> ${setupLogFile}
 fi
 
+# Unless the sample routing data exists:
+if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingData} ]; then
+    tar xf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing
+fi
+
+
 # Create a config if not already present
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 if [ ! -x "${routingEngineConfigFile}" ]; then

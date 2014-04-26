@@ -32,7 +32,7 @@ mysqlImportUsername=import
 mysqlImportPassword=
 
 #	Use a routing database that has been built for a small sized city.
-sampleRoutingDb=routing130815
+sampleRoutingDb=routing140426
 
 # A string used to encrypt user passwords
 signinSalt=

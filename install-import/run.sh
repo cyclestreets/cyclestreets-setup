@@ -96,7 +96,7 @@ ${mysql} -e "grant select , insert , update , delete , create , drop , index , a
 # rsync --partial --progress --rsh=ssh user@host:remote_file local_file
 
 # Make sure the target folder exists
-mkdir -p ${websitesBackupsFolder}/external
+${asCS} mkdir -p ${websitesBackupsFolder}/external
 
 # Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
 if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then

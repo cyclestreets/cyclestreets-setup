@@ -42,24 +42,24 @@ echo "#	CycleStreets schema script starting"
 credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
 
 #	Use a routing database that has been built for a small sized city.
-sampleDb=routing130815
+sampleRoutingDb=routing130815
 
 #	Load the zapper
-mysql ${credentials} ${sampleDb} < ${websitesContentFolder}/documentation/schema/cleanSampleRouting.sql
+mysql ${credentials} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema/cleanSampleRouting.sql
 
 #	Run the zapper - which eliminates unnecessary data, leaving only essential data required to provide routing
 #	(This smashes the routing db so consider making a copy first.)
-mysql ${credentials} ${sampleDb} -e "call cleanSampleRouting();"
+mysql ${credentials} ${sampleRoutingDb} -e "call cleanSampleRouting();"
 
 #	Write
-mysqldump ${sampleDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
+mysqldump ${sampleRoutingDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
 
 # Archive the data
-tar czf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing ${sampleDb}
+tar czf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing ${sampleRoutingDb}
 
 #	Advise
 echo "#	Actions required next:"
-echo "#	Add the new file (/documentation/schema/${sampleDb}.sql.gz) to the repo and remove the old one, then commit."
+echo "#	Add the new file (/documentation/schema/${sampleRoutingDb}.sql.gz) to the repo and remove the old one, then commit."
 echo "#	Fixup the install-website script from https://github.com/cyclestreets/cyclestreets-setup to refer to the new db."
 
 # Confirm end of script

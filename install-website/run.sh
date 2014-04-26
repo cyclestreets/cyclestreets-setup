@@ -485,7 +485,7 @@ archiveDb=csArchive
 # Unless the database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'" | grep ${archiveDb} > /dev/null 2>&1
 then
-    # Create basicRoutingDb database
+    # Create sampleRoutingDb database
     echo "#	Create ${archiveDb} database"
     ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql >> ${setupLogFile}
 
@@ -498,7 +498,7 @@ fi
 # Unless the database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
 then
-    # Create basicRoutingDb database
+    # Create sampleRoutingDb database
     echo "#	Create ${externalDb} database"
     # !! Need to provide a place from where a full version can be downloaded.
     echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately."
@@ -509,17 +509,17 @@ then
 fi
 
 # Install a basic routing db from the repository
-basicRoutingDb=routing130815
+sampleRoutingDb=routing130815
 # Unless the database already exists:
-if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${basicRoutingDb}'" | grep ${basicRoutingDb} > /dev/null 2>&1
+if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRoutingDb}'" | grep ${sampleRoutingDb} > /dev/null 2>&1
 then
-    # Create basicRoutingDb database
-    echo "#	Create ${basicRoutingDb} database"
-    ${mysql} -e "create database if not exists ${basicRoutingDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+    # Create sampleRoutingDb database
+    echo "#	Create ${sampleRoutingDb} database"
+    ${mysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
 
     # Load data
-    echo "#	Load ${basicRoutingDb} data"
-    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${basicRoutingDb} >> ${setupLogFile}
+    echo "#	Load ${sampleRoutingDb} data"
+    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${sampleRoutingDb} >> ${setupLogFile}
 fi
 
 # Create a config if not already present
@@ -527,7 +527,7 @@ routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 if [ ! -x "${routingEngineConfigFile}" ]; then
 	# Create the config for the basic routing db, as cyclestreets user
 	${asCS} touch "${routingEngineConfigFile}"
-	${asCS} echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${basicRoutingDb}" > "${routingEngineConfigFile}"
+	${asCS} echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${sampleRoutingDb}" > "${routingEngineConfigFile}"
 	# Ensure it is executable
 	chmod a+x "${routingEngineConfigFile}"
 fi

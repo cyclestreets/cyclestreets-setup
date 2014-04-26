@@ -26,4 +26,4 @@ to see the CycleStreets home page.
 
 Troubleshooting
 ===============
-Check apache2 logs in `/websites/www/logs/` or `/var/logs/apache2/`.
+Check apache2 logs in `/websites/www/logs/` or `/var/log/apache2/`.

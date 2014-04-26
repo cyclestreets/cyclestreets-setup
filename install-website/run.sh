@@ -238,8 +238,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 
 	# Available URL(s)
 	# Note: ServerName should not use wildcards, use ServerAlias for that.
-	ServerName localhost
-	ServerAlias *.localhost
+	ServerName ${websiteurl}
 
 	# Logging
 	CustomLog /websites/www/logs/access.log combined
@@ -279,11 +278,11 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
     cat > ${apiLocalVirtualHostFile} << EOF
 <VirtualHost *:80>
 
-	ServerName api.localhost
+	ServerName api.${websiteurl}
 	
 	# Logging
-	CustomLog /websites/www/logs/api.localhost.access.log combined
-	ErrorLog /websites/www/logs/api.localhost.error.log
+	CustomLog /websites/www/logs/api.${websiteurl}.access.log combined
+	ErrorLog /websites/www/logs/api.${websiteurl}.error.log
 	
 	# Where the files are
 	DocumentRoot /websites/www/content/
@@ -469,6 +468,9 @@ then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
     ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql >> ${setupLogFile}
+
+    # Set the gui server
+    ${mysql} cyclestreets -e "update map_gui set server='${websiteurl}' where id = 1;" >> ${setupLogFile}
 
     # Create an admin user
     encryption=`php -r"echo crypt(\"${password}\", \"${signinSalt}\");"`

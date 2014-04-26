@@ -70,6 +70,7 @@ mysqldump ${sampleDb} ${credentials} --routines --no-create-db > ${websitesConte
 
 #	Advise
 echo "#	Actions required next:"
+echo "#	Build a routing sample db."
 echo "#	Commit the updated schema to the repository."
 
 # Confirm end of script

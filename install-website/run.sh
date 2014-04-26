@@ -524,7 +524,7 @@ then
 fi
 
 # Unless the sample routing data exists:
-if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingData} ]; then
+if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingDb} ]; then
     echo "#	Unpacking ${sampleRoutingDb} data"
     tar xf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing
 fi

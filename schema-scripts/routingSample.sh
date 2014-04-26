@@ -54,6 +54,9 @@ mysql ${credentials} ${sampleDb} -e "call cleanSampleRouting();"
 #	Write
 mysqldump ${sampleDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
 
+# Archive the data
+tar czf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing ${sampleDb}
+
 #	Advise
 echo "#	Actions required next:"
 echo "#	Add the new file (/documentation/schema/${sampleDb}.sql.gz) to the repo and remove the old one, then commit."

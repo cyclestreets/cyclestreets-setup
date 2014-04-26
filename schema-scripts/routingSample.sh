@@ -52,11 +52,12 @@ mysql ${credentials} ${sampleRoutingDb} -e "call cleanSampleRouting();"
 mysqldump ${sampleRoutingDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
 
 # Archive the data
-tar czf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing ${sampleRoutingDb}
+sampleRoutingData=routingSampleData.tar.gz
+tar czf ${websitesContentFolder}/documentation/schema/${sampleRoutingData} -C ${websitesContentFolder}/data/routing ${sampleRoutingDb}
 
 #	Advise
 echo "#	Actions required next:"
-echo "#	Add the new file (/documentation/schema/${sampleRoutingDb}.sql.gz) to the repo and remove the old one, then commit."
+echo "#	Add the new files, ${sampleRoutingDb}.sql.gz and ${sampleRoutingData} (in /documentation/schema/) to the repo and remove the old one, then commit."
 echo "#	Fixup the install-website script from https://github.com/cyclestreets/cyclestreets-setup to refer to the new db."
 
 # Confirm end of script

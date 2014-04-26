@@ -41,9 +41,6 @@ echo "#	CycleStreets schema script starting"
 # Main Body
 credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
 
-#	Use a routing database that has been built for a small sized city.
-sampleRoutingDb=routing130815
-
 #	Load the zapper
 mysql ${credentials} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema/cleanSampleRouting.sql
 

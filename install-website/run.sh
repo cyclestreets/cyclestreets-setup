@@ -508,9 +508,7 @@ then
     ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 fi
 
-# Install a basic routing db from the repository
-sampleRoutingDb=routing130815
-# Unless the database already exists:
+# Unless the sample routing database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRoutingDb}'" | grep ${sampleRoutingDb} > /dev/null 2>&1
 then
     # Create sampleRoutingDb database

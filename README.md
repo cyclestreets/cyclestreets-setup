@@ -13,6 +13,8 @@ After the repository has been cloned from github, proceed by making your own *.c
 
 The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using *sudo*).
 
+    cyclestreets@machine:~/src/cyclestreets-setup/install-website$ sudo ./run.sh
+
 Use
 ===
 

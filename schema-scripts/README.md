@@ -24,3 +24,10 @@ The result is saved to:
 /documentation/schema/routingSample.sql.gz
 
 
+To create sample routing data
+    Run an import for a small sized city
+    Switch over to the new import via the control panel
+    Run in this order:
+    schema-scripts/csSampleDb.sh
+    schema-scripts/routingSample.sh
+    That will bind the latest routing edition into the sample database so that it should get set up with fresh installs.

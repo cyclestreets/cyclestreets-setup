@@ -510,7 +510,7 @@ fi
 # Batch db
 # This creates only a skeleton and sets up grant permissions. A full installation is not yet available.
 # Unless the database already exists:
-if [ -n "${batchDb}" -a ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${batchDb}'" | grep ${batchDb} > /dev/null 2>&1 ]; then
+if [ -n "${batchDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${batchDb}'" | grep ${batchDb} > /dev/null 2>&1 ; then
 
     # Create batch database
     echo "#	Create ${batchDb} database"

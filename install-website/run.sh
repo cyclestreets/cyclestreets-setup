@@ -507,6 +507,25 @@ then
     ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 fi
 
+# Batch db
+# This creates only a skeleton and sets up grant permissions. A full installation is not yet available.
+# Unless the database already exists:
+if [ -n "${batchDb}" -a ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${batchDb}'" | grep ${batchDb} > /dev/null 2>&1 ]; then
+
+    # Create batch database
+    echo "#	Create ${batchDb} database"
+    ${mysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+
+    # Grants
+    ${mysql} -e "grant SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+
+    echo "#	Note: this contains table definitions only and contains no data."
+    #${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql >> ${setupLogFile}
+
+else
+    echo "#	Skipping batch database"
+fi
+
 # Identify the sample database
 sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
 

@@ -500,8 +500,7 @@ if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}
 then
     # Create external database
     echo "#	Create ${externalDb} database"
-    # !! Need to provide a place from where a full version can be downloaded.
-    echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately."
+    echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
     ${mysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql >> ${setupLogFile}
 
     # Allow website read only access

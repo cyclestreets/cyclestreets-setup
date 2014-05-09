@@ -526,8 +526,9 @@ else
     echo "#	Skipping batch database"
 fi
 
-# Identify the sample database
-sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
+# Identify the sample database (the -s suprresses the tabular output)
+sampleRoutingDb=$(${mysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
+echo "#	The sample database is: ${sampleRoutingDb}"
 
 # Unless the sample routing database already exists:
 if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRoutingDb}'" | grep ${sampleRoutingDb} > /dev/null 2>&1

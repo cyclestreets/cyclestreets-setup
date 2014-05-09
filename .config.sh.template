@@ -100,7 +100,6 @@ failoverServer=
 # Tilecache
 tilecacheUrl=tile.cyclestreets.net
 tilecacheContentFolder=/websites/tile/content
-tilecacheKeyCloudmade=
 
 
 # Cron jobs boolean: true|false

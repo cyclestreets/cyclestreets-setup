@@ -89,7 +89,6 @@ chmod -R g+w "${tilecacheContentFolder}"
 # Create the config file if it doesn't exist, and write in the configuration
 if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then
 	${asCS} cp -pr .config.php.template .config.php
-	sed -i "s|<cloudmadekey>|${tilecacheKeyCloudmade}|g" .config.php
 fi
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration

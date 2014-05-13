@@ -526,7 +526,7 @@ else
     echo "#	Skipping batch database"
 fi
 
-# Identify the sample database (the -s suprresses the tabular output)
+# Identify the sample database (the -s suppresses the tabular output)
 sampleRoutingDb=$(${mysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 echo "#	The sample database is: ${sampleRoutingDb}"
 

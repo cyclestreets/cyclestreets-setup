@@ -42,16 +42,23 @@ credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
 
 # The current database name will be the sample database
 sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
-echo "# Using routing data from the db named: ${sampleRoutingDb}"
+# Use the date part of that (from character 7) as the basis for getting the planet db.
+samplePlanetDb=planetExtractOSM${sampleRoutingDb:7}
+echo "# Using routing data from the db named: ${sampleRoutingDb} and planet ${samplePlanetDb}"
 
 #	Write
-mysqldump ${sampleRoutingDb} ${credentials} map_way map_routingFactor map_wayName | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
+#	Routing db
+mysqldump ${sampleRoutingDb} ${credentials} map_way map_routingFactor map_wayName map_osmBicycleRoute map_way_tags | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
+#	Planet Extract db
+mysqldump ${samplePlanetDb} ${credentials} osm_wayTag | gzip > ${websitesContentFolder}/${samplePlanetDb}Project.sql.gz
 
 #	Advise
 echo "#	Actions required next:"
 echo "#	End user will need to create a database and load the data into it using:"
 echo "mysql -e \"create database ${sampleRoutingDb} default character set utf8 default collate utf8_unicode_ci;\""
 echo "gunzip < ${sampleRoutingDb}Project.sql.gz | mysql ${sampleRoutingDb}"
+echo "mysql -e \"create database ${samplePlanetDb} default character set utf8 default collate utf8_unicode_ci;\""
+echo "gunzip < ${samplePlanetDb}Project.sql.gz | mysql ${samplePlanetDb}"
 
 # Confirm end of script
 echo "#	Script completed $(date)"

@@ -45,13 +45,13 @@ sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from 
 echo "# Using routing data from the db named: ${sampleRoutingDb}"
 
 #	Write
-mysqldump ${sampleRoutingDb} ${credentials} map_way map_routingFactor map_wayName | gzip > ${websitesContentFolder}/documentation/schema/routingProject.sql.gz
+mysqldump ${sampleRoutingDb} ${credentials} map_way map_routingFactor map_wayName | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
 
 #	Advise
 echo "#	Actions required next:"
 echo "#	End user will need to create a database and load the data into it using:"
 echo "mysql -e \"create database ${sampleRoutingDb} default character set utf8 default collate utf8_unicode_ci;\""
-echo "gunzip < routingProject.sql.gz | mysql ${sampleRoutingDb}"
+echo "gunzip < ${sampleRoutingDb}Project.sql.gz | mysql ${sampleRoutingDb}"
 
 # Confirm end of script
 echo "#	Script completed $(date)"

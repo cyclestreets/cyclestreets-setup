@@ -48,7 +48,7 @@ fi
 
 # Outputs the config of this plugin
 output_config() {
-    echo "graph_title Cycle Streets usage"
+    echo "graph_title CycleStreets usage"
     echo "graph_category CycleStreets"
     echo "itineraries.label Itineraries per 5 mins"
     echo "failedItineraries.label Failed itineraries per 5 mins"

@@ -516,8 +516,9 @@ if [ -n "${batchDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABA
     echo "#	Create ${batchDb} database"
     ${mysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
 
-    # Grants
+    # Grants; note that the FILE privilege (which is not database-specific) is required so that table contents can be loaded from a file
     ${mysql} -e "grant SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+    ${mysql} -e "GRANT FILE ON *.* TO '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
     echo "#	Note: this contains table definitions only and contains no data."
     ${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql >> ${setupLogFile}

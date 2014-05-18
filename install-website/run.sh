@@ -520,7 +520,7 @@ if [ -n "${batchDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABA
     ${mysql} -e "grant SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
     echo "#	Note: this contains table definitions only and contains no data."
-    #${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql >> ${setupLogFile}
+    ${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql >> ${setupLogFile}
 
 else
     echo "#	Skipping batch database"

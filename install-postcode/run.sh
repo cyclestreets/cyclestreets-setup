@@ -68,7 +68,7 @@ if [ ! -r ONSdata.csv ]; then
  exit 1;
 fi
 
-# External databse
+# External database
 externalDb=csExternal
 
 # Useful bindings

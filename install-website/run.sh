@@ -227,7 +227,7 @@ chown www-data:rollout ${websitesContentFolder}/documentation/RequestedMissingCi
 a2enmod rewrite >> ${setupLogFile}
 
 # Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
-cslocalconf=cslocalhost.conf
+cslocalconf=cyclestreets.conf
 localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 
 # Check if the local virtual host exists already
@@ -269,7 +269,7 @@ fi
 a2ensite ${cslocalconf}
 
 # Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
-apilocalconf=apilocalhost.conf
+apilocalconf=api.cyclestreets.conf
 apiLocalVirtualHostFile=/etc/apache2/sites-available/${apilocalconf}
 
 # Check if the local virtual host exists already

@@ -467,6 +467,10 @@ then
     echo "#	Load cyclestreets data"
     ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql >> ${setupLogFile}
 
+    # Set the API server
+    # Uses http rather than https as that will help get it working, then user can change later via the control panel.
+    ${mysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;" >> ${setupLogFile}
+
     # Set the gui server
     ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;" >> ${setupLogFile}
 

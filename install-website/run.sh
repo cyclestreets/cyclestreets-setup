@@ -278,11 +278,11 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
     cat > ${apiLocalVirtualHostFile} << EOF
 <VirtualHost *:80>
 
-	ServerName api.${websiteurl}
+	ServerName ${apiServerName}
 	
 	# Logging
-	CustomLog /websites/www/logs/api.${websiteurl}.access.log combined
-	ErrorLog /websites/www/logs/api.${websiteurl}.error.log
+	CustomLog /websites/www/logs/${apiServerName}.access.log combined
+	ErrorLog /websites/www/logs/${apiServerName}.error.log
 	
 	# Where the files are
 	DocumentRoot /websites/www/content/

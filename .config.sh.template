@@ -12,6 +12,9 @@ csServerName=localhost
 administratorEmail=webmaster@example.com
 mainEmail="${administratorEmail}"
 
+# API
+apiServerName=api."${csServerName}"
+
 # Define the username for CycleStreets to install/run under, so that it can run independent of any individual personal account on the machine
 # No spaces, all lower case, minimum five chars - so that can also be used as a cyclestreets sign in username.
 username=cyclestreets

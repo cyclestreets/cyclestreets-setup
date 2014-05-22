@@ -238,7 +238,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 
 	# Available URL(s)
 	# Note: ServerName should not use wildcards, use ServerAlias for that.
-	ServerName ${websiteurl}
+	ServerName ${csServerName}
 
 	# Logging
 	CustomLog /websites/www/logs/access.log combined
@@ -470,7 +470,7 @@ then
     ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql >> ${setupLogFile}
 
     # Set the gui server
-    ${mysql} cyclestreets -e "update map_gui set server='${websiteurl}' where id = 1;" >> ${setupLogFile}
+    ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;" >> ${setupLogFile}
 
     # Create an admin user
     encryption=`php -r"echo crypt('${password}', '${signinSalt}');"`

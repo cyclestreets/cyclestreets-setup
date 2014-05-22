@@ -293,8 +293,6 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
 	
 	# Development environment
 	# Use MacroDevelopmentEnvironment '/'
-	# Force use of https
-	SetEnv HTTPS on
 
 </VirtualHost>
 EOF

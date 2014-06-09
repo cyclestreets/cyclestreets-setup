@@ -45,10 +45,10 @@ if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
 fi
 
 # Create a folder for the new version
-mkdir -p /usr/local/osmosis/osmosis-0.43.1
+mkdir -p /usr/local/osmosis/osmosis-0.44.1
 
 # Unpack into it
-tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.43.1
+tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.44.1
 
 # Remove the download archive
 # rm -f /usr/local/osmosis/osmosis-latest.tgz
@@ -56,8 +56,8 @@ tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.43
 # Repoint current to the new install
 rm -f /usr/local/osmosis/current
 
-# Whatever the version number is here - replace the 0.43.1
-ln -s /usr/local/osmosis/osmosis-0.43.1 /usr/local/osmosis/current
+# Whatever the version number is here - replace the 0.44.1
+ln -s /usr/local/osmosis/osmosis-0.44.1 /usr/local/osmosis/current
 
 # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
 if [ ! -L /usr/local/bin/osmosis ]; then

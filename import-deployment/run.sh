@@ -90,6 +90,8 @@ key_buffer		= 4G
 max_allowed_packet	= 16M
 group_concat_max_len	= 50K
 
+# Query Cache - on demand
+query_cache_type        = 2
 # These are quite big
 query_cache_limit	= 1M
 query_cache_size        = 50M

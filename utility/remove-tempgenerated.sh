@@ -65,6 +65,10 @@ done
 #	rm -rf thumbnails
 #	rm -rf thumbnails2
 # 2. Re-create the thumbnails folder, best done by svn update from the tempgenerated folder:
-#	cyclestreets@www:${websitesContentFolder}/data/tempgenerated# svn update
+#	cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ svn update
+# 3. You may need to update ownership
+#    cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ sudo chown -R www-data thumbnails
+#    cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ sudo chown -R www-data thumbnails2
+
 
 # End of file

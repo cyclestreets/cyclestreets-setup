@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script to create a dump of the csExternal database - as used by import-deployment
+# Script to create a dump of the csExternal database
 #
 # Tested on 13.04 View Ubuntu version using: lsb_release -a
 
@@ -32,9 +32,6 @@ fi
 
 # Load the credentials
 . ./${configFile}
-
-# Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
 
 # Report
 echo "#	CycleStreets creating a dump of the external schema only (no data)"

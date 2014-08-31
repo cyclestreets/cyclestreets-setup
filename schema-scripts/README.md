@@ -13,7 +13,7 @@ Only running the script after that will process the changes into: `/documentatio
 
 ## externalDb.sh
 
-Creates a dump of the external schema only (no data).
+Creates a dump of the external schema, optionally including data.
 
 
 ## routingSample.sh

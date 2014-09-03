@@ -226,8 +226,8 @@ rm -f ${websitesContentFolder}/maintenance
 
 ### Stage 5 - end
 
-# Tinkle the update
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (1, 'Routing data updated to ${newEdition} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+# Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${newEdition} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Finish
 echo "#	All done"

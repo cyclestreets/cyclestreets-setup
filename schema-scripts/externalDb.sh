@@ -54,7 +54,7 @@ if [ ! -z "${csExternalDataFile}" ]; then
     # Advise
     echo "#	Advise: on the backup machine run this to copy the dump:"
     echo "#	scp www.cyclestreets.net:${websitesBackupsFolder}/${csExternalDataFile} ${websitesBackupsFolder}"
-    echo "#	Create a new csExternal database and use this to restore:"
+    echo "#	Create a new csExternal database (or drop all the tables from any existing one) and use this to restore:"
     echo "#	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | mysql csExternal -uroot -pROOT PASSWORD HERE"
 
 fi

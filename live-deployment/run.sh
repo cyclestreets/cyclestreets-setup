@@ -44,6 +44,10 @@ fi
 ## !! Turned off for testing
 #. ../install-website/run.sh
 
+# SSL for secure logins
+apt-get -y install openssl libssl1.0.0 libssl-dev
+## !! TODO: Copy in SSL certificate files and add to VirtualHost config
+
 
 # MySQL configuration
 mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf

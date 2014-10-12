@@ -108,11 +108,13 @@ fi
 newEdition=$1
 
 # Check the format is routingYYMMDD
-if [[ ! "$newEdition" =~ routing[0-9]{6} ]]; then
+if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
   echo "#	Arg importedition must specify a database of the form routingYYMMDD"
   exit 1
 fi
 
+# Extract the date part of the routing database
+importDate=${BASH_REMATCH[1]}
 
 ### Stage 3 - confirm existence of the routing import database and files
 
@@ -227,7 +229,7 @@ rm -f ${websitesContentFolder}/maintenance
 ### Stage 5 - end
 
 # Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${newEdition} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Finish
 echo "#	All done"

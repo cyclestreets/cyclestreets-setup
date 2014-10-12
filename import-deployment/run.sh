@@ -73,6 +73,7 @@ if [ ! -r ${mysqlConfFile} ]; then
 default-storage-engine = myisam
 
 # Memory tables are also used
+# These values are controlled during an import
 max_heap_table_size = 1G
 tmp_table_size = 1G
 
@@ -85,6 +86,7 @@ table_open_cache = 4096
 open_files_limit = 65535
 
 # This should be set to about 20 - 50% of available memory. On our 8GB www machine a good size is probably 1G. (The default is only 16M is a performance killer.)  
+# This value is controlled during an import
 key_buffer		= 4G
 
 max_allowed_packet	= 16M

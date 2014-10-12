@@ -34,6 +34,16 @@ mysqlImportUsername=import
 # Avoid using a % in this password because that won't survive being passed to version 0.43.1 of osmosis (this problem has been flagged with them)
 mysqlImportPassword=
 
+# MySQL settings for when the server is running an import or serving routes
+# Values should be written as eg: 100*1024*1024
+import_key_buffer_size=
+import_max_heap_table_size=
+import_tmp_table_size=
+routing_key_buffer_size=
+routing_max_heap_table_size=
+routing_tmp_table_size=
+
+
 # A string used to encrypt user passwords
 signinSalt=
 

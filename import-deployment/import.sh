@@ -68,6 +68,19 @@ if [ -n "${importDisk}" ]; then
     fi
 fi
 
+# Configure MySQL for import
+if [ -n "${import_key_buffer_size}" ]; then
+    echo "#	Configuring MySQL for import"
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${import_key_buffer_size};";
+fi
+# These two variable changes affect new connections to the server and so can't be checked straight away with select @@...
+if [ -n "${import_max_heap_table_size}" ]; then
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${import_max_heap_table_size};";
+fi
+if [ -n "${import_tmp_table_size}" ]; then
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${import_tmp_table_size};";
+fi
+
 # Stop the routing service
 # Note: the service command is available to the root user on debian
 # It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
@@ -87,9 +100,22 @@ if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names
 then
     echo "# The import process did not complete. The routing service will not be started."
     exit 1
-else
-    echo "# Now starting the routing service for the new import"
 fi
+
+
+# Configure MySQL for routing
+if [ -n "${routing_key_buffer_size}" ]; then
+    echo "#	Configuring MySQL for serving routes"
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${routing_key_buffer_size};";
+fi
+if [ -n "${routing_max_heap_table_size}" ]; then
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${routing_max_heap_table_size};";
+fi
+if [ -n "${routing_tmp_table_size}" ]; then
+    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${routing_tmp_table_size};";
+fi
+
+echo "# Now starting the routing service for the new import"
 
 # Start the routing service
 # Note: the service command is available to the root user on debian

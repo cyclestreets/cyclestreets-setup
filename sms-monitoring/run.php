@@ -11,6 +11,7 @@ class doCheck
 	private $timeoutSeconds = 15;
 	private $enableSms = true;
 	private $serverUrl = 'http://www.cyclestreets.net';
+	private $apiV2Url = 'https://api.cyclestreets.net/v2';
 
 	# Constructor
 	public function __construct ()
@@ -356,10 +357,10 @@ class doCheck
 	# Photo (retrieval) test
 	private function test_photo (&$errorMessage = false, &$result = false)
 	{
-		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = $this->serverUrl . "/api/photo.json?key={$this->testApiKey}&id=80";
+		# Obtain a photo (the split is to avoid bots traversing a repository)
+		$apiUrl = $this->apiV2Url . "/photomap.location?key={$this->testApiKey}&id=80&format=flat&fields=id,latitude,longitude,caption";
 		if (!$json = @file_get_contents ($apiUrl)) {
-			$errorMessage = "The /api/photo call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
+			$errorMessage = "The /v2/photomap.location call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -370,20 +371,18 @@ class doCheck
 		
 		# Ensure the data is as expected
 		if (
-			# Check the marker structure has the first marker
-			   !isSet ($result['request'])
-			|| !isSet ($result['result'])
-			|| !isSet ($result['result']['longitude'])
-			|| !isSet ($result['result']['caption'])
+			# Check the data structure
+			   !isSet ($result['longitude'])
+			|| !isSet ($result['caption'])
 			
-			# Check for a co-ordinate in the right area of the country
-			|| (!substr_count ($result['result']['longitude'], '0.141'))
-			|| (!substr_count ($result['result']['caption'], 'York Street'))
+			# Check for a co-ordinate in the right area of the country and a correct caption
+			|| (!substr_count ($result['longitude'], '0.141'))
+			|| (!substr_count ($result['caption'], 'York Street'))
 			
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/photo call did not return the expected format. URL: {$apiUrl}";
+			$errorMessage = "The /v2/photomap.location call did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		

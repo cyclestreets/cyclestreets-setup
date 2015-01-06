@@ -264,10 +264,10 @@ class doCheck
 	# Nearestpoint test
 	private function test_nearestpoint (&$errorMessage = false, &$result = false)
 	{
-		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = $this->serverUrl . "/api/nearestpoint.json?key={$this->testApiKey}&longitude=0.117950&latitude=52.205302";
+		# Obtain a photo (the split is to avoid bots traversing a repository)
+		$apiUrl = $this->apiV2Url . "/nearestpoint?key={$this->testApiKey}&lonlat=0.117950,52.205302";
 		if (!$json = @file_get_contents ($apiUrl)) {
-			$errorMessage = "The /api/nearestpoint call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
+			$errorMessage = "The /v2/nearestpoint call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -279,19 +279,21 @@ class doCheck
 		# Ensure the data is as expected
 		if (
 			# Check the marker structure has the first marker
-			   !isSet ($result['marker'])
-			|| !isSet ($result['marker']['@attributes'])
-			|| !isSet ($result['marker']['@attributes']['longitude'])
-			|| !isSet ($result['marker']['@attributes']['latitude'])
+			   !isSet ($result['features'])
+			|| !isSet ($result['features'][0])
+			|| !isSet ($result['features'][0]['geometry'])
+			|| !isSet ($result['features'][0]['geometry']['coordinates'])
+			|| !isSet ($result['features'][0]['geometry']['coordinates'][0])
+			|| !isSet ($result['features'][0]['geometry']['coordinates'][1])
 			
 			# Check for a co-ordinate in the right area of the country
-			|| (!substr_count ($result['marker']['@attributes']['longitude'], '0.11'))
-			|| (!substr_count ($result['marker']['@attributes']['latitude'], '52.2'))
+			|| (!substr_count ($result['features'][0]['geometry']['coordinates'][0], '0.11'))
+			|| (!substr_count ($result['features'][0]['geometry']['coordinates'][1], '52.2'))
 			
 			# Testing..
 			// || !isSet ($result['doesnotexist'])
 		) {
-			$errorMessage = "The /api/nearestpoint call did not return the expected format. URL: {$apiUrl}";
+			$errorMessage = "The /v2/nearestpoint call did not return the expected format. URL: {$apiUrl}";
 			return false;
 		}
 		
@@ -358,7 +360,7 @@ class doCheck
 	private function test_photo (&$errorMessage = false, &$result = false)
 	{
 		# Obtain a photo (the split is to avoid bots traversing a repository)
-		$apiUrl = $this->apiV2Url . "/photomap.location?key={$this->testApiKey}&id=80&format=flat&fields=id,latitude,longitude,caption";
+		$apiUrl = $this->apiV2Url . "/photomap.location?key={$this->testApiKey}&id=80&fields=id,latitude,longitude,caption&format=flat";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /v2/photomap.location call did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;

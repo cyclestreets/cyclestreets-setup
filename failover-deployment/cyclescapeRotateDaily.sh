@@ -56,7 +56,7 @@ rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Rotate
 $rotateDaily $folder cyclescapeDB.sql.gz
-$rotateDaily $folder toolkitShared.tar.bz2
+$rotateDaily $folder cyclescapeShared.tar.bz2
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

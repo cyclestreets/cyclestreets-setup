@@ -3,7 +3,7 @@
 #	It rotates the backups relative to the folder
 #	The arguments are:
 #	1. folder relative to root (not slash terminated) e.g. /websites/cyclescape/backup
-#	2. name of the archive file e.g. toolkitShared.tar.bz2
+#	2. name of the archive file e.g. cyclescapeShared.tar.bz2
 
 folder=$1
 archive=$2

@@ -65,7 +65,7 @@ $rotateWeekly $folder cyclestreetsRepo.dump.bz2
 #	Cyclescape Folder locations
 folder=/websites/cyclescape/backup
 $rotateWeekly $folder cyclescapeDB.sql.gz
-$rotateWeekly $folder toolkitShared.tar.bz2
+$rotateWeekly $folder cyclescapeShared.tar.bz2
 
 
 # Remove the lock file - ${0##*/} extracts the script's basename

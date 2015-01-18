@@ -4,8 +4,8 @@
 #	This file downloads dumps from www.cyclescape.org to the backup machine.
 #
 #	The server at www.cyclescape.org should generate backups of
-#	* database - less than 1M
-#	* toolkit assets - around 100M (Feb 2012) (500M Jan 2013)
+#	* Cyclescape database - less than 1M
+#	* Cyclescape assets - around 4.7GB (as of Jan 2015)
 #	as zipped files.
 #	Both files should also have .md5 files containing the md5 strings associated with them.
 #	This script looks at the remote md5 files to determine whether they and the dumps are ready to download.
@@ -71,11 +71,11 @@ rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Download
 $download $administratorEmail $server $folder cyclescapeDB.sql.gz
-$download $administratorEmail $server $folder toolkitShared.tar.bz2
+$download $administratorEmail $server $folder cyclescapeShared.tar.bz2
 
 #	Rotate
 $rotateDaily $folder cyclescapeDB.sql.gz
-$rotateDaily $folder toolkitShared.tar.bz2
+$rotateDaily $folder cyclescapeShared.tar.bz2
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

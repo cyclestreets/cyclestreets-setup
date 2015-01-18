@@ -11,7 +11,7 @@
 #	email used to notify of any problems
 #	server e.g. www.cyclescape.org
 #	folder relative to root (not slash terminated) e.g. /websites/cyclescape/backup
-#	name of the archive file e.g. toolkitShared.tar.bz2
+#	name of the archive file e.g. cyclescapeShared.tar.bz2
 
 # Ensure this script is NOT run as root (it should be run as cyclestreets)
 if [ "$(id -u)" = "0" ]; then

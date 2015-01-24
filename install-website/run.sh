@@ -370,6 +370,9 @@ Alias /images/statsicons /websites/configuration/analog/images
 <Directory /websites/www/content/data/photomap2/>
 	deny from all
 </Directory>
+<Directory /websites/www/content/data/photomap3/>
+	deny from all
+</Directory>
 
 # Disallow loading of .svn folder contents
 <DirectoryMatch .*\.svn/.*>

@@ -92,11 +92,10 @@ key_buffer		= 4G
 max_allowed_packet	= 16M
 group_concat_max_len	= 50K
 
-# Query Cache - on demand
+# Query Cache - on demand and best to limit to small efficient size
 query_cache_type        = 2
-# These are quite big
-query_cache_limit	= 1M
-query_cache_size        = 50M
+query_cache_limit	= 256K
+query_cache_size        = 20M
 
 log_slow_queries	= /var/log/mysql/mysql-slow.log
 long_query_time = 3

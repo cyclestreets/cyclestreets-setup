@@ -42,6 +42,9 @@ class doCheck
 		# Set the timeout for URL requests
 		ini_set ('default_socket_timeout', $this->timeoutSeconds);
 		
+		# Set the user-agent string
+		ini_set ('user_agent', 'API monitor');
+		
 		# Ignore times if required
 		if ($ignoreTimes) {
 			$currentTime = date ('Hi');

@@ -10,8 +10,8 @@ class doCheck
 	private $debugging = false;
 	private $timeoutSeconds = 15;
 	private $enableSms = true;
-	private $serverUrl = 'http://www.cyclestreets.net';
-	private $apiV2Url = 'https://api.cyclestreets.net/v2';
+	private $serverUrlMain = 'http://www.cyclestreets.net';
+	private $apiV2UrlMain = 'https://api.cyclestreets.net/v2';
 
 	# Constructor
 	public function __construct ()
@@ -66,12 +66,22 @@ class doCheck
 		// $testSpec is false to skip all tests, true to apply all test, or an array of only those tests to apply
 		foreach ($testApiKeys as $testApiKey => $testSpec) {
 
-			// Skip tests for this apiKey
+			// Skip tests for this apiKey if required
 			if (!$testSpec) {continue;}
 
 			// Bind
 			$this->testApiKey = $testApiKey;
 
+			# Use the standard API URLs by default for this key
+			$this->serverUrl = $this->serverUrlMain;
+			$this->apiV2Url = $this->apiV2UrlMain;
+			
+			# If a key-specific API URL has been defined for this key, use that URL (for both V1 and V2)
+			if (isSet ($keySpecificApiUrls[$testApiKey])) {
+				$this->serverUrl = $keySpecificApiUrls[$testApiKey];
+				$this->apiV2Url = $keySpecificApiUrls[$testApiKey];
+			}
+			
 			# Run each test; if it fails, wait a short while then try again before reporting a problem
 			foreach ($tests as $test) {
 

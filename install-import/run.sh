@@ -112,7 +112,7 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/
 	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
-	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/
+	${asCS} scp ${elevationDataSource}/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of OS NTF data"
@@ -129,7 +129,7 @@ if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/external/${srtmData
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/external/${srtmDataFile} ${websitesBackupsFolder}/external/
+	${asCS} scp ${elevationDataSource}/external/${srtmDataFile} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of SRTM data"
@@ -146,7 +146,7 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 	echo "#	Starting download of ASTER data 25G"
 
 	# Download
-	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/external/${asterDataFile} ${websitesBackupsFolder}/external/
+	${asCS} scp ${elevationDataSource}/external/${asterDataFile} ${websitesBackupsFolder}/external/
 
 	# Report
 	echo "#	Starting installation of ASTER data"
@@ -164,7 +164,7 @@ if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDat
 	echo "#	Starting download of external database 125M"
 
 	# Download
-	${asCS} scp ${importMachineAddress}:${websitesBackupsFolder}/${csExternalDataFile} ${websitesBackupsFolder}/
+	${asCS} scp ${elevationDataSource}/${csExternalDataFile} ${websitesBackupsFolder}/
 
 	# Report
 	echo "#	Starting installation of external database"

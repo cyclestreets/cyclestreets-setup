@@ -101,6 +101,9 @@ liveMachineAddress=
 importMachineAddress=
 importMachineFile=${websitesBackupsFolder}/importdefinition.ini
 
+## Location of elevation data as a full scp-retrievable location
+elevationDataSource=example.com:${websitesBackupsFolder}/external
+
 # Specify the import disk, eg. /dev/sda1 that will be checked for sufficient space (leave blank to skip this check)
 importDisk=
 

@@ -49,6 +49,13 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     exit 1
 fi
 
+# Need to add a check that CycleStreets main installation has been completed
+# !! This is a dependency that is medium term aim for removal [:] 10 Mar 2015 20:16:12
+if [ ! -d "${websitesContentFolder}" ]; then
+    echo "#	Please install the main CycleStreets repo first"
+    exit 1
+fi
+
 # Define import folder
 importFolder=${websitesContentFolder}/import
 

@@ -4,7 +4,7 @@
 # Script to install CycleStreets on Ubuntu
 # https://github.com/cyclestreets/cyclestreets/wiki/Osmosis-planet-extractor
 #
-# Tested on 13.04 View Ubuntu version using: lsb_release -a
+# Tested on 14.04 View Ubuntu version using: lsb_release -a
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets / Osmosis installation $(date)"

@@ -38,4 +38,5 @@ Add this repository to a machine using the following, as your normal username (n
     sudo adduser cyclestreets
     sudo addgroup rollout
     sudo chown -R cyclestreets.rollout /opt/cyclestreets-setup
+    sudo chmod -R g+w /opt/cyclestreets-setup
     sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;

@@ -37,6 +37,9 @@ fi
 # Load the credentials
 . ./${configFile}
 
+# Osmosis requires java
+apt-get -y install openjdk-7-jre
+
 mkdir -p /usr/local/osmosis
 
 # wget the latest to here

@@ -84,7 +84,7 @@ fi
 # Stop the routing service
 # Note: the service command is available to the root user on debian
 # It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
-echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored." /etc/init.d/cycleroutingd stop
+echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" /etc/init.d/cycleroutingd stop
 
 #       Move to the right place
 cd ${websitesContentFolder}

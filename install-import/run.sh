@@ -50,6 +50,9 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     # Announce Osmosis installation
     echo "#	CycleStreets / Osmosis installation $(date)"
 
+    # Prepare the apt index
+    apt-get update > /dev/null
+
     # Osmosis requires java
     apt-get -y install openjdk-7-jre
 

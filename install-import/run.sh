@@ -120,6 +120,7 @@ then
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
+-e "s/KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
 	${phpConfig}
 fi
 

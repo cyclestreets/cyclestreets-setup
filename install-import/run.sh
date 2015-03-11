@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # Script to install CycleStreets import sources and data on Ubuntu
 #
@@ -45,8 +46,42 @@ echo "#	CycleStreets import installation starting"
 
 # Check Osmosis has been installed
 if [ ! -L /usr/local/bin/osmosis ]; then
-    echo "#	Please install osmosis first"
-    exit 1
+
+    # Announce Osmosis installation
+    echo "#	CycleStreets / Osmosis installation $(date)"
+
+    # Osmosis requires java
+    apt-get -y install openjdk-7-jre
+
+    # Create folder
+    mkdir -p /usr/local/osmosis
+
+    # wget the latest to here
+    if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
+	wget -O /usr/local/osmosis/osmosis-latest.tgz http://dev.openstreetmap.org/~bretth/osmosis-build/osmosis-latest.tgz
+    fi
+
+    # Create a folder for the new version
+    mkdir -p /usr/local/osmosis/osmosis-0.44.1
+
+    # Unpack into it
+    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.44.1
+
+    # Remove the download archive
+    rm -f /usr/local/osmosis/osmosis-latest.tgz
+
+    # Repoint current to the new install
+    rm -f /usr/local/osmosis/current
+
+    # Whatever the version number is here - replace the 0.44.1
+    ln -s /usr/local/osmosis/osmosis-0.44.1 /usr/local/osmosis/current
+
+    # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
+    if [ ! -L /usr/local/bin/osmosis ]; then
+	ln -s /usr/local/osmosis/current/bin/osmosis /usr/local/bin/osmosis
+    fi
+
+    echo "#	Completed installation of osmosis"
 fi
 
 # Need to add a check that CycleStreets main installation has been completed

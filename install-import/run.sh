@@ -120,7 +120,9 @@ then
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
--e "s/KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
+-e "s/MySQL_KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
+-e "s/MySQL_MAX_HEAP_TABLE_SIZE_HERE/${import_max_heap_table_size}/" \
+-e "s/MySQL_TMP_TABLE_SIZE_HERE/${import_tmp_table_size}/" \
 	${phpConfig}
 fi
 

@@ -48,6 +48,7 @@ echo "#	CycleStreets import installation starting"
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
+    # !! Osmosis uses MySQL and that needs to be configured to use character_set_server=utf8 and collation_server=utf8_unicode_ci which is currently set up (machine wide) by website installation.
     echo "#	CycleStreets / Osmosis installation $(date)"
 
     # Prepare the apt index
@@ -84,6 +85,7 @@ if [ ! -L /usr/local/bin/osmosis ]; then
 	ln -s /usr/local/osmosis/current/bin/osmosis /usr/local/bin/osmosis
     fi
 
+    # Announce completion
     echo "#	Completed installation of osmosis"
 fi
 

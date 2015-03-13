@@ -259,7 +259,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
 
-	# This is necessary to enable cookies to work on the domain http://localhost/ 
+	# This is necessary to enable cookies to work on the domain http://localhost/
 	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
 	php_admin_value session.cookie_domain none
 
@@ -397,8 +397,9 @@ Alias /images/statsicons /websites/configuration/analog/images
 <Directory />
 	# Options FollowSymLinks
 	AllowOverride None
-	# In Apache 2.4 uncomment this next line
-	# Require all granted
+	<IfModule mod_authz_core.c>
+		Require all granted
+	</IfModule>
 </Directory>
 
 # Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area

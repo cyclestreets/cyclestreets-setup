@@ -51,12 +51,20 @@ else
 	stty -echo
 	printf "Please enter a password that will be used to create the CycleStreets user account:"
 	read password
+	if [ -z "$password" ]; then
+	    echo "#	The password was empty"
+	    exit 1
+	fi
 	printf "\n"
 	printf "Confirm that password:"
 	read passwordconfirm
+	if [ -z "$passwordconfirm" ]; then
+	    echo "#	The password was empty"
+	    exit 1
+	fi
 	printf "\n"
 	stty echo
-	if [ $password != $passwordconfirm ]; then
+	if [ "$password" != "$passwordconfirm" ]; then
 	    echo "#	The passwords did not match"
 	    exit 1
 	fi
@@ -430,7 +438,7 @@ ${mysql} -e "create database if not exists cyclestreets default character set ut
 ${mysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 ${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
-# The following is needed only to support OSM import
+# Allow the website to view any planetExtract files that have been created by an import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
 # Create the settings file if it doesn't exist

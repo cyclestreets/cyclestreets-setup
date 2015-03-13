@@ -91,13 +91,6 @@ is_installed () {
 	dpkg -s "$1" | grep -q '^Status:.*installed'
 }
 
-# Set the MySQL repo to version 5.7 using the official MySQL repo
-echo mysql-apt-config mysql-apt-config/enable-repo select mysql-5.7-dmr | debconf-set-selections
-wget -P /tmp/ http://dev.mysql.com/get/mysql-apt-config_0.3.3-1ubuntu14.04_all.deb
-dpkg -i /tmp/mysql-apt-config_0.3.3-1ubuntu14.04_all.deb
-rm -f /tmp/mysql-apt-config_*.deb
-apt-get update
-
 # Assign the mysql root password - to avoid being prompted.
 if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
 	echo "# You have apparently not specified a MySQL root password in the config file"
@@ -105,10 +98,12 @@ if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
 	echo "# .. aborting"
 	exit 1
 fi
+echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
+echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
-# Install MySQL, which will start it, and secure it by setting the root password
-apt-get -y install mysql-server mysql-client >> ${setupLogFile}
-mysqladmin -u root password "${mysqlRootPassword}"
+# Install MySQL, which will start it
+apt-get -y install mysql-server-5.6 mysql-client-5.6 >> ${setupLogFile}
+echo PURGE | debconf-communicate  mysql-server-5.6
 
 # Install core webserver software
 echo "#	Installing core webserver packages" >> ${setupLogFile}

@@ -475,6 +475,7 @@ then
     ${mysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;" >> ${setupLogFile}
 
     # Set the gui server
+    # #!# This needs review - on one live machine it is set as localhost and always ignored
     ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;" >> ${setupLogFile}
 
     # Create an admin user

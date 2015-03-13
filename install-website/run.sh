@@ -91,20 +91,29 @@ is_installed () {
 	dpkg -s "$1" | grep -q '^Status:.*installed'
 }
 
-# Provide the mysql root password - to avoid being prompted.
+# Set the MySQL repo to version 5.7 using the official MySQL repo
+echo mysql-apt-config mysql-apt-config/enable-repo select mysql-5.7-dmr | debconf-set-selections
+wget -P /tmp/ http://dev.mysql.com/get/mysql-apt-config_0.3.3-1ubuntu14.04_all.deb
+dpkg -i /tmp/mysql-apt-config_0.3.3-1ubuntu14.04_all.deb
+rm -f /tmp/mysql-apt-config_*.deb
+apt-get update
+
+# Assign the mysql root password - to avoid being prompted.
 if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
-	echo "# You have apparently not specified a MySQL root password"
+	echo "# You have apparently not specified a MySQL root password in the config file"
 	echo "# This means the install script would get stuck prompting for one"
 	echo "# .. aborting"
 	exit 1
 fi
 
-echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
-echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
+# Install MySQL, which will start it, and secure it by setting the root password
+apt-get -y install mysql-server mysql-client >> ${setupLogFile}
+mysqladmin -u root password "${mysqlRootPassword}"
 
 # Install core webserver software
 echo "#	Installing core webserver packages" >> ${setupLogFile}
-apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
+apt-get -y install apache2 >> ${setupLogFile}
+apt-get -y install php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
 apt-get -y install libapache2-mod-macro

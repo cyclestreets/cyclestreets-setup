@@ -51,12 +51,20 @@ else
 	stty -echo
 	printf "Please enter a password that will be used to create the CycleStreets user account:"
 	read password
+	if [ -z "$password" ]; then
+	    echo "#	The password was empty"
+	    exit 1
+	fi
 	printf "\n"
 	printf "Confirm that password:"
 	read passwordconfirm
+	if [ -z "$passwordconfirm" ]; then
+	    echo "#	The password was empty"
+	    exit 1
+	fi
 	printf "\n"
 	stty echo
-	if [ $password != $passwordconfirm ]; then
+	if [ "$password" != "$passwordconfirm" ]; then
 	    echo "#	The passwords did not match"
 	    exit 1
 	fi

@@ -443,7 +443,7 @@ if [ -n "${blogDatabasename}" ]; then
     ${mysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
 fi
 
-# The following is needed only to support OSM import
+# Allow the website to view any planetExtract files that have been created by the import process
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
 # Create the settings file if it doesn't exist

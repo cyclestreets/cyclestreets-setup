@@ -402,11 +402,6 @@ Alias /images/statsicons /websites/configuration/analog/images
 	</IfModule>
 </Directory>
 
-# Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area
-<Directory /websites/www/content/blog/>
-	AllowOverride FileInfo
-</Directory>
-
 EOF
 
     # Add IP bans - quoted to preserve newlines
@@ -434,14 +429,6 @@ ${mysql} -e "create database if not exists cyclestreets default character set ut
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${mysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 ${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
-
-# Update-able blogs
-if [ -n "${blogDatabasename}" ]; then
-    # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
-    blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
-    ${mysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
-    ${mysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
-fi
 
 # The following is needed only to support OSM import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}

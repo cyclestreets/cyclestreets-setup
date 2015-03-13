@@ -104,6 +104,8 @@ fi
 
 
 # Configure MySQL for routing
+# !! These values should only take effect until the next MySQL restart. The value they have here is to reduce sizes from the big import values down to runtime levels after an import.
+# Therefore doing a MySQL restart is probably the smarter thing to do.
 if [ -n "${routing_key_buffer_size}" ]; then
     echo "#	Configuring MySQL for serving routes"
     mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${routing_key_buffer_size};";

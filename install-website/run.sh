@@ -51,12 +51,20 @@ else
 	stty -echo
 	printf "Please enter a password that will be used to create the CycleStreets user account:"
 	read password
+	if [ -z "$password" ]; then
+	    echo "#	The password was empty"
+	    exit 1
+	fi
 	printf "\n"
 	printf "Confirm that password:"
 	read passwordconfirm
+	if [ -z "$passwordconfirm" ]; then
+	    echo "#	The password was empty"
+	    exit 1
+	fi
 	printf "\n"
 	stty echo
-	if [ $password != $passwordconfirm ]; then
+	if [ "$password" != "$passwordconfirm" ]; then
 	    echo "#	The passwords did not match"
 	    exit 1
 	fi
@@ -91,20 +99,28 @@ is_installed () {
 	dpkg -s "$1" | grep -q '^Status:.*installed'
 }
 
-# Provide the mysql root password - to avoid being prompted.
+# Assign the mysql root password - to avoid being prompted.
 if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
-	echo "# You have apparently not specified a MySQL root password"
+	echo "# You have apparently not specified a MySQL root password in the config file"
 	echo "# This means the install script would get stuck prompting for one"
 	echo "# .. aborting"
 	exit 1
 fi
-
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
-# Install core webserver software
+# Install MySQL 5.6, which will also start it
+apt-get -y install mysql-server-5.6 mysql-client-5.6 >> ${setupLogFile}
+echo PURGE | debconf-communicate  mysql-server-5.6
+
+# Install Apache (2.4)
 echo "#	Installing core webserver packages" >> ${setupLogFile}
-apt-get -y install apache2 mysql-server mysql-client php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
+apt-get -y install apache2 >> ${setupLogFile}
+
+# PHP 5.6; see: http://phpave.com/upgrade-to-php-56-on-ubuntu-1404-lts/
+add-apt-repository -y ppa:ondrej/php5-5.6
+apt-get update
+apt-get -y install php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
 apt-get -y install libapache2-mod-macro
@@ -251,7 +267,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
 
-	# This is necessary to enable cookies to work on the domain http://localhost/ 
+	# This is necessary to enable cookies to work on the domain http://localhost/
 	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
 	php_admin_value session.cookie_domain none
 
@@ -389,13 +405,9 @@ Alias /images/statsicons /websites/configuration/analog/images
 <Directory />
 	# Options FollowSymLinks
 	AllowOverride None
-	# In Apache 2.4 uncomment this next line
-	# Require all granted
-</Directory>
-
-# Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area
-<Directory /websites/www/content/blog/>
-	AllowOverride FileInfo
+	<IfModule mod_authz_core.c>
+		Require all granted
+	</IfModule>
 </Directory>
 
 EOF
@@ -426,15 +438,7 @@ ${mysql} -e "create database if not exists cyclestreets default character set ut
 ${mysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
 ${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
-# Update-able blogs
-if [ -n "${blogDatabasename}" ]; then
-    # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
-    blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
-    ${mysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
-    ${mysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
-fi
-
-# The following is needed only to support OSM import
+# Allow the website to view any planetExtract files that have been created by an import
 ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
 
 # Create the settings file if it doesn't exist

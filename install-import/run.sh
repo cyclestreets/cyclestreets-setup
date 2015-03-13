@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # Script to install CycleStreets import sources and data on Ubuntu
 #
@@ -45,8 +46,47 @@ echo "#	CycleStreets import installation starting"
 
 # Check Osmosis has been installed
 if [ ! -L /usr/local/bin/osmosis ]; then
-    echo "#	Please install osmosis first"
-    exit 1
+
+    # Announce Osmosis installation
+    # !! Osmosis uses MySQL and that needs to be configured to use character_set_server=utf8 and collation_server=utf8_unicode_ci which is currently set up (machine wide) by website installation.
+    echo "#	CycleStreets / Osmosis installation $(date)"
+
+    # Prepare the apt index
+    apt-get update > /dev/null
+
+    # Osmosis requires java
+    apt-get -y install openjdk-7-jre
+
+    # Create folder
+    mkdir -p /usr/local/osmosis
+
+    # wget the latest to here
+    if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
+	wget -O /usr/local/osmosis/osmosis-latest.tgz http://dev.openstreetmap.org/~bretth/osmosis-build/osmosis-latest.tgz
+    fi
+
+    # Create a folder for the new version
+    mkdir -p /usr/local/osmosis/osmosis-0.44.1
+
+    # Unpack into it
+    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.44.1
+
+    # Remove the download archive
+    rm -f /usr/local/osmosis/osmosis-latest.tgz
+
+    # Repoint current to the new install
+    rm -f /usr/local/osmosis/current
+
+    # Whatever the version number is here - replace the 0.44.1
+    ln -s /usr/local/osmosis/osmosis-0.44.1 /usr/local/osmosis/current
+
+    # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
+    if [ ! -L /usr/local/bin/osmosis ]; then
+	ln -s /usr/local/osmosis/current/bin/osmosis /usr/local/bin/osmosis
+    fi
+
+    # Announce completion
+    echo "#	Completed installation of osmosis"
 fi
 
 # Need to add a check that CycleStreets main installation has been completed
@@ -82,6 +122,9 @@ then
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
+-e "s/MySQL_KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
+-e "s/MySQL_MAX_HEAP_TABLE_SIZE_HERE/${import_max_heap_table_size}/" \
+-e "s/MySQL_TMP_TABLE_SIZE_HERE/${import_tmp_table_size}/" \
 	${phpConfig}
 fi
 

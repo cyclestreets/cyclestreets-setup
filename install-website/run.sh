@@ -101,13 +101,17 @@ fi
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
-# Install MySQL, which will start it
+# Install MySQL 5.6, which will also start it
 apt-get -y install mysql-server-5.6 mysql-client-5.6 >> ${setupLogFile}
 echo PURGE | debconf-communicate  mysql-server-5.6
 
-# Install core webserver software
+# Install Apache (2.4)
 echo "#	Installing core webserver packages" >> ${setupLogFile}
 apt-get -y install apache2 >> ${setupLogFile}
+
+# PHP 5.6; see: http://phpave.com/upgrade-to-php-56-on-ubuntu-1404-lts/
+add-apt-repository -y ppa:ondrej/php5-5.6
+apt-get update
 apt-get -y install php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
 
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)

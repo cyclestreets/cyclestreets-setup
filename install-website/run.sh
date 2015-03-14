@@ -117,6 +117,9 @@ echo PURGE | debconf-communicate  mysql-server-5.6
 echo "#	Installing core webserver packages" >> ${setupLogFile}
 apt-get -y install apache2 >> ${setupLogFile}
 
+# The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:
+apt-get -y install python-software-properties software-properties-common
+
 # PHP 5.6; see: http://phpave.com/upgrade-to-php-56-on-ubuntu-1404-lts/
 add-apt-repository -y ppa:ondrej/php5-5.6
 apt-get update

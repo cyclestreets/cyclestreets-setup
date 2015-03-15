@@ -43,6 +43,8 @@ routing_key_buffer_size=
 routing_max_heap_table_size=
 routing_tmp_table_size=
 
+#	Use a routing database that has been built for a small sized city.
+sampleRoutingDb=routing1500315
 
 # A string used to encrypt user passwords
 signinSalt=

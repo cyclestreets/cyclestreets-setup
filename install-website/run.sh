@@ -486,8 +486,8 @@ then
     ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;" >> ${setupLogFile}
 
     # Create an admin user
-    encryption=`php -r"echo crypt('${password}', '${signinSalt}');"`
-    ${mysql} cyclestreets -e "insert user_user (username, email, \`password\`, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());" >> ${setupLogFile}
+    encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`
+    ${mysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());" >> ${setupLogFile}
 
     # Create a welcome tinkle
     ${mysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');" >> ${setupLogFile}

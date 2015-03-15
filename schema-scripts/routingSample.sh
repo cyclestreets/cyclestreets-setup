@@ -62,7 +62,6 @@ tar czf ${websitesContentFolder}/documentation/schema/${sampleRoutingData} -C ${
 #	Advise
 echo "#	Actions required next:"
 echo "#	Commit the replacement files, routingSample.sql.gz and ${sampleRoutingData} (in /documentation/schema/) to the repo."
-echo "#	Fix the sampleRoutingDb variable in the .config.sh script from https://github.com/cyclestreets/cyclestreets-setup to refer to the new db."
 
 # Confirm end of script
 echo "#	Script completed $(date)"

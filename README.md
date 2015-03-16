@@ -27,16 +27,23 @@ Check apache2 logs in `/websites/www/logs/` or `/var/log/apache2/`.
 
 ## Setup
 
-Add this repository to a machine using the following, as your normal username (not root):
+Add this repository to a machine using the following, as your normal username (not root). In the listing the grouped items can usually be cut and pasted together into the command shell, others require responding to a prompt:
 
     cd ~
     sudo apt-get -y install git
+
     git clone https://github.com/cyclestreets/cyclestreets-setup.git
+
     sudo mv cyclestreets-setup /opt
     cd /opt/cyclestreets-setup/
     git config core.sharedRepository group
-    sudo adduser cyclestreets
+
+    sudo adduser --gecos "" cyclestreets
+
     sudo addgroup rollout
+
+    # Some command shells won't detect the preceding group change, so reset your shell eg. by logging out and then back in again
     sudo chown -R cyclestreets.rollout /opt/cyclestreets-setup
+
     sudo chmod -R g+w /opt/cyclestreets-setup
     sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;

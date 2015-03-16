@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to produce a sample cyclestreets database dump for use in a repository
 #
-# Tested on 13.04 View Ubuntu version using: lsb_release -a
+# Tested on 14.04.1 LTS. View Ubuntu version using: lsb_release -a
 
 echo "#	CycleStreets schema script $(date)"
 

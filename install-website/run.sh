@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to install CycleStreets on Ubuntu
-# Tested on 14.04 LTS Server (View Ubuntu version using 'lsb_release -a')
+# Tested on 14.04.2 LTS Desktop (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets installation $(date)"

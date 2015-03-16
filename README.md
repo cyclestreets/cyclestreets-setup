@@ -1,6 +1,6 @@
 # cyclestreets-setup
 
-Scripts for installing CycleStreets, developing for Ubuntu 12.10 / Debian Squeeze
+Scripts for installing CycleStreets, developing for Ubuntu 14.04.2 LTS
 
 **Note this is work-in-progress and the CycleStreets repo which is needed is not yet publicly available.**
 
@@ -10,7 +10,9 @@ The *root* user is required to install the packages, but most of the installatio
 
     cyclestreets@machine:/opt/cyclestreets-setup/install-website$ sudo ./run.sh
 
-With apache 2.4 there's a line to uncomment in `/etc/apache2/conf-available/zcsglobal.conf`
+## Requirements
+
+In March 2015 it can run on a VM with 2GB RAM, 8GB Disk, based on a Ubuntu 14.04.2 LTS Desktop VM.
 
 ## Use
 

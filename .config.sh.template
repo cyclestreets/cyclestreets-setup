@@ -21,6 +21,9 @@ username=cyclestreets
 # Tip: If passwords contain a $ or other characters that need escaping, wrap them in single quotes or use backslashes.
 password=
 
+# Password for the CycleStreets subversion (svn) repository
+repopassword="${password}"
+
 ## MySQL
 # The mysql root password - to avoid being prompted.
 mysqlRootPassword=

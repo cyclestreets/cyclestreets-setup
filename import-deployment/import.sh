@@ -1,4 +1,6 @@
 #!/bin/bash
+# Script to run an import of fresh CycleStreets data on Ubuntu
+# Tested on 14.04.2 LTS Desktop (View Ubuntu version using 'lsb_release -a')
 
 # When in failover mode uncomment the next two lines:
 #echo "# Skipping in failover mode"

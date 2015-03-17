@@ -3,11 +3,12 @@
 # Tested on 14.04.2 LTS Desktop (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
+# Announce start
 echo "#	CycleStreets installation $(date)"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run as root." 1>&2
+    echo "#	This script must be run as root."
     exit 1
 fi
 
@@ -26,19 +27,12 @@ configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ./${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
     exit 1
 fi
 
 # Load the credentials
 . ./${configFile}
-
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets installation $(date)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if id -u ${username} >/dev/null 2>&1; then
@@ -71,10 +65,11 @@ else
     fi
 
     # Create the CycleStreets user
-    useradd -m $username >> ${setupLogFile}
+    useradd -m $username
+
     # Assign the password - this technique hides it from process listings
     echo "${username}:${password}" | /usr/sbin/chpasswd
-    echo "#	CycleStreets user ${username} created" >> ${setupLogFile}
+    echo "#	CycleStreets user ${username} created"
 fi
 
 # Add the user to the sudo group, if they are not already present
@@ -90,10 +85,10 @@ asCS="sudo -u ${username}"
 apt-get update > /dev/null
 
 # Install basic software
-apt-get -y install wget git emacs >> ${setupLogFile}
+apt-get -y install wget git emacs
 
 # Install Apache, PHP
-echo "#	Installing Apache, MySQL, PHP" >> ${setupLogFile}
+echo "#	Installing Apache, MySQL, PHP"
 
 is_installed () {
 	dpkg -s "$1" | grep -q '^Status:.*installed'
@@ -110,12 +105,12 @@ echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | deb
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
 # Install MySQL 5.6, which will also start it
-apt-get -y install mysql-server-5.6 mysql-client-5.6 >> ${setupLogFile}
+apt-get -y install mysql-server-5.6 mysql-client-5.6
 echo PURGE | debconf-communicate  mysql-server-5.6
 
 # Install Apache (2.4)
-echo "#	Installing core webserver packages" >> ${setupLogFile}
-apt-get -y install apache2 >> ${setupLogFile}
+echo "#	Installing core webserver packages"
+apt-get -y install apache2
 
 # The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:
 apt-get -y install python-software-properties software-properties-common
@@ -123,7 +118,7 @@ apt-get -y install python-software-properties software-properties-common
 # PHP 5.6; see: http://phpave.com/upgrade-to-php-56-on-ubuntu-1404-lts/
 add-apt-repository -y ppa:ondrej/php5-5.6
 apt-get update
-apt-get -y install php5 php5-gd php5-cli php5-mysql >> ${setupLogFile}
+apt-get -y install php5 php5-gd php5-cli php5-mysql
 
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
 apt-get -y install libapache2-mod-macro
@@ -131,24 +126,24 @@ apt-get -y install libapache2-mod-macro
 # Note: some new versions of php5.5 are missing json functions. This can be easily remedied by including the package: php5-json
 
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
-apt-get -y install imagemagick php5-imagick >> ${setupLogFile}
+apt-get -y install imagemagick php5-imagick
 
 # Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
 sudo a2enmod deflate
-apt-get -y install php-apc >> ${setupLogFile}
+apt-get -y install php-apc
 /etc/init.d/apache2 restart
 
 # Install Python
-echo "#	Installing python" >> ${setupLogFile}
-apt-get -y install python php5-xmlrpc php5-curl >> ${setupLogFile}
+echo "#	Installing python"
+apt-get -y install python php5-xmlrpc php5-curl
 
 # Utilities
-echo "#	Some utilities" >> ${setupLogFile}
+echo "#	Some utilities"
 # ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
-apt-get -y install subversion openjdk-6-jre bzip2 >> ${setupLogFile}
+apt-get -y install subversion openjdk-6-jre bzip2
 
 # Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
-apt-get -y install ntp >> ${setupLogFile}
+apt-get -y install ntp
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # apt-get -y install phpmyadmin
@@ -208,9 +203,9 @@ cd ${websitesContentFolder}
 # Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
 if [ ! -d ${websitesContentFolder}/.svn ]
 then
-    ${asCS} svn co --username=${currentActualUser} --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder} >> ${setupLogFile}
+    ${asCS} svn co --username=${currentActualUser} --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder}
 else
-    ${asCS} svn update --username=${currentActualUser} --no-auth-cache >> ${setupLogFile}
+    ${asCS} svn update --username=${currentActualUser} --no-auth-cache
 fi
 
 # Assume ownership of all the new files and folders
@@ -243,7 +238,7 @@ touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 chown www-data:rollout ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 
 # Mod rewrite
-a2enmod rewrite >> ${setupLogFile}
+a2enmod rewrite
 
 # Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
 cslocalconf=cyclestreets.conf
@@ -439,22 +434,22 @@ if [ -d /etc/apache2/conf-available ]; then
 fi
 
 # Reload apache
-/etc/init.d/apache2 reload >> ${setupLogFile}
+/etc/init.d/apache2 reload
 
 # Database setup
 # Useful binding
 mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 
 # Create cyclestreets database
-${mysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+${mysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;"
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
-${mysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';" >> ${setupLogFile}
-${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+${mysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';"
+${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Allow the website to view any planetExtract files that have been created by an import
-${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Create the settings file if it doesn't exist
 phpConfig=".config.php"
@@ -487,22 +482,22 @@ if ! ${mysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyc
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql >> ${setupLogFile}
+    ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
-    ${mysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;" >> ${setupLogFile}
+    ${mysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;"
 
     # Set the gui server
     # #!# This needs review - on one live machine it is set as localhost and always ignored
-    ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;" >> ${setupLogFile}
+    ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;"
 
     # Create an admin user
     encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`
-    ${mysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());" >> ${setupLogFile}
+    ${mysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());"
 
     # Create a welcome tinkle
-    ${mysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');" >> ${setupLogFile}
+    ${mysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');"
 fi
 
 # Archive db
@@ -512,10 +507,10 @@ if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'
 then
     # Create archive database
     echo "#	Create ${archiveDb} database"
-    ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql >> ${setupLogFile}
+    ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql
 
     # Allow website read only access
-    ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+    ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
 # External db
@@ -526,10 +521,10 @@ then
     # Create external database
     echo "#	Create ${externalDb} database"
     echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
-    ${mysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql >> ${setupLogFile}
+    ${mysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql
 
     # Allow website read only access
-    ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+    ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
 # Batch db
@@ -539,14 +534,14 @@ if [ -n "${batchDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABA
 
     # Create batch database
     echo "#	Create ${batchDb} database"
-    ${mysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+    ${mysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;"
 
     # Grants; note that the FILE privilege (which is not database-specific) is required so that table contents can be loaded from a file
-    ${mysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
-    ${mysql} -e "GRANT FILE ON *.* TO '${mysqlWebsiteUsername}'@'localhost';" >> ${setupLogFile}
+    ${mysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+    ${mysql} -e "GRANT FILE ON *.* TO '${mysqlWebsiteUsername}'@'localhost';"
 
     echo "#	Note: this contains table definitions only and contains no data."
-    ${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql >> ${setupLogFile}
+    ${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql
 
 else
     echo "#	Skipping batch database"
@@ -561,11 +556,11 @@ if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRouti
 then
     # Create sampleRoutingDb database
     echo "#	Create ${sampleRoutingDb} database"
-    ${mysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8 collate utf8_unicode_ci;" >> ${setupLogFile}
+    ${mysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8 collate utf8_unicode_ci;"
 
     # Load data
     echo "#	Load ${sampleRoutingDb} data"
-    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${sampleRoutingDb} >> ${setupLogFile}
+    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${sampleRoutingDb}
 fi
 
 # Unless the sample routing data exists:
@@ -586,7 +581,7 @@ if [ ! -x "${routingEngineConfigFile}" ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt-get -y install gcc g++ python-dev >> ${setupLogFile}
+sudo apt-get -y install gcc g++ python-dev
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/routingengine/"
@@ -659,10 +654,15 @@ else
 fi
 
 
-# Confirm end of script
-msg="#	All now installed $(date)"
-echo $msg >> ${setupLogFile}
-echo $msg
+
+# Advise setting up
+if [ "${csServerName}" != "localhost" ]; then
+    echo "#	Ensure ${csServerName} routes to this machine, eg by adding this line to /etc/hosts"
+    echo "127.0.0.1	${csServerName}"
+fi
+
+# Announce end of script
+echo "#	CycleStreets installed $(date), visit http://${csServerName}/"
 
 # Return true to indicate success
 :

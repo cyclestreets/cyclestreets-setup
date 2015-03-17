@@ -282,16 +282,27 @@ fi
 # Enable this virtual host
 a2ensite ${cslocalconf}
 
-# If the api is based on localhost then add it to /etc/hosts
-if [ "${apiServerName}" == "api.localhost" ]; then
+# Add the api address to /etc/hosts if it is not already present
+if ! cat /etc/hosts | grep "\b${apiServerName}\b" > /dev/null 2>&1
+then
 
-    # Check it is not already present
-    if ! cat /etc/hosts | grep "\b${apiServerName}\b" > /dev/null 2>&1
-    then
-	# Append
-	echo "# Added by CycleStreets installation" >> /etc/hosts
-	echo "127.0.0.1	${apiServerName}" >> /etc/hosts
+    # Start a list of aliases to add
+    aliases=${apiServerName}
+
+    # Unless localhost is being used, check cs server name
+    if [ "${csServerName}" != "localhost" ]; then
+
+	# If the servername is not present add an alias to localhost
+	if  ! cat /etc/hosts | grep "\b${csServerName}\b" > /dev/null 2>&1
+
+	    # Add to aliases
+	    aliases="${csServerName} ${aliases}"
+	fi
     fi
+
+    # Append
+    echo "# Added by CycleStreets installation" >> /etc/hosts
+    echo "127.0.1.1	${aliases}" >> /etc/hosts
 fi
 
 # Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files

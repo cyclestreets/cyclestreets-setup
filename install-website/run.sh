@@ -294,6 +294,7 @@ then
 
 	# If the servername is not present add an alias to localhost
 	if  ! cat /etc/hosts | grep "\b${csServerName}\b" > /dev/null 2>&1
+	then
 
 	    # Add to aliases
 	    aliases="${csServerName} ${aliases}"

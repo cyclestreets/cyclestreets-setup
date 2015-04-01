@@ -19,6 +19,6 @@ response and message to SMS and e-mail in the event of a problem.
 	pico -w .config.php
 	
 	# Add a cron entry, e.g. every 15 minutes; see: http://stackoverflow.com/a/8106460/180733
-	command="php ~/cyclestreets-setup/sms-monitoring/run.php"
+	command="php /opt/cyclestreets-setup/sms-monitoring/run.php"
 	job="0,15,30,45 * * * * $command"
 	cat <(fgrep -i -v "$command" <(crontab -l)) <(echo "$job") | crontab -

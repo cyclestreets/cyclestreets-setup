@@ -46,8 +46,9 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization
 # chmod -R g+w /websites/blog/content/
 # chmod -R g+w /websites/cyclescape-blog/content/
 # !! Hardwired locations
-rsync -rtO --cvs-exclude ${server}:/websites/blog/content /websites/blog
-rsync -rtO --cvs-exclude ${server}:/websites/cyclescape-blog/content /websites/cyclescape-blog
+# Include the l option to copy symlinks as symlinks
+rsync -rtOl --cvs-exclude ${server}:/websites/blog/content /websites/blog
+rsync -rtOl --cvs-exclude ${server}:/websites/cyclescape-blog/content /websites/cyclescape-blog
 
 # Resume exit on error
 set -e

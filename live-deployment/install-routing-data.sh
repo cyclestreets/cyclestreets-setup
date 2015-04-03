@@ -160,7 +160,7 @@ fi
 
 ### Stage 4 - unpack and install the TSV files
 #	Unpack and install the TSV files
-tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/
+tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/data/routing/
 
 #	Clean up the compressed TSV data
 # !! Temporarily turned off (September 2013) as uploaded files can then quickly be copied to fallback machine.
@@ -181,7 +181,7 @@ mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEditi
 #!# Hard-coded location /var/lib/mysql/
 echo $password | sudo -S test -d /var/lib/mysql/${importEdition}
 if [ $? != 0 ]; then
-   echo "#$(date) !! The database does not seem to be installed correctly." >> ${setupLogFile}
+   echo "#$(date) !! The MySQL database does not seem to be installed in the expected location." >> ${setupLogFile}
    exit 1
 fi
 

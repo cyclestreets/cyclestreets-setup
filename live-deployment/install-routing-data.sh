@@ -183,18 +183,13 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/tables.tar.gz)" != "MD5(${newEditi
 	exit 1
 fi
 
-echo "#	WIP testing [:]  4 Apr 2015 17:29:06"
-exit 1
-
 
 ### Stage 4 - unpack and install the TSV files
-#	Unpack and install the TSV files
-tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentFolder}/data/routing/
+cd ${newEditionFolder}
+tar xf tsv.tar.gz
 
 #	Clean up the compressed TSV data
-# !! Temporarily turned off (September 2013) as uploaded files can then quickly be copied to fallback machine.
-#rm ${websitesBackupsFolder}/${importEdition}tsv.tar.gz
-
+rm tsv.tar.gz
 
 ### Stage 5 - create the routing database
 
@@ -213,6 +208,9 @@ if [ $? != 0 ]; then
    echo "#$(date) !! The MySQL database does not seem to be installed in the expected location."
    exit 1
 fi
+
+echo "#	WIP testing [:]  4 Apr 2015 18:02:13"
+exit 1
 
 # Unpack the database files; options here are "tar extract, change directory to websitesBackupsFolder, preserve permissions, verbose, file is routingXXXXXXtables.tar.gz
 tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz

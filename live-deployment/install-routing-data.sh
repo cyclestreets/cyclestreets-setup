@@ -200,39 +200,27 @@ echo "$(date)	Installing the routing database: ${importEdition}"
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
 mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
+#!# Hard-coded location
+dbFilesLocation=/var/lib/mysql/
+
 # Ensure the MySQL directory has been created
 # Requires root permissions to check this and so sudo is used.
-#!# Hard-coded location /var/lib/mysql/
-echo $password | sudo -S test -d /var/lib/mysql/${importEdition}
+echo $password | sudo -S test -d ${dbFilesLocation}${importEdition}
 if [ $? != 0 ]; then
    echo "#$(date) !! The MySQL database does not seem to be installed in the expected location."
    exit 1
 fi
 
-echo "#	WIP testing [:]  4 Apr 2015 18:02:13"
-exit 1
-
-# Unpack the database files; options here are "tar extract, change directory to websitesBackupsFolder, preserve permissions, verbose, file is routingXXXXXXtables.tar.gz
-tar x -C ${websitesBackupsFolder} -pvf ${websitesBackupsFolder}/${importEdition}tables.tar.gz
+# Unpack the database files, preserve permissions, verbose into mysql
+echo $password | sudo -S tar xpvf tables.tar.gz -C ${dbFilesLocation}${importEdition}
 
 # Remove the zip
-# !! Temporarily turned off (September 2013) as uploaded files can then quickly be copied to fallback machine.
-#rm -f ${websitesBackupsFolder}/${importEdition}tables.tar.gz
-
-# Move the tables into mysql
-echo $password | sudo -S mv ${websitesBackupsFolder}/${importEdition}/* /var/lib/mysql/${importEdition}
-
-# Ensure the permissions are correct
-echo $password | sudo -S chown -R mysql.mysql /var/lib/mysql/${importEdition}
-
-# Remove the now empty folder
-rmdir ${websitesBackupsFolder}/${importEdition}
-
+rm tables.tar.gz
 
 ### Stage 6 - move the sieve into place for the purposes of having visible documentation
 
 #	Install the sieve
-mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
+mv sieve.sql ${websitesContentFolder}/import/
 
 
 ### Stage 7 - run post-install stored procedures for nearestPoint
@@ -249,14 +237,8 @@ echo "$(date)	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 
-### Stage 9 - park the import definition file
+### Stage 9 - Finish
 
-# Rename the file by appending the edition
-mv ${importMachineFile} ${importMachineFile}${importEdition}
-
-# Finish
-date
-echo "All done"
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 echo "$(date)	Completed routing data installation ${importEdition}"

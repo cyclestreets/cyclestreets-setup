@@ -102,7 +102,6 @@ liveMachineAddress=
 
 ## Specify the machine that provides routing data imported from openstreetmap (only used by live-deployment)
 importMachineAddress=
-importMachineFile=${websitesBackupsFolder}/importdefinition.ini
 importMachineEditions=${importContentFolder}/output
 
 ## Location of elevation data as a full scp-retrievable location

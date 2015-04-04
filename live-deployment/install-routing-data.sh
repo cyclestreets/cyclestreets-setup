@@ -100,7 +100,7 @@ fi
 echo "#	Latest edition: ${latestEdition}"
 
 # Useful binding
-importMachineFile=${websitesContentFolder}/data/routing/neweditiondefinition.txt
+importMachineFile=${websitesContentFolder}/data/routing/temporaryNewEdition.txt
 
 #	Copy definition file
 scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $importMachineFile >/dev/null 2>&1
@@ -133,9 +133,6 @@ if [ "$importEdition" != "$latestEdition" ]; then
 	exit 1
 fi
 
-echo "#	WIP testing [:]  4 Apr 2015 17:12:17"
-exit 1
-
 
 # Check to see if this routing database already exists
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
@@ -146,7 +143,8 @@ if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; th
 fi
 
 # Check to see if a routing data file for this routing edition already exists
-if [ -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
+newEditionFolder=${websitesContentFolder}/data/routing/${importEdition}
+if [ -d ${newEditionFolder} ]; then
 	echo "#	Stopping because the routing data folder ${importEdition} already exists."
 	exit 1
 fi
@@ -157,11 +155,20 @@ fi
 # Begin the file transfer
 echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}"
 
+# Create the folder
+mkdir -p ${newEditionFolder}
+
+# Move the temporary definition to correct place and name
+mv ${importMachineFile} ${newEditionFolder}/importdefinition.ini
+
 #	Transfer the TSV file
-scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
+scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/
 
 #	Hot-copied tables file
-scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tables.tar.gz ${websitesBackupsFolder}/
+scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/tables.tar.gz ${newEditionFolder}/
+
+echo "#	WIP testing [:]  4 Apr 2015 17:29:06"
+exit 1
 
 
 # Sieve file

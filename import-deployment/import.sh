@@ -97,6 +97,8 @@ cd ${importFolder}
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php import/run.php
 
+# The stuff below is really to do with switching to a new routing edition and could be considered as a separate task.
+
 # Clear this cache - (whose rows relate to a specific routing edition)
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
 

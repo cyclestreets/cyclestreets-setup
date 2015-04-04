@@ -83,25 +83,33 @@ if [ -z "${importMachineAddress}" -o -z "${importMachineEditions}" ]; then
 	exit 1
 fi
 
-# Retrieve the routing definition file from the import machine
+## Retrieve the routing definition file from the import machine
+# Tolerate errors
 set +e
 
-# Read the directly of routing editions, one per line, newest first, getting first one
+# Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ssh ${username}@${importMachineAddress} ls -1t ${importMachineEditions} | head -n1`
 
+# Abandon if not found
 if [ -z "${latestEdition}" ]; then
 	echo "# No routing editions found on ${importMachineAddress}"
 	exit 1
 fi
 
+#	Report finding
 echo "#	Latest edition: ${latestEdition}"
-echo "#	WIP testing [:]  4 Apr 2015 16:28:17"
-exit 1
-scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
+
+# Useful binding
+importMachineFile=${websitesContentFolder}/data/routing/neweditiondefinition.txt
+
+#	Copy definition file
+scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $importMachineFile >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings."
 	exit 1
 fi
+
+# Stop on errors
 set -e
 
 # Get the required variables from the routing definition file; this is not directly executed for security
@@ -118,6 +126,16 @@ if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]
 	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables"
 	exit 1
 fi
+
+#	Ensure these variables match
+if [ "$importEdition" != "$latestEdition" ]; then
+	echo "# The import edition: $importEdition does not match the latest edition: $latestEdition"
+	exit 1
+fi
+
+echo "#	WIP testing [:]  4 Apr 2015 17:12:17"
+exit 1
+
 
 # Check to see if this routing database already exists
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'

@@ -167,26 +167,24 @@ scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition
 #	Hot-copied tables file
 scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/tables.tar.gz ${newEditionFolder}/
 
-echo "#	WIP testing [:]  4 Apr 2015 17:29:06"
-exit 1
-
-
-# Sieve file
-#!# This is in a different source folder and could presumably be out-of-sync; fix upstream to put with the routing files
-scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
+#	Sieve file
+scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
 #	Note that all files are downloaded
 echo "$(date)	File transfer stage complete"
 
 # MD5 checks
-if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tsv.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then
+if [ "$(openssl dgst -md5 ${newEditionFolder}/tsv.tar.gz)" != "MD5(${newEditionFolder}/tsv.tar.gz)= ${md5Tsv}" ]; then
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then
+if [ "$(openssl dgst -md5 ${newEditionFolder}/tables.tar.gz)" != "MD5(${newEditionFolder}/tables.tar.gz)= ${md5Tables}" ]; then
 	echo "#	Stopping: Tables md5 does not match"
 	exit 1
 fi
+
+echo "#	WIP testing [:]  4 Apr 2015 17:29:06"
+exit 1
 
 
 ### Stage 4 - unpack and install the TSV files

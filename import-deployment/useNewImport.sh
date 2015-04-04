@@ -42,8 +42,6 @@ fi
 # Load the credentials
 . ${configFile}
 
-# The stuff below is really to do with switching to a new routing edition and could be considered as a separate task.
-
 # Clear this cache - (whose rows relate to a specific routing edition)
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
 

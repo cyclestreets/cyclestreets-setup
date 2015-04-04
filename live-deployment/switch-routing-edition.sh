@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to change CycleStreets served routes
-# Tested on Ubuntu 12.10 & Debian Squeeze (View Ubuntu version using 'lsb_release -a')
+# Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # SYNOPSIS
@@ -8,16 +8,17 @@
 #
 # DESCRIPTION
 #	newEdition
-#		Names a routing database of the form routingYYMMDD, eg. routing130111
+#		Names a routing database of the form routingYYMMDD, eg. routing1500404
 
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
-# The local server must be currently serving routes - this script cannot be used to start a routing service.
+# An existing routing service must already be running
 # If a failOverServer is specified, it must already be serving routes for the new edition.
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets switch routing edition"
+# Announce start
+echo "#	$(date)	CycleStreets routing data switchover"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
@@ -57,13 +58,6 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$(readlink -e $(dirname $0))/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets routing data switchover in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets routing data switchover" >> ${setupLogFile}
-
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	echo "# User ${username} must exist: please run the main website install script"
@@ -85,6 +79,7 @@ fi
 # Check the local routing service is currently serving
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
 set +e
+
 # Note: we must use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
 localRoutingStatus=$(/etc/init.d/cycleroutingd status)
 if [ $? -ne 0 ]
@@ -232,8 +227,7 @@ rm -f ${websitesContentFolder}/maintenance
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Finish
-echo "#	All done"
-echo "$(date)	Completed switch to $newEdition" >> ${setupLogFile}
+echo "#	$(date)	Completed switch to $newEdition"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

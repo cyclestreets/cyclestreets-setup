@@ -59,24 +59,18 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$(readlink -e $(dirname $0))/log.txt
-touch ${setupLogFile}
-
 # Avoid echo if possible as this generates cron emails
-# echo "#	CycleStreets routing data installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets routing data installation" >> ${setupLogFile}
+echo "$(date)	CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "# User ${username} must exist: please run the main website install script" >> ${setupLogFile}
+	echo "# User ${username} must exist: please run the main website install script"
 	exit 1
 fi
 
 # Ensure the main website installation is present
-if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-	echo "# The main website installation must exist: please run the main website install script" >> ${setupLogFile}
+if [ ! -d ${websitesContentFolder}/data/routing ]; then
+	echo "# The main website installation must exist with subtree data/routing please run the main website install script"
 	exit 1
 fi
 
@@ -84,16 +78,28 @@ fi
 ### Stage 2 - obtain the routing import definition
 
 # Ensure import machine and definition file variables has been defined
-if [ -z "${importMachineAddress}" -o -z "${importMachineFile}" ]; then
-	echo "# An import machine and definition file must be defined in order to run an import" >> ${setupLogFile}
+if [ -z "${importMachineAddress}" -o -z "${importMachineEditions}" ]; then
+	echo "# An import machine with an editions folder must be defined in order to run an import"
 	exit 1
 fi
 
 # Retrieve the routing definition file from the import machine
 set +e
+
+# Read the directly of routing editions, one per line, newest first, getting first one
+latestEdition=`ssh ${username}@${importMachineAddress} ls -1t ${importMachineEditions} | head -n1`
+
+if [ -z "${latestEdition}" ]; then
+	echo "# No routing editions found on ${importMachineAddress}"
+	exit 1
+fi
+
+echo "#	Latest edition: ${latestEdition}"
+echo "#	WIP testing [:]  4 Apr 2015 16:28:17"
+exit 1
 scp ${username}@${importMachineAddress}:${importMachineFile} ${websitesBackupsFolder} >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings." >> ${setupLogFile}
+	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings."
 	exit 1
 fi
 set -e
@@ -109,7 +115,7 @@ md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1
 
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]; then
-	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables" >> ${setupLogFile}
+	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables"
 	exit 1
 fi
 
@@ -117,13 +123,13 @@ fi
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
 # but in fact that is the condition desired.
 if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
-	echo "#	Stopping because the routing database ${importEdition} already exists." >> ${setupLogFile}
+	echo "#	Stopping because the routing database ${importEdition} already exists."
 	exit 1
 fi
 
 # Check to see if a routing data file for this routing edition already exists
 if [ -d "${websitesContentFolder}/data/routing/${importEdition}" ]; then
-	echo "#	Stopping because the routing data folder ${importEdition} already exists." >> ${setupLogFile}
+	echo "#	Stopping because the routing data folder ${importEdition} already exists."
 	exit 1
 fi
 
@@ -131,7 +137,7 @@ fi
 ### Stage 3 - get the routing files and check data integrity
 
 # Begin the file transfer
-echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}" >> ${setupLogFile}
+echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}"
 
 #	Transfer the TSV file
 scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition}tsv.tar.gz ${websitesBackupsFolder}/
@@ -145,15 +151,15 @@ scp ${username}@${importMachineAddress}:${websitesBackupsFolder}/${importEdition
 scp ${username}@${importMachineAddress}:${websitesContentFolder}/import/sieve.sql ${websitesBackupsFolder}/
 
 #	Note that all files are downloaded
-echo "$(date)	File transfer stage complete" >> ${setupLogFile}
+echo "$(date)	File transfer stage complete"
 
 # MD5 checks
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tsv.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tsv.tar.gz)= ${md5Tsv}" ]; then
-	echo "#	Stopping: TSV md5 does not match" >> ${setupLogFile}
+	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
 if [ "$(openssl dgst -md5 ${websitesBackupsFolder}/${importEdition}tables.tar.gz)" != "MD5(${websitesBackupsFolder}/${importEdition}tables.tar.gz)= ${md5Tables}" ]; then
-	echo "#	Stopping: Tables md5 does not match" >> ${setupLogFile}
+	echo "#	Stopping: Tables md5 does not match"
 	exit 1
 fi
 
@@ -170,7 +176,7 @@ tar xf ${websitesBackupsFolder}/${importEdition}tsv.tar.gz -C ${websitesContentF
 ### Stage 5 - create the routing database
 
 # Narrate
-echo "$(date)	Installing the routing database: ${importEdition}" >> ${setupLogFile}
+echo "$(date)	Installing the routing database: ${importEdition}"
 
 #	Create the database (which will be empty for now) and set default collation
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
@@ -181,7 +187,7 @@ mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEditi
 #!# Hard-coded location /var/lib/mysql/
 echo $password | sudo -S test -d /var/lib/mysql/${importEdition}
 if [ $? != 0 ]; then
-   echo "#$(date) !! The MySQL database does not seem to be installed in the expected location." >> ${setupLogFile}
+   echo "#$(date) !! The MySQL database does not seem to be installed in the expected location."
    exit 1
 fi
 
@@ -211,14 +217,14 @@ mv ${websitesBackupsFolder}/sieve.sql ${websitesContentFolder}/import/
 ### Stage 7 - run post-install stored procedures for nearestPoint
 
 #	Load nearest point stored procedures
-echo "$(date)	Loading nearestPoint technology" >> ${setupLogFile}
+echo "$(date)	Loading nearestPoint technology"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 
 
 ### Stage 8 - deal with photos-en-route
 
 # Build the photo index
-echo "$(date)	Building the photosEnRoute tables" >> ${setupLogFile}
+echo "$(date)	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 
@@ -232,7 +238,7 @@ date
 echo "All done"
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
-echo "$(date)	Completed routing data installation ${importEdition}" >> ${setupLogFile}
+echo "$(date)	Completed routing data installation ${importEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -52,8 +52,14 @@ if [ ! -d "${importContentFolder}" ]; then
     # Ensure the import folder exists
     mkdir -p ${importContentFolder}
 
+    # Go there (these next few lines are rather unsatisfactory, but they should do the trick)
+    cd ${importContentFolder}
+
+    #  Remove import
+    rmdir import/
+
     # Move the import folder across
-    mv ${websitesContentFolder}/import ${importContentFolder}
+    mv ${websitesContentFolder}/import ./
 fi
 
 # Switch to import folder

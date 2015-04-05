@@ -1,11 +1,11 @@
-
 #!/bin/bash
 # Script to install CycleStreets import sources and data on Ubuntu
 #
-# Tested on 13.04. View Ubuntu version using: lsb_release -a
+# Tested on 14.04.2 LTS. View Ubuntu version using: lsb_release -a
 # This script is idempotent - it can be safely re-run without destroying existing data
+# It should be run after the website system has been installed.
 
-echo "#	CycleStreets Import System installation $(date)"
+echo "#	$(date)	CycleStreets Import System installation"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -38,18 +38,59 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets import installation starting"
+# Need to add a check that CycleStreets main installation has been completed
+# !! This is a dependency that is medium term aim for removal [:] 10 Mar 2015 20:16:12
+if [ ! -d "${websitesContentFolder}" ]; then
+    echo "#	Please install the main CycleStreets repo first"
+    exit 1
+fi
+
+# Ideally the import system would have its own repo, which would be checked out here.
+# Instead just copy the code across from the main wesbsite installation
+if [ ! -d "${importContentFolder}" ]; then
+
+    # Ensure the import folder exists
+    mkdir -p ${importContentFolder}
+
+    # Move the import folder across
+    mv ${websitesContentFolder}/import ${importContentFolder}
+fi
+
+# Switch to import folder
+cd ${importContentFolder}
+
+# Create the settings file if it doesn't exist
+phpConfig=.config.php
+if [ ! -e ${phpConfig} ]
+then
+    cp -p .config.php.template ${phpConfig}
+fi
+
+# Setup the config?
+if grep IMPORT_USERNAME_HERE ${phpConfig} >/dev/null 2>&1;
+then
+
+    # Make the substitutions
+    echo "#	Configuring the import ${phpConfig}";
+    sed -i \
+-e "s/IMPORT_USERNAME_HERE/${mysqlImportUsername}/" \
+-e "s/IMPORT_PASSWORD_HERE/${mysqlImportPassword}/" \
+-e "s/MYSQL_ROOT_PASSWORD_HERE/${mysqlRootPassword}/" \
+-e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
+-e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
+-e "s/YOUR_SALT_HERE/${signinSalt}/" \
+-e "s/MySQL_KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
+-e "s/MySQL_MAX_HEAP_TABLE_SIZE_HERE/${import_max_heap_table_size}/" \
+-e "s/MySQL_TMP_TABLE_SIZE_HERE/${import_tmp_table_size}/" \
+	${phpConfig}
+fi
 
 # Check Osmosis has been installed
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
     # !! Osmosis uses MySQL and that needs to be configured to use character_set_server=utf8 and collation_server=utf8_unicode_ci which is currently set up (machine wide) by website installation.
-    echo "#	CycleStreets / Osmosis installation $(date)"
+    echo "#	$(date)	CycleStreets / Osmosis installation"
 
     # Prepare the apt index
     apt-get update > /dev/null
@@ -88,46 +129,6 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     # Announce completion
     echo "#	Completed installation of osmosis"
 fi
-
-# Need to add a check that CycleStreets main installation has been completed
-# !! This is a dependency that is medium term aim for removal [:] 10 Mar 2015 20:16:12
-if [ ! -d "${websitesContentFolder}" ]; then
-    echo "#	Please install the main CycleStreets repo first"
-    exit 1
-fi
-
-# Define import folder
-importFolder=${websitesContentFolder}/import
-
-# Switch to import folder
-cd ${importFolder}
-
-# Create the settings file if it doesn't exist
-phpConfig=".config.php"
-if [ ! -e ${phpConfig} ]
-then
-    cp -p .config.php.template ${phpConfig}
-fi
-
-# Setup the config?
-if grep IMPORT_USERNAME_HERE ${phpConfig} >/dev/null 2>&1;
-then
-
-    # Make the substitutions
-    echo "#	Configuring the import ${phpConfig}";
-    sed -i \
--e "s/IMPORT_USERNAME_HERE/${mysqlImportUsername}/" \
--e "s/IMPORT_PASSWORD_HERE/${mysqlImportPassword}/" \
--e "s/MYSQL_ROOT_PASSWORD_HERE/${mysqlRootPassword}/" \
--e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
--e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
--e "s/YOUR_SALT_HERE/${signinSalt}/" \
--e "s/MySQL_KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
--e "s/MySQL_MAX_HEAP_TABLE_SIZE_HERE/${import_max_heap_table_size}/" \
--e "s/MySQL_TMP_TABLE_SIZE_HERE/${import_tmp_table_size}/" \
-	${phpConfig}
-fi
-
 
 # Database setup
 # Useful binding
@@ -217,7 +218,7 @@ if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDat
 fi
 
 # Confirm end of script
-echo "#	All now installed $(date)"
+echo "#	$(date)	All now installed."
 
 # Return true to indicate success
 :

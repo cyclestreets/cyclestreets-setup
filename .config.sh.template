@@ -75,7 +75,7 @@ cyclescapeBlogPassword=
 websitesContentFolder=/websites/www/content
 websitesBackupsFolder=/websites/www/backups
 websitesLogsFolder=/websites/www/logs
-importContentFolder=${websitesContentFolder}
+importContentFolder=/websites/www/import
 
 
 ## Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE

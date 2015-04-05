@@ -118,8 +118,9 @@ if $installCronJobs ; then
     # Update scripts
     jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
 
-    # Dump data every day at 4:04 am
-    jobs[2]="4 4 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
+    # Dump data every day at 4:01 am
+    # Choose a timing that allows the script to complete before being polled by the automatic testing - which currently (April 2015) happens on each five minute boundary
+    jobs[2]="4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
 
     # Hourly zapping at 13 mins past every hour
     jobs[3]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"

@@ -48,9 +48,6 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Location of the import files - transitioning away
-importFolder=${websitesContentFolder}
-
 # When an import disk has been specified in the config, check it has enough free space
 if [ -n "${importDisk}" ]; then
 
@@ -92,10 +89,10 @@ fi
 echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" /etc/init.d/cycleroutingd stop
 
 #       Move to the right place
-cd ${importFolder}
+cd ${importContentFolder}
 
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
-php import/run.php
+php run.php
 
 echo "# $(date)	CycleStreets import completed."
 echo "# Run useNewImport script if import and live are on the same server."

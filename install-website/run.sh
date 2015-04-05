@@ -4,7 +4,7 @@
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # Announce start
-echo "#	CycleStreets installation $(date)"
+echo "#	$(date)	CycleStreets installation"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -537,6 +537,26 @@ then
 
     # Allow website read only access
     ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+fi
+
+# External database
+# A skeleton schema is created by the website installation - override that it if has not previously been downloaded
+if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDataFile} ]; then
+
+	# Report
+	echo "#	$(date)	Starting download of external database"
+
+	# Download
+	${asCS} scp ${externalDataSource}/${csExternalDataFile} ${websitesBackupsFolder}/
+
+	# Report
+	echo "#	$(date)	Starting installation of external database"
+
+	# Unpack into the skeleton db
+	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${mysql} ${externalDb}
+
+	# Report
+	echo "#	$(date)	Completed installation of external database"
 fi
 
 # Batch db

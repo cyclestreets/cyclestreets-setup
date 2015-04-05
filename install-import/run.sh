@@ -53,7 +53,7 @@ if [ ! -d "${importContentFolder}" ]; then
     mkdir -p ${importContentFolder}
 
     # Go there (these next few lines are rather unsatisfactory, but they should do the trick)
-    cd ${importContentFolder}
+    cd ${importContentFolder}/..
 
     #  Remove import
     rmdir import/

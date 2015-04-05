@@ -132,6 +132,7 @@ asterDataFile=
 
 # External database
 externalDb=csExternal
+externalDataSource=www.cyclestreets.net:${websitesBackupsFolder}
 csExternalDataFile=
 
 # Batch database

@@ -8,7 +8,7 @@
 #
 # DESCRIPTION
 #	newEdition
-#		Names a routing database of the form routingYYMMDD, eg. routing1500404
+#		Names a routing database of the form routingYYMMDD, eg. routing150404
 
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:

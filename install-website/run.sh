@@ -528,8 +528,8 @@ fi
 # External db
 # This creates only a skeleton and sets up grant permissions. The full installation is done by a script in install-import folder.
 # Unless the database already exists:
-if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
-then
+if [ -n "${externalDb}" -a ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1 ]; then
+
     # Create external database
     echo "#	Create ${externalDb} database"
     echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
@@ -539,9 +539,8 @@ then
     ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
-# External database
-# A skeleton schema is created by the website installation - override that it if has not previously been downloaded
-if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDataFile} ]; then
+# External db restore
+if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDataFile} ]; then
 
 	# Report
 	echo "#	$(date)	Starting download of external database"
@@ -554,6 +553,9 @@ if [ -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDat
 
 	# Unpack into the skeleton db
 	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${mysql} ${externalDb}
+
+	# Remove the archive to save space
+	rm ${websitesBackupsFolder}/${csExternalDataFile}
 
 	# Report
 	echo "#	$(date)	Completed installation of external database"

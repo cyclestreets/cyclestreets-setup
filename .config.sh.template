@@ -132,8 +132,12 @@ asterDataFile=
 
 # External database
 externalDb=csExternal
+csExternalDataFile=csExternal.sql.gz
+
+# Prompts for a password for the cyclestreets user on the main website, midway during download.
+# 250MB download, unpacks to almost 800MB database
+# !! Plan to move to a new server with passwordless access where it can be downloaded via wget.
 externalDataSource=www.cyclestreets.net:${websitesBackupsFolder}
-csExternalDataFile=
 
 # Batch database
 batchDb=csBatch

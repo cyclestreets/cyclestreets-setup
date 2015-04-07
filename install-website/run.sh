@@ -546,7 +546,7 @@ if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -r ${websitesBackupsF
 	echo "#	$(date)	Starting download of external database"
 
 	# Download
-	${asCS} scp ${externalDataSource}/${csExternalDataFile} ${websitesBackupsFolder}/
+	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${csExternalDataFile} -O ${websitesBackupsFolder}/${csExternalDataFile}
 
 	# Report
 	echo "#	$(date)	Starting installation of external database"

@@ -162,7 +162,7 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/
 	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
-	${asCS} scp ${elevationDataSource}/${ordnanceSurveyDataFile} ${websitesBackupsFolder}/external/
+	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${ordnanceSurveyDataFile} -O ${websitesBackupsFolder}/${ordnanceSurveyDataFile}
 
 	# Report
 	echo "#	Starting installation of OS NTF data"
@@ -179,7 +179,7 @@ if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/external/${srtmData
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	${asCS} scp ${elevationDataSource}/external/${srtmDataFile} ${websitesBackupsFolder}/external/
+	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${srtmDataFile} -O ${websitesBackupsFolder}/${srtmDataFile}
 
 	# Report
 	echo "#	Starting installation of SRTM data"
@@ -196,7 +196,7 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 	echo "#	Starting download of ASTER data 25G"
 
 	# Download
-	${asCS} scp ${elevationDataSource}/external/${asterDataFile} ${websitesBackupsFolder}/external/
+	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${asterDataFile} -O ${websitesBackupsFolder}/${asterDataFile}
 
 	# Report
 	echo "#	Starting installation of ASTER data"

@@ -107,9 +107,6 @@ liveMachineAddress=
 importMachineAddress=
 importMachineEditions=${importContentFolder}/output
 
-## Location of elevation data as a full scp-retrievable location
-elevationDataSource=example.com:${websitesBackupsFolder}/external
-
 # Specify the import disk, eg. /dev/sda1 that will be checked for sufficient space (leave blank to skip this check)
 importDisk=
 
@@ -136,11 +133,6 @@ asterDataFile=
 # External database
 externalDb=csExternal
 csExternalDataFile=csExternal.sql.gz
-
-# Prompts for a password for the cyclestreets user on the main website, midway during download.
-# 250MB download, unpacks to almost 800MB database
-# !! Plan to move to a new server with passwordless access where it can be downloaded via wget.
-externalDataSource=www.cyclestreets.net:${websitesBackupsFolder}
 
 # Batch database
 batchDb=csBatch

@@ -156,7 +156,7 @@ ${mysql} -e "grant select , insert , update , delete , create , drop , index , a
 ${asCS} mkdir -p ${websitesBackupsFolder}/external
 
 # Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
-if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} ]; then
+if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/${ordnanceSurveyDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of OS NTF data 48M"
@@ -169,11 +169,11 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/external/
 
 	# Create folder and unpack
 	mkdir -p ${importContentFolder}/data/elevation/ordnanceSurvey
-	tar xf ${websitesBackupsFolder}/external/${ordnanceSurveyDataFile} -C ${importContentFolder}/data/elevation/ordnanceSurvey
+	tar xf ${websitesBackupsFolder}/${ordnanceSurveyDataFile} -C ${importContentFolder}/data/elevation/ordnanceSurvey
 fi
 
 # Check if srtm data is desired and that it has not already been downloaded
-if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/external/${srtmDataFile} ]; then
+if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/${srtmDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of SRTM data 8.2G"
@@ -186,11 +186,11 @@ if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/external/${srtmData
 
 	# Create folder and unpack
 	mkdir -p ${importContentFolder}/data/elevation/srtmV4.1/tiff
-	tar xf ${websitesBackupsFolder}/external/${srtmDataFile} -C ${importContentFolder}/data/elevation/srtmV4.1
+	tar xf ${websitesBackupsFolder}/${srtmDataFile} -C ${importContentFolder}/data/elevation/srtmV4.1
 fi
 
 # Check if ASTER data is desired and that it has not already been downloaded
-if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDataFile} ]; then
+if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/${asterDataFile} ]; then
 
 	# Report
 	echo "#	Starting download of ASTER data 25G"
@@ -203,7 +203,7 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/external/${asterDa
 
 	# Create folder and unpack
 	mkdir -p ${importContentFolder}/data/elevation/asterV2/tiff
-	tar xf ${websitesBackupsFolder}/external/${asterDataFile} -C ${importContentFolder}/data/elevation/asterV2
+	tar xf ${websitesBackupsFolder}/${asterDataFile} -C ${importContentFolder}/data/elevation/asterV2
 fi
 
 # Confirm end of script

@@ -22,6 +22,9 @@ set -e
 DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 SCRIPTDIRECTORY=$DIR
 
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
 # Name of the credentials file
 configFile=../.config.sh
 

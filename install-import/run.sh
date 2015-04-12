@@ -35,8 +35,8 @@ fi
 # Load the credentials
 . ./${configFile}
 
-# Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
+# Load common install script
+. ${ScriptHome}/utility/installCommon.sh
 
 # Need to add a check that CycleStreets main installation has been completed
 # !! This is a dependency that is medium term aim for removal [:] 10 Mar 2015 20:16:12

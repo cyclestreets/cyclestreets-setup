@@ -45,7 +45,8 @@ then
 fi
 
 # Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
+# Use i option so that that .my.cnf is read
+asCS="sudo -iu ${username}"
 
 # Prepare the apt index; it may be practically non-existent on a fresh VM
 apt-get update > /dev/null

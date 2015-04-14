@@ -58,13 +58,13 @@ fi
 # Therefore doing a MySQL restart is probably the smarter thing to do.
 if [ -n "${routing_key_buffer_size}" ]; then
     echo "#	Configuring MySQL for serving routes"
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${routing_key_buffer_size};";
+    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${routing_key_buffer_size};";
 fi
 if [ -n "${routing_max_heap_table_size}" ]; then
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${routing_max_heap_table_size};";
+    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${routing_max_heap_table_size};";
 fi
 if [ -n "${routing_tmp_table_size}" ]; then
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${routing_tmp_table_size};";
+    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${routing_tmp_table_size};";
 fi
 
 echo "# Now starting the routing service for the new import"

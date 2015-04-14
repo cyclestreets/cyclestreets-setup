@@ -51,7 +51,7 @@ asCS="sudo -u ${username}"
 apt-get update > /dev/null
 
 # Install basic software
-apt-get -y install wget git emacs
+apt-get -y install wget subversion git emacs
 
 # Install Apache, PHP
 echo "#	Installing Apache, MySQL, PHP"
@@ -92,7 +92,7 @@ apt-get -y install libapache2-mod-macro
 # Utilities
 echo "#	Some utilities"
 # ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
-apt-get -y install subversion openjdk-6-jre bzip2
+apt-get -y install openjdk-6-jre bzip2
 
 # Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
 apt-get -y install ntp

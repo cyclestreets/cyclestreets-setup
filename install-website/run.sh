@@ -40,6 +40,16 @@ fi
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 
+# Note: some new versions of php5.5 are missing json functions. This can be easily remedied by including the package: php5-json
+
+# ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
+apt-get -y install imagemagick php5-imagick
+
+# Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
+sudo a2enmod deflate
+apt-get -y install php-apc
+/etc/init.d/apache2 restart
+
 # The following folders and files are be created with root as owner, but that is fixed later on in the script.
 
 # Add the path to content (the -p option creates the intermediate www)

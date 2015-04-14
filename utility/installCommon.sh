@@ -89,16 +89,6 @@ apt-get -y install php5 php5-gd php5-cli php5-mysql
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
 apt-get -y install libapache2-mod-macro
 
-# Note: some new versions of php5.5 are missing json functions. This can be easily remedied by including the package: php5-json
-
-# ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
-apt-get -y install imagemagick php5-imagick
-
-# Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
-sudo a2enmod deflate
-apt-get -y install php-apc
-/etc/init.d/apache2 restart
-
 # Install Python
 echo "#	Installing python"
 apt-get -y install python php5-xmlrpc php5-curl

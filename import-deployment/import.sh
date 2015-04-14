@@ -83,10 +83,13 @@ if [ -n "${import_tmp_table_size}" ]; then
     mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${import_tmp_table_size};";
 fi
 
-# Stop the routing service
-# Note: the service command is available to the root user on debian
-# It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
-echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" /etc/init.d/cycleroutingd stop
+# Stop the routing service - if it is installed
+if [ -e /etc/init.d/cycleroutingd ]; then
+
+    # Note: the service command is available to the root user on debian
+    # It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
+    echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" /etc/init.d/cycleroutingd stop
+fi
 
 #       Move to the right place
 cd ${importContentFolder}

@@ -73,14 +73,14 @@ fi
 # Configure MySQL for import
 if [ -n "${import_key_buffer_size}" ]; then
     echo "#	Configuring MySQL for import"
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${import_key_buffer_size};";
+    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${import_key_buffer_size};";
 fi
 # These two variable changes affect new connections to the server and so can't be checked straight away with select @@...
 if [ -n "${import_max_heap_table_size}" ]; then
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${import_max_heap_table_size};";
+    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${import_max_heap_table_size};";
 fi
 if [ -n "${import_tmp_table_size}" ]; then
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${import_tmp_table_size};";
+    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${import_tmp_table_size};";
 fi
 
 # Stop the routing service

@@ -177,4 +177,6 @@ EOF
 
 fi
 
-
+# Database setup
+# Useful binding
+mysql="${asCS} mysql -hlocalhost"

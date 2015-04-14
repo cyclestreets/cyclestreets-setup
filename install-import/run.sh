@@ -42,27 +42,17 @@ fi
 . ${ScriptHome}/utility/installCommon.sh
 
 # Need to add a check that CycleStreets main installation has been completed
-# !! This is a dependency that is medium term aim for removal [:] 10 Mar 2015 20:16:12
 if [ ! -d "${websitesContentFolder}" ]; then
     echo "#	Please install the main CycleStreets repo first"
     exit 1
 fi
 
-# Ideally the import system would have its own repo, which would be checked out here.
-# Instead just copy the code across from the main wesbsite installation
-if [ ! -d "${importContentFolder}" ]; then
+# For the time being [:] 14 Apr 2015 the import is a symbolic link
+if [ ! -L "${importContentFolder}" ]; then
 
-    # Ensure the import folder exists
-    mkdir -p ${importContentFolder}
+    # Create the symlink
+    ln -s ${websitesContentFolder}/import ${importContentFolder}
 
-    # Go there (these next few lines are rather unsatisfactory, but they should do the trick)
-    cd ${importContentFolder}/..
-
-    #  Remove import
-    rmdir import/
-
-    # Move the import folder across
-    mv ${websitesContentFolder}/import ./
 fi
 
 # Switch to import folder
@@ -86,8 +76,6 @@ then
 -e "s/IMPORT_PASSWORD_HERE/${mysqlImportPassword}/" \
 -e "s/MYSQL_ROOT_PASSWORD_HERE/${mysqlRootPassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
--e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
--e "s/YOUR_SALT_HERE/${signinSalt}/" \
 -e "s/MySQL_KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
 -e "s/MySQL_MAX_HEAP_TABLE_SIZE_HERE/${import_max_heap_table_size}/" \
 -e "s/MySQL_TMP_TABLE_SIZE_HERE/${import_tmp_table_size}/" \

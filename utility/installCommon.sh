@@ -125,3 +125,35 @@ umask 0002
 # It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
 # (The equivalent for the setuid bit does not work because of security issues and so file owners are set later on in the script.)
 chmod g+ws /websites
+# The following folders and files are be created with root as owner, but that is fixed later on in the script.
+
+# Add the path to content (the -p option creates the intermediate www)
+mkdir -p ${websitesContentFolder}
+
+# Create a folder for Apache to log access / errors:
+mkdir -p ${websitesLogsFolder}
+
+# Create a folder for backups
+mkdir -p ${websitesBackupsFolder}
+
+
+# Switch to content folder
+cd ${websitesContentFolder}
+
+# Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
+if [ ! -d ${websitesContentFolder}/.svn ]
+then
+    ${asCS} svn co --username=${currentActualUser} --password="${repopassword}" --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder}
+else
+    ${asCS} svn update --username=${currentActualUser} --password="${repopassword}" --no-auth-cache
+fi
+
+# Assume ownership of all the new files and folders
+chown -R ${username} /websites
+
+# Add group writability.
+# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
+chmod -R g+w /websites
+
+# Allow the Apache webserver process to write / add to the data/ folder
+chown -R www-data ${websitesContentFolder}/data

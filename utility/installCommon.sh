@@ -51,7 +51,7 @@ asCS="sudo -u ${username}"
 apt-get update > /dev/null
 
 # Install basic software
-apt-get -y install wget subversion git emacs
+apt-get -y install wget subversion git emacs bzip2
 
 # Install Apache, PHP
 echo "#	Installing Apache, MySQL, PHP"
@@ -85,17 +85,6 @@ apt-get -y install python-software-properties software-properties-common
 add-apt-repository -y ppa:ondrej/php5-5.6
 apt-get update
 apt-get -y install php5 php5-gd php5-cli php5-mysql
-
-# Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
-apt-get -y install libapache2-mod-macro
-
-# Utilities
-echo "#	Some utilities"
-# ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
-apt-get -y install openjdk-6-jre bzip2
-
-# Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
-apt-get -y install ntp
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # apt-get -y install phpmyadmin

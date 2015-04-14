@@ -50,6 +50,10 @@ sudo a2enmod deflate
 apt-get -y install php-apc
 /etc/init.d/apache2 restart
 
+# Install Python
+echo "#	Installing python"
+apt-get -y install python php5-xmlrpc php5-curl
+
 # The following folders and files are be created with root as owner, but that is fixed later on in the script.
 
 # Add the path to content (the -p option creates the intermediate www)

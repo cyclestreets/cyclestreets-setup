@@ -89,10 +89,6 @@ apt-get -y install php5 php5-gd php5-cli php5-mysql
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
 apt-get -y install libapache2-mod-macro
 
-# Install Python
-echo "#	Installing python"
-apt-get -y install python php5-xmlrpc php5-curl
-
 # Utilities
 echo "#	Some utilities"
 # ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)

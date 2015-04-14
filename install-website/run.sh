@@ -298,7 +298,7 @@ fi
 
 # Database setup
 # Useful binding
-mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
+mysql="mysql -hlocalhost"
 
 # Create cyclestreets database
 ${mysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;"

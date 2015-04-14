@@ -157,3 +157,24 @@ chmod -R g+w /websites
 
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
+
+# Setup a ~/.my.cnf file which will allow the user to run mysql commands without supplying command line password
+mycnfFile=/home/${username}/.my.cnf
+if [ ! -e ${mycnfFile} ]; then
+
+    # Create config file
+    cat > ${mycnfFile} << EOF
+[client]
+user=root
+password=${mysqlRootPassword}
+# Best to avoid setting a database as this can confuse scripts, ie leave commented out:
+#database=cyclestreets
+
+[mysql]
+# Equiv to -A at startup, stops tabs trying to autocomplete
+no-auto-rehash
+EOF
+
+fi
+
+

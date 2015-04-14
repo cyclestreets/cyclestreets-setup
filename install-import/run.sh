@@ -129,7 +129,7 @@ fi
 
 # Database setup
 # Useful binding
-mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
+mysql="mysql -hlocalhost"
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.

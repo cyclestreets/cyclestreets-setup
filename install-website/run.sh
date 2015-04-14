@@ -54,13 +54,11 @@ apt-get -y install php-apc
 echo "#	Installing python"
 apt-get -y install python php5-xmlrpc php5-curl
 
-# Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
-apt-get -y install libapache2-mod-macro
-
 # Utilities
 echo "#	Some utilities"
 # ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
-apt-get -y install openjdk-6-jre
+# Install Apache mod_macro for convenience (not an actual requirement for CycleStreets)
+apt-get -y install libapache2-mod-macro
 
 # Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
 apt-get -y install ntp

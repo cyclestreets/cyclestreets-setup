@@ -164,7 +164,7 @@ mycnfFile=/home/${username}/.my.cnf
 if [ ! -e ${mycnfFile} ]; then
 
     # Create config file
-    cat > ${mycnfFile} << EOF
+    ${asCS} cat > ${mycnfFile} << EOF
 [client]
 user=root
 password=${mysqlRootPassword}

@@ -372,7 +372,8 @@ fi
 # External db
 # This creates only a skeleton and sets up grant permissions. The full installation is done by a script in install-import folder.
 # Unless the database already exists:
-if [ -n "${externalDb}" -a ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1 ]; then
+if [ -n "${externalDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
+then
 
     # Create external database
     echo "#	Create ${externalDb} database"
@@ -384,7 +385,7 @@ if [ -n "${externalDb}" -a ! ${mysql} --batch --skip-column-names -e "SHOW DATAB
 fi
 
 # External db restore
-if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -r ${websitesBackupsFolder}/${csExternalDataFile} ]; then
+if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsFolder}/${csExternalDataFile} ]; then
 
 	# Report
 	echo "#	$(date)	Starting download of external database"

@@ -9,7 +9,6 @@
 # Start an import run
 
 echo "#	CycleStreets import $(date)"
-echo "#	Progress is logged in ${importContentFolder}/log.txt"
 
 # Ensure this script is NOT run as root
 if [ "$(id -u)" = "0" ]; then
@@ -48,6 +47,9 @@ fi
 
 # Load the credentials
 . ${configFile}
+
+#	Report where logging is occurring
+echo "#	Progress is logged in ${importContentFolder}/log.txt"
 
 # When an import disk has been specified in the config, check it has enough free space
 if [ -n "${importDisk}" ]; then

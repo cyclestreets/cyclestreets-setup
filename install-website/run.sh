@@ -400,7 +400,8 @@ if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsF
 	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${mysql} ${externalDb}
 
 	# Remove the archive to save space
-	rm ${websitesBackupsFolder}/${csExternalDataFile}
+	# !! Can't remove as a reinstall would trigger another download.
+	# rm ${websitesBackupsFolder}/${csExternalDataFile}
 
 	# Report
 	echo "#	$(date)	Completed installation of external database"

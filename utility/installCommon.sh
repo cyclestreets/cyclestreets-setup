@@ -45,8 +45,7 @@ then
 fi
 
 # Shortcut for running commands as the cyclestreets user
-# Use i option so that that .my.cnf is read
-asCS="sudo -iu ${username}"
+asCS="sudo -u ${username}"
 
 # Prepare the apt index; it may be practically non-existent on a fresh VM
 apt-get update > /dev/null
@@ -178,6 +177,6 @@ EOF
 
 fi
 
-# Database setup
 # Useful binding
-mysql="${asCS} mysql -hlocalhost"
+# By providing the defaults like this, the use of ${asCS} can be avoided - which can be complicated as it produces double expansion of the arguments - which is mess if passwords contain the dollar symbol.
+mysql="mysql -hlocalhost --defaults-extra-file=/home/cyclestreets/.my.cnf"

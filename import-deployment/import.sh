@@ -9,6 +9,7 @@
 # Start an import run
 
 echo "#	CycleStreets import $(date)"
+echo "#	Progress is logged in ${importContentFolder}/log.txt"
 
 # Ensure this script is NOT run as root
 if [ "$(id -u)" = "0" ]; then
@@ -73,14 +74,14 @@ fi
 # Configure MySQL for import
 if [ -n "${import_key_buffer_size}" ]; then
     echo "#	Configuring MySQL for import"
-    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${import_key_buffer_size};";
+    mysql -hlocalhost -e "set global key_buffer_size = ${import_key_buffer_size};";
 fi
 # These two variable changes affect new connections to the server and so can't be checked straight away with select @@...
 if [ -n "${import_max_heap_table_size}" ]; then
-    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${import_max_heap_table_size};";
+    mysql -hlocalhost -e "set global max_heap_table_size = ${import_max_heap_table_size};";
 fi
 if [ -n "${import_tmp_table_size}" ]; then
-    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${import_tmp_table_size};";
+    mysql -hlocalhost -e "set global tmp_table_size = ${import_tmp_table_size};";
 fi
 
 # Stop the routing service - if it is installed

@@ -72,7 +72,9 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 
 # Install MySQL 5.6, which will also start it
 apt-get -y install mysql-server-5.6 mysql-client-5.6
-echo PURGE | debconf-communicate  mysql-server-5.6
+
+## !! Not sure why this was ever necessary
+# echo PURGE | debconf-communicate  mysql-server-5.6
 
 # Install Apache (2.4)
 echo "#	Installing core webserver packages"

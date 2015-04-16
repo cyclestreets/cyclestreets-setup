@@ -53,6 +53,12 @@ fi
 # Announce starting
 echo "# Tilecache installation $(date)"
 
+# Check the options
+if [ -z "${tilecacheUrl}" -o -z "${tilecacheContentFolder}" ]; then
+    echo "#	The tilecache options are not configured, abandoning installation."
+    exit 1
+fi
+
 
 ## Main body
 

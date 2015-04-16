@@ -50,12 +50,8 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "# Tilecache installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "# Tilecache installation $(date)" >> ${setupLogFile}
+# Announce starting
+echo "# Tilecache installation $(date)"
 
 
 ## Main body
@@ -64,7 +60,7 @@ echo "# Tilecache installation $(date)" >> ${setupLogFile}
 asCS="sudo -u ${username}"
 
 # Ensure that dependencies are present
-apt-get -y install apache2 php5 >> ${setupLogFile}
+apt-get -y install apache2 php5
 
 # Install path to content and go there
 ${asCS} mkdir -p "${tilecacheContentFolder}"
@@ -108,8 +104,7 @@ fi
 a2enmod headers
 
 # Reload apache
-/etc/init.d/apache2 reload >> ${setupLogFile}
-
+/etc/init.d/apache2 reload
 
 # Report completion
 echo "#	Installing tilecache completed"

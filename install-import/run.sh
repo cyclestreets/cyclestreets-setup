@@ -90,6 +90,9 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
 # Permit cyclestreets user to run the routing compression using sudo without a password
 cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
 EOF
+
+    # Make it read only
+    chmod 440 ${csSudoers}
 fi
 
 

@@ -195,7 +195,7 @@ if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then
 fi
 
 # Check if ASTER data is desired and that it has not already been downloaded
-unpackASTERfolder=${unpackASTERfolder}
+unpackASTERfolder=${importContentFolder}/data/elevation/asterV2
 if [ -n "${asterDataFile}" -a ! -d ${unpackASTERfolder} ]; then
 
 	# Report

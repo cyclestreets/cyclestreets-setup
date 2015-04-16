@@ -89,20 +89,21 @@ chmod -R g+w "${tilecacheContentFolder}"
 
 # Create the config file if it doesn't exist, and write in the configuration
 if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then
-	${asCS} cp -pr .config.php.template .config.php
+	${asCS} cp -p .config.php.template .config.php
 fi
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
-if [ ! -f ${websitesContentFolder}/configuration/apache/sites-available/tile ]; then
-	cp -pr .apache-vhost.conf.template /etc/apache2/sites-available/tile
-	sed -i "s|tile.example.com|${tilecacheUrl}|g" /etc/apache2/sites-available/tile
-	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" /etc/apache2/sites-available/tile
-	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" /etc/apache2/sites-available/tile
+vhConf=/etc/apache2/sites-available/tile
+if [ ! -f ${vhConf} ]; then
+	cp -p .apache-vhost.conf.template ${vhConf}
+	sed -i "s|tile.example.com|${tilecacheUrl}|g" ${vhConf}
+	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhConf}
+	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhConf}
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
 if [ ! -L /etc/apache2/sites-enabled/700-tile ]; then
-    ln -s ${websitesContentFolder}/configuration/apache/sites-available/tile /etc/apache2/sites-enabled/700-tile
+    ln -s ${vhConf} /etc/apache2/sites-enabled/700-tile
 fi
 
 # Enable mod_headers, so that the Access-Control-Allow-Origin header is sent

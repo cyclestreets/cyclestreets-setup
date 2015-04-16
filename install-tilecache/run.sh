@@ -69,7 +69,12 @@ asCS="sudo -u ${username}"
 apt-get -y install apache2 php5
 
 # Install path to content and go there
-${asCS} mkdir -p "${tilecacheContentFolder}"
+mkdir -p "${tilecacheContentFolder}"
+
+# Make the folder group writable
+chmod -R g+w "${tilecacheContentFolder}"
+
+# Switch to it
 cd "${tilecacheContentFolder}"
 
 # Make sure the webserver user can write to the tilecache, by setting this as the owner

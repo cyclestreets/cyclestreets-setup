@@ -158,8 +158,9 @@ ${mysql} -e "${importpermissions} \`routing%\` . * to '${mysqlImportUsername}'@'
 # Make sure the target folder exists
 ${asCS} mkdir -p ${websitesBackupsFolder}/external
 
-# Check if Ordnance Survey NTF data is desired and that it has not already been downloaded
-if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/${ordnanceSurveyDataFile} ]; then
+# Check if Ordnance Survey NTF data is desired and that it has not already been downloaded and unpacked
+unpackOSfolder=${importContentFolder}/data/elevation/ordnanceSurvey
+if [ -n "${ordnanceSurveyDataFile}" -a ! -d ${unpackOSfolder} ]; then
 
 	# Report
 	echo "#	Starting download of OS NTF data 48M"
@@ -171,12 +172,13 @@ if [ ! -z "${ordnanceSurveyDataFile}" -a ! -x ${websitesBackupsFolder}/${ordnanc
 	echo "#	Starting installation of OS NTF data"
 
 	# Create folder and unpack
-	mkdir -p ${importContentFolder}/data/elevation/ordnanceSurvey
-	tar xf ${websitesBackupsFolder}/${ordnanceSurveyDataFile} -C ${importContentFolder}/data/elevation/ordnanceSurvey
+	mkdir -p ${unpackOSfolder}
+	tar xf ${websitesBackupsFolder}/${ordnanceSurveyDataFile} -C ${unpackOSfolder}
 fi
 
 # Check if srtm data is desired and that it has not already been downloaded
-if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/${srtmDataFile} ]; then
+unpackSRTMfolder=${importContentFolder}/data/elevation/srtmV4.1
+if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then
 
 	# Report
 	echo "#	Starting download of SRTM data 8.2G"
@@ -188,12 +190,13 @@ if [ ! -z "${srtmDataFile}" -a ! -x ${websitesBackupsFolder}/${srtmDataFile} ]; 
 	echo "#	Starting installation of SRTM data"
 
 	# Create folder and unpack
-	mkdir -p ${importContentFolder}/data/elevation/srtmV4.1/tiff
-	tar xf ${websitesBackupsFolder}/${srtmDataFile} -C ${importContentFolder}/data/elevation/srtmV4.1
+	mkdir -p ${unpackSRTMfolder}/tiff
+	tar xf ${websitesBackupsFolder}/${srtmDataFile} -C ${unpackSRTMfolder}
 fi
 
 # Check if ASTER data is desired and that it has not already been downloaded
-if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/${asterDataFile} ]; then
+unpackASTERfolder=${unpackASTERfolder}
+if [ -n "${asterDataFile}" -a ! -d ${unpackASTERfolder} ]; then
 
 	# Report
 	echo "#	Starting download of ASTER data 25G"
@@ -205,8 +208,8 @@ if [ ! -z "${asterDataFile}" -a ! -x ${websitesBackupsFolder}/${asterDataFile} ]
 	echo "#	Starting installation of ASTER data"
 
 	# Create folder and unpack
-	mkdir -p ${importContentFolder}/data/elevation/asterV2/tiff
-	tar xf ${websitesBackupsFolder}/${asterDataFile} -C ${importContentFolder}/data/elevation/asterV2
+	mkdir -p ${unpackASTERfolder}/tiff
+	tar xf ${websitesBackupsFolder}/${asterDataFile} -C ${unpackASTERfolder}
 fi
 
 # Confirm end of script

@@ -82,6 +82,17 @@ then
 	${phpConfig}
 fi
 
+# Ensure there's a custom sudoers file
+if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
+
+    # Create it
+    cat > ${csSudoers} << EOF
+# Permit cyclestreets user to run the routing compression using sudo without a password
+cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
+EOF
+fi
+
+
 # Check Osmosis has been installed
 if [ ! -L /usr/local/bin/osmosis ]; then
 

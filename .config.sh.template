@@ -40,6 +40,9 @@ mysqlImportUsername=import
 # Avoid using a % in this password because that won't survive being passed to version 0.43.1 of osmosis (this problem has been flagged with them)
 mysqlImportPassword=
 
+# Custom sudoers file
+csSudoers=/etc/sudoers.d/cyclestreets
+
 # MySQL settings for when the server is running an import or serving routes
 # Values should be written as eg: 100*1024*1024
 import_key_buffer_size=

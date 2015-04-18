@@ -107,9 +107,6 @@ mkdir -p ${websitesContentFolder}/data/routing/${latestEdition}
 # Move the tsv files
 mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data/routing/${latestEdition}
 
-# Copy the routing edition
-cp ${importMachineEditions}/${latestEdition}/importdefinition.ini ${websitesContentFolder}/data/routing/${latestEdition}
-
 # Configure the routing engine to use the new edition
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${latestEdition}" > $routingEngineConfigFile
 

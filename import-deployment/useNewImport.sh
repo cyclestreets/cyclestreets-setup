@@ -111,15 +111,13 @@ mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data
 cp ${importMachineEditions}/${latestEdition}/importdefinition.ini ${websitesContentFolder}/data/routing/${latestEdition}
 
 # Configure the routing engine to use the new edition
-echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
+echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${latestEdition}" > $routingEngineConfigFile
 
 # Ensure it is executable
 chmod a+x $routingEngineConfigFile
 
-exit 1
-
-
-
+#	Copy the sieve
+cp ${importMachineEditions}/${latestEdition}/sieve.sql $importContentFolder
 
 # Clear this cache - (whose rows relate to a specific routing edition)
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";

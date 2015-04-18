@@ -1,6 +1,8 @@
 #!/bin/bash
 # Script to run an import of fresh CycleStreets data on Ubuntu
 # Tested on 14.04.2 LTS Desktop (View Ubuntu version using 'lsb_release -a')
+#
+# Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
 # When in failover mode uncomment the next two lines:
 #echo "# Skipping in failover mode"
@@ -50,6 +52,12 @@ fi
 
 
 ## Main body of script
+
+# Ensure this script is run as cyclestreets user
+if [ ! "$(id -nu)" = "${username}" ]; then
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
+    exit 1
+fi
 
 #	Report where logging is occurring
 echo "#	Progress is logged in ${importContentFolder}/log.txt"

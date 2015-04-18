@@ -2,8 +2,10 @@
 # Script to install CycleStreets routing data
 # Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
+#
+# Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
-# Requires password-less access to the import machine.
+# Requires password-less access to the import machine, using a public key.
 
 # When in failover mode uncomment the next two lines:
 #echo "# Skipping in failover mode"
@@ -59,6 +61,9 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
+
+## Main body of script
+
 # Avoid echo if possible as this generates cron emails
 echo "$(date)	CycleStreets routing data installation"
 
@@ -66,6 +71,12 @@ echo "$(date)	CycleStreets routing data installation"
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	echo "# User ${username} must exist: please run the main website install script"
 	exit 1
+fi
+
+# Ensure this script is run as cyclestreets user
+if [ ! "$(id -nu)" = "${username}" ]; then
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
+    exit 1
 fi
 
 # Ensure the main website installation is present
@@ -217,21 +228,18 @@ echo $password | sudo -S tar xpvf tables.tar.gz -C ${dbFilesLocation}${importEdi
 # Remove the zip
 rm tables.tar.gz
 
-### Stage 6 - run post-install stored procedures for nearestPoint
+### Stage 6 - run post-install stored procedures
 
 #	Load nearest point stored procedures
 echo "$(date)	Loading nearestPoint technology"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
-
-
-### Stage 8 - deal with photos-en-route
 
 # Build the photo index
 echo "$(date)	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 
-### Stage 9 - Finish
+### Stage 7 - Finish
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"

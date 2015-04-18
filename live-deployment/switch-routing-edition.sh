@@ -122,7 +122,7 @@ importDate=${BASH_REMATCH[1]}
 ### Stage 3 - confirm existence of the routing import database and files
 
 # Check to see that this routing database exists
-if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${newEdition}"; then
+if ! mysql -hlocalhost -e "use ${newEdition}"; then
 	echo "#	The routing database ${newEdition} is not present"
 	exit 1
 fi
@@ -142,7 +142,7 @@ fi
 ### Stage 4 - do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
+mysql cyclestreets -hlocalhost -e "truncate map_nearestPointCache;";
 
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
@@ -163,7 +163,7 @@ if [ -n "${failoverRoutingServer}" ]; then
     fi
 
     # Use the failover server during switch over
-    mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
+    mysql cyclestreets -hlocalhost -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
     echo "#	Now using failover routing service"
 else
     # When there is no failover server put the site into maintenance mode
@@ -220,7 +220,7 @@ if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
 fi
 
 # Switch the website to the local server and ensure the routingDb is also set
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
+mysql cyclestreets -hlocalhost -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
 
 # Restore the site by switching off maintenance mode (-f ignores if non existent)
 rm -f ${websitesContentFolder}/maintenance
@@ -229,7 +229,7 @@ rm -f ${websitesContentFolder}/maintenance
 ### Stage 5 - end
 
 # Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+mysql cyclestreets -hlocalhost -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Finish
 echo "#	$(date)	Completed switch to $newEdition"

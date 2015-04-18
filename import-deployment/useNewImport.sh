@@ -1,6 +1,8 @@
 #!/bin/bash
 # Script to switch the routing service to the newly generated import.
 # Run after an import has completed, when the import and live service run from the same machine.
+#
+# Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
 echo "# $(date)	Use new CycleStreets import routing edition"
 
@@ -42,7 +44,14 @@ fi
 # Load the credentials
 . ${configFile}
 
+
 ## Main body of script
+
+# Ensure this script is run as cyclestreets user
+if [ ! "$(id -nu)" = "${username}" ]; then
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
+    exit 1
+fi
 
 # Check that the import finished correctly
 if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
@@ -56,8 +65,8 @@ mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_ne
 
 
 # Configure MySQL for routing
-# !! These values should only take effect until the next MySQL restart. The value they have here is to reduce sizes from the big import values down to runtime levels after an import.
-# Therefore doing a MySQL restart is probably the smarter thing to do.
+# During an import run these parameters may have been set to much larger values in order to process large data tables.
+# Setting these parameters here will have the effect of reducing them from their import settings, at least until the next MySQL restart, when they will inherit the configuration values.
 if [ -n "${routing_key_buffer_size}" ]; then
     echo "#	Configuring MySQL for serving routes"
     mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${routing_key_buffer_size};";
@@ -71,10 +80,8 @@ fi
 
 echo "# Now starting the routing service for the new import"
 
-# Start the routing service
-# Note: the service command is available to the root user on debian
-# It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
-echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" /etc/init.d/cycleroutingd start
+# Start the routing service (the cyclestreets user should have passwordless sudo access to this command)
+sudo /etc/init.d/cycleroutingd start
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -67,7 +67,7 @@ if [ -z "${importContentFolder}" ]; then
 fi
 
 # Check that the import finished correctly
-if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
+if ! mysql -hlocalhost --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
 then
     echo "# The import process did not complete. The routing service will not be started."
     exit 1
@@ -117,7 +117,7 @@ chmod a+x $routingEngineConfigFile
 cp ${importMachineEditions}/${latestEdition}/sieve.sql $importContentFolder
 
 # Clear this cache - (whose rows relate to a specific routing edition)
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
+mysql cyclestreets -hlocalhost -e "truncate map_nearestPointCache;";
 
 
 # Configure MySQL for routing
@@ -125,13 +125,13 @@ mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_ne
 # Setting these parameters here will have the effect of reducing them from their import settings, at least until the next MySQL restart, when they will inherit the configuration values.
 if [ -n "${routing_key_buffer_size}" ]; then
     echo "#	Configuring MySQL for serving routes"
-    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global key_buffer_size = ${routing_key_buffer_size};";
+    mysql -hlocalhost -e "set global key_buffer_size = ${routing_key_buffer_size};";
 fi
 if [ -n "${routing_max_heap_table_size}" ]; then
-    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global max_heap_table_size = ${routing_max_heap_table_size};";
+    mysql -hlocalhost -e "set global max_heap_table_size = ${routing_max_heap_table_size};";
 fi
 if [ -n "${routing_tmp_table_size}" ]; then
-    mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "set global tmp_table_size = ${routing_tmp_table_size};";
+    mysql -hlocalhost -e "set global tmp_table_size = ${routing_tmp_table_size};";
 fi
 
 echo "# Now starting the routing service for the new import"

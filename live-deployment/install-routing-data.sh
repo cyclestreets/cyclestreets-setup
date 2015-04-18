@@ -111,12 +111,12 @@ fi
 echo "#	Latest edition: ${latestEdition}"
 
 # Useful binding
-importMachineFile=${websitesContentFolder}/data/routing/temporaryNewEdition.txt
+newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
 
 #	Copy definition file
-scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $importMachineFile >/dev/null 2>&1
+scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'importMachineFile': ${importMachineFile} settings."
+	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'newImportDefinition': ${newImportDefinition} settings."
 	exit 1
 fi
 
@@ -127,10 +127,10 @@ set -e
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
 # NB the timestamp parameter is not really used yet in the script below
 # !! Note: the md5Dump option (which loads the database from a mysqldump generated file, and is an alternative to the hotcopy option md5Tables) is not yet supported
-timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $importMachineFile`
-importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $importMachineFile`
-md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $importMachineFile`
-md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $importMachineFile`
+timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $newImportDefinition`
+importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
+md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
+md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]; then
@@ -170,7 +170,7 @@ echo "$(date)	Transferring the routing files from the import machine ${importMac
 mkdir -p ${newEditionFolder}
 
 # Move the temporary definition to correct place and name
-mv ${importMachineFile} ${newEditionFolder}/importdefinition.ini
+mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 
 #	Transfer the TSV file
 scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/

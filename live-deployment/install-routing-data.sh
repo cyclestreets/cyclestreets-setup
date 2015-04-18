@@ -217,13 +217,7 @@ echo $password | sudo -S tar xpvf tables.tar.gz -C ${dbFilesLocation}${importEdi
 # Remove the zip
 rm tables.tar.gz
 
-### Stage 6 - move the sieve into place for the purposes of having visible documentation
-
-#	Install the sieve
-mv sieve.sql ${websitesContentFolder}/import/
-
-
-### Stage 7 - run post-install stored procedures for nearestPoint
+### Stage 6 - run post-install stored procedures for nearestPoint
 
 #	Load nearest point stored procedures
 echo "$(date)	Loading nearestPoint technology"

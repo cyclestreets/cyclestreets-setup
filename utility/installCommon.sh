@@ -47,6 +47,29 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
+# Ensure there's a custom sudoers file
+if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
+
+    # Create it file that provides passwordless sudo access to the routing service - which needs root access to control running service
+    cat > ${csSudoers} << EOF
+# Permit cyclestreets user to control the routing service without a password
+cyclestreets ALL = (root) NOPASSWD: /etc/init.d/cycleroutingd
+EOF
+
+    # Extra option for import
+    if [ -n "${importContentFolder}" ]; then
+
+	# Add passwordless sudo access to routing compression (which needs access to raw mysql files)
+	cat >> ${csSudoers} << EOF
+# Permit cyclestreets user to run the routing compression using sudo without a password
+cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
+EOF
+    fi
+
+    # Make it read only
+    chmod 440 ${csSudoers}
+fi
+
 # Prepare the apt index; it may be practically non-existent on a fresh VM
 apt-get update > /dev/null
 

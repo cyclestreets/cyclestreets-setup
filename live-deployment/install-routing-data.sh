@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to install CycleStreets routing data
-# Tested on Ubuntu 12.10 (View Ubuntu version using 'lsb_release -a')
+# Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # Requires password-less access to the import machine.

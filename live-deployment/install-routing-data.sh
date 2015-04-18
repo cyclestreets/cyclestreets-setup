@@ -148,7 +148,7 @@ fi
 # Check to see if this routing database already exists
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
 # but in fact that is the condition desired.
-if mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "use ${importEdition}"; then
+if mysql -hlocalhost -e "use ${importEdition}"; then
 	echo "#	Stopping because the routing database ${importEdition} already exists."
 	exit 1
 fi
@@ -208,8 +208,8 @@ rm tsv.tar.gz
 echo "#	$(date)	Installing the routing database: ${importEdition}"
 
 #	Create the database (which will be empty for now) and set default collation
-mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
-mysql -hlocalhost -uroot -p${mysqlRootPassword} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
+mysqladmin create ${importEdition} -hlocalhost --default-character-set=utf8
+mysql -hlocalhost -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
 #!# Hard-coded location
 dbFilesLocation=/var/lib/mysql/
@@ -232,12 +232,12 @@ rm tables.tar.gz
 
 #	Load nearest point stored procedures
 echo "#	$(date)	Loading nearestPoint technology"
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
+mysql ${importEdition} -hlocalhost < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 
 # Build the photo index
 echo "#	$(date)	Building the photosEnRoute tables"
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
+mysql ${importEdition} -hlocalhost < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+mysql ${importEdition} -hlocalhost -e "call indexPhotos(false,0);"
 
 ### Stage 7 - Finish
 

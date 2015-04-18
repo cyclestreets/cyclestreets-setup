@@ -2,6 +2,8 @@
 # Script to change CycleStreets served routes
 # Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
+#
+# Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
 # SYNOPSIS
 #	run.sh newEdition
@@ -62,6 +64,12 @@ fi
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	echo "# User ${username} must exist: please run the main website install script"
 	exit 1
+fi
+
+# Ensure this script is run as cyclestreets user
+if [ ! "$(id -nu)" = "${username}" ]; then
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
+    exit 1
 fi
 
 # Ensure the main website installation is present

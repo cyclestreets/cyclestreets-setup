@@ -492,12 +492,15 @@ if $configureExim ; then
     sudo /etc/init.d/exim4 restart
 fi
 
+# Useful binding
+routingDaemonLocation=/etc/init.d/cycleroutingd
+
 # Install the cycle routing daemon (service)
 if $installRoutingAsDaemon ; then
 
     # Setup a symlink from the etc init demons folder, if it doesn't already exist
-    if [ ! -L /etc/init.d/cycleroutingd ]; then
-	ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d /etc/init.d/cycleroutingd
+    if [ ! -L ${routingDaemonLocation} ]; then
+	ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d ${routingDaemonLocation}
     fi
 
     # Ensure the relevant files are executable
@@ -506,7 +509,7 @@ if $installRoutingAsDaemon ; then
 
     # Start the service
     # Acutally uses the restart option, which is more idempotent
-    /etc/init.d/cycleroutingd restart
+    ${routingDaemonLocation} restart
     echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 
     # Add the daemon to the system initialization, so that it will start on reboot
@@ -519,13 +522,13 @@ else
     echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/routing_server.py"
 
     # If it was previously setup as a daemon, remove it
-    if [ -L /etc/init.d/cycleroutingd ]; then
+    if [ -L ${routingDaemonLocation} ]; then
 
 	# Ensure it is stopped
-	/etc/init.d/cycleroutingd stop
+	${routingDaemonLocation} stop
 
 	# Remove the symlink
-	rm /etc/init.d/cycleroutingd
+	rm ${routingDaemonLocation}
 
 	# Remove the daemon from the system initialization
 	update-rc.d cycleroutingd remove

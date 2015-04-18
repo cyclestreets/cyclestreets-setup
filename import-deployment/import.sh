@@ -48,6 +48,9 @@ fi
 # Load the credentials
 . ${configFile}
 
+
+## Main body of script
+
 #	Report where logging is occurring
 echo "#	Progress is logged in ${importContentFolder}/log.txt"
 

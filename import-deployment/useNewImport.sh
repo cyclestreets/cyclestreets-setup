@@ -42,8 +42,7 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Clear this cache - (whose rows relate to a specific routing edition)
-mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
+## Main body of script
 
 # Check that the import finished correctly
 if ! mysql -hlocalhost -uroot -p${mysqlRootPassword} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
@@ -51,6 +50,9 @@ then
     echo "# The import process did not complete. The routing service will not be started."
     exit 1
 fi
+
+# Clear this cache - (whose rows relate to a specific routing edition)
+mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";
 
 
 # Configure MySQL for routing

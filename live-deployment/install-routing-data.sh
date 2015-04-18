@@ -65,7 +65,7 @@ fi
 ## Main body of script
 
 # Avoid echo if possible as this generates cron emails
-echo "$(date)	CycleStreets routing data installation"
+echo "#	$(date)	CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
@@ -164,7 +164,7 @@ fi
 ### Stage 3 - get the routing files and check data integrity
 
 # Begin the file transfer
-echo "$(date)	Transferring the routing files from the import machine ${importMachineAddress}"
+echo "#	$(date)	Transferring the routing files from the import machine ${importMachineAddress}"
 
 # Create the folder
 mkdir -p ${newEditionFolder}
@@ -182,7 +182,7 @@ scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition
 scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
 #	Note that all files are downloaded
-echo "$(date)	File transfer stage complete"
+echo "#	$(date)	File transfer stage complete"
 
 # MD5 checks
 if [ "$(openssl dgst -md5 ${newEditionFolder}/tsv.tar.gz)" != "MD5(${newEditionFolder}/tsv.tar.gz)= ${md5Tsv}" ]; then
@@ -205,7 +205,7 @@ rm tsv.tar.gz
 ### Stage 5 - create the routing database
 
 # Narrate
-echo "$(date)	Installing the routing database: ${importEdition}"
+echo "#	$(date)	Installing the routing database: ${importEdition}"
 
 #	Create the database (which will be empty for now) and set default collation
 mysqladmin create ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} --default-character-set=utf8
@@ -218,7 +218,7 @@ dbFilesLocation=/var/lib/mysql/
 # Requires root permissions to check this and so sudo is used.
 echo $password | sudo -S test -d ${dbFilesLocation}${importEdition}
 if [ $? != 0 ]; then
-   echo "#$(date) !! The MySQL database does not seem to be installed in the expected location."
+   echo "#	$(date) !! The MySQL database does not seem to be installed in the expected location."
    exit 1
 fi
 
@@ -231,11 +231,11 @@ rm tables.tar.gz
 ### Stage 6 - run post-install stored procedures
 
 #	Load nearest point stored procedures
-echo "$(date)	Loading nearestPoint technology"
+echo "#	$(date)	Loading nearestPoint technology"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 
 # Build the photo index
-echo "$(date)	Building the photosEnRoute tables"
+echo "#	$(date)	Building the photosEnRoute tables"
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexPhotos(false,0);"
 
@@ -243,7 +243,7 @@ mysql ${importEdition} -hlocalhost -uroot -p${mysqlRootPassword} -e "call indexP
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
-echo "$(date)	Completed routing data installation ${importEdition}"
+echo "#	$(date)	Completed routing data installation ${importEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

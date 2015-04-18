@@ -451,7 +451,6 @@ fi
 
 
 # Create a config if not already present
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 if [ ! -x "${routingEngineConfigFile}" ]; then
 	# Create the config for the basic routing db, as cyclestreets user
 	${asCS} touch "${routingEngineConfigFile}"

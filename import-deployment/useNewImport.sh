@@ -110,9 +110,11 @@ mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data
 # Copy the routing edition
 cp ${importMachineEditions}/${latestEdition}/importdefinition.ini ${websitesContentFolder}/data/routing/${latestEdition}
 
-# Write a routingengine config that uses this definition
-# !! WIP 18 Apr 2015 
-# cat > ${routingEngineConfigFile}
+# Configure the routing engine to use the new edition
+echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
+
+# Ensure it is executable
+chmod a+x $routingEngineConfigFile
 
 exit 1
 

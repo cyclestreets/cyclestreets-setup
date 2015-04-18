@@ -172,7 +172,6 @@ else
 fi
 
 # Configure the routing engine to use the new edition
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
 
 # Ensure it is executable

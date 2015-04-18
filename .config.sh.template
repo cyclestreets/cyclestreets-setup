@@ -98,6 +98,7 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 
 
 ## Routing daemon
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 routingDaemonLocation=/etc/init.d/cycleroutingd
 installRoutingAsDaemon=true
 

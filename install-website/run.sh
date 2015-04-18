@@ -492,9 +492,6 @@ if $configureExim ; then
     sudo /etc/init.d/exim4 restart
 fi
 
-# Useful binding
-routingDaemonLocation=/etc/init.d/cycleroutingd
-
 # Install the cycle routing daemon (service)
 if $installRoutingAsDaemon ; then
 

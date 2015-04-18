@@ -80,8 +80,12 @@ fi
 
 echo "# Now starting the routing service for the new import"
 
-# Start the routing service (the cyclestreets user should have passwordless sudo access to this command)
-sudo /etc/init.d/cycleroutingd start
+# Stop the routing service - if it is installed
+if [ -e ${routingDaemonLocation} ]; then
+
+    # Start the routing service (the cyclestreets user should have passwordless sudo access to this command)
+    sudo ${routingDaemonLocation} start
+fi
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

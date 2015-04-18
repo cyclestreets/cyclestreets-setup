@@ -79,7 +79,7 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 fi
 
 # Ensure the routing daemon (service) is installed
-if [ ! -f /etc/init.d/cycleroutingd ]; then
+if [ ! -f ${routingDaemonLocation} ]; then
 	echo "#	The routing daemon (service) is not installed"
 	exit 1
 fi
@@ -89,7 +89,7 @@ fi
 set +e
 
 # Note: we must use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
-localRoutingStatus=$(/etc/init.d/cycleroutingd status)
+localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
   echo "#	Switchover expects the routing service to be running."
@@ -182,34 +182,32 @@ chmod a+x $routingEngineConfigFile
 # Rather than use the restart option to the service, it is stopped then started. This enables the script to verify that the service did stop properly in between.
 # This seems to be necessary when there are large amounts of memory being freed by stopping.
 
-# Note: the service command is available to the root user on debian
-# Stop
-# It is not possible to specify a null password prompt for sudo, hence the long explanatory prompt in place.
-echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" /etc/init.d/cycleroutingd stop
+# Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
+sudo ${routingDaemonLocation} stop
 
 # Check the local routing service has stopped
-localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has stopped
 while [[ ! "$localRoutingStatus" =~ stopped ]]; do
     sleep 10
-    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+    localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done
 
 # Start
-echo $password | sudo -Sk /etc/init.d/cycleroutingd start
+sudo ${routingDaemonLocation} start
 
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has restarted
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
     sleep 10
-    localRoutingStatus=$(/etc/init.d/cycleroutingd status | grep "State:")
+    localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done
 

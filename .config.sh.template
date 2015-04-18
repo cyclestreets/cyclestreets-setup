@@ -98,6 +98,7 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 
 
 ## Routing daemon
+routingDaemonLocation=/etc/init.d/cycleroutingd
 installRoutingAsDaemon=true
 
 ## Local routing server

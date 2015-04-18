@@ -53,7 +53,7 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
     # Create it file that provides passwordless sudo access to the routing service - which needs root access to control running service
     cat > ${csSudoers} << EOF
 # Permit cyclestreets user to control the routing service without a password
-cyclestreets ALL = (root) NOPASSWD: /etc/init.d/cycleroutingd
+cyclestreets ALL = (root) NOPASSWD: ${routingDaemonLocation}
 EOF
 
     # Extra option for import

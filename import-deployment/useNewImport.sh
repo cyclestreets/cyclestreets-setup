@@ -2,6 +2,13 @@
 # Script to switch the routing service to the newly generated import.
 # Run after an import has completed, when the import and live service run from the same machine.
 #
+# SYNOPSIS
+#	useNewImport.sh
+#
+# DESCRIPTION
+#	arg?
+#		Not yet deterimed
+#
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
 echo "# $(date)	Use new CycleStreets import routing edition"
@@ -37,7 +44,7 @@ configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file."
     exit 1
 fi
 
@@ -49,7 +56,13 @@ fi
 
 # Ensure this script is run as cyclestreets user
 if [ ! "$(id -nu)" = "${username}" ]; then
-    echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
+    exit 1
+fi
+
+# Check the import folder is defined
+if [ -z "${importContentFolder}" ]; then
+    echo "#	The import folder is not defined."
     exit 1
 fi
 
@@ -59,6 +72,52 @@ then
     echo "# The import process did not complete. The routing service will not be started."
     exit 1
 fi
+
+
+### Determine latest import
+
+# Check the import folder is defined
+if [ -z "${importMachineEditions}" ]; then
+    echo "#	The import output folder is not defined."
+    exit 1
+fi
+
+# Read the folder of routing editions, one per line, newest first, getting first one
+latestEdition=`ls -1t ${importMachineEditions} | head -n1`
+
+# Abandon if not found
+if [ -z "${latestEdition}" ]; then
+	echo "# No editions found in ${importMachineEditions}"
+	exit 1
+fi
+
+# Check this edition is not already installed
+if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
+	echo "# Already installed, abandoning."
+	exit 1
+fi
+
+
+#	Report finding
+echo "#	Latest edition: ${latestEdition}"
+
+# Create the new folder
+mkdir -p ${websitesContentFolder}/data/routing/${latestEdition}
+
+# Move the tsv files
+mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data/routing/${latestEdition}
+
+# Copy the routing edition
+cp ${importMachineEditions}/${latestEdition}/importdefinition.ini ${websitesContentFolder}/data/routing/${latestEdition}
+
+# Write a routingengine config that uses this definition
+# !! WIP 18 Apr 2015 
+# cat > ${routingEngineConfigFile}
+
+exit 1
+
+
+
 
 # Clear this cache - (whose rows relate to a specific routing edition)
 mysql cyclestreets -hlocalhost -uroot -p${mysqlRootPassword} -e "truncate map_nearestPointCache;";

@@ -43,7 +43,9 @@ fi
 # Ensure there's a custom sudoers file
 if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
 
-    # Create it file that provides passwordless sudo access to the routing service - which needs root access to control running service
+    # Create a file that provides passwordless sudo access svnadmin - which needs root access because some files are read able only by www-data
+    # Note: the csSudoers var was created for other deployments and this is a bit of an appropriation of that var and file.
+    # It would be a little cleaner for it to have its own var, but on a dev deployment it is not used for anything else.
     cat > ${csSudoers} << EOF
 # Dev deployment
 # Permit cyclestreets user to dump svn without a password

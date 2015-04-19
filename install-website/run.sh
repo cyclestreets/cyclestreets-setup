@@ -323,7 +323,7 @@ then
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
--e "s/CONFIGURED_BY_HERE/Configured by cyclestreets-setup for csServerName: ${csServerName}${sourceConfig}/" \
+-e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup for csServerName: ${csServerName}${sourceConfig}|" \
 -e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \

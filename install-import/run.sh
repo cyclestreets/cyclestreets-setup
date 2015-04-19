@@ -73,7 +73,7 @@ then
     # Make the substitutions
     echo "#	Configuring the import ${phpConfig}";
     sed -i \
--e "s/CONFIGURED_BY_HERE/Configured by cyclestreets-setup for csServerName: ${csServerName}${sourceConfig}/" \
+-e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup for csServerName: ${csServerName}${sourceConfig}|" \
 -e "s/IMPORT_USERNAME_HERE/${mysqlImportUsername}/" \
 -e "s/IMPORT_PASSWORD_HERE/${mysqlImportPassword}/" \
 -e "s/MYSQL_ROOT_PASSWORD_HERE/${mysqlRootPassword}/" \

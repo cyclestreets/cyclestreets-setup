@@ -89,20 +89,6 @@ if [ -n "${importDisk}" ]; then
     fi
 fi
 
-# Configure MySQL for import
-# !! This could perhaps be done within the php import script.
-if [ -n "${import_key_buffer_size}" ]; then
-    mysql -hlocalhost -e "set global key_buffer_size = ${import_key_buffer_size};";
-    echo "#	Configured MySQL for import"
-fi
-# These two variable changes affect new connections to the server and so can't be checked straight away with select @@...
-if [ -n "${import_max_heap_table_size}" ]; then
-    mysql -hlocalhost -e "set global max_heap_table_size = ${import_max_heap_table_size};";
-fi
-if [ -n "${import_tmp_table_size}" ]; then
-    mysql -hlocalhost -e "set global tmp_table_size = ${import_tmp_table_size};";
-fi
-
 # Stop the routing service - if it is installed
 if [ -e ${routingDaemonLocation} ]; then
 

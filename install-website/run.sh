@@ -312,16 +312,18 @@ ${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsernam
 phpConfig=".config.php"
 if [ ! -e ${websitesContentFolder}/${phpConfig} ]
 then
+    # Make a copy from the config template
     cp -p .config.php.template ${phpConfig}
 fi
 
-# Setup the config?
-if grep WEBSITE_USERNAME_HERE ${phpConfig} >/dev/null 2>&1;
+# Setup the configuration
+if grep CONFIGURED_BY_HERE ${phpConfig} >/dev/null 2>&1;
 then
 
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
+-e "s/CONFIGURED_BY_HERE/Configured by cyclestreets-setup for csServerName: ${csServerName}/" \
 -e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \

@@ -62,16 +62,18 @@ cd ${importContentFolder}
 phpConfig=.config.php
 if [ ! -e ${phpConfig} ]
 then
+    # Make a copy from the config template
     cp -p .config.php.template ${phpConfig}
 fi
 
-# Setup the config?
-if grep IMPORT_USERNAME_HERE ${phpConfig} >/dev/null 2>&1;
+# Setup the configuration file
+if grep CONFIGURED_BY_HERE ${phpConfig} >/dev/null 2>&1;
 then
 
     # Make the substitutions
     echo "#	Configuring the import ${phpConfig}";
     sed -i \
+-e "s/CONFIGURED_BY_HERE/Configured by cyclestreets-setup for csServerName: ${csServerName}/" \
 -e "s/IMPORT_USERNAME_HERE/${mysqlImportUsername}/" \
 -e "s/IMPORT_PASSWORD_HERE/${mysqlImportPassword}/" \
 -e "s/MYSQL_ROOT_PASSWORD_HERE/${mysqlRootPassword}/" \

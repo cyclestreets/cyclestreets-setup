@@ -126,7 +126,7 @@ touch "${websitesContentFolder}/data/routing/${latestEdition}/installationComple
 # Report completion and next steps
 echo "#	$(date) Installation completed."
 echo "#	If the import was configured for supporting large amounts of data then a MySQL restart could restore values more appropriate for serving routes."
-echo "#	To switch routing service use: ../live-deployment/switch-routing-edition.sh ${latestEdition}"
+echo "#	To switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

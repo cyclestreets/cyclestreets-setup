@@ -122,8 +122,8 @@ latestEdition=`ls -1t ${importMachineEditions} | head -n1`
 # Report completion and next steps
 echo "#	$(date)	CycleStreets import has created a new edition: ${latestEdition}"
 echo "#	To prepare this data for serving locally, remotely or both:"
-echo "#	Locally  run: ../live-deployment/installLocalLatestEdition.sh"
-echo "#	Remotely run: ${username}@other:/opt/cyclestreets-setup/live-deployment$ ./install-routing-data.sh"
+echo "#	Locally  run: ${ScriptHome}/live-deployment/installLocalLatestEdition.sh"
+echo "#	Remotely run: ${username}@other:${ScriptHome}/live-deployment\$ ./install-routing-data.sh"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

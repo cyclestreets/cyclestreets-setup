@@ -26,17 +26,20 @@ SCRIPTDIRECTORY=$DIR
 # Use this to remove the ../
 ScriptHome=$(readlink -f "${DIR}/..")
 
+# Change to the script's folder
+cd {ScriptHome}
+
 # Name of the credentials file
-configFile=../.config.sh
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ./${configFile} ]; then
+if [ ! -x ${configFile} ]; then
     echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
+. ${configFile}
 
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh

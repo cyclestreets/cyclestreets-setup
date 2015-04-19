@@ -10,7 +10,7 @@
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
-echo "# $(date)	Install latest locally generated CycleStreets import routing edition"
+echo "#	$(date)	Install latest locally generated CycleStreets import routing edition"
 
 # Ensure this script is NOT run as root
 if [ "$(id -u)" = "0" ]; then
@@ -68,7 +68,7 @@ fi
 # Check that the import finished correctly
 if ! mysql -hlocalhost --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
 then
-    echo "# The import process did not complete. The routing service will not be started."
+    echo "#	The import process did not complete. The routing service will not be started."
     exit 1
 fi
 
@@ -86,14 +86,14 @@ latestEdition=`ls -1t ${importMachineEditions} | head -n1`
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then
-	echo "# No editions found in ${importMachineEditions}"
-	exit 1
+    echo "#	No editions found in ${importMachineEditions}"
+    exit 1
 fi
 
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
-	echo "# Edition ${latestEdition} is already installed."
-	exit 1
+    echo "#	Edition ${latestEdition} is already installed."
+    exit 1
 fi
 
 
@@ -124,7 +124,9 @@ fi
 touch "${websitesContentFolder}/data/routing/${latestEdition}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "# Installation completed, to switch routing service use: ../live-deployment/switch-routing-edition.sh ${latestEdition}"
+echo "#	$(date) Installation completed."
+echo "#	If the import was configured for supporting large amounts of data then a MySQL restart could restore values more appropriate for serving routes."
+echo "#	To switch routing service use: ../live-deployment/switch-routing-edition.sh ${latestEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -1,12 +1,13 @@
 #!/bin/bash
-# Script to deploy CycleStreets import system on Ubuntu
-# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
-# This script is idempotent - it can be safely re-run without destroying existing data
-
-# WIP - many parts of the import setup are yet to be completed in here
-# e.g external libraries and databases setup (elevations, postcodes, railways etc)
-# Permissions for the import user
-# Some of that data cannot be included in this repo because it is owned by others.
+# 
+# SYNOPSIS
+#	deploy.sh
+#
+# DESCRIPTION
+#	Script to deploy a CycleStreets import system that has been installed by ../install-import/run.sh
+#	All it does is to configure MySQL to be capabable of handling large imports, and optionally schedule some cron jobs.
+#	Tested on 14.04 LTS (View Ubuntu version using 'lsb_release -a')
+#	This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets import deployment $(date)"
 
@@ -44,12 +45,6 @@ fi
 . ${ScriptHome}/utility/helper.sh
 
 # Main body of script
-
-# Install the website
-# !! Turned off for testing
-# !! Import machine may also need different config options for the server - needs checking
-#. ../install-website/run.sh
-
 
 # MySQL configuration
 mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf

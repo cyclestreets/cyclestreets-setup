@@ -59,6 +59,12 @@ if [ ! "$(id -nu)" = "${username}" ]; then
     exit 1
 fi
 
+# Check the import folder is defined
+if [ -z "${importMachineEditions}" ]; then
+    echo "#	The import output folder is not defined."
+    exit 1
+fi
+
 #	Report where logging is occurring
 echo "#	Progress is logged in ${importContentFolder}/log.txt"
 
@@ -110,8 +116,14 @@ cd ${importContentFolder}
 #       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php run.php
 
-echo "# $(date)	CycleStreets import completed."
-echo "# Run useNewImport script if import and live are on the same server."
+# Read the folder of routing editions, one per line, newest first, getting first one
+latestEdition=`ls -1t ${importMachineEditions} | head -n1`
+
+# Report completion and next steps
+echo "# $(date)	CycleStreets import has created a new edition is: ${latestEdition}"
+echo "# Run the following to prepare this data for serving locally, remotely or both:"
+echo "# Locally  run: cyclestreets@local:/opt/cyclestreets-setup/live-deployment$ ./installLocalLatestEdition.sh"
+echo "# Remotely run: cyclestreets@other:/opt/cyclestreets-setup/live-deployment$ ./install-routing-data.sh"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

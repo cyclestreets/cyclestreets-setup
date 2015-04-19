@@ -124,7 +124,7 @@ fi
 touch "${websitesContentFolder}/data/routing/${latestEdition}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "# Installation completed, to switch routing service use: ./switch-routing-edition.sh ${latestEdition}"
+echo "# Installation completed, to switch routing service use: ../live-deployment/switch-routing-edition.sh ${latestEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

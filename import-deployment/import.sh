@@ -9,8 +9,7 @@
 #exit 1
 
 # Start an import run
-
-echo "#	CycleStreets import $(date)"
+echo "#	$(date) CycleStreets import"
 
 # Ensure this script is NOT run as root
 if [ "$(id -u)" = "0" ]; then
@@ -91,9 +90,10 @@ if [ -n "${importDisk}" ]; then
 fi
 
 # Configure MySQL for import
+# !! This could perhaps be done within the php import script.
 if [ -n "${import_key_buffer_size}" ]; then
-    echo "#	Configuring MySQL for import"
     mysql -hlocalhost -e "set global key_buffer_size = ${import_key_buffer_size};";
+    echo "#	Configured MySQL for import"
 fi
 # These two variable changes affect new connections to the server and so can't be checked straight away with select @@...
 if [ -n "${import_max_heap_table_size}" ]; then
@@ -120,10 +120,10 @@ php run.php
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`
 
 # Report completion and next steps
-echo "# $(date)	CycleStreets import has created a new edition is: ${latestEdition}"
-echo "# Run the following to prepare this data for serving locally, remotely or both:"
-echo "# Locally  run: cyclestreets@local:/opt/cyclestreets-setup/live-deployment$ ./installLocalLatestEdition.sh"
-echo "# Remotely run: cyclestreets@other:/opt/cyclestreets-setup/live-deployment$ ./install-routing-data.sh"
+echo "#	$(date)	CycleStreets import has created a new edition: ${latestEdition}"
+echo "#	To prepare this data for serving locally, remotely or both:"
+echo "#	Locally  run: ../live-deployment/installLocalLatestEdition.sh"
+echo "#	Remotely run: ${username}@other:/opt/cyclestreets-setup/live-deployment$ ./install-routing-data.sh"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

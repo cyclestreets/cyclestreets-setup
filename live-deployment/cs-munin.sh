@@ -22,9 +22,11 @@
 # sudo munin-run cyclestreets config
 # sudo munin-run cyclestreets
 #
-#
 # Remove
 # sudo rm /etc/munin/plugins/cyclestreets
+#
+# See also
+# https://dev.cyclestreets.net/wiki/ServerMonitoring
 
 ### CREDENTIALS ###
 

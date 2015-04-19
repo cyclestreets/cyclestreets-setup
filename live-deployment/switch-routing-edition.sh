@@ -92,8 +92,7 @@ set +e
 localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
-  echo "#	Switchover expects the routing service to be running."
-  exit 1
+  echo "#	Note: there is no current routing service."
 fi
 # Restore abandon-on-error
 set -e

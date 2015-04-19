@@ -1,6 +1,4 @@
-import-deployment
-=================
+# import-deployment
 
-`run.sh` installs the import system.
-
-`import.sh` performs an import.
+1. `deploy.sh` deploys the import system - use rarely.
+1. `import.sh` performs an import - use frequently.

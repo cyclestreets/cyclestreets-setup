@@ -112,7 +112,7 @@ newEdition=$1
 
 # Check the format is routingYYMMDD
 if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
-  echo "#	Arg importedition must specify a database of the form routingYYMMDD"
+  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${newEdition}."
   exit 1
 fi
 

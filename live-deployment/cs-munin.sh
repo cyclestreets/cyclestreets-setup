@@ -1,17 +1,27 @@
 #!/bin/bash
 #	Generates CycleStreets data for munin
 #
-# Synopsis
+# SYNOPSIS
 # 	munin-run cyclestreets [config]
 #
-# Description
-# 	If the optional argument config is supplied, this script returns a summary of the parameters provided by this munin plugin.
-#	Without the config argument the values of those parameters are returned.
+# DESCRIPTION
+# 	If the optional argument config is supplied (as the plain string: config), this script returns a summary of the parameters provided by this munin plugin.
+#	Without that argument the values of those parameters are returned.
 #
 # Configure
-# sudo ln -s /home/cyclestreets/src/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+# Install this package on the relevant server:
+# apt-get install munin-node
+#
+# Create a link to this script from the munin configuration:
+# sudo ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+#
 # Then restart munin
 # sudo /etc/init.d/munin-node restart
+#
+# Example calls
+# sudo munin-run cyclestreets config
+# sudo munin-run cyclestreets
+#
 #
 # Remove
 # sudo rm /etc/munin/plugins/cyclestreets
@@ -29,20 +39,24 @@ do
   DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
 
-# Define the location of the credentials file relative to script directory
-configFile=../.config.sh
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
+# Name of the credentials file
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
-    echo "# The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+if [ ! -x ${configFile} ]; then
+    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file."
     exit 1
 fi
 
 # Load the credentials
-. $SCRIPTDIRECTORY/${configFile}
+. ${configFile}
 
+
+## Main body of script
 
 ## Public functions as called by munin
 

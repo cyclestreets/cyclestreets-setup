@@ -84,7 +84,7 @@ if [ ! -f ${routingDaemonLocation} ]; then
 	exit 1
 fi
 
-# Check the local routing service is currently serving
+# Check the local routing service - but it is no longer a requirement that it is currently serving routes.
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
 set +e
 
@@ -92,7 +92,7 @@ set +e
 localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
-  echo "#	Note: there is no current routing service."
+  echo "#	Note: there is no current routing service. Switchover will proceed."
 fi
 # Restore abandon-on-error
 set -e
@@ -148,9 +148,6 @@ xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>ge
 
 # If a failoverRoutingServer is supplied, check it is running and using the proposed edition
 if [ -n "${failoverRoutingServer}" ]; then
-
-    # Required packages
-    # echo $password | sudo -Sk apt-get -y install curl libxml-xpath-perl
 
     # POST the request to the server
     failoverRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${failoverRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')

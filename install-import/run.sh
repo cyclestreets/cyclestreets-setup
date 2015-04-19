@@ -26,7 +26,7 @@ DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ScriptHome=$(readlink -f "${DIR}/..")
 
 # Change to the script's folder
-cd {ScriptHome}
+cd ${ScriptHome}
 
 # Name of the credentials file
 configFile=${ScriptHome}/.config.sh

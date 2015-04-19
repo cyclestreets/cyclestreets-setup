@@ -1,5 +1,21 @@
 # Sections of script that are common to install-website and install-import
 
+# Tolerate errors for the readlink
+set +e
+
+# Identify the source of the configuration, depending on whether the config is a symlink
+if [ -L ${SCRIPTDIRECTORY}/${configFile} ]; then
+    # Read the target
+    sourceConfig=$(readlink -q ${SCRIPTDIRECTORY}/${configFile})
+    sourceConfig=" via symlink: ${sourceConfig}"
+else
+    # Use this simple text
+    sourceConfig=" by local configuration."
+fi
+
+# Bomb out if something goes wrong
+set -e
+
 # Ensure there is a cyclestreets user account
 if id -u ${username} >/dev/null 2>&1; then
     echo "#	User ${username} exists already and will be used."

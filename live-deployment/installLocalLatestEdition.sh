@@ -123,7 +123,8 @@ fi
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${latestEdition}/installationCompleted.txt"
 
-echo "# Installation completed, to switch routing service use: ./switchRoutingEdition.sh ${latestEdition}"
+# Report completion and next steps
+echo "# Installation completed, to switch routing service use: ./switch-routing-edition.sh ${latestEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

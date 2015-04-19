@@ -29,34 +29,33 @@ do
   DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
 
 # Use this to remove the ../
 ScriptHome=$(readlink -f "${DIR}/..")
 
-# Define the location of the credentials file relative to script directory
-configFile=../.config.sh
+# Name of the credentials file
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
-    echo "# The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+if [ ! -x ${configFile} ]; then
+    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file."
     exit 1
 fi
 
 # Load the credentials
-. $SCRIPTDIRECTORY/${configFile}
+. ${configFile}
+
+
+## Main body of script
 
 # Ensure this script is run as cyclestreets user
 if [ ! "$(id -nu)" = "${username}" ]; then
-    echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
     exit 1
 fi
 
 # Logging
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets fromFailOver in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets fromFailOver $(id)" >> ${setupLogFile}
+echo "$(date)	CycleStreets fromFailOver $(id)"
 
 
 #	Download and restore the CycleStreets database.
@@ -66,7 +65,7 @@ server=${failoverServer}
 dumpPrefix=failover
 
 # Restore recent data
-. ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
+. ${ScriptHome}/utility/restore-recent.sh
 
 # Restart the pseudoCron at today's date
 mysql cyclestreets -hlocalhost -e "update map_config set pseudoCron = curdate();";
@@ -76,6 +75,6 @@ cat <(crontab -l) <(echo "4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
 cat <(crontab -l) <(echo "34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh") | crontab -
 
 # Finish
-echo "$(date)	All done" >> ${setupLogFile}
+echo "$(date)	All done"
 
 # End of file

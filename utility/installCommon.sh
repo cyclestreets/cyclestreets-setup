@@ -4,9 +4,9 @@
 set +e
 
 # Identify the source of the configuration, depending on whether the config is a symlink
-if [ -L ${SCRIPTDIRECTORY}/${configFile} ]; then
+if [ -L ${ScriptHome}/${configFile} ]; then
     # Read the target
-    sourceConfig=$(readlink -q ${SCRIPTDIRECTORY}/${configFile})
+    sourceConfig=$(readlink -q ${ScriptHome}/${configFile})
     sourceConfig=" via symlink: ${sourceConfig}"
 else
     # Use this simple text

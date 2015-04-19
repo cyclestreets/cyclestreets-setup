@@ -47,19 +47,21 @@ do
   DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
 
-# Define the location of the credentials file relative to script directory
-configFile=../.config.sh
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
+# Name of the credentials file
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+if [ ! -x ${configFile} ]; then
+    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file."
     exit 1
 fi
 
 # Load the credentials
-. $SCRIPTDIRECTORY/${configFile}
+. ${configFile}
 
 
 ## Main body of script

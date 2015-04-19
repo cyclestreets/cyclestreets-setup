@@ -6,10 +6,13 @@
 #	useNewImport.sh
 #
 # DESCRIPTION
-#	arg?
-#		Not yet deterimed
+#	args?
+#		This script does not take any arguments.
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
+
+# !! WIP 18 Apr 2015 Review the differences between the switching part of this script and the actual switch script.
+# It must be simplified and move to live deployment
 
 echo "# $(date)	Use new CycleStreets import routing edition"
 
@@ -108,17 +111,22 @@ mkdir -p ${websitesContentFolder}/data/routing/${latestEdition}
 mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data/routing/${latestEdition}
 
 # Configure the routing engine to use the new edition
+# !! handled by the switcher
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${latestEdition}" > $routingEngineConfigFile
 
 # Ensure it is executable
+# !! ditto
 chmod a+x $routingEngineConfigFile
 
 #	Copy the sieve
+# !! ditto
 cp ${importMachineEditions}/${latestEdition}/sieve.sql $importContentFolder
 
 # Clear this cache - (whose rows relate to a specific routing edition)
+# !! ditto
 mysql cyclestreets -hlocalhost -e "truncate map_nearestPointCache;";
 
+# !! Undecide as to whether to keep this mysql config section.
 
 # Configure MySQL for routing
 # During an import run these parameters may have been set to much larger values in order to process large data tables.

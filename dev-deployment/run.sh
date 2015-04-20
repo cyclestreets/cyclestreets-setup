@@ -41,6 +41,7 @@ fi
 # Main body of script
 
 # Ensure there's a custom sudoers file
+# !! Note: on the dev machine (which dates back to about 2008) the sudoers.d folder was not automatically included, so had to be added manually.
 if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
 
     # Create a file that provides passwordless sudo access svnadmin - which needs root access because some files are read able only by www-data
@@ -49,7 +50,7 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
     cat > ${csSudoers} << EOF
 # Dev deployment
 # Permit cyclestreets user to dump svn without a password
-cyclestreets ALL = (root) NOPASSWD: svnadmin dump
+cyclestreets ALL = (root) NOPASSWD: /usr/bin/svnadmin dump
 EOF
 
     # Make it read only

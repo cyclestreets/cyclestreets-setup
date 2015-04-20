@@ -162,9 +162,10 @@ if [ -n "${failoverRoutingServer}" ]; then
     mysql cyclestreets -hlocalhost -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
     echo "#	Now using failover routing service"
 else
-    # When there is no failover server put the site into maintenance mode
-    sudo -u $username touch ${websitesContentFolder}/maintenance
-    echo "#	As there is no failover routing server the local site has entered maintenance mode"
+
+    # Set the journeyPlannerStatus to closed for the duration
+    mysql cyclestreets -hlocalhost -e "UPDATE map_config SET journeyPlannerStatus = 'closed' WHERE id = 1;";
+    echo "#	As there is no failover routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
 # Configure the routing engine to use the new edition
@@ -218,8 +219,8 @@ fi
 # Switch the website to the local server and ensure the routingDb is also set
 mysql cyclestreets -hlocalhost -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
 
-# Restore the site by switching off maintenance mode (-f ignores if non existent)
-rm -f ${websitesContentFolder}/maintenance
+# Restore the journeyPlannerStatus
+mysql cyclestreets -hlocalhost -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
 
 
 ### Stage 5 - end

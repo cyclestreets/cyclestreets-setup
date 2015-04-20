@@ -64,7 +64,7 @@ fi
 asCS="sudo -u ${username}"
 
 # Ensure there's a custom sudoers file
-if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
+if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]; then
 
     # Create it file that provides passwordless sudo access to the routing service - which needs root access to control running service
     cat > ${csSudoers} << EOF

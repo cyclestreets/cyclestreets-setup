@@ -247,7 +247,7 @@ mysql ${importEdition} -hlocalhost -e "call indexPhotos(false,0);"
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "#	$(date) Installation completed, to switch routing service use: ./switch-routing-edition.sh ${importEdition}"
+echo "#	$(date) Installation completed, to switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

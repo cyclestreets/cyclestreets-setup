@@ -44,6 +44,8 @@ fi
 # !! Note: on the dev machine (which dates back to about 2008) the sudoers.d folder was not automatically included, so had to be added manually.
 if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
 
+    # !! Potentially add more checks to these sudoers expressions, such as ensuring the commands include their full paths.
+
     # Create a file that provides passwordless sudo access svnadmin - which needs root access because some files are read able only by www-data
     # Note: the csSudoers var was created for other deployments and this is a bit of an appropriation of that var and file.
     # It would be a little cleaner for it to have its own var, but on a dev deployment it is not used for anything else.

@@ -80,6 +80,18 @@ chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
 chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
 chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 
+# HTML to PDF conversion
+# http://wkhtmltopdf.org/downloads.html
+# Note: using "apt-get -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
+# See: http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
+# See: http://xfloyd.net/blog/?p=745
+if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
+	apt-get -y install wkhtmltopdf  # Install dependencies
+	wget -P /tmp/ http://cznic.dl.sourceforge.net/project/wkhtmltopdf/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
+	dpkg -i /tmp/wkhtmltox*.deb
+	rm /tmp/wkhtmltox*.deb
+fi
+
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
 chown www-data:rollout ${websitesContentFolder}/documentation/schema/selectChangeLog.sql

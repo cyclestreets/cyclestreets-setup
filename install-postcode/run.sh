@@ -76,7 +76,7 @@ myopt="-uroot -p${mysqlRootPassword} -hlocalhost"
 mysql="mysql ${myopt}"
 
 # Check the database already exists
-if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
+if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
 then
     echo "#	Stopping: external database ${externalDb} must exist."
     # Terminate the script
@@ -84,7 +84,7 @@ then
 fi
 
 # Load the table definitions
-${mysql} ${externalDb} < tableDefinitions.sql
+${superMysql} ${externalDb} < tableDefinitions.sql
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege. The --local option is needed in some situations.
 mysqlimport ${myopt} --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
@@ -98,7 +98,7 @@ echo "#	Creating eastings northings file"
 rm -f /tmp/eastingsnorthings.csv
 
 # Exclude the 22,000+ broken postcodes that lie at the origin of the (east|north)ing grid.
-${mysql} ${externalDb} -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata where OSEAST1M > 0 and OSNRTH1M > 0 INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
+${superMysql} ${externalDb} -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata where OSEAST1M > 0 and OSNRTH1M > 0 INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
 mv /tmp/eastingsnorthings.csv ${onsFolder}
 
 # Convert all (takes a few minutes)
@@ -112,11 +112,11 @@ rm map_postcodes.csv
 
 # Tidy extracted data into postcode table
 echo "#	Creating new postcode table"
-${mysql} ${externalDb} < newPostcodeTable.sql
+${superMysql} ${externalDb} < newPostcodeTable.sql
 
 # Create the short district postcodes
 echo "#	Creating short postcode table"
-${mysql} ${externalDb} < shortPostcode.sql
+${superMysql} ${externalDb} < shortPostcode.sql
 
 # Confirm end of script
 echo -e "#	All now installed $(date)"

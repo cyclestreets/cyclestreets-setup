@@ -52,8 +52,8 @@ mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
 
 # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
 blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
-${mysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
-#${mysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
+${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
+#${superMysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
 
 
 #!# Install Wordpress unattended

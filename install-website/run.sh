@@ -312,15 +312,15 @@ fi
 /etc/init.d/apache2 reload
 
 # Create cyclestreets database
-${mysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;"
+${superMysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;"
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
-${mysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';"
-${mysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+${superMysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';"
+${superMysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Allow the website to view any planetExtract files that have been created by an import
-${mysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+${superMysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Create the settings file if it doesn't exist
 phpConfig=".config.php"
@@ -351,54 +351,54 @@ fi
 
 # Install a basic cyclestreets db from the repository
 # Unless the cyclestreets db has already been loaded (check for presence of map_config table)
-if ! ${mysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyclestreets | grep map_config  > /dev/null 2>&1
+if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'" cyclestreets | grep map_config  > /dev/null 2>&1
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    ${mysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
+    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
-    ${mysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;"
 
     # Set the gui server
     # #!# This needs review - on one live machine it is set as localhost and always ignored
-    ${mysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;"
 
     # Create an admin user
     encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`
-    ${mysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());"
+    ${superMysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());"
 
     # Create a welcome tinkle
-    ${mysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');"
+    ${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');"
 fi
 
 # Archive db
 archiveDb=csArchive
 # Unless the database already exists:
-if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'" | grep ${archiveDb} > /dev/null 2>&1
+if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'" | grep ${archiveDb} > /dev/null 2>&1
 then
     # Create archive database
     echo "#	Create ${archiveDb} database"
-    ${mysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql
+    ${superMysql} < ${websitesContentFolder}/documentation/schema/csArchive.sql
 
     # Allow website read only access
-    ${mysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+    ${superMysql} -e "grant select on \`${archiveDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
 # External db
 # This creates only a skeleton and sets up grant permissions. The full installation is done by a script in install-import folder.
 # Unless the database already exists:
-if [ -n "${externalDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
+if [ -n "${externalDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
 then
 
     # Create external database
     echo "#	Create ${externalDb} database"
     echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
-    ${mysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql
+    ${superMysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql
 
     # Allow website read only access
-    ${mysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+    ${superMysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
 # External db restore
@@ -414,7 +414,7 @@ if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsF
 	echo "#	$(date)	Starting installation of external database"
 
 	# Unpack into the skeleton db
-	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${mysql} ${externalDb}
+	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${superMysql} ${externalDb}
 
 	# Remove the archive to save space
 	# !! Can't remove as a reinstall would trigger another download.
@@ -427,37 +427,37 @@ fi
 # Batch db
 # This creates only a skeleton and sets up grant permissions. A full installation is not yet available.
 # Unless the database already exists:
-if [ -n "${batchDb}" ] && ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${batchDb}'" | grep ${batchDb} > /dev/null 2>&1 ; then
+if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${batchDb}'" | grep ${batchDb} > /dev/null 2>&1 ; then
 
     # Create batch database
     echo "#	Create ${batchDb} database"
-    ${mysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;"
+    ${superMysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;"
 
     # Grants; note that the FILE privilege (which is not database-specific) is required so that table contents can be loaded from a file
-    ${mysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
-    ${mysql} -e "GRANT FILE ON *.* TO '${mysqlWebsiteUsername}'@'localhost';"
+    ${superMysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+    ${superMysql} -e "GRANT FILE ON *.* TO '${mysqlWebsiteUsername}'@'localhost';"
 
     echo "#	Note: this contains table definitions only and contains no data."
-    ${mysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql
+    ${superMysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql
 
 else
     echo "#	Skipping batch database"
 fi
 
 # Identify the sample database (the -s suppresses the tabular output)
-sampleRoutingDb=$(${mysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
+sampleRoutingDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 echo "#	The sample database is: ${sampleRoutingDb}"
 
 # Unless the sample routing database already exists:
-if ! ${mysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRoutingDb}'" | grep ${sampleRoutingDb} > /dev/null 2>&1
+if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sampleRoutingDb}'" | grep ${sampleRoutingDb} > /dev/null 2>&1
 then
     # Create sampleRoutingDb database
     echo "#	Create ${sampleRoutingDb} database"
-    ${mysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8 collate utf8_unicode_ci;"
+    ${superMysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8 collate utf8_unicode_ci;"
 
     # Load data
     echo "#	Load ${sampleRoutingDb} data"
-    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${mysql} ${sampleRoutingDb}
+    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${superMysql} ${sampleRoutingDb}
 fi
 
 # Unless the sample routing data exists:

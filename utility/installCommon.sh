@@ -220,4 +220,4 @@ fi
 # Useful binding
 # By providing the defaults like this, the use of ${asCS} can be avoided - which can be complicated as it produces double expansion of the arguments - which is messy if passwords contain the dollar symbol.
 # The defaults-extra-file is a positional argument which must come first.
-mysql="mysql --defaults-extra-file=${mycnfFile} -hlocalhost"
+superMysql="mysql --defaults-extra-file=${mycnfFile} -hlocalhost"

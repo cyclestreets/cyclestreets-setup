@@ -68,7 +68,7 @@ if [ ! -e ${myImportCnfFile} ]; then
     ${asCS} cat > ${myImportCnfFile} << EOF
 [client]
 user=${mysqlImportUsername}
-password=${mysqlImportPassword}
+password='${mysqlImportPassword}'
 # Best to avoid setting a database as this can confuse scripts, ie leave commented out:
 #database=
 

@@ -107,20 +107,6 @@ mkdir -p ${websitesContentFolder}/data/routing/${latestEdition}
 # Move the tsv files
 mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data/routing/${latestEdition}
 
-# Configure MySQL for routing
-# During an import run these parameters may have been set to much larger values in order to process large data tables.
-# Setting these parameters here will have the effect of reducing them from their import settings, at least until the next MySQL restart, when they will inherit the configuration values.
-if [ -n "${routing_key_buffer_size}" ]; then
-    echo "#	Configuring MySQL for serving routes"
-    mysql -hlocalhost -e "set global key_buffer_size = ${routing_key_buffer_size};";
-fi
-if [ -n "${routing_max_heap_table_size}" ]; then
-    mysql -hlocalhost -e "set global max_heap_table_size = ${routing_max_heap_table_size};";
-fi
-if [ -n "${routing_tmp_table_size}" ]; then
-    mysql -hlocalhost -e "set global tmp_table_size = ${routing_tmp_table_size};";
-fi
-
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${latestEdition}/installationCompleted.txt"
 

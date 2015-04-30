@@ -103,9 +103,9 @@ is_installed () {
 
 # Assign the mysql root password - to avoid being prompted.
 if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
-	echo "# You have apparently not specified a MySQL root password in the config file"
-	echo "# This means the install script would get stuck prompting for one"
-	echo "# .. aborting"
+	echo "# It appears that either no MySQL root password has been specified in the config file or that there is no MySQL server installed."
+	echo "# This means the install script would get stuck prompting for one."
+	echo "# Abandoning the installation."
 	exit 1
 fi
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections

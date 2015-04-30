@@ -201,7 +201,7 @@ chmod -R g+w /websites
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 
-# Setup a ~/.my.cnf file which will allow the user to run mysql commands without supplying command line password
+# Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 mycnfFile=/home/${username}/.my.cnf
 if [ ! -e ${mycnfFile} ]; then
 

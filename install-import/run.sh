@@ -43,25 +43,6 @@ fi
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 
-# Setup a ~/.my.import.cnf file which will allow the import user to run mysql commands without supplying credentials on the command line
-myImportCnfFile=/home/${username}/.my.import.cnf
-if [ ! -e ${myImportCnfFile} ]; then
-
-    # Create config file
-    ${asCS} cat > ${myImportCnfFile} << EOF
-[client]
-user=${mysqlImportUsername}
-password=${mysqlImportPassword}
-# Best to avoid setting a database as this can confuse scripts, ie leave commented out:
-#database=
-
-[mysql]
-# Equiv to -A at startup, stops tabs trying to autocomplete
-no-auto-rehash
-EOF
-
-fi
-
 # Need to add a check that CycleStreets main installation has been completed
 if [ ! -d "${websitesContentFolder}" ]; then
     echo "#	Please install the main CycleStreets repo first"
@@ -78,6 +59,25 @@ fi
 
 # Switch to import folder
 cd ${importContentFolder}
+
+# Setup a .my.import.cnf file which will allow the import user to run mysql commands without supplying credentials on the command line
+myImportCnfFile=${importContentFolder}/.my.import.cnf
+if [ ! -e ${myImportCnfFile} ]; then
+
+    # Create config file
+    ${asCS} cat > ${myImportCnfFile} << EOF
+[client]
+user=${mysqlImportUsername}
+password=${mysqlImportPassword}
+# Best to avoid setting a database as this can confuse scripts, ie leave commented out:
+#database=
+
+[mysql]
+# Equiv to -A at startup, stops tabs trying to autocomplete
+no-auto-rehash
+EOF
+
+fi
 
 # Create the settings file if it doesn't exist
 phpConfig=.config.php

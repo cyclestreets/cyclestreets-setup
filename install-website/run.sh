@@ -50,7 +50,7 @@ apt-get -y install imagemagick php5-imagick
 # Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
 sudo a2enmod deflate
 apt-get -y install php-apc
-/etc/init.d/apache2 restart
+service apache2 restart
 
 # Install Python
 echo "#	Installing python"
@@ -309,7 +309,7 @@ if [ -d /etc/apache2/conf-available ]; then
 fi
 
 # Reload apache
-/etc/init.d/apache2 reload
+service apache2 reload
 
 # Create cyclestreets database
 ${superMysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;"
@@ -505,7 +505,7 @@ if $configureExim ; then
     # NB These two are the same in any CycleStreets installation but different from the default Debian installation:
     sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
     sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
-    sudo /etc/init.d/exim4 restart
+    sudo service exim4 restart
 fi
 
 # Install the cycle routing daemon (service)

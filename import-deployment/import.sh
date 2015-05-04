@@ -104,7 +104,7 @@ php run.php
 
 # Restart mysql - as setup for passwordless sudo by the installer. This resets the MySQL configuration to default values, more suited to serving web pages and routes.
 echo "#	$(date)	Restarting MySQL to restore default configuration."
-sudo /etc/init.d/mysql restart
+sudo service mysql restart
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`

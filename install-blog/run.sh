@@ -101,7 +101,7 @@ if [ -d /etc/apache2/conf-available ]; then
 fi
 
 # Reload apache
-/etc/init.d/apache2 reload >> ${setupLogFile}
+service /apache2 reload >> ${setupLogFile}
 
 # Confirm end of script
 msg="#	All now installed $(date)"

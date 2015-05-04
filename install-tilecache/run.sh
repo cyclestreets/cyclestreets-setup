@@ -115,7 +115,7 @@ fi
 a2enmod headers
 
 # Reload apache
-/etc/init.d/apache2 reload
+service apache2 reload
 
 # Report completion
 echo "#	Installing tilecache completed"

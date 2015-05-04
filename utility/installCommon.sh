@@ -82,7 +82,7 @@ EOF
 # Permit cyclestreets user to run the routing compression using sudo without a password
 cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
-cyclestreets ALL = (root) NOPASSWD: /etc/init.d/mysql restart
+cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
 EOF
     fi
 

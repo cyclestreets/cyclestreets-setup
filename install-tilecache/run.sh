@@ -125,8 +125,8 @@ if [ ! -f ${vhSslConf} ]; then
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
-if [ ! -L /etc/apache2/sites-enabled/700-tile_ssl.conf ]; then
-    ln -s ${vhSslConf} /etc/apache2/sites-enabled/700-tile_ssl.conf
+if [ ! -L /etc/apache2/sites-enabled/701-tile_ssl.conf ]; then
+    ln -s ${vhSslConf} /etc/apache2/sites-enabled/701-tile_ssl.conf
 fi
 
 # Enable mod_headers, so that the Access-Control-Allow-Origin header is sent

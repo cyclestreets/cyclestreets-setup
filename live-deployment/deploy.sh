@@ -115,20 +115,17 @@ echo "#	MySQL configured, but consider running the following security step from 
 if $installCronJobs ; then
 
     # Update scripts
-    jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
+    installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
 
     # Dump data every day at 4:01 am
     # Choose a timing that allows the script to complete before being polled by the automatic testing - which currently (April 2015) happens on each five minute boundary
-    jobs[2]="4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
+    installCronJob ${username} "4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[3]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
+    installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
     # Install routing data at 01:34
-    jobs[4]="34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh"
-
-    # Install the jobs
-    installCronJobs ${username} jobs[@]
+    installCronJob ${username} "34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh"
 fi
 
 # Confirm end of script

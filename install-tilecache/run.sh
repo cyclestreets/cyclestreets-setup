@@ -98,7 +98,7 @@ if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then
 fi
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
-vhConf=/etc/apache2/sites-available/tile
+vhConf=/etc/apache2/sites-available/tile.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhConf}
 	sed -i "s|tile.example.com|${tilecacheUrl}|g" ${vhConf}

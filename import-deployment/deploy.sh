@@ -94,14 +94,6 @@ query_cache_size        = 20M
 
 log_slow_queries	= /var/log/mysql/mysql-slow.log
 long_query_time = 3
-
-# CHARACTER SET
-# It is simplest (and quickest, due to no translation overhead) if all text uses the utf8 character set and collation utf8_unicode_ci (case-insensitive).
-# Set these in the mysql server configuration so that the osmosis program which reads the OpenStreetMap planet extracts also uses this character set.
-
-# Set default character set and collation
-character_set_server=utf8
-collation_server=utf8_unicode_ci
 EOF
 
     # Allow the user to edit this file

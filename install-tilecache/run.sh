@@ -106,6 +106,17 @@ if [ ! -f ${vhConf} ]; then
 	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhConf}
 fi
 
+# Create the SSL VirtualHost config if it doesn't exist, and write in the configuration
+vhSslConf=/etc/apache2/sites-available/tile_ssl.conf
+if [ ! -f ${vhSslConf} ]; then
+	cp -p .apache-vhost.conf.template ${vhSslConf}
+	sed -i "s|:80|:443|g" ${vhSslConf}
+	sed -i "s|tile.example.com|${tilecacheUrl}|g" ${vhSslConf}
+	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhSslConf}
+	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhSslConf}
+	sed -i "s|#SSL|SSL|g" ${vhSslConf}
+fi
+
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
 if [ ! -L /etc/apache2/sites-enabled/700-tile.conf ]; then
     ln -s ${vhConf} /etc/apache2/sites-enabled/700-tile.conf

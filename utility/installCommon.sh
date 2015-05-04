@@ -219,6 +219,9 @@ init-connect='SET NAMES utf8'
 character-set-server = utf8
 EOF
 
+    # Restart mysql
+    service mysql restart
+
 fi
 
 

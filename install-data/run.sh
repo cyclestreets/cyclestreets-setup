@@ -117,8 +117,8 @@ EOF
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
-if [ ! -L /etc/apache2/sites-enabled/750-data ]; then
-    ln -s ${vhConf} /etc/apache2/sites-enabled/750-data
+if [ ! -L /etc/apache2/sites-enabled/750-data.conf ]; then
+    ln -s ${vhConf} /etc/apache2/sites-enabled/750-data.conf
 fi
 
 # Reload apache

@@ -107,8 +107,8 @@ if [ ! -f ${vhConf} ]; then
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
-if [ ! -L /etc/apache2/sites-enabled/700-tile ]; then
-    ln -s ${vhConf} /etc/apache2/sites-enabled/700-tile
+if [ ! -L /etc/apache2/sites-enabled/700-tile.conf ]; then
+    ln -s ${vhConf} /etc/apache2/sites-enabled/700-tile.conf
 fi
 
 # Enable mod_headers, so that the Access-Control-Allow-Origin header is sent

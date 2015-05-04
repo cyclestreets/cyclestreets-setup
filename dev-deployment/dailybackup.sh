@@ -88,8 +88,8 @@ dump=cyclestreetsRepo.dump.bz2
 
 #      Dump
 #	This takes almost half an hour in mid Feb 2012, and an hour in Jan 2013, with size 900M.
-#	Must be setup for passwordless sudo
-sudo svnadmin dump /websites/svn/svn/cyclestreets -q | bzip2 > ${websitesBackupsFolder}/${dump}
+#	Must be setup for passwordless sudo - hence needs full path to command binary rather than just svnadmin
+sudo /usr/bin/svnadmin dump /websites/svn/svn/cyclestreets -q | bzip2 > ${websitesBackupsFolder}/${dump}
 
 #	Hash
 openssl dgst -md5 ${websitesBackupsFolder}/${dump} > ${websitesBackupsFolder}/${dump}.md5

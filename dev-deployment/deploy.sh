@@ -52,7 +52,7 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
     cat > ${csSudoers} << EOF
 # Dev deployment
 # Permit cyclestreets user to dump svn without a password
-cyclestreets ALL = (root) NOPASSWD: /usr/bin/svnadmin dump
+cyclestreets ALL = (root) NOPASSWD: /usr/bin/svnadmin
 EOF
 
     # Make it read only

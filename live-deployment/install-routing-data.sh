@@ -7,6 +7,9 @@
 
 # Requires password-less access to the import machine, using a public key.
 
+# The script is setup to avoid echo when there is no new data.
+# Perhaps an argument to control any output could be considered - like quiet or verbose.
+
 # When in failover mode uncomment the next two lines:
 #echo "# Skipping in failover mode"
 #exit 1
@@ -67,7 +70,7 @@ fi
 ## Main body of script
 
 # Avoid echo if possible as this generates cron emails
-echo "#	$(date)	CycleStreets routing data installation"
+#echo "#	$(date)	CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
@@ -110,7 +113,8 @@ if [ -z "${latestEdition}" ]; then
 fi
 
 #	Report finding
-echo "#	Latest edition: ${latestEdition}"
+# Avoid echo if possible as this generates cron emails
+#echo "#	Latest edition: ${latestEdition}"
 
 # Useful binding
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
@@ -151,8 +155,10 @@ fi
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
 # but in fact that is the condition desired.
 if mysql -hlocalhost -e "use ${importEdition}"; then
-	echo "#	Stopping because the routing database ${importEdition} already exists."
-	exit 1
+	# Avoid echo if possible as this generates cron emails
+	#echo "#	Stopping because the routing database ${importEdition} already exists."
+	# Clean exit - because this is not an error, it is just that there is no new data available
+	exit 0
 fi
 
 # Check to see if a routing data file for this routing edition already exists
@@ -166,6 +172,7 @@ fi
 ### Stage 3 - get the routing files and check data integrity
 
 # Begin the file transfer
+echo "#	$(date)	CycleStreets routing data installation"
 echo "#	$(date)	Transferring the routing files from the import machine ${importMachineAddress}"
 
 # Create the folder

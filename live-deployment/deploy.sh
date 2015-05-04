@@ -48,6 +48,11 @@ fi
 apt-get -y install openssl libssl1.0.0 libssl-dev
 ## !! TODO: Copy in SSL certificate files and add to VirtualHost config
 
+# SSL is installed by default, but needs enabling
+a2enmod ssl
+
+# Restart apache after enabling ssl
+service apache2 restart
 
 # MySQL configuration
 mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf

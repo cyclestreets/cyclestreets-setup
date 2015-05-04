@@ -50,8 +50,10 @@ apt-get -y install openssl libssl1.0.0 libssl-dev
 
 # SSL is installed by default, but needs enabling
 a2enmod ssl
+service apache2 restart
 
-# Restart apache after enabling ssl
+# Enable support for proxied sites
+a2enmod proxy_http
 service apache2 restart
 
 # MySQL configuration

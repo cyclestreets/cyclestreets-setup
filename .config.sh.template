@@ -142,7 +142,11 @@ csExternalDataFile=csExternal.sql.gz
 # Batch database
 batchDb=csBatch
 
-# Placeford site (not part of Cyclestreets itself)
+# Mobile web site (not part of CycleStreets itself)
+mobilewebContentFolder=
+mobilewebLogsFolder=
+
+# Placeford site (not part of CycleStreets itself)
 placefordContentFolder=
 placefordLogsFolder=
 

@@ -201,6 +201,28 @@ chmod -R g+w /websites
 chown -R www-data ${websitesContentFolder}/data
 
 # Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
+mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf
+if [ ! -e ${mysqlUtf8CnfFile} ]; then
+
+    # Create config file
+    ${asCS} cat > ${mysqlUtf8CnfFile} << EOF
+# http://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+collation-server = utf8_unicode_ci
+init-connect='SET NAMES utf8'
+character-set-server = utf8
+EOF
+
+fi
+
+
+# Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 mycnfFile=/home/${username}/.my.cnf
 if [ ! -e ${mycnfFile} ]; then
 

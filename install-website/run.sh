@@ -520,10 +520,21 @@ if $installRoutingAsDaemon ; then
     chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
     chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
 
-    # Start the service
-    # Acutally uses the restart option, which is more idempotent
-    ${routingDaemonLocation} restart
-    echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
+    # Check the local routing service
+    # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
+    set +e
+    # Get the status
+    localRoutingStatus=$(${routingDaemonLocation} status)
+    # If it is not running an error value (ie not zero) is returned
+    if [ $? -ne 0 ]
+    then
+	# Start the service
+	${routingDaemonLocation} start
+	echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
+    fi
+    # Restore abandon-on-error
+    set -e
+
 
     # Add the daemon to the system initialization, so that it will start on reboot
     update-rc.d cycleroutingd defaults

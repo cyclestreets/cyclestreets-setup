@@ -121,6 +121,28 @@ if [ ! -L /etc/apache2/sites-enabled/750-data.conf ]; then
     ln -s ${vhConf} /etc/apache2/sites-enabled/750-data.conf
 fi
 
+# Create a readme file
+readme=${dataContentFolder}/readme.txt
+if [ ! -f ${readme} ]; then
+
+    # Create the local virtual host (avoid any backquotes in the text as they'll spawn sub-processes)
+    cat > ${readme} << EOF
+data.cyclestreets.net
+=====================
+
+Contains sources of elevation data from:
+
+Ordnance Survey - Great Britain
+
+SRTM - NASA - worldwide between 60 degrees south and 60 degrees north
+
+ASTER - Japanese data from 60 degrees north to 83 degrees north
+
+EOF
+
+fi
+
+
 # Reload apache
 service apache2 reload
 

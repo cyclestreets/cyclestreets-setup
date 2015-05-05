@@ -66,34 +66,8 @@ if [ ! -r ${mysqlConfFile} ]; then
 
 # Most CycleStreets tables use MyISAM storage
 default-storage-engine = myisam
+default_tmp_storage_engine = myisam
 
-# Memory tables are also used
-# These values are controlled during an import
-max_heap_table_size = 1G
-tmp_table_size = 1G
-
-# General options as recommended by
-# http://www.percona.com/pdf-canonical-header?path=files/presentations/percona-live/dc-2012/PLDC2012-optimizing-mysql-configuration.pdf
-# mysqltuner
-# select @@thread_cache_size, @@table_open_cache, @@open_files_limit;
-thread_cache_size = 100
-table_open_cache = 4096
-open_files_limit = 65535
-
-# This should be set to about 20 - 50% of available memory. On our 8GB www machine a good size is probably 1G. (The default is only 16M is a performance killer.)  
-# This value is controlled during an import
-key_buffer		= 4G
-
-max_allowed_packet	= 16M
-group_concat_max_len	= 50K
-
-# Query Cache - on demand and best to limit to small efficient size
-query_cache_type        = 2
-query_cache_limit	= 256K
-query_cache_size        = 20M
-
-log_slow_queries	= /var/log/mysql/mysql-slow.log
-long_query_time = 3
 EOF
 
     # Allow the user to edit this file

@@ -108,13 +108,10 @@ echo "#	MySQL configured, but consider running the following security step from 
 if $installCronJobs ; then
 
     # Update scripts
-    jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
+    installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
 
     # Import data every day
-    jobs[2]="0 10 * * * ${ScriptHome}/import-deployment/import.sh"
-
-    # Install the jobs
-    installCronJobs ${username} jobs[@]
+    installCronJob ${username} "0 10 * * * ${ScriptHome}/import-deployment/import.sh"
 fi
 
 # Confirm end of script

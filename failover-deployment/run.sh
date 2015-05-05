@@ -49,34 +49,31 @@ fi
 if $installCronJobs ; then
 
     # Update scripts
-    jobs[1]="25 6 * * * cd ${ScriptHome} && git pull -q"
+    installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
 
     # Backup data every day at 5:05 am
-    jobs[2]="5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh"
+    installCronJob ${username} "5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh"
 
     # Hourly zapping at 13 mins past every hour
-    jobs[3]="13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
+    installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
     # Hourly backup of Cyclescape
-    jobs[4]="42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateDaily.sh"
+    installCronJob ${username} "42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateDaily.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
-    jobs[5]="19 9 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
+    installCronJob ${username} "19 9 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
 
     # Daily rotate of Cyclescape
-    jobs[6]="26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"
+    installCronJob ${username} "26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
-    jobs[7]="39 8 * * * ${ScriptHome}/failover-deployment/cyclestreetsRotateDaily.sh"
+    installCronJob ${username} "39 8 * * * ${ScriptHome}/failover-deployment/cyclestreetsRotateDaily.sh"
 
     # Daily update of code base and clearout of old routing files at 9:49am
-    jobs[8]="49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
+    installCronJob ${username} "49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
 
     # Weekly rotation of backups
-    jobs[9]="50 10 * * 7 ${ScriptHome}/failover-deployment/cyclestreetsRotateWeekly.sh"
-
-    # Install the jobs
-    installCronJobs ${username} jobs[@]
+    installCronJob ${username} "50 10 * * 7 ${ScriptHome}/failover-deployment/cyclestreetsRotateWeekly.sh"
 fi
 
 # Confirm end of script

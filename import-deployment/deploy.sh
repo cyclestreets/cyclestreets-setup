@@ -46,38 +46,6 @@ fi
 
 # Main body of script
 
-# MySQL configuration
-mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf
-if [ ! -r ${mysqlConfFile} ]; then
-
-    # Create the file (avoid any backquotes in the text as they'll spawn sub-processes)
-    cat > ${mysqlConfFile} <<EOF
-# MySQL Configuration for import server
-# This config should be loaded via a symlink from: /etc/mysql/conf.d/
-# On systems running apparmor the symlinks need to be enabled via /etc/apparmor.d/usr.sbin.mysqld
-
-# Main characteristics
-# * Handle very large tables
-# * Long group_concat
-
-# On some versions of mysql any *.cnf files that are world-writable are ignored.
-
-[mysqld]
-
-# Most CycleStreets tables use MyISAM storage
-default-storage-engine = myisam
-default_tmp_storage_engine = myisam
-
-EOF
-
-    # Allow the user to edit this file
-    chown ${username}:rollout ${mysqlConfFile}
-fi
-
-
-# Advise
-echo "#	MySQL configured, but consider running the following security step from the command line: mysql_secure_installation"
-
 # Cron jobs
 if $installCronJobs ; then
 

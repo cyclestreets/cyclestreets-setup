@@ -89,13 +89,6 @@ if [ -n "${importDisk}" ]; then
     fi
 fi
 
-# Stop the routing service - if it is installed
-if [ -e ${routingDaemonLocation} ]; then
-
-    # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-    sudo ${routingDaemonLocation} stop
-fi
-
 #       Move to the right place
 cd ${importContentFolder}
 

@@ -77,12 +77,13 @@ chmod -R g+w "${telluswhereContentFolder}"
 cd "${telluswhereContentFolder}"
 
 # Create/update the repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
-if [ ! -d "${telluswhereContentFolder}/.git" ]
-then
-	${asCS} git clone git://github.com/cyclestreets/telluswhere.git "${telluswhereContentFolder}/"
-else
-	${asCS} git pull
-fi
+# #!# Repo is currently private so this stage will fail; as a workaround, clone the repo manually first as a user which has access
+# if [ ! -d "${telluswhereContentFolder}/.git" ]
+# then
+# 	${asCS} git clone git://github.com/cyclestreets/telluswhere.git "${telluswhereContentFolder}/"
+# else
+# 	${asCS} git pull
+# fi
 
 # Make the repository writable to avoid permissions problems when manually editing
 chmod -R g+w "${telluswhereContentFolder}"

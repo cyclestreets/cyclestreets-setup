@@ -76,40 +76,23 @@ if [ ! -r ${mysqlConfFile} ]; then
 
 # Most CycleStreets tables use MyISAM storage
 default-storage-engine = myisam
-
-# General options as recommended by
-# http://www.percona.com/pdf-canonical-header?path=files/presentations/percona-live/dc-2012/PLDC2012-optimizing-mysql-configuration.pdf
-# mysqltuner
-# select @@thread_cache_size, @@table_open_cache, @@open_files_limit;
-thread_cache_size = 100
-table_open_cache = 4096
-open_files_limit = 65535
-
-# This should be set to about 20 - 50% of available memory. On our 8GB www machine a good size is probably 1G. (The default is only 16M is a performance killer.)  
-key_buffer		= 2G
-
-max_allowed_packet	= 16M
-group_concat_max_len	= 50K
+default_tmp_storage_engine = myisam
 
 # Query Cache - on demand and best to limit to small efficient size
 query_cache_type        = 2
-query_cache_limit	= 256K
 query_cache_size        = 20M
-
-# Useful for performance monitoring
-log_slow_queries	= /var/log/mysql/mysql-slow.log
-long_query_time = 2
-# Enable this only for a session focussing on performance enhancement
-# log_queries_not_using_indexes = 1
 EOF
 
     # Allow the user to edit this file
     chown ${username}:rollout ${mysqlConfFile}
 fi
 
-
 # Advise
 echo "#	MySQL configured, but consider running the following security step from the command line: mysql_secure_installation"
+
+# Restart mysql - as setup for passwordless sudo by the installer.
+echo "#	$(date)	Restarting MySQL"
+sudo service mysql restart
 
 # Cron jobs - note the timings of these should be the same as in the fromFailOver.sh
 if $installCronJobs ; then

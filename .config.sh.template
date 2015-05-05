@@ -150,5 +150,9 @@ mobilewebLogsFolder=
 placefordContentFolder=
 placefordLogsFolder=
 
+# Telluswhere site (not part of CycleStreets itself)
+telluswhereContentFolder=
+telluswhereLogsFolder=
+
 
 # End of file

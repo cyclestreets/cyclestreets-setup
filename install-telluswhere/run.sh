@@ -106,8 +106,9 @@ if [ ! -L /etc/apache2/sites-enabled/600-telluswhere.conf ]; then
     ln -s ${vhConf} /etc/apache2/sites-enabled/600-telluswhere.conf
 fi
 
-# Add support for SQLite
-apt-get install php5-sqlite
+# Add support for SQLite, and add client program
+apt-get -y install php5-sqlite
+apt-get -y install sqlite3
 
 # Reload apache
 service apache2 reload

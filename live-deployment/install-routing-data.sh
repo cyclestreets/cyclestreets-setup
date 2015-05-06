@@ -95,7 +95,9 @@ fi
 
 # Ensure import machine and definition file variables has been defined
 if [ -z "${importMachineAddress}" -o -z "${importMachineEditions}" ]; then
-	echo "# An import machine with an editions folder must be defined in order to run an import"
+
+	# Avoid echoing as these are called by a cron job
+	# echo "# An import machine with an editions folder must be defined in order to run an import"
 	exit 1
 fi
 

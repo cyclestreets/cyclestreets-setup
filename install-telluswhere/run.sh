@@ -91,6 +91,7 @@ chmod -R g+w "${telluswhereContentFolder}"
 # Add writability for areas requiring it
 sudo chown -R www-data tmp/
 sudo chown -R www-data db/
+sudo chown -R www-data images/news/
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
 vhConf=/etc/apache2/sites-available/telluswhere.conf

@@ -64,8 +64,9 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Ensure that dependencies are present
+# Ensure that dependencies are present; GD is needed for thumbnailing
 apt-get -y install apache2 php5
+apt-get -y install php5-gd
 
 # Install path to content and go there
 mkdir -p "${telluswhereContentFolder}"

@@ -5,7 +5,7 @@
 #
 # DESCRIPTION
 #	The first argument identifies which user's crontab
-#	The second argument names an array of cron jobs, ie. use: jobs[@] rather than $jobs
+#	The second argument names a job
 installCronJob ()
 {
     # Shortcut for running commands as the suggested user

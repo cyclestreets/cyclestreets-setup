@@ -3,10 +3,11 @@
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 
 # This script is idempotent - it can be safely re-run without destroying existing data.
+# It should be run as cyclestreets user - a check for that occurs below.
 
 ### Stage 1 - general setup
 
-# Ensure this script is NOT run as root (it should be run as cyclestreets)
+# Ensure this script is NOT run as root
 if [ "$(id -u)" = "0" ]; then
     echo "#	This script must NOT be run as root." 1>&2
     exit 1

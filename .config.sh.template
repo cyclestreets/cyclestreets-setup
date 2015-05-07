@@ -28,7 +28,7 @@ repopassword="${password}"
 datapassword=
 
 ## MySQL
-# The mysql root password - to avoid being prompted.
+# The mysql root password - to avoid being prompted during installation.
 mysqlRootPassword=
 
 # Credentials for the website user
@@ -39,6 +39,9 @@ mysqlWebsitePassword="${password}"
 mysqlImportUsername=import
 # Avoid using a % in this password because that won't survive being passed to version 0.43.1 of osmosis (this problem has been flagged with them)
 mysqlImportPassword=
+
+# Names a myslq configuration file which gets setup to allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
+mycnfFile=/home/${username}/.my.cnf
 
 # MySQL settings for when the server is running an import or serving routes
 # Values should be written as eg: 100*1024*1024

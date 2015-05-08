@@ -200,7 +200,7 @@ chmod -R g+w /websites
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 
-# Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
+# Setup a .cnf file which sets up mysql to connect with utf8
 mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf
 if [ ! -e ${mysqlUtf8CnfFile} ]; then
 
@@ -232,6 +232,7 @@ fi
 
 
 # Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
+# !! Be wary of this as the settings in here will override those in any supplied defaults-extra-file
 if [ ! -e ${mycnfFile} ]; then
 
     # Create the file owned by the user

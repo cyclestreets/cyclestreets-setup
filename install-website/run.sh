@@ -441,9 +441,9 @@ if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW D
     ${superMysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql
     
     # Install the batch routing cron job
-    # #!# the %token will need to be changed manually
+    # #!# the token will need to be changed manually
     . ${ScriptHome}/utility/helper.sh
-    installCronJob ${username} "* * * * * curl -s 'http://www.cyclestreets.net/journey/batch/cron.html?key=%token' &>/dev/null"
+    installCronJob ${username} "* * * * * curl -s 'http://www.cyclestreets.net/journey/batch/cron.html?key=token' &>/dev/null"
     
 else
     echo "#	Skipping batch database"

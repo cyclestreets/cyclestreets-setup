@@ -204,11 +204,14 @@ chown -R www-data ${websitesContentFolder}/data
 mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf
 if [ ! -e ${mysqlUtf8CnfFile} ]; then
 
-    # Create the file owned by the user
-    ${asCS} touch ${mysqlUtf8CnfFile}
+    # Create the file
+    touch ${mysqlUtf8CnfFile}
+
+    # Own by the user
+    chown ${username}:rollout ${mysqlUtf8CnfFile}
 
     # Write config
-    ${asCS} cat > ${mysqlUtf8CnfFile} << EOF
+    cat > ${mysqlUtf8CnfFile} << EOF
 # http://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf
 [client]
 default-character-set=utf8

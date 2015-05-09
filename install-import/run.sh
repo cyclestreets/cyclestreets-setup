@@ -60,8 +60,8 @@ fi
 # Switch to import folder
 cd ${importContentFolder}
 
-# Setup a .my.import.cnf file which will allow the import user to run mysql commands without supplying credentials on the command line
-myImportCnfFile=${importContentFolder}/.my.import.cnf
+# Setup a mysql configuration file which will allow the import user to run mysql commands without supplying credentials on the command line
+myImportCnfFile=${importContentFolder}/.myImportUserCredentials.cnf
 if [ ! -e ${myImportCnfFile} ]; then
 
     # Create config file

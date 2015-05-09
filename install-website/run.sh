@@ -94,11 +94,11 @@ fi
 
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
-chown www-data:rollout ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
+chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
 
 # Requested missing cities logging (will disappear when ticket 645 cleared up)
 touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
-chown www-data:rollout ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
+chown www-data:${rollout} ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 
 # Mod rewrite
 a2enmod rewrite
@@ -136,7 +136,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 EOF
 
     # Allow the user to edit this file
-    chown ${username}:rollout ${localVirtualHostFile}
+    chown ${username}:${rollout} ${localVirtualHostFile}
 
 else
     echo "#	Virtual host already exists: ${localVirtualHostFile}"
@@ -199,7 +199,7 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
 EOF
 
     # Allow the user to edit this file
-    chown ${username}:rollout ${apiLocalVirtualHostFile}
+    chown ${username}:${rollout} ${apiLocalVirtualHostFile}
 
 else
     echo "#	Virtual host already exists: ${apiLocalVirtualHostFile}"

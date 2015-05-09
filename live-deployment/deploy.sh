@@ -84,7 +84,7 @@ query_cache_size        = 20M
 EOF
 
     # Allow the user to edit this file
-    chown ${username}:rollout ${mysqlConfFile}
+    chown ${username}:${rollout} ${mysqlConfFile}
 fi
 
 # Advise

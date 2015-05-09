@@ -135,29 +135,28 @@ apt-get -y install php5 php5-gd php5-cli php5-mysql
 currentActualUser=`who am i | awk '{print $1}'`
 
 # Create the rollout group, if it does not already exist
-#!# The group name should be a setting
-if ! grep -i "^rollout\b" /etc/group > /dev/null 2>&1
+if ! grep -i "^${rollout}\b" /etc/group > /dev/null 2>&1
 then
-    addgroup rollout
+    addgroup ${rollout}
 fi
 
 # Add the user to the rollout group, if not already there
-if ! groups ${username} | grep "\brollout\b" > /dev/null 2>&1
+if ! groups ${username} | grep "\b${rollout}\b" > /dev/null 2>&1
 then
-	usermod -a -G rollout ${username}
+	usermod -a -G ${rollout} ${username}
 fi
 
 # Add the person installing the software to the rollout group, for convenience, if not already there
-if ! groups ${currentActualUser} | grep "\brollout\b" > /dev/null 2>&1
+if ! groups ${currentActualUser} | grep "\b${rollout}\b" > /dev/null 2>&1
 then
-	usermod -a -G rollout ${currentActualUser}
+	usermod -a -G ${rollout} ${currentActualUser}
 fi
 
 # Working directory
 mkdir -p /websites
 
 # Own the folder and set the group to be rollout:
-chown ${username}:rollout /websites
+chown ${username}:${rollout} /websites
 
 # Allow sharing of private groups (i.e. new files are created group writeable)
 # !! This won't work for any sections run using ${asCS} because in those cases the umask will be inherited from the cyclestreets user's login profile.
@@ -208,7 +207,7 @@ if [ ! -e ${mysqlUtf8CnfFile} ]; then
     touch ${mysqlUtf8CnfFile}
 
     # Own by the user
-    chown ${username}:rollout ${mysqlUtf8CnfFile}
+    chown ${username}:${rollout} ${mysqlUtf8CnfFile}
 
     # Write config
     cat > ${mysqlUtf8CnfFile} << EOF

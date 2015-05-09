@@ -66,7 +66,7 @@ if [ -z "${importContentFolder}" ]; then
 fi
 
 # Check that the import finished correctly
-if ! ${superMysql} -hlocalhost --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
+if ! ${superMysql} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
 then
     echo "#	The import process did not complete. The routing service will not be started."
     exit 1

@@ -100,6 +100,9 @@ fi
 # Reload apache
 service /apache2 reload >> ${setupLogFile}
 
+# Ensure the blog files are writable, as otherwise automatic upgrade will fail
+chown -R www-data /websites/blog/content/
+
 # Confirm end of script
 msg="#	All now installed $(date)"
 echo $msg >> ${setupLogFile}

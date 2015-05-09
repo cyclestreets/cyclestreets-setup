@@ -307,7 +307,7 @@ Alias /images/statsicons /websites/configuration/analog/images
 <FilesMatch "wp-login.php">
     AuthName "WordPress Admin"
     AuthType Basic
-    AuthUserFile /etc/apache/.htpasswd
+    AuthUserFile /etc/apache2/.htpasswd
     require valid-user
 </FilesMatch>
 

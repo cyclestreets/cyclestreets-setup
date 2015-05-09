@@ -90,17 +90,17 @@ output_usage() {
 # Number of itineraries in a five minute period
 # Avoids the latest minute's worth of data as that would include unfinished route calculations.
 number_of_itineraries() {
-    mysql --defaults-extra-file=${mycnfFile} cyclestreets -sNe "select count(distinct itineraryId) count from map_journey where datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
+    mysql --defaults-extra-file=${mySuperCredFile} cyclestreets -sNe "select count(distinct itineraryId) count from map_journey where datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
 }
 
 # Number of itineraries in a five minute period
 number_of_failed_itineraries() {
-    mysql --defaults-extra-file=${mycnfFile} cyclestreets -sNe "select count(distinct itineraryId) count from map_journey where length = 0 and datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
+    mysql --defaults-extra-file=${mySuperCredFile} cyclestreets -sNe "select count(distinct itineraryId) count from map_journey where length = 0 and datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
 }
 
 # Number of errors in a five minute period
 number_of_errors() {
-    mysql --defaults-extra-file=${mycnfFile} cyclestreets -sNe "select count(*) count from map_error where datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
+    mysql --defaults-extra-file=${mySuperCredFile} cyclestreets -sNe "select count(*) count from map_error where datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
 }
 
 

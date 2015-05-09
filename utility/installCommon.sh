@@ -233,13 +233,13 @@ fi
 
 # Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 # !! Be wary of this as the settings in here will override those in any supplied defaults-extra-file
-if [ ! -e ${mycnfFile} ]; then
+if [ ! -e ${mySuperCredFile} ]; then
 
     # Create the file owned by the user
-    ${asCS} touch ${mycnfFile}
+    ${asCS} touch ${mySuperCredFile}
 
     # Write config
-    ${asCS} cat > ${mycnfFile} << EOF
+    ${asCS} cat > ${mySuperCredFile} << EOF
 [client]
 user=root
 password=${mysqlRootPassword}

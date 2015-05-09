@@ -68,7 +68,7 @@ dumpPrefix=failover
 . ${ScriptHome}/utility/restore-recent.sh
 
 # Restart the pseudoCron at today's date
-mysql cyclestreets -hlocalhost -e "update map_config set pseudoCron = curdate();";
+${superMysql} cyclestreets -e "update map_config set pseudoCron = curdate();";
 
 # Restore these cronjobs - note the timings of these should be the same as in the run.sh
 cat <(crontab -l) <(echo "4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh") | crontab -

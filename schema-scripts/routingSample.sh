@@ -31,29 +31,23 @@ fi
 # Load the credentials
 . ./${configFile}
 
-# Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
-
 # Report
 echo "#	CycleStreets schema script starting"
 
-# Main Body
-credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
-
 # The current database name will be the sample database
-sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
+sampleRoutingDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 echo "# Creating sample routing database for data built with the db named: ${sampleRoutingDb}"
 
 
 #	Load the zapper
-mysql ${credentials} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema/cleanSampleRouting.sql
+${superMysql} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema/cleanSampleRouting.sql
 
 #	Run the zapper - which eliminates unnecessary data, leaving only essential data required to provide routing
 #	(This smashes the routing db so consider making a copy first.)
-mysql ${credentials} ${sampleRoutingDb} -e "call cleanSampleRouting();"
+${superMysql} ${sampleRoutingDb} -e "call cleanSampleRouting();"
 
 #	Write
-mysqldump ${sampleRoutingDb} ${credentials} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost ${sampleRoutingDb} --routines --no-create-db | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
 
 # Archive the data
 sampleRoutingData=routingSampleData.tar.gz

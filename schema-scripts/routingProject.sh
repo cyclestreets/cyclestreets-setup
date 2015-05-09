@@ -31,26 +31,22 @@ fi
 # Load the credentials
 . ./${configFile}
 
-# Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
-
 # Report
 echo "#	CycleStreets schema script starting"
 
 # Main Body
-credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
 
 # The current database name will be the sample database
-sampleRoutingDb=$(mysql -s ${credentials} cyclestreets<<<"select routingDb from map_config limit 1")
+sampleRoutingDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 # Use the date part of that (from character 7) as the basis for getting the planet db.
 samplePlanetDb=planetExtractOSM${sampleRoutingDb:7}
 echo "# Using routing data from the db named: ${sampleRoutingDb} and planet ${samplePlanetDb}"
 
 #	Write
 #	Routing db
-mysqldump ${sampleRoutingDb} ${credentials} map_way map_routingFactor map_wayName map_osmBicycleRoute map_way_tags | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost ${sampleRoutingDb} map_way map_routingFactor map_wayName map_osmBicycleRoute map_way_tags | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
 #	Planet Extract db
-mysqldump ${samplePlanetDb} ${credentials} osm_wayTag | gzip > ${websitesContentFolder}/${samplePlanetDb}Project.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost ${samplePlanetDb} osm_wayTag | gzip > ${websitesContentFolder}/${samplePlanetDb}Project.sql.gz
 
 #	Advise
 echo "#	Actions required next:"

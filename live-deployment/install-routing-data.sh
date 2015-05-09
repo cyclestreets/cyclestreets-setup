@@ -156,7 +156,7 @@ fi
 # Check to see if this routing database already exists
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
 # but in fact that is the condition desired.
-if mysql -hlocalhost -e "use ${importEdition}"; then
+if ${superMysql} -e "use ${importEdition}"; then
 	# Avoid echo if possible as this generates cron emails
 	#echo "#	Stopping because the routing database ${importEdition} already exists."
 	# Clean exit - because this is not an error, it is just that there is no new data available
@@ -219,8 +219,8 @@ rm tsv.tar.gz
 echo "#	$(date)	Installing the routing database: ${importEdition}"
 
 #	Create the database (which will be empty for now) and set default collation
-mysqladmin create ${importEdition} -hlocalhost --default-character-set=utf8
-mysql -hlocalhost -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
+${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
+${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
 #!# Hard-coded location
 dbFilesLocation=/var/lib/mysql/
@@ -243,12 +243,12 @@ rm tables.tar.gz
 
 #	Load nearest point stored procedures
 echo "#	$(date)	Loading nearestPoint technology"
-mysql ${importEdition} -hlocalhost < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
+${superMysql} ${importEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 
 # Build the photo index
 echo "#	$(date)	Building the photosEnRoute tables"
-mysql ${importEdition} -hlocalhost < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-mysql ${importEdition} -hlocalhost -e "call indexPhotos(false,0);"
+${superMysql} ${importEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+${superMysql} ${importEdition} -e "call indexPhotos(false,0);"
 
 ### Stage 7 - Finish
 

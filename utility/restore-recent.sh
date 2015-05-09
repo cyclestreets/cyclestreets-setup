@@ -15,12 +15,12 @@ $download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
 
 # Replace the cyclestreets database
 echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
-mysql -e "drop database if exists cyclestreets;";
-mysql -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | mysql cyclestreets
+${superMysql} -e "drop database if exists cyclestreets;";
+${superMysql} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
+gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} cyclestreets
 
 #	Stop duplicated cronning from the backup machine
-mysql cyclestreets -e "update map_config set pseudoCron = null;";
+${superMysql} cyclestreets -e "update map_config set pseudoCron = null;";
 
 #	Sync the photomap
 # Use option -O (omit directories from --times), necessary because apparently only owner (or root) can set a directory's mtime.
@@ -71,23 +71,23 @@ do
     $download $administratorEmail $server $folder $fileName
 
     #	Add them
-    gunzip < /websites/www/backups/$fileName | mysql cyclestreets
+    gunzip < /websites/www/backups/$fileName | ${superMysql} cyclestreets
 done
 
 #
 #	Repartition, which copies the current to the archived tables, and log output.
-mysql cyclestreets -e "call repartitionIJS()" >> ${setupLogFile}
+${superMysql} cyclestreets -e "call repartitionIJS()" >> ${setupLogFile}
 
 #	CycleStreets Blog
 $download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
-mysql cyclestreets -e "drop database if exists blogcyclestreets;";
-mysql cyclestreets -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | mysql blogcyclestreets
+${superMysql} cyclestreets -e "drop database if exists blogcyclestreets;";
+${superMysql} cyclestreets -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | ${superMysql} blogcyclestreets
 
 #	Cyclescape Blog
 $download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclescape_database.sql.gz
-mysql cyclestreets -e "drop database if exists blogcyclescape;";
-mysql cyclestreets -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclescape_database.sql.gz | mysql blogcyclescape
+${superMysql} cyclestreets -e "drop database if exists blogcyclescape;";
+${superMysql} cyclestreets -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclescape_database.sql.gz | ${superMysql} blogcyclescape
 
 ### Final Stage

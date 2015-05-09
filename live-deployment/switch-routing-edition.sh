@@ -121,7 +121,7 @@ importDate=${BASH_REMATCH[1]}
 ### Stage 3 - confirm existence of the routing import database and files
 
 # Check to see that this routing database exists
-if ! mysql -hlocalhost -e "use ${newEdition}"; then
+if ! ${superMysql} -e "use ${newEdition}"; then
 	echo "#	The routing database ${newEdition} is not present"
 	exit 1
 fi
@@ -141,7 +141,7 @@ fi
 ### Stage 4 - do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)
-mysql cyclestreets -hlocalhost -e "truncate map_nearestPointCache;";
+${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
@@ -159,12 +159,12 @@ if [ -n "${failoverRoutingServer}" ]; then
     fi
 
     # Use the failover server during switch over
-    mysql cyclestreets -hlocalhost -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
+    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
     echo "#	Now using failover routing service"
 else
 
     # Set the journeyPlannerStatus to closed for the duration
-    mysql cyclestreets -hlocalhost -e "UPDATE map_config SET journeyPlannerStatus = 'closed' WHERE id = 1;";
+    ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'closed' WHERE id = 1;";
     echo "#	As there is no failover routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
@@ -217,16 +217,16 @@ if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
 fi
 
 # Switch the website to the local server and ensure the routingDb is also set
-mysql cyclestreets -hlocalhost -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
+${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
 
 # Restore the journeyPlannerStatus
-mysql cyclestreets -hlocalhost -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
+${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
 
 
 ### Stage 5 - end
 
 # Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
-mysql cyclestreets -hlocalhost -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Finish
 echo "#	$(date)	Completed switch to $newEdition"

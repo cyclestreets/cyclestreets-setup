@@ -40,7 +40,7 @@ echo "#	CycleStreets creating a dump of the external schema only (no data)"
 
 # Create the schema file
 # Uses some options and a trick with sed to make the schema file avoid overwriting any existing data.
-mysqldump -hlocalhost -uroot -p${mysqlRootPassword} csExternal --databases --no-data --skip-add-drop-table | sed 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' > ${websitesContentFolder}/documentation/schema/csExternal.sql
+mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost csExternal --databases --no-data --skip-add-drop-table | sed 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' > ${websitesContentFolder}/documentation/schema/csExternal.sql
 
 # Create the version with data
 if [ ! -z "${csExternalDataFile}" ]; then
@@ -49,7 +49,7 @@ if [ ! -z "${csExternalDataFile}" ]; then
     echo "#	CycleStreets creating a full external database dump"
 
     # Dump
-    mysqldump -hlocalhost -uroot -p${mysqlRootPassword} csExternal | gzip > ${websitesBackupsFolder}/${csExternalDataFile}
+    mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost -uroot -p${mysqlRootPassword} csExternal | gzip > ${websitesBackupsFolder}/${csExternalDataFile}
 
     # Advise
     echo "#	Advise: on the backup machine run this to copy the dump:"

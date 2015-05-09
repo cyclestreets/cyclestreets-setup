@@ -40,9 +40,8 @@ asCS="sudo -u ${username}"
 echo "#	CycleStreets schema script starting"
 
 # Main Body
-credentials="-hlocalhost -uroot -p${mysqlRootPassword}"
 sampleDb=csSample
-csBackup=/websites/www/backups/www_cyclestreets.sql.gz
+csBackup=${websitesBackupsFolder}/www_cyclestreets.sql.gz
 
 # Check a backup of the cyclestreets database is available
 if [ ! -r ${csBackup} ]; then
@@ -53,20 +52,20 @@ if [ ! -r ${csBackup} ]; then
 fi
 
 #	Create the new database
-mysql ${credentials} -e "drop database if exists ${sampleDb};"
-mysql ${credentials} -e "create database ${sampleDb} default character set utf8 default collate utf8_unicode_ci;"
+${superMysql} -e "drop database if exists ${sampleDb};"
+${superMysql} -e "create database ${sampleDb} default character set utf8 default collate utf8_unicode_ci;"
 
 #	Load a copy of the cyclestreets database into the new db
-gunzip < ${csBackup} | mysql ${credentials} ${sampleDb}
+gunzip < ${csBackup} | ${superMysql} ${sampleDb}
 
 #	Load the zapper - procedures which clean the database
-mysql ${credentials} ${sampleDb} < ${websitesContentFolder}/documentation/schema/prepareSampleCycleStreetsDB.sql
+${superMysql} ${sampleDb} < ${websitesContentFolder}/documentation/schema/prepareSampleCycleStreetsDB.sql
 
 #	Run the zapper - which eliminates all user generated and sensitive data, leaving only essential data required to run the system
-mysql ${credentials} ${sampleDb} -e "call prepareSampleCycleStreetsDB();"
+${superMysql} ${sampleDb} -e "call prepareSampleCycleStreetsDB();"
 
 #	Write (requires a subsequent commit to become part of the repo)
-mysqldump ${sampleDb} ${credentials} --routines --no-create-db > ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
+mysqldump --defaults-extra-file=${mySuperCredFile} ${sampleDb} --routines --no-create-db > ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
 
 #	Advise
 echo "#	Actions required next:"

@@ -71,10 +71,6 @@ fi
 # External database
 externalDb=csExternal
 
-# Useful bindings
-myopt="-uroot -p${mysqlRootPassword} -hlocalhost"
-mysql="mysql ${myopt}"
-
 # Check the database already exists
 if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
 then
@@ -87,7 +83,7 @@ fi
 ${superMysql} ${externalDb} < tableDefinitions.sql
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege. The --local option is needed in some situations.
-mysqlimport ${myopt} --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
+mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
 ## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
@@ -107,7 +103,7 @@ php -d memory_limit=1000M  converteastingsnorthings.php
 rm eastingsnorthings.csv
 mv latlons.csv map_postcodes.csv
 # The --local option is needed in some situations.
-mysqlimport ${myopt} --fields-terminated-by=',' --lines-terminated-by="\n" --local ${externalDb} ${onsFolder}/map_postcodes.csv
+mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-terminated-by=',' --lines-terminated-by="\n" --local ${externalDb} ${onsFolder}/map_postcodes.csv
 rm map_postcodes.csv
 
 # Tidy extracted data into postcode table

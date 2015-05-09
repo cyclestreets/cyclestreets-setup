@@ -47,9 +47,6 @@ if [ -z "${blogDatabasename}" ]; then
 	exit 1
 fi;
 
-# Database setup Useful binding
-mysql="mysql -uroot -p${mysqlRootPassword} -hlocalhost"
-
 # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
 blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
 ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}

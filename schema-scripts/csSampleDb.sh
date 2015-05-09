@@ -33,9 +33,6 @@ fi
 # Load the credentials
 . ./${configFile}
 
-# Shortcut for running commands as the cyclestreets user
-asCS="sudo -u ${username}"
-
 # Report
 echo "#	CycleStreets schema script starting"
 

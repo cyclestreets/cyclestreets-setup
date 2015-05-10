@@ -35,13 +35,13 @@ Add this repository to a machine using the following, as your normal username (n
 
 ## Install website
 
-After the repository has been cloned from Github above, proceed by making your own */opt/cyclestreets-setup.config.sh* file based on the */opt/cyclestreets-setup.config.sh.template* file.
+After the repository has been cloned from Github above, proceed by making your own `.config.sh` file based on the `/opt/cyclestreets-setup.config.sh.template` file.
 
-Provide a password for the subversion repository for your username, ie *repopassword* in the config file. By default the script will try the same password as provided for the cyclestreteets user.
+Provide a password for the subversion repository for your username, ie `repopassword` in the config file. By default the script will try the same password as provided for the cyclestreteets user.
 
-The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using *sudo*).
+The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using `sudo`).
 
-    cyclestreets@machine:/opt/cyclestreets-setup/install-website$ sudo ./run.sh
+    user@machine:/opt/cyclestreets-setup/$ sudo install-website/run.sh
 
 
 ## Use
@@ -55,6 +55,15 @@ Once the script has run you should be able to go to:
     http://*csServerName*/
 
 to see the CycleStreets home page.
+
+## Install import
+
+    user@machine:/opt/cyclestreets-setup/$ sudo install-import/run.sh
+
+## Run an import
+
+    cyclestreets@machine:/opt/cyclestreets-setup/$ import-deployment/import.sh 
+
 
 ## Troubleshooting
 

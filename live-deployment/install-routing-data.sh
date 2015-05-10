@@ -114,6 +114,14 @@ if [ -z "${latestEdition}" ]; then
 	exit 1
 fi
 
+# Check this edition is not already installed
+if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
+	# Avoid echo if possible as this generates cron emails
+	#echo "#	Edition ${latestEdition} is already installed."
+	#echo "#	Remove it with: rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
+	exit 1
+fi
+
 #	Report finding
 # Avoid echo if possible as this generates cron emails
 #echo "#	Latest edition: ${latestEdition}"

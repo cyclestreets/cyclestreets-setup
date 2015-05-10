@@ -160,7 +160,8 @@ fi
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	Edition ${latestEdition} is already installed."
-	vecho "#	Remove it with: rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
+	vecho "#	Remove file with: rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
+	vecho "#	... and database: drop database ${latestEdition};"
 	exit 1
 fi
 

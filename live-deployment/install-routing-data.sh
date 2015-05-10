@@ -34,7 +34,8 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo '#	An installation is already running' ; exit 1; }
+	# Avoid echo if possible as this generates cron emails - this removed from curly parentheses: echo '#	An installation is already running' ;
+	flock -n 9 || { exit 1; }
 
 
 ### CREDENTIALS ###
@@ -132,7 +133,8 @@ newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition
 #	Copy definition file
 scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-	echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'newImportDefinition': ${newImportDefinition} settings."
+	# Avoid echo if possible as this generates cron emails
+	#echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'newImportDefinition': ${newImportDefinition} settings."
 	exit 1
 fi
 

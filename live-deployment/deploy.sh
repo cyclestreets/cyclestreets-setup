@@ -100,15 +100,15 @@ if $installCronJobs ; then
     # Update scripts
     installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
 
-    # Dump data every day at 4:01 am
+    # Dump data every day at 1:01 am
     # Choose a timing that allows the script to complete before being polled by the automatic testing - which currently (April 2015) happens on each five minute boundary
-    installCronJob ${username} "4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
+    installCronJob ${username} "1 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
 
     # Hourly zapping at 13 mins past every hour
     installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
-    # Install routing data at 01:34
-    installCronJob ${username} "34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh"
+    # Install routing data every hour, using quiet option to suppress advice messages
+    installCronJob ${username} "44 * * * * ${ScriptHome}/live-deployment/install-routing-data.sh -q"
 fi
 
 # Confirm end of script

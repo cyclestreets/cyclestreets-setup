@@ -1,18 +1,59 @@
 #!/bin/bash
-# Script to install CycleStreets routing data
 # Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 #
+# Controls echoed output default to off (empty string)
+verbose=
+
+# http://ubuntuforums.org/showthread.php?t=1783298
+usage()
+{
+    cat << EOF
+    
+SYNOPSIS
+	$0 -h -v
+
+OPTIONS
+	-h Show this message
+	-v Verbose-mode
+
+DESCRIPTION
+ 	Checks whether there's is a new edition of routing data on the server identified by configuration settings.
+	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
+	The routing edition database is installed.
+	If successful it prompts to use the switch-routing-edition.sh script to start using the new routing edition.
+EOF
+}
+
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
-
 # Requires password-less access to the import machine, using a public key.
-
-# The script is setup to avoid echo when there is no new data.
-# Perhaps an argument to control any output could be considered - like quiet or verbose.
 
 # When in failover mode uncomment the next two lines:
 #echo "# Skipping in failover mode"
 #exit 1
+
+verbose()
+{
+    verbose=1
+}
+
+
+# http://wiki.bash-hackers.org/howto/getopts_tutorial
+while getopts ":hv" option ; do
+    case ${option} in
+        h) usage; exit ;;
+        v) verbose ;;
+	\?) echo "Invalid option: -$OPTARG" >&2
+    esac
+done
+
+# Echo output only if the verbose option has been set
+vecho()
+{
+	if [ "${verbose}" ]; then
+		echo $1
+	fi
+}
 
 ### Stage 1 - general setup
 
@@ -34,8 +75,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	# Avoid echo if possible as this generates cron emails - this removed from curly parentheses: echo '#	An installation is already running' ;
-	flock -n 9 || { exit 1; }
+	flock -n 9 || { vecho '#	An installation is already running' ; exit 1; }
 
 
 ### CREDENTIALS ###
@@ -71,7 +111,7 @@ fi
 ## Main body of script
 
 # Avoid echo if possible as this generates cron emails
-#echo "#	$(date)	CycleStreets routing data installation"
+vecho "#	$(date)	CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
@@ -98,7 +138,7 @@ fi
 if [ -z "${importMachineAddress}" -o -z "${importMachineEditions}" ]; then
 
 	# Avoid echoing as these are called by a cron job
-	# echo "# An import machine with an editions folder must be defined in order to run an import"
+	echo "# An import machine with an editions folder must be defined in order to run an import"
 	exit 1
 fi
 
@@ -118,14 +158,14 @@ fi
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
-	#echo "#	Edition ${latestEdition} is already installed."
-	#echo "#	Remove it with: rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
+	vecho "#	Edition ${latestEdition} is already installed."
+	vecho "#	Remove it with: rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
 	exit 1
 fi
 
 #	Report finding
 # Avoid echo if possible as this generates cron emails
-#echo "#	Latest edition: ${latestEdition}"
+vecho "#	Latest edition: ${latestEdition}"
 
 # Useful binding
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
@@ -134,7 +174,7 @@ newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition
 scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
-	#echo "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'newImportDefinition': ${newImportDefinition} settings."
+	vecho "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'newImportDefinition': ${newImportDefinition} settings."
 	exit 1
 fi
 
@@ -168,7 +208,7 @@ fi
 # but in fact that is the condition desired.
 if ${superMysql} -e "use ${importEdition}"; then
 	# Avoid echo if possible as this generates cron emails
-	#echo "#	Stopping because the routing database ${importEdition} already exists."
+	vecho "#	Stopping because the routing database ${importEdition} already exists."
 	# Clean exit - because this is not an error, it is just that there is no new data available
 	exit 0
 fi
@@ -176,7 +216,7 @@ fi
 # Check to see if a routing data file for this routing edition already exists
 newEditionFolder=${websitesContentFolder}/data/routing/${importEdition}
 if [ -d ${newEditionFolder} ]; then
-	echo "#	Stopping because the routing data folder ${importEdition} already exists."
+	vecho "#	Stopping because the routing data folder ${importEdition} already exists."
 	exit 1
 fi
 

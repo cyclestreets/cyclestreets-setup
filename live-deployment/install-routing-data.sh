@@ -2,8 +2,8 @@
 # Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 #
-# Controls echoed output default to off (empty string)
-verbose=
+# Controls echoed output default to on
+verbose=1
 
 # http://ubuntuforums.org/showthread.php?t=1783298
 usage()
@@ -11,11 +11,11 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -v
+	$0 -h -q
 
 OPTIONS
 	-h Show this message
-	-v Verbose-mode
+	-q Suppress helpful messages, error messages are still produced
 
 DESCRIPTION
  	Checks whether there's is a new edition of routing data on the server identified by configuration settings.
@@ -32,18 +32,19 @@ EOF
 #echo "# Skipping in failover mode"
 #exit 1
 
-verbose()
+quietmode()
 {
-    verbose=1
+    # Turn off verbose messages by setting this variable to the empty string
+    verbose=
 }
 
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
-while getopts ":hv" option ; do
+while getopts ":hq" option ; do
     case ${option} in
         h) usage; exit ;;
-        v) verbose ;;
-	\?) echo "Invalid option: -$OPTARG" >&2
+        q) quietmode ;;
+	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
 

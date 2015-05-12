@@ -152,7 +152,7 @@ latestEdition=`ssh ${username}@${importMachineAddress} ls -1t ${importMachineEdi
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then
-	echo "# No routing editions found on ${importMachineAddress}"
+	vecho "# No routing editions found on ${importMachineAddress}"
 	exit 1
 fi
 

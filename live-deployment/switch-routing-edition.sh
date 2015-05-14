@@ -130,6 +130,7 @@ else
     # Check the failover routing edition is the same as the proposed edition
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingServer}"
+	echo "#	Restart it using: sudo service cycleroutingd restart"
 	exit 1
     fi
 fi

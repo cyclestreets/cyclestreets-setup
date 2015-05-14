@@ -60,6 +60,19 @@ fi
 # Load the credentials
 . ${configFile}
 
+
+## Main body from here
+
+# Ensure there is a single argument, defining the routing edition, or end
+if [ $# -ne 1 ]
+then
+  echo "#	Usage: `basename $0` importedition"
+  exit 1
+fi
+
+# Allocate that argument
+newEdition=$1
+
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	echo "# User ${username} must exist: please run the main website install script"
@@ -84,6 +97,15 @@ if [ ! -f ${routingDaemonLocation} ]; then
 	exit 1
 fi
 
+# Check a local routing server is configure
+if [ -z "${localRoutingServer}" ]; then
+	echo "#	The local routing service is not specified."
+	exit 1
+fi
+
+# XML for the calls to get the routing edition
+xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+
 # Check the local routing service - but it is no longer a requirement that it is currently serving routes.
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
 set +e
@@ -93,21 +115,27 @@ localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
   echo "#	Note: there is no current routing service. Switchover will proceed."
+else
+
+    # Check not already serving this edition
+
+    # POST the request to the server
+    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+
+    if [ -z "${currentRoutingEdition}" ]; then
+	echo "#	The current edition at ${localRoutingServer} could not be determined."
+	exit 1
+    fi
+
+    # Check the failover routing edition is the same as the proposed edition
+    if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
+	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingServer}"
+	exit 1
+    fi
 fi
+
 # Restore abandon-on-error
 set -e
-
-### Stage 2 - ensure required parameters are present
-
-# Ensure there is a single argument, defining the routing edition, or end
-if [ $# -ne 1 ]
-then
-  echo "#	Usage: `basename $0` importedition"
-  exit 1
-fi
-
-# Allocate that argument
-newEdition=$1
 
 # Check the format is routingYYMMDD
 if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
@@ -118,7 +146,7 @@ fi
 # Extract the date part of the routing database
 importDate=${BASH_REMATCH[1]}
 
-### Stage 3 - confirm existence of the routing import database and files
+### Confirm existence of the routing import database and files
 
 # Check to see that this routing database exists
 if ! ${superMysql} -e "use ${newEdition}"; then
@@ -138,13 +166,10 @@ if [ ! -e "${websitesContentFolder}/data/routing/${newEdition}/installationCompl
 	exit 1
 fi
 
-### Stage 4 - do switch-over
+### Do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
-
-# XML for the calls to get the routing edition
-xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
 # If a failoverRoutingServer is supplied, check it is running and using the proposed edition
 if [ -n "${failoverRoutingServer}" ]; then
@@ -223,12 +248,12 @@ ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}'
 ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
 
 
-### Stage 5 - end
+### Finishing
 
 # Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
 ${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
 
-# Finish
+# Report
 echo "#	$(date)	Completed switch to $newEdition"
 
 # Remove the lock file - ${0##*/} extracts the script's basename

@@ -112,6 +112,7 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 routingDaemonLocation=/etc/init.d/cycleroutingd
 installRoutingAsDaemon=true
+stopRoutingDuringImport=yes
 
 ## Local routing server
 localRoutingServer=http://localhost:9000/

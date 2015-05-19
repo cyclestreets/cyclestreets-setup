@@ -187,6 +187,7 @@ set -e
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
 # NB the timestamp parameter is not really used yet in the script below
 # !! Note: the md5Dump option (which loads the database from a mysqldump generated file, and is an alternative to the hotcopy option md5Tables) is not yet supported
+# Note also that hotcopy is deprecated at MySQL 5.6 and will be removed in 5.7, see: https://dev.mysql.com/doc/refman/5.6/en/mysqlhotcopy.html
 timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $newImportDefinition`
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`

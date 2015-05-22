@@ -48,9 +48,6 @@ mysqlImportPassword=
 import_key_buffer_size=
 import_max_heap_table_size=
 import_tmp_table_size=
-routing_key_buffer_size=
-routing_max_heap_table_size=
-routing_tmp_table_size=
 
 # Custom sudoers file
 csSudoers=/etc/sudoers.d/cyclestreets

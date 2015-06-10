@@ -387,6 +387,9 @@ then
 
     # Create a welcome tinkle
     ${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');"
+
+    # Initialize pseudoCron
+    ${superMysql} cyclestreets -e "update map_config set pseudoCron = DATE_SUB(CURDATE(), INTERVAL 1 DAY) WHERE id = 1;"
 fi
 
 # Archive db

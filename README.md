@@ -13,25 +13,48 @@ Tested, March 2015 on a Ubuntu Server 14.04.2 LTS VM with 1 GB RAM, 8GB HD.
 
 Add this repository to a machine using the following, as your normal username (not root). In the listing the grouped items can usually be cut and pasted together into the command shell, others require responding to a prompt:
 
-    cd ~
-    sudo apt-get -y install git
+```shell
+# Install git
+# user@machine:~$
+sudo apt-get -y install git
 
-    git clone https://github.com/cyclestreets/cyclestreets-setup.git
+# Tell git who you are
+# git config --global user.name "Your git username"
+# git config --global user.email "Your git email"
 
-    sudo mv cyclestreets-setup /opt
-    cd /opt/cyclestreets-setup/
-    git config core.sharedRepository group
+# Clone the cyclestreets-setup repo
+git clone https://github.com/cyclestreets/cyclestreets-setup.git
 
-    sudo adduser --gecos "" cyclestreets
+# Move it to the right place
+sudo mv cyclestreets-setup /opt
+cd /opt/cyclestreets-setup/
+git config core.sharedRepository group
 
-    sudo addgroup rollout
+# Create the cyclestreets user - without prompting for e.g. office 'phone number
+sudo adduser --gecos "" cyclestreets
 
-    # Some command shells won't detect the preceding group change, so reset your shell eg. by logging out and then back in again
-    sudo chown -R cyclestreets.rollout /opt/cyclestreets-setup
+# Create the rollout group
+sudo addgroup rollout
 
-    sudo chmod -R g+w /opt/cyclestreets-setup
-    sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;
+# Add your username to the rollout group
+sudo adduser *username* rollout
 
+# Some command shells won't detect the preceding group change,
+# so reset your shell eg. by logging out and then back in again:
+exit
+
+# Login
+# user@other-machine:~$
+ssh user@machine
+
+# Set ownership and group
+# user@machine:~$
+sudo chown -R cyclestreets.rollout /opt/cyclestreets-setup
+
+# Set group permissions and add sticky group bit
+sudo chmod -R g+w /opt/cyclestreets-setup
+sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;
+```
 
 ## Install website
 

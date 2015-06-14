@@ -131,8 +131,13 @@ fi
 # Enable mod_headers, so that the Access-Control-Allow-Origin header is sent
 a2enmod headers
 
-# Reload apache
-service apache2 reload
+# SSL is installed by default, but may need enabling which requires a restart
+if ! apache2ctl -M | grep ssl_module > /dev/null 2>&1
+then
+    echo "#	Enabaling apache ssl"
+    a2enmod ssl
+    service apache2 restart
+fi
 
 # Report completion
 echo "#	Installing tilecache completed"

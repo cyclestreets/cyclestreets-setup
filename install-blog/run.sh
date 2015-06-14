@@ -17,7 +17,7 @@ set -e
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
+# The multi-line method of geting the script directory is needed to enable the script to be called from elsewhere.
 SOURCE="${BASH_SOURCE[0]}"
 DIR="$( dirname "$SOURCE" )"
 while [ -h "$SOURCE" ]
@@ -33,13 +33,13 @@ SCRIPTDIRECTORY=$DIR
 configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ./${configFile} ]; then
+if [ ! -x SCRIPTDIRECTORY/${configFile} ]; then
     echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file."
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
+. SCRIPTDIRECTORY/${configFile}
 
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script

@@ -17,8 +17,16 @@ set -e
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
-DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
+SOURCE="${BASH_SOURCE[0]}"
+DIR="$( dirname "$SOURCE" )"
+while [ -h "$SOURCE" ]
+do
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 SCRIPTDIRECTORY=$DIR
 
 # Name of the credentials file

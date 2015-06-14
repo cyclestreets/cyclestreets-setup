@@ -26,7 +26,7 @@ mkdir -p $lockdir
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
+# The multi-line method of geting the script directory is needed to enable the script to be called from elsewhere.
 SOURCE="${BASH_SOURCE[0]}"
 DIR="$( dirname "$SOURCE" )"
 while [ -h "$SOURCE" ]

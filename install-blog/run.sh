@@ -58,7 +58,7 @@ fi;
 # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
 blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
 ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
-#${superMysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
+${superMysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
 
 
 #!# Install Wordpress unattended
@@ -106,7 +106,7 @@ if [ -d /etc/apache2/conf-available ]; then
 fi
 
 # Reload apache
-service /apache2 reload >> ${setupLogFile}
+service apache2 reload >> ${setupLogFile}
 
 # Ensure the blog files are writable, as otherwise automatic upgrade will fail
 chown -R www-data /websites/blog/content/

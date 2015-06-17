@@ -86,6 +86,16 @@ cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
 EOF
     fi
 
+    # Extra option for failover-deployment
+    if [ -n "${liveMachineAddress}" ]; then
+
+	# Add passwordless sudo access to set photomap files ownership
+	cat >> ${csSudoers} << EOF
+# Passwordless sudo to chown photomap files
+cyclestreets ALL = (root) NOPASSWD: /opt/cyclestreets-setup/utility/chownPhotomapWwwdata.sh
+EOF
+    fi
+
     # Make it read only
     chmod 440 ${csSudoers}
 fi

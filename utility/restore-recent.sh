@@ -38,10 +38,7 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${web
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
 
 # Fix the ownership after the rsync above using the same fixups as applied by failover-deployment/install-website.sh - but that requires root user.
-echo $password | sudo -Sk -p"[sudo] Password for %p (No need to enter - it is provided by the script. This prompt should be ignored.)" chown -R www-data ${websitesContentFolder}/data/photomap
-echo $password | sudo -Sk chown -R www-data ${websitesContentFolder}/data/photomap2
-echo $password | sudo -Sk chown -R www-data ${websitesContentFolder}/data/photomap3
-echo $password | sudo -Sk chown -R www-data ${websitesContentFolder}/data/synchronization
+sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh
 
 #	Also sync the blog code
 # Note: WordPress checks that files are owned by the webserver user (rather than just checking they are writable) so these fixes may be necessary

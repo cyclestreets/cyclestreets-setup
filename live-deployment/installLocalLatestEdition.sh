@@ -90,8 +90,9 @@ if [ -z "${latestEdition}" ]; then
     exit 1
 fi
 
-# Check the (at least one of the) files exist
+# Check (at least one of) the files exist
 if [ ! -e ${importMachineEditions}/${latestEdition}/legDetail.tsv ]; then
+    # This usually happens if trying re reinstall.
     echo "Error: TSV files missing in: ${importMachineEditions}/${latestEdition}"
     exit 1
 fi

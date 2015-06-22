@@ -77,7 +77,7 @@ fi
 
 # Check the import folder is defined
 if [ -z "${importMachineEditions}" ]; then
-    echo "#	The import output folder is not defined."
+    echo "Error: The import output folder is not defined."
     exit 1
 fi
 
@@ -86,17 +86,22 @@ latestEdition=`ls -1t ${importMachineEditions} | head -n1`
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then
-    echo "#	No editions found in ${importMachineEditions}"
+    echo "Error: No editions found in ${importMachineEditions}"
     exit 1
 fi
+
+# Check the (at least one of the) files exist
+if [ ! -e ${importMachineEditions}/${latestEdition}/legDetail.tsv ]; then
+    echo "Error: TSV files missing in: ${importMachineEditions}/${latestEdition}"
+    exit 1
+fi
+
 
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
-    echo "#	Edition ${latestEdition} is already installed."
-    echo "#	Remove it with: rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
-    exit 1
+    echo "#	Edition ${latestEdition} is already installed - removing."
+    rm -r ${websitesContentFolder}/data/routing/${latestEdition};
 fi
-
 
 #	Report finding
 echo "#	Installing latest edition: ${latestEdition}"

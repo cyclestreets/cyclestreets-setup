@@ -107,11 +107,8 @@ fi
 #	Report finding
 echo "#	Installing latest edition: ${latestEdition}"
 
-# Create the new folder
-mkdir -p ${websitesContentFolder}/data/routing/${latestEdition}
-
-# Move the tsv files
-mv ${importMachineEditions}/${latestEdition}/*.tsv ${websitesContentFolder}/data/routing/${latestEdition}
+# Move the folder
+mv ${importMachineEditions}/${latestEdition} ${websitesContentFolder}/data/routing
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${latestEdition}/installationCompleted.txt"

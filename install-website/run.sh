@@ -591,7 +591,7 @@ fi
 # Advise setting up
 if [ "${csServerName}" != "localhost" ]; then
     echo "#	Ensure ${csServerName} routes to this machine, eg by adding this line to /etc/hosts"
-    echo "127.0.0.1	${csServerName} api.${csServerName}"
+    echo "127.0.0.1	${csServerName} ${apiServerName}"
 fi
 
 # Announce end of script

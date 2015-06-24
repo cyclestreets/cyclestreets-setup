@@ -377,7 +377,7 @@ then
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
-    ${superMysql} cyclestreets -e "update map_config set apiV2Url='http://${apiServerName}/v2/' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csServerName}:9000/', apiV2Url='http://${apiServerName}/v2/' where id = 1;"
 
     # Set the gui server
     # #!# This needs review - on one live machine it is set as localhost and always ignored

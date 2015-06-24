@@ -359,8 +359,8 @@ then
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
--e "s/YOUR_csServerName/${csServerName}/g" \
--e "s/YOUR_apiServerName/${apiServerName}/g" \
+-e "s/YOUR_CSSERVERNAME/${csServerName}/g" \
+-e "s/YOUR_APISERVERNAME/${apiServerName}/g" \
 	${phpConfig}
 fi
 

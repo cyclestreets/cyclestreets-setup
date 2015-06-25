@@ -94,7 +94,7 @@ echo "#	MySQL configured, but consider running the following security step from 
 echo "#	$(date)	Restarting MySQL"
 sudo service mysql restart
 
-# Cron jobs - note the timings of these should be the same as in the fromFailOver.sh
+# Cron jobs - note the timings of these should be the same as in the fromFallback.sh
 if $installCronJobs ; then
 
     # Update scripts

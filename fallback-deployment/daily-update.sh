@@ -5,8 +5,8 @@
 # This script is idempotent - it can be safely re-run without destroying existing data.
 # It should be run as cyclestreets user - a check for that occurs below.
 
-# When in failover mode uncomment the next two lines:
-#echo "# Skipping in failover mode"
+# When in fallback mode uncomment the next two lines:
+#echo "# Skipping in fallback mode"
 #exit 1
 
 ### Stage 1 - general setup
@@ -89,7 +89,7 @@ fi
 ### Stage 2 - CycleStreets regular tasks for www
 
 #	Download and restore the CycleStreets database.
-#	This section is simlar to failover-deployment/fromFailOver.sh
+#	This section is simlar to fallback-deployment/fromFallback.sh
 #	Folder locations
 server=${liveMachineAddress}
 dumpPrefix=www

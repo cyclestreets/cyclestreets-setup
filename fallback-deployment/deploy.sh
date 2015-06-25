@@ -52,28 +52,28 @@ if $installCronJobs ; then
     installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
 
     # Backup data every day at 5:05 am
-    installCronJob ${username} "5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh"
+    installCronJob ${username} "5 5 * * * ${ScriptHome}/fallback-deployment/daily-update.sh"
 
     # Hourly zapping at 13 mins past every hour
     installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
     # Hourly backup of Cyclescape
-    installCronJob ${username} "42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateDaily.sh"
+    installCronJob ${username} "42 7 * * * ${ScriptHome}/fallback-deployment/cyclescapeDownloadAndRotateDaily.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
-    installCronJob ${username} "19 9 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh"
+    installCronJob ${username} "19 9 * * * ${ScriptHome}/fallback-deployment/csDevDownloadAndRotateDaily.sh"
 
     # Daily rotate of Cyclescape
-    installCronJob ${username} "26 8 * * * ${ScriptHome}/failover-deployment/cyclescapeRotateDaily.sh"
+    installCronJob ${username} "26 8 * * * ${ScriptHome}/fallback-deployment/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
-    installCronJob ${username} "39 8 * * * ${ScriptHome}/failover-deployment/cyclestreetsRotateDaily.sh"
+    installCronJob ${username} "39 8 * * * ${ScriptHome}/fallback-deployment/cyclestreetsRotateDaily.sh"
 
     # Daily update of code base and clearout of old routing files at 9:49am
     installCronJob ${username} "49 9 * * * ${ScriptHome}/utility/backup-maintenance.sh"
 
     # Weekly rotation of backups
-    installCronJob ${username} "50 10 * * 7 ${ScriptHome}/failover-deployment/cyclestreetsRotateWeekly.sh"
+    installCronJob ${username} "50 10 * * 7 ${ScriptHome}/fallback-deployment/cyclestreetsRotateWeekly.sh"
 fi
 
 # Confirm end of script

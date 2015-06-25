@@ -4,8 +4,8 @@
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
-# When in failover mode uncomment the next two lines:
-#echo "# Skipping in failover mode"
+# When in fallback mode uncomment the next two lines:
+#echo "# Skipping in fallback mode"
 #exit 1
 
 # Start an import run

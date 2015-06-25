@@ -15,7 +15,7 @@
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
 # An existing routing service must already be running
-# If a failOverServer is specified, it must already be serving routes for the new edition.
+# If a fallbackServer is specified, it must already be serving routes for the new edition.
 
 ### Stage 1 - general setup
 
@@ -127,7 +127,7 @@ else
 	exit 1
     fi
 
-    # Check the failover routing edition is the same as the proposed edition
+    # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingServer}"
 	echo "#	Restart it using: sudo service cycleroutingd restart"
@@ -172,26 +172,26 @@ fi
 # Clear this cache - (whose rows relate to a specific routing edition)
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
-# If a failoverRoutingServer is supplied, check it is running and using the proposed edition
-if [ -n "${failoverRoutingServer}" ]; then
+# If a fallbackRoutingServer is supplied, check it is running and using the proposed edition
+if [ -n "${fallbackRoutingServer}" ]; then
 
     # POST the request to the server
-    failoverRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${failoverRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    fallbackRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${fallbackRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
-    # Check the failover routing edition is the same as the proposed edition
-    if [ "${newEdition}" != "${failoverRoutingEdition}" ]; then
-	echo "#	The failover server is running: ${failoverRoutingEdition} which differs from the proposed edition: ${newEdition}"
+    # Check the fallback routing edition is the same as the proposed edition
+    if [ "${newEdition}" != "${fallbackRoutingEdition}" ]; then
+	echo "#	The fallback server is running: ${fallbackRoutingEdition} which differs from the proposed edition: ${newEdition}"
 	exit 1
     fi
 
-    # Use the failover server during switch over
-    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${failoverRoutingServer}' WHERE id = 1;";
-    echo "#	Now using failover routing service"
+    # Use the fallback server during switch over
+    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingServer}' WHERE id = 1;";
+    echo "#	Now using fallback routing service"
 else
 
     # Set the journeyPlannerStatus to closed for the duration
     ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'closed' WHERE id = 1;";
-    echo "#	As there is no failover routing server the journey planner service has been closed for the duration of the switch over."
+    echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
 # Configure the routing engine to use the new edition

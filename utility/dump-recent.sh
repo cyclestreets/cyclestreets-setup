@@ -11,7 +11,7 @@ minItineraryId=$(${superMysql} cyclestreets -Nse "select min(id) from map_itiner
 # If the minItineraryId is NULL then the repartitioning can be skipped
 if [ $minItineraryId = "NULL" ]; then
 
-    #	No new routes to partition (can happen e.g if the site is in a failover mode)
+    #	No new routes to partition (can happen e.g if the site is in a fallback mode)
     echo "$(date)	Skipping repartition" >> ${setupLogFile}
 
 else

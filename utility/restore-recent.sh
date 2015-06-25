@@ -37,7 +37,7 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${web
 # GeoSynchronization photos
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
 
-# Fix the ownership after the rsync above using the same fixups as applied by failover-deployment/install-website.sh - but that requires root user.
+# Fix the ownership after the rsync above using the same fixups as applied by fallback-deployment/install-website.sh - but that requires root user.
 sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
 
 #	Also sync the blog code

@@ -28,8 +28,8 @@ EOF
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 # Requires password-less access to the import machine, using a public key.
 
-# When in failover mode uncomment the next two lines:
-#echo "# Skipping in failover mode"
+# When in fallback mode uncomment the next two lines:
+#echo "# Skipping in fallback mode"
 #exit 1
 
 quietmode()

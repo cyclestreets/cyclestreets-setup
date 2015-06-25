@@ -86,7 +86,7 @@ cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
 EOF
     fi
 
-    # Extra option for failover-deployment
+    # Extra option for fallback-deployment
     if [ -n "${liveMachineAddress}" ]; then
 
 	# Add passwordless sudo access to set photomap files ownership

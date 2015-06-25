@@ -12,8 +12,8 @@
 
 # This script is idempotent - it can be safely re-run without destroying existing data.
 
-# When in failover mode uncomment the next two lines:
-#echo "# Skipping in failover mode"
+# When in fallback mode uncomment the next two lines:
+#echo "# Skipping in fallback mode"
 #exit 1
 
 ### Stage 1 - general setup

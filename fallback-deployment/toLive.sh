@@ -1,6 +1,6 @@
 #!/bin/bash
-#	When the failover is running as the live server, this script can be used to generate files to keep live machine in sync.
-#	It should be run manually on the failover machine, as user cyclestreets.
+#	When the fallback is running as the live server, this script can be used to generate files to keep live machine in sync.
+#	It should be run manually on the fallback machine, as user cyclestreets.
 
 ### Stage 1 - general setup
 
@@ -74,15 +74,15 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 fi
 
 ### Stage 2
-dumpPrefix=failover
+dumpPrefix=fallback
 
 # Dump recent data
 . ${SCRIPTDIRECTORY}/../utility/dump-recent.sh
 
 # Restore these cronjobs
-cat <(crontab -l) <(echo "49 7 * * * ${ScriptHome}/failover-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
-cat <(crontab -l) <(echo "42 7 * * * ${ScriptHome}/failover-deployment/cyclescapeDownloadAndRotateDaily.sh") | crontab -
-cat <(crontab -l) <(echo "5 5 * * * ${ScriptHome}/failover-deployment/daily-update.sh") | crontab -
+cat <(crontab -l) <(echo "49 7 * * * ${ScriptHome}/fallback-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
+cat <(crontab -l) <(echo "42 7 * * * ${ScriptHome}/fallback-deployment/cyclescapeDownloadAndRotateDaily.sh") | crontab -
+cat <(crontab -l) <(echo "5 5 * * * ${ScriptHome}/fallback-deployment/daily-update.sh") | crontab -
 cat <(crontab -l) <(echo "0 10 * * * ${ScriptHome}/import-deployment/import.sh") | crontab -
 
 # Finish

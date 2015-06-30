@@ -422,8 +422,11 @@ then
     ${superMysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
+# File to avoid re-download of the csExternalDataFile
+csExternalDataFileDownloaded=${websitesBackupsFolder}/csExternalDataFileDownloaded.txt
+
 # External db restore
-if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsFolder}/${csExternalDataFile} ]; then
+if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsFolder}/${csExternalDataFile} -a ! -e ${csExternalDataFileDownloaded} ]; then
 
 	# Report
 	echo "#	$(date)	Starting download of external database"
@@ -438,8 +441,13 @@ if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsF
 	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${superMysql} ${externalDb}
 
 	# Remove the archive to save space
-	# !! Can't remove as a reinstall would trigger another download.
-	# rm ${websitesBackupsFolder}/${csExternalDataFile}
+	rm ${websitesBackupsFolder}/${csExternalDataFile}
+
+	# Create an empty file to avoid re-download
+	cat > ${csExternalDataFileDownloaded} <<EOF
+Created by cyclestreets-setup/install-website/run.sh
+This file exists to avoid a re-download of the csExternalDataFile.
+EOF
 
 	# Report
 	echo "#	$(date)	Completed installation of external database"

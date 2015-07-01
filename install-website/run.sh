@@ -118,8 +118,8 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	ServerName ${csServerName}
 
 	# Logging
-	CustomLog /websites/www/logs/access.log combined
-	ErrorLog /websites/www/logs/error.log
+	CustomLog /websites/www/logs/${csServerName}-access.log combined
+	ErrorLog /websites/www/logs/${csServerName}-error.log
 
 	# Where the files are
 	DocumentRoot /websites/www/content/

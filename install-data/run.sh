@@ -85,7 +85,8 @@ vhConf=/etc/apache2/sites-available/data.conf
 if [ ! -f ${vhConf} ]; then
 
     # Create the local virtual host (avoid any backquotes in the text as they'll spawn sub-processes)
-    cat > ${localVirtualHostFile} << EOF
+    # Create the password file using: sudo htpasswd -c /websites/data/.htpasswd ${username}
+    cat > ${vhConf} << EOF
 # Data
 <VirtualHost *:80>
 

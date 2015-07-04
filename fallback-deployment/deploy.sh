@@ -57,14 +57,11 @@ if $installCronJobs ; then
     # Hourly zapping at 13 mins past every hour
     installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
-    # Hourly backup of Cyclescape
+    # Daily backup of Cyclescape
     installCronJob ${username} "42 7 * * * ${ScriptHome}/fallback-deployment/cyclescapeDownloadAndRotateDaily.sh"
 
     # Daily download of Cyclestreets Dev - subversion repo and trac
     installCronJob ${username} "19 9 * * * ${ScriptHome}/fallback-deployment/csDevDownloadAndRotateDaily.sh"
-
-    # Daily rotate of Cyclescape
-    installCronJob ${username} "26 8 * * * ${ScriptHome}/fallback-deployment/cyclescapeRotateDaily.sh"
 
     # Daily rotate of Cyclestreets
     installCronJob ${username} "39 8 * * * ${ScriptHome}/fallback-deployment/cyclestreetsRotateDaily.sh"

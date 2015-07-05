@@ -98,7 +98,26 @@ fi
 #    1) Pull down the latest dev code from https://github.com/openstreetmap/potlatch2
 #    2) Compile using Flex as detailed in the README, using the Flex install instructions at http://thomas.deuling.org/2011/05/install-flex-sdk-under-ubuntu-linux/
 #    3) Add in the local config, which are believed to be map_features.xml (position of transport block moved) and vectors.xml (which defines the external sources); possibly there are other files - needs to be checked
-tar xf /websites/www/backups/potlatchEditor.tgz -C /websites/www/content/edit
+potlatchEditorFile=potlatchEditor.tgz
+
+# Check if there is a password for the data store and that the file has not already been obtained
+if [ -n "${datapassword}" -a ! -e ${websitesBackupsFolder}/${potlatchEditorFile} ]; then
+
+	# Report
+	echo "#	$(date)	Starting download of potlatch editor"
+
+	# Download
+	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${potlatchEditorFile} -O ${websitesBackupsFolder}/${potlatchEditorFile}
+
+	# Report
+	echo "#	$(date)	Starting installation of potlatch editor"
+
+	# Unpack
+	tar xf ${websitesBackupsFolder}/potlatchEditor.tgz -C ${websitesContentFolder}/edit
+
+	# Report
+	echo "#	$(date)	Completed installation of potlatch editor"
+fi
 
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql

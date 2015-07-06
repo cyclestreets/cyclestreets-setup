@@ -209,8 +209,8 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
 	ServerName ${apiServerName}
 	
 	# Logging
-	CustomLog /websites/www/logs/${apiServerName}.access.log combined
-	ErrorLog /websites/www/logs/${apiServerName}.error.log
+	CustomLog /websites/www/logs/${apiServerName}-access.log combined
+	ErrorLog /websites/www/logs/${apiServerName}-error.log
 	
 	# Where the files are
 	DocumentRoot /websites/www/content/

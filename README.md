@@ -37,7 +37,7 @@ sudo adduser --gecos "" cyclestreets
 sudo addgroup rollout
 
 # Add your username to the rollout group
-sudo adduser *username* rollout
+sudo adduser `whoami` rollout
 
 # Some command shells won't detect the preceding group change,
 # so reset your shell eg. by logging out and then back in again:

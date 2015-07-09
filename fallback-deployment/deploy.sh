@@ -46,7 +46,12 @@ fi
 #. ../install-website/run.sh
 
 # Cyclescape prepare location
-mkdir -p /websites/cyclescape/backup
+cyclescapeFolder=/websites/cyclescape
+cyclescapeBackup=${cyclescapeBackup}/backup
+mkdir -p ${cyclescapeBackup}
+chown ${username}.${rollout} -R ${cyclescapeFolder}
+chmod g+w -R ${cyclescapeFolder}
+
 
 # Cron jobs
 if $installCronJobs ; then

@@ -104,7 +104,7 @@ fi
 apt-get update > /dev/null
 
 # Install basic software
-apt-get -y install wget subversion git emacs bzip2
+apt-get -y install wget dnsutils subversion git emacs nano bzip2
 
 # Install Apache, PHP
 echo "#	Installing Apache, MySQL, PHP"

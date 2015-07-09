@@ -60,6 +60,9 @@ fi
 # Switch to import folder
 cd ${importContentFolder}
 
+#	Ensure directory for new routing editions
+mkdir -p ${importContentFolder}/output
+
 # Setup a mysql configuration file which will allow the import user to run mysql commands without supplying credentials on the command line
 myImportCnfFile=${importContentFolder}/.myImportUserCredentials.cnf
 if [ ! -e ${myImportCnfFile} ]; then

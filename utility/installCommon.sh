@@ -247,6 +247,9 @@ if [ ! -e ${mySuperCredFile} ]; then
     # Create the file owned by the user
     ${asCS} touch ${mySuperCredFile}
 
+    # Remove other readability
+    ${asCS} chmod o-r ${mySuperCredFile}
+
     # Write config
     ${asCS} cat > ${mySuperCredFile} << EOF
 [client]

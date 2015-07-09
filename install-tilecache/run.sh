@@ -134,7 +134,7 @@ a2enmod headers
 # SSL is installed by default, but may need enabling which requires a restart
 if ! apache2ctl -M | grep ssl_module > /dev/null 2>&1
 then
-    echo "#	Enabaling apache ssl"
+    echo "#	Activating apache ssl"
     a2enmod ssl
     service apache2 restart
 fi

@@ -77,6 +77,8 @@ password='${mysqlImportPassword}'
 no-auto-rehash
 EOF
 
+    # Remove other readability
+    ${asCS} chmod o-r ${myImportCnfFile}
 fi
 
 # Create the settings file if it doesn't exist

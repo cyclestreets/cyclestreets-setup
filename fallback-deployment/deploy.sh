@@ -45,6 +45,9 @@ fi
 # !! Backup machine may also need different config options for the server - needs checking
 #. ../install-website/run.sh
 
+# Cyclescape prepare location
+mkdir -p /websites/cyclescape/backup
+
 # Cron jobs
 if $installCronJobs ; then
 

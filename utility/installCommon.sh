@@ -68,33 +68,18 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]
 
     # !! Potentially add more checks to the variables used in these sudoers expressions, such as ensuring the variables are full paths to the commands.
 
-    # Create it file that provides passwordless sudo access to the routing service - which needs root access to control running service
+    # Create file that provides passwordless sudo access to the routing service - which needs root access to control running service
+    # A number of other passwordless options are also included when operating in a variety of roles such as doing imports or running backup / restores.
     cat > ${csSudoers} << EOF
 # Permit cyclestreets user to control the routing service without a password
 cyclestreets ALL = (root) NOPASSWD: ${routingDaemonLocation}
-EOF
-
-    # Extra option for import
-    if [ -n "${importContentFolder}" ]; then
-
-	# Add passwordless sudo access to routing compression (which needs access to raw mysql files)
-	cat >> ${csSudoers} << EOF
 # Permit cyclestreets user to run the routing compression using sudo without a password
 cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
-EOF
-    fi
-
-    # Extra option for fallback-deployment
-    if [ -n "${liveMachineAddress}" ]; then
-
-	# Add passwordless sudo access to set photomap files ownership
-	cat >> ${csSudoers} << EOF
 # Passwordless sudo to chown photomap files
 cyclestreets ALL = (root) NOPASSWD: /opt/cyclestreets-setup/utility/chownPhotomapWwwdata.sh
 EOF
-    fi
 
     # Make it read only
     chmod 440 ${csSudoers}

@@ -87,7 +87,7 @@ chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 # See: http://xfloyd.net/blog/?p=745
 if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
 	apt-get -y install wkhtmltopdf  # Install dependencies
-	wget -P /tmp/ http://cznic.dl.sourceforge.net/project/wkhtmltopdf/archive/0.12.1/wkhtmltox-0.12.1_linux-trusty-amd64.deb
+	wget -P /tmp/ http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 	dpkg -i /tmp/wkhtmltox*.deb
 	rm /tmp/wkhtmltox*.deb
 fi

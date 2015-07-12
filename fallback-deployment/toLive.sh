@@ -44,20 +44,18 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Logging
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets toLive in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets toLive $(id)" >> ${setupLogFile}
+echo "#	CycleStreets toLive in progress"
+echo "#	$(date)	CycleStreets toLive $(id)"
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineAddress}" ]; then
-    echo "# A live machine must be defined in order to run updates" >> ${setupLogFile}
+    echo "# A live machine must be defined in order to run updates"
     exit 1
 fi
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "$(date) User ${username} must exist: please run the main website install script" >> ${setupLogFile}
+	echo "$(date) User ${username} must exist: please run the main website install script"
 	exit 1
 fi
 
@@ -69,7 +67,7 @@ fi
 
 # Ensure the main website installation is present
 if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-	echo "$(date) The main website installation must exist: please run the main website install script" >> ${setupLogFile}
+	echo "$(date) The main website installation must exist: please run the main website install script"
 	exit 1
 fi
 
@@ -80,12 +78,14 @@ dumpPrefix=fallback
 . ${SCRIPTDIRECTORY}/../utility/dump-recent.sh
 
 # Restore these cronjobs
-cat <(crontab -l) <(echo "49 7 * * * ${ScriptHome}/fallback-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
-cat <(crontab -l) <(echo "42 7 * * * ${ScriptHome}/fallback-deployment/cyclescapeDownloadAndRotateDaily.sh") | crontab -
-cat <(crontab -l) <(echo "5 5 * * * ${ScriptHome}/fallback-deployment/daily-update.sh") | crontab -
-cat <(crontab -l) <(echo "0 10 * * * ${ScriptHome}/import-deployment/import.sh") | crontab -
+echo "#	$(date)	It is recommended to manually uncomment relevant cron jobs"
+
+#cat <(crontab -l) <(echo "49 7 * * * ${ScriptHome}/fallback-deployment/csDevDownloadAndRotateDaily.sh") | crontab -
+#cat <(crontab -l) <(echo "42 7 * * * ${ScriptHome}/fallback-deployment/cyclescapeDownloadAndRotateDaily.sh") | crontab -
+#cat <(crontab -l) <(echo "5 5 * * * ${ScriptHome}/fallback-deployment/daily-update.sh") | crontab -
+#cat <(crontab -l) <(echo "0 10 * * * ${ScriptHome}/import-deployment/import.sh") | crontab -
 
 # Finish
-echo "$(date)	All done" >> ${setupLogFile}
+echo "#	$(date)	All done"
 
 # End of file

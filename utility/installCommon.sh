@@ -186,13 +186,16 @@ fi
 
 # Assume ownership of all the new files and folders
 echo "#	Starting a series of recursive chown/chmod to set correct file ownership and permissions"
+echo "#	chown -R ${username} /websites"
 chown -R ${username} /websites
 
 # Add group writability
 # This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
+echo "#	chmod -R g+w /websites"
 chmod -R g+w /websites
 
 # Allow the Apache webserver process to write / add to the data/ folder
+echo "#	chown -R www-data ${websitesContentFolder}/data"
 chown -R www-data ${websitesContentFolder}/data
 
 # Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility

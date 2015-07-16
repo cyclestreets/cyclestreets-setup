@@ -194,7 +194,7 @@ chmod -R g+w /websites
 # Allow the Apache webserver process to write / add to the data/ folder
 chown -R www-data ${websitesContentFolder}/data
 
-# Setup a .cnf file which sets up mysql to connect with utf8
+# Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility
 mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf
 if [ ! -e ${mysqlUtf8CnfFile} ]; then
 
@@ -205,18 +205,19 @@ if [ ! -e ${mysqlUtf8CnfFile} ]; then
     chown ${username}:${rollout} ${mysqlUtf8CnfFile}
 
     # Write config
+    # https://mathiasbynens.be/notes/mysql-utf8mb4
     cat > ${mysqlUtf8CnfFile} << EOF
-# http://stackoverflow.com/questions/3513773/change-mysql-default-character-set-to-utf-8-in-my-cnf
 [client]
-default-character-set=utf8
+default-character-set=utf8mb4
 
 [mysql]
-default-character-set=utf8
+default-character-set=utf8mb4
 
 [mysqld]
-collation-server = utf8_unicode_ci
-init-connect='SET NAMES utf8'
-character-set-server = utf8
+character-set-client-handshake = FALSE
+collation-server = utf8mb4_unicode_ci
+character-set-server = utf8mb4
+sql_mode=NO_ENGINE_SUBSTITUTION
 EOF
 
     # Restart mysql

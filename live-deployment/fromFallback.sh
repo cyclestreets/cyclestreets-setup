@@ -54,6 +54,14 @@ if [ ! "$(id -nu)" = "${username}" ]; then
     exit 1
 fi
 
+# Check a fallback server is setup
+if [ -z "${fallbackServer}" ]; then
+    echo "#	No fallback server is setup in the config."
+    exit 1
+fi
+
+
+
 # Logging
 echo "#	$(date)	CycleStreets fromFallback $(id)"
 

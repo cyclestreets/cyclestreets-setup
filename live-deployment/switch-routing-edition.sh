@@ -14,8 +14,7 @@
 
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
-# An existing routing service must already be running
-# If a fallbackServer is specified, it must already be serving routes for the new edition.
+# If a fallbackRoutingServer is specified, it must already be serving routes for the new edition.
 
 ### Stage 1 - general setup
 

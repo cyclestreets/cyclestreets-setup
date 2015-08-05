@@ -286,6 +286,7 @@ if [ $? != 0 ]; then
    exit 1
 fi
 
+# !! This is weak because mysql cannot be restarted while this long unpack direct to mysql repo is unfinished.
 # Unpack the database files, preserve permissions, verbose into mysql
 echo $password | sudo -S tar xpvf tables.tar.gz -C ${dbFilesLocation}${importEdition}
 

@@ -286,9 +286,18 @@ if [ $? != 0 ]; then
    exit 1
 fi
 
-# !! This is weak because mysql cannot be restarted while this long unpack direct to mysql repo is unfinished.
-# Unpack the database files, preserve permissions, verbose into mysql
-echo $password | sudo -S tar xpvf tables.tar.gz -C ${dbFilesLocation}${importEdition}
+# Create a place to unpack mysql tables
+mysqlTablesFolder=${newEditionFolder}/mysqltables
+mkdir -p ${mysqlTablesFolder}
+
+# Unpack the database files, preserve permissions, verbose
+echo $password | sudo -S tar xpvf tables.tar.gz -C ${mysqlTablesFolder}
+
+# Move into mysql
+echo $password | sudo -S mv ${mysqlTablesFolder}/* ${dbFilesLocation}${importEdition}
+
+# Remove the folder, which should by now be empty
+rmdir ${mysqlTablesFolder}
 
 # Remove the zip
 rm tables.tar.gz

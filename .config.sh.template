@@ -83,7 +83,7 @@ websitesBackupsFolder=/websites/www/backups
 websitesLogsFolder=/websites/www/logs
 importContentFolder=/websites/www/import
 
-# Names a myslq configuration file which gets setup to allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
+# Names a mysql configuration file which gets setup to allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 
 # Useful binding

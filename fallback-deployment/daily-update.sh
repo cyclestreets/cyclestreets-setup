@@ -63,26 +63,27 @@ echo "$(date)	CycleStreets daily update $(id)" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineAddress}" ]; then
-    echo "# A live machine must be defined in order to run updates" >> ${setupLogFile}
+    # Echoed messages like this will generate emails when run via cron
+    echo "# A live machine must be defined in order to run updates"
     exit 1
 fi
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "$(date) User ${username} must exist: please run the main website install script" >> ${setupLogFile}
-	exit 1
+    echo "$(date) User ${username} must exist: please run the main website install script"
+    exit 1
 fi
 
 # Ensure this script is run as cyclestreets user
 if [ ! "$(id -nu)" = "${username}" ]; then
-    echo "#	This script must be run as user ${username}, rather than as $(id -nu)." 1>&2
+    echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
     exit 1
 fi
 
 # Ensure the main website installation is present
 if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-	echo "$(date) The main website installation must exist: please run the main website install script" >> ${setupLogFile}
-	exit 1
+    echo "$(date) The main website installation must exist: please run the main website install script"
+    exit 1
 fi
 
 

@@ -39,6 +39,10 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Installer
+[[ $baseOS = "Ubuntu" ]] && packageInstall="apt-get -y install" || packageInstall="brew install"
+[[ $baseOS = "Ubuntu" ]] && packageUpdate="apt-get update" || packageUpdate="brew update"
+
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 

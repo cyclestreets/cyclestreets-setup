@@ -2,6 +2,10 @@
 # Contains credentials
 # This is a template file, save as simply .config.sh and set your own values below. Make it executable.
 
+# Installing on Ubuntu or Mac
+baseOS=Ubuntu
+#baseOS=Mac
+
 # Define the CycleStreets server name and e-mail for the VirtualHost
 # Several option groups here, comment in / out as necessary
 # Localhost

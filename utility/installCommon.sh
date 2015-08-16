@@ -22,6 +22,12 @@ if id -u ${username} >/dev/null 2>&1; then
 else
     echo "#	User ${username} does not exist: creating now."
 
+    # Can't easily create usernames on the Mac
+    if [ $baseOS = "Mac" ]; then
+	echo "#	Can't easily create usernames on the Mac"
+	exit 1
+    fi
+
     # Request a password for the CycleStreets user account; see http://stackoverflow.com/questions/3980668/how-to-get-a-password-from-a-shell-script-without-echoing
     if [ ! ${password} ]; then
 	stty -echo
@@ -86,10 +92,10 @@ EOF
 fi
 
 # Prepare the apt index; it may be practically non-existent on a fresh VM
-apt-get update > /dev/null
+$packageUpdate > /dev/null
 
 # Install basic software
-apt-get -y install wget dnsutils man-db subversion git emacs nano bzip2
+$packageInstall wget dnsutils man-db subversion git emacs nano bzip2
 
 # Install Apache, PHP
 echo "#	Installing Apache, MySQL, PHP"
@@ -109,22 +115,22 @@ echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | deb
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
 # Install MySQL 5.6, which will also start it
-apt-get -y install mysql-server-5.6 mysql-client-5.6
+$packageInstall mysql-server-5.6 mysql-client-5.6
 
 # Install Apache (2.4)
 echo "#	Installing core webserver packages"
-apt-get -y install apache2
+$packageInstall apache2
 
 # The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:
-apt-get -y install python-software-properties software-properties-common
+$packageInstall python-software-properties software-properties-common
 
 # PHP 5.6; see: http://phpave.com/upgrade-to-php-56-on-ubuntu-1404-lts/
 add-apt-repository -y ppa:ondrej/php5-5.6
-apt-get update
-apt-get -y install php5 php5-gd php5-cli php5-mysql
+$packageUpdate
+$packageInstall php5 php5-gd php5-cli php5-mysql
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
-# apt-get -y install phpmyadmin
+# $packageInstall phpmyadmin
 
 # Determine the current actual user
 currentActualUser=`who am i | awk '{print $1}'`

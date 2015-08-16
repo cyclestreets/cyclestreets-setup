@@ -6,8 +6,8 @@ response and message to SMS and e-mail in the event of a problem.
 ## Installation
 
 	# Ensure dependencies (PHP, and a mail-sending program) installed
-	sudo apt-get install php5
-	sudo apt-get install exim4
+	sudo apt-get -y install php5
+	sudo apt-get -y install exim4
 
 	# Clone the repository
 	cd ~

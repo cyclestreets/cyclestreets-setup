@@ -10,7 +10,7 @@
 #
 # Configure
 # Install this package on the relevant server:
-# apt-get install munin-node
+# apt-get -y install munin-node
 #
 # Create a link to this script from the munin configuration:
 # sudo ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets

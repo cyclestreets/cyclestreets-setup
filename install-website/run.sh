@@ -51,9 +51,8 @@ fi
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
 apt-get -y install imagemagick php5-imagick
 
-# Apache/PHP performance packages (mod_deflate for Apache, APC cache for PHP)
+# Enable mod_deflate for Apache
 sudo a2enmod deflate
-apt-get -y install php-apc
 service apache2 restart
 
 # Install Python

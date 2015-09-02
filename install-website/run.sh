@@ -94,6 +94,9 @@ if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
 	dpkg -i /tmp/wkhtmltox*.deb
 	rm /tmp/wkhtmltox*.deb
 fi
+# On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
+# brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb
+
 
 # Install Potlatch editor
 #!# This currently assumes the existence of the .tgz file; need to make this part of a repo at some point

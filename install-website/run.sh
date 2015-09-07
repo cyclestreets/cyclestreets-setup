@@ -46,10 +46,6 @@ if [ -z "${baseOS}" ]; then
 fi
 echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 
-# Installer
-[[ $baseOS = "Ubuntu" ]] && packageInstall="apt-get -y install" || packageInstall="brew install"
-[[ $baseOS = "Ubuntu" ]] && packageUpdate="apt-get update" || packageUpdate="brew update"
-
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 
@@ -95,6 +91,7 @@ chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 # Note: using "apt-get -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
 # See: http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
 # See: http://xfloyd.net/blog/?p=745
+# Note if it breaks here try: apt-get -f install
 if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
 	apt-get -y install wkhtmltopdf  # Install dependencies
 	wget -P /tmp/ http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb

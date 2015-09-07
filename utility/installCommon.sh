@@ -91,6 +91,10 @@ EOF
     chmod 440 ${csSudoers}
 fi
 
+# Installer
+[[ $baseOS = "Ubuntu" ]] && packageInstall="apt-get -y install" || packageInstall="brew install"
+[[ $baseOS = "Ubuntu" ]] && packageUpdate="apt-get update" || packageUpdate="brew update"
+
 # Prepare the apt index; it may be practically non-existent on a fresh VM
 $packageUpdate > /dev/null
 

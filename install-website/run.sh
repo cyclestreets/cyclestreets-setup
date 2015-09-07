@@ -39,6 +39,13 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Check a base OS has been defined
+if [ -z "${baseOS}" ]; then
+    echo "#	Please define a value for baseOS in the config file."
+    exit 1
+fi
+echo "#	Installing CycleStreets website for base OS: ${baseOS}"
+
 # Installer
 [[ $baseOS = "Ubuntu" ]] && packageInstall="apt-get -y install" || packageInstall="brew install"
 [[ $baseOS = "Ubuntu" ]] && packageUpdate="apt-get update" || packageUpdate="brew update"

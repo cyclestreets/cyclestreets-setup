@@ -40,6 +40,13 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Check a base OS has been defined
+if [ -z "${baseOS}" ]; then
+    echo "#	Please define a value for baseOS in the config file."
+    exit 1
+fi
+echo "#	Installing CycleStreets import for base OS: ${baseOS}"
+
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 

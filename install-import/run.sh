@@ -75,7 +75,7 @@ myImportCnfFile=${importContentFolder}/.myImportUserCredentials.cnf
 if [ ! -e ${myImportCnfFile} ]; then
 
     # Create config file
-    ${asCS} cat > ${myImportCnfFile} << EOF
+    cat > ${myImportCnfFile} << EOF
 [client]
 user=${mysqlImportUsername}
 password='${mysqlImportPassword}'
@@ -87,8 +87,11 @@ password='${mysqlImportPassword}'
 no-auto-rehash
 EOF
 
+    # Ownership
+    chown ${username}.${rollout} ${myImportCnfFile}
+
     # Remove other readability
-    ${asCS} chmod o-r ${myImportCnfFile}
+    chmod o-r ${myImportCnfFile}
 fi
 
 # Create the settings file if it doesn't exist

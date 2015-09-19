@@ -20,14 +20,6 @@ fi
 # Bomb out if something goes wrong
 set -e
 
-# Lock directory
-lockdir=/var/lock/cyclestreets
-mkdir -p $lockdir
-
-# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
-(
-	flock -n 9 || { echo '#	An import is already running' ; exit 1; }
-
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733
@@ -88,6 +80,14 @@ if [ -n "${importDisk}" ]; then
         exit 1
     fi
 fi
+
+# Lock directory
+lockdir=/var/lock/cyclestreets
+mkdir -p $lockdir
+
+# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
+(
+	flock -n 9 || { echo '#	An import is already running' ; exit 1; }
 
 # Stop the routing service - if it is installed
 if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then

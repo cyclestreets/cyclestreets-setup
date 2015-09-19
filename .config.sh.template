@@ -113,6 +113,7 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 routingDaemonLocation=/etc/init.d/cycleroutingd
 installRoutingAsDaemon=true
+# Don't stop routing service during import by leaving this variable empty:
 stopRoutingDuringImport=yes
 
 ## Local routing server

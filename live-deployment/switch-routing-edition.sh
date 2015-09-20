@@ -226,6 +226,7 @@ localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has restarted
+# !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
     sleep 10
     localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")

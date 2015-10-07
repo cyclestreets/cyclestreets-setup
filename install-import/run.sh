@@ -56,6 +56,9 @@ if [ ! -d "${websitesContentFolder}" ]; then
     exit 1
 fi
 
+# GDAL - which provides tools for reading elevation data
+$packageInstall gdal-bin
+
 # For the time being [:] 14 Apr 2015 the import is a symbolic link
 if [ ! -L "${importContentFolder}" ]; then
 

@@ -133,9 +133,6 @@ add-apt-repository -y ppa:ondrej/php5-5.6
 $packageUpdate
 $packageInstall php5 php5-gd php5-cli php5-mysql
 
-# GDAL - which provides tools for reading elevation data
-$packageInstall gdal-bin
-
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # $packageInstall phpmyadmin
 

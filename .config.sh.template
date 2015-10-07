@@ -4,6 +4,7 @@
 
 # Installing on Ubuntu or Mac
 baseOS=Ubuntu
+# !! Mac install is in an unfinished state and needs much more work
 #baseOS=Mac
 
 # Define the CycleStreets server name and e-mail for the VirtualHost

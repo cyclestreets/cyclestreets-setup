@@ -233,6 +233,24 @@ if [ -n "${asterDataFile}" -a ! -d ${unpackASTERfolder} ]; then
 	tar xf ${websitesBackupsFolder}/${asterDataFile} -C ${unpackASTERfolder}
 fi
 
+# Check if USGS NED data is desired and that it has not already been downloaded
+unpackUSGSNEDfolder=${importContentFolder}/data/elevation/usgsned
+if [ -n "${usgsnedDataFile}" -a ! -d ${unpackUSGSNEDfolder} ]; then
+
+	# Report
+	echo "#	Starting download of USGSNED data 850M"
+
+	# Download
+	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${usgsnedDataFile} -O ${websitesBackupsFolder}/${usgsnedDataFile}
+
+	# Report
+	echo "#	Starting installation of USGSNED data"
+
+	# Create folder and unpack
+	mkdir -p ${unpackUSGSNEDfolder}/img
+	tar xf ${websitesBackupsFolder}/${usgsnedDataFile} -C ${unpackUSGSNEDfolder}/img
+fi
+
 # Confirm end of script
 echo "#	$(date)	All now installed."
 

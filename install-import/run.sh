@@ -250,8 +250,9 @@ if [ -n "${usgsnedDataFile}" -a ! -d ${unpackUSGSNEDfolder} ]; then
 	echo "#	Starting installation of USGSNED data"
 
 	# Create folder and unpack
+	# Was packed using: tar cjvf /websites/data/content/USGS_NED_13.tar.bz2 -C /websites/www/import/data/elevation/usgsned img
 	mkdir -p ${unpackUSGSNEDfolder}/img
-	tar xf ${websitesBackupsFolder}/${usgsnedDataFile} -C ${unpackUSGSNEDfolder}/img
+	tar xf ${websitesBackupsFolder}/${usgsnedDataFile} -C ${unpackUSGSNEDfolder}
 fi
 
 # Confirm end of script

@@ -46,6 +46,9 @@ if [ -z "${baseOS}" ]; then
 fi
 echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 
+# Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory
+. ${ScriptHome}/utility/installBaseWebserver.sh
+
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 

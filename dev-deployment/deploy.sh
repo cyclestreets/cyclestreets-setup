@@ -1,6 +1,6 @@
 #!/bin/bash
-# Script to deploy CycleStreets Dev scripts on Ubuntu
-# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
+# Script to deploy CycleStreets dev server on Ubuntu
+# Tested on 14.04 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets Dev machine deployment $(date)"
@@ -35,42 +35,39 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Check a base OS has been defined
+if [ -z "${baseOS}" ]; then
+	echo "#     Please define a value for baseOS in the config file."
+	exit 1
+fi
+echo "# Installing CycleStreets website for base OS: ${baseOS}"
+
+# Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory
+. ${ScriptHome}/utility/installBaseWebserver.sh
+
+# Enable mod_ssl for HTTPS sites
+a2enmod ssl
+service apache2 reload
+
 # Load helper functions
 . ${ScriptHome}/utility/helper.sh
 
-# Main body of script
+# Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory
+. ${ScriptHome}/utility/installBaseWebserver.sh
 
-# Ensure there's a custom sudoers file
-# !! Note: on the dev machine (which dates back to about 2008) the sudoers.d folder was not automatically included, so had to be added manually.
-if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
+# Add mod_macro to help simplify Apache configuration
+apt-get -y install libapache2-mod-macro
+a2enmod macro
 
-    # !! Potentially add more checks to these sudoers expressions, such as ensuring the commands include their full paths.
+# Update scripts daily at 6:25am
+installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
 
-    # Create a file that provides passwordless sudo access svnadmin - which needs root access because some files are read able only by www-data
-    # Note: the csSudoers var was created for other deployments and this is a bit of an appropriation of that var and file.
-    # It would be a little cleaner for it to have its own var, but on a dev deployment it is not used for anything else.
-    cat > ${csSudoers} << EOF
-# Dev deployment
-# Permit cyclestreets user to dump svn without a password
-cyclestreets ALL = (root) NOPASSWD: /usr/bin/svnadmin
-EOF
+# Backup data every day at 6:26am
+installCronJob ${username} "26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
 
-    # Make it read only
-    chmod 440 ${csSudoers}
-fi
+# Enable SMS site monitoring, every 5 minutes
+installCronJob ${username} "0,5,10,15,20,25,30,35,40,45,50,55 * * * * php ${ScriptHome}/sms-monitoring/run.php"
 
-# Cron jobs
-if $installCronJobs ; then
-
-    # Update scripts
-    installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
-
-    # Backup data every day at 6:26 am
-    installCronJob ${username} "26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
-
-    # SMS monitoring every 5 minutes
-    installCronJob ${username} "0,5,10,15,20,25,30,35,40,45,50,55 * * * * php ${ScriptHome}/sms-monitoring/run.php"
-fi
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

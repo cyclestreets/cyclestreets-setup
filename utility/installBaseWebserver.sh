@@ -77,6 +77,11 @@ asCS="sudo -u ${username}"
 # Prepare the apt index; it may be practically non-existent on a fresh VM
 $packageUpdate > /dev/null
 
+# Bring the machine distribution up to date by updating all existing packages
+apt-get -y upgrade
+apt-get -y dist-upgrade
+apt-get -y autoremove
+
 # Install basic software
 $packageInstall wget dnsutils man-db subversion git emacs nano bzip2
 

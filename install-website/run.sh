@@ -140,9 +140,6 @@ chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectCh
 touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 chown www-data:${rollout} ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 
-# Mod rewrite
-a2enmod rewrite
-
 # Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
 cslocalconf=cyclestreets.conf
 localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}

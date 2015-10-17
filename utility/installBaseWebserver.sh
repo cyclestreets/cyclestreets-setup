@@ -110,6 +110,7 @@ echo "#	Installing core webserver packages"
 $packageInstall apache2
 
 # Enable core Apache modules
+a2enmod rewrite
 a2enmod headers
 
 # The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:

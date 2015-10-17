@@ -109,6 +109,9 @@ $packageInstall mysql-server-5.6 mysql-client-5.6
 echo "#	Installing core webserver packages"
 $packageInstall apache2
 
+# Enable core Apache modules
+a2enmod headers
+
 # The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:
 $packageInstall python-software-properties software-properties-common
 

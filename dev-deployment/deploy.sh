@@ -86,7 +86,6 @@ apt-get install -y munin
 #  Alias / /var/cache/munin/www/
 a2disconf munin
 service apache2 reload
-service munin-node restart
 
 
 # Update scripts daily at 6:25am

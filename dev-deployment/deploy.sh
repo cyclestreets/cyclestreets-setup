@@ -87,6 +87,13 @@ apt-get install -y munin
 a2disconf munin
 service apache2 reload
 
+# Downloads area
+mkdir -p /websites/downloads/content/
+if [ ! -f /websites/downloads/content/index.html ]; then
+	echo -e '<p>There is no index of files in this location.</p>' >> /websites/downloads/content/index.html
+fi
+chown -R ${username}:${rollout} /websites/downloads/content/
+
 
 # Update scripts daily at 6:25am
 installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"

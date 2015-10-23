@@ -140,6 +140,9 @@ fallbackServer=
 tilecacheUrl=tile.cyclestreets.net
 tilecacheContentFolder=/websites/tile/content
 
+# Main mailserver
+dc_other_hostnames=
+
 
 # Cron jobs boolean: true|false
 installCronJobs=false

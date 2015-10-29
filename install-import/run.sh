@@ -193,7 +193,7 @@ if [ -n "${ordnanceSurveyDataFile}" -a ! -d ${unpackOSfolder} ]; then
 	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
-	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${ordnanceSurveyDataFile} -O ${websitesBackupsFolder}/${ordnanceSurveyDataFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${ordnanceSurveyDataFile} -O ${websitesBackupsFolder}/${ordnanceSurveyDataFile}
 
 	# Report
 	echo "#	Starting installation of OS NTF data"
@@ -211,7 +211,7 @@ if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${srtmDataFile} -O ${websitesBackupsFolder}/${srtmDataFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${srtmDataFile} -O ${websitesBackupsFolder}/${srtmDataFile}
 
 	# Report
 	echo "#	Starting installation of SRTM data"
@@ -229,7 +229,7 @@ if [ -n "${asterDataFile}" -a ! -d ${unpackASTERfolder} ]; then
 	echo "#	Starting download of ASTER data 25G"
 
 	# Download
-	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${asterDataFile} -O ${websitesBackupsFolder}/${asterDataFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${asterDataFile} -O ${websitesBackupsFolder}/${asterDataFile}
 
 	# Report
 	echo "#	Starting installation of ASTER data"
@@ -247,7 +247,7 @@ if [ -n "${usgsnedDataFile}" -a ! -d ${unpackUSGSNEDfolder} ]; then
 	echo "#	Starting download of USGSNED data 850M"
 
 	# Download
-	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${usgsnedDataFile} -O ${websitesBackupsFolder}/${usgsnedDataFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${usgsnedDataFile} -O ${websitesBackupsFolder}/${usgsnedDataFile}
 
 	# Report
 	echo "#	Starting installation of USGSNED data"

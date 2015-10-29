@@ -120,7 +120,7 @@ if [ -n "${datapassword}" -a ! -e ${websitesBackupsFolder}/${potlatchEditorFile}
 	echo "#	$(date)	Starting download of potlatch editor"
 
 	# Download
-	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${potlatchEditorFile} -O ${websitesBackupsFolder}/${potlatchEditorFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${potlatchEditorFile} -O ${websitesBackupsFolder}/${potlatchEditorFile}
 
 	# Report
 	echo "#	$(date)	Starting installation of potlatch editor"
@@ -469,7 +469,7 @@ if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsF
 	echo "#	$(date)	Starting download of external database"
 
 	# Download
-	wget http://cyclestreets:${datapassword}@data.cyclestreets.net/${csExternalDataFile} -O ${websitesBackupsFolder}/${csExternalDataFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${csExternalDataFile} -O ${websitesBackupsFolder}/${csExternalDataFile}
 
 	# Report
 	echo "#	$(date)	Starting installation of external database"

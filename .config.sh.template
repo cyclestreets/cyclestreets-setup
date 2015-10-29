@@ -148,7 +148,7 @@ dc_other_hostnames=
 installCronJobs=false
 
 # Import installation
-# Options for installing the import - leave blank to skip these steps
+# Options for installing the import - leave blank to skip these steps, or add string true to enable
 ordnanceSurveyDataFile=
 srtmDataFile=
 asterDataFile=

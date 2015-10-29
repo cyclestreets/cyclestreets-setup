@@ -88,11 +88,7 @@ a2disconf munin
 service apache2 reload
 
 # Downloads area
-mkdir -p /websites/downloads/content/
-if [ ! -f /websites/downloads/content/index.html ]; then
-	echo -e '<p>There is no index of files in this location.</p>' >> /websites/downloads/content/index.html
-fi
-chown -R ${username}:${rollout} /websites/downloads/content/
+. ${ScriptHome}/dev-deployment/install-downloads.sh
 
 # Exim
 # Mail Transfer Agent (MTA); NB load before Python otherwise Ubuntu will choose Postfix

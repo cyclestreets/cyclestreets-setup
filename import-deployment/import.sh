@@ -89,12 +89,17 @@ mkdir -p $lockdir
 (
 	flock -n 9 || { echo '#	An import is already running' ; exit 1; }
 
+# Removes coverage files - requires passwordless sudo
+sudo ${ScriptHome}/utility/removeCoverageCSV.sh
+
 # Stop the routing service - if it is installed
 if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
 
     # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
     sudo ${routingDaemonLocation} stop
 fi
+
+
 
 #       Move to the right place
 cd ${importContentFolder}

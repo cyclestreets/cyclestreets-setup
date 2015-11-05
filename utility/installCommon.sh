@@ -46,6 +46,8 @@ cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
 cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
 # Passwordless sudo to chown photomap files
 cyclestreets ALL = (root) NOPASSWD: /opt/cyclestreets-setup/utility/chownPhotomapWwwdata.sh
+# Passwordless sudo to remove coverage files at the start of an import run
+cyclestreets ALL = (root) NOPASSWD: /opt/cyclestreets-setup/utility/removeCoverageCSV.sh
 EOF
 
     # Make it read only

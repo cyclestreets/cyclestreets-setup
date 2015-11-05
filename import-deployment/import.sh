@@ -99,8 +99,6 @@ if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
     sudo ${routingDaemonLocation} stop
 fi
 
-
-
 #       Move to the right place
 cd ${importContentFolder}
 

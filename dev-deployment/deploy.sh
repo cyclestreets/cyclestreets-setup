@@ -49,12 +49,6 @@ echo "# Installing CycleStreets website for base OS: ${baseOS}"
 a2enmod ssl
 service apache2 reload
 
-# Load helper functions
-. ${ScriptHome}/utility/helper.sh
-
-# Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory
-. ${ScriptHome}/utility/installBaseWebserver.sh
-
 # Add mod_macro to help simplify Apache configuration
 apt-get -y install libapache2-mod-macro
 a2enmod macro
@@ -106,6 +100,9 @@ if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 fi
 
 
+
+# Load cron job function
+. ${ScriptHome}/utility/helper.sh
 
 # Update scripts daily at 6:25am
 installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"

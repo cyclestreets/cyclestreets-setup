@@ -193,7 +193,7 @@ if [ -n "${ordnanceSurveyDataFile}" -a ! -d ${unpackOSfolder} ]; then
 	echo "#	Starting download of OS NTF data 48M"
 
 	# Download
-	$ordnanceSurveyDataFile=ordnanceSurveyNTF.tar.bz2
+	ordnanceSurveyDataFile=ordnanceSurveyNTF.tar.bz2
 	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${ordnanceSurveyDataFile} -O ${websitesBackupsFolder}/${ordnanceSurveyDataFile}
 
 	# Report
@@ -212,7 +212,7 @@ if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then
 	echo "#	Starting download of SRTM data 8.2G"
 
 	# Download
-	$srtmDataFile=srtm4.1.tiff.tar.bz2
+	srtmDataFile=srtm4.1.tiff.tar.bz2
 	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${srtmDataFile} -O ${websitesBackupsFolder}/${srtmDataFile}
 
 	# Report
@@ -231,7 +231,7 @@ if [ -n "${asterDataFile}" -a ! -d ${unpackASTERfolder} ]; then
 	echo "#	Starting download of ASTER data 25G"
 
 	# Download
-	$asterDataFile=asterV2tiff.bz2
+	asterDataFile=asterV2tiff.bz2
 	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${asterDataFile} -O ${websitesBackupsFolder}/${asterDataFile}
 
 	# Report
@@ -250,7 +250,7 @@ if [ -n "${usgsnedDataFile}" -a ! -d ${unpackUSGSNEDfolder} ]; then
 	echo "#	Starting download of USGSNED data 850M"
 
 	# Download
-	$usgsnedDataFile=USGS_NED_13.tar.bz2
+	usgsnedDataFile=USGS_NED_13.tar.bz2
 	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${usgsnedDataFile} -O ${websitesBackupsFolder}/${usgsnedDataFile}
 
 	# Report

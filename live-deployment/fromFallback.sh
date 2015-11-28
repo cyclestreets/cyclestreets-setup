@@ -81,7 +81,7 @@ ${superMysql} cyclestreets -e "update map_config set pseudoCron = curdate();";
 # Restore these cronjobs - note the timings of these should be the same as in the run.sh
 echo "#	$(date)	It is recommended to manually uncomment relevant cron jobs"
 #cat <(crontab -l) <(echo "4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh") | crontab -
-#cat <(crontab -l) <(echo "34 1 * * * ${ScriptHome}/live-deployment/install-routing-data.sh") | crontab -
+#cat <(crontab -l) <(echo "34 11 * * * ${ScriptHome}/live-deployment/install-routing-data.sh") | crontab -
 
 # Finish
 echo "#	$(date)	All done"

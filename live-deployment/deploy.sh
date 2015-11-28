@@ -107,8 +107,10 @@ if $installCronJobs ; then
     # Hourly zapping at 13 mins past every hour
     installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
 
-    # Install routing data every hour, using quiet option to suppress advice messages
-    installCronJob ${username} "44 * * * * ${ScriptHome}/live-deployment/install-routing-data.sh -q"
+    # Install routing data, using quiet option to suppress advice messages
+    # A time in the middle of the day is probably best overall as likely to be awake to handle any issues.
+    # Experience has shown that doing it in the middle of the night is likely to lead to ping messages caused by temporary routing test failures due to the heavy i/o.
+    installCronJob ${username} "34 11 * * * ${ScriptHome}/live-deployment/install-routing-data.sh -q"
 fi
 
 # Confirm end of script

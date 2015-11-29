@@ -2,3 +2,5 @@
 
 # Deletes coverage files from tmp
 find /tmp/ -maxdepth 1 -type f -name 'coverage*.csv' -delete
+# Deletes elevation files from tmp
+find /tmp/ -maxdepth 1 -type f -name 'elevation*.csv' -delete

@@ -130,15 +130,15 @@ fi
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
-# Check the local routing service - but it is no longer a requirement that it is currently serving routes.
+# Check the local routing service to make sure that it won't be deletes - but it is not a requirement that it is currently serving routes.
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
 set +e
 
-# Note: we must use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
+# Note: use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
 localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
-  echo "#	Note: there is no current routing service. Routing edition removal will proceed."
+  echo "#	Note: there is no current routing service. Routing edition ${oldEdition} removal will proceed."
 else
 
     # Check not already serving this edition

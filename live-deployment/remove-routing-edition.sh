@@ -83,8 +83,17 @@ then
     oldEdition=$1
 else
 
+    # Count the number of routing editions
+    numEditions=$(${superMysql} -s cyclestreets<<<"SELECT count(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%';")
+
+    # Check that there are at least three routing editions - to avoid removing the latest ones.
+    if [ -z "${numEditions}" -o "${numEditions}" -lt 3 ]
+    then
+	echo "# There are ${numEditions} editions which is too few to use the oldest as a default value."
+	exit 1
+    fi
+
     # Determine oldest edition (the -s suppresses the tabular output)
-    # !! May also be wise to check that there are at least two or three routing editions - to avoid removing the latest ones.
     oldEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME asc limit 1;")
 fi
 

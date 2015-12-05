@@ -1,16 +1,32 @@
 #!/bin/bash
 # Script to change CycleStreets served routes
-# Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
-# This script is idempotent - it can be safely re-run without destroying existing data
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
-# SYNOPSIS
-#	run.sh newEdition
-#
-# DESCRIPTION
-#	newEdition
-#		Names a routing database of the form routingYYMMDD, eg. routing150404
+# http://ubuntuforums.org/showthread.php?t=1783298
+usage()
+{
+    cat << EOF
+SYNOPSIS
+	$0 -h [newEdition]
+
+OPTIONS
+	-h Show this message
+
+DESCRIPTION
+	newEdition
+		Names a routing database of the form routingYYMMDD, eg. routing151205
+		Defaults to the latest version avaialble.
+EOF
+}
+
+# http://wiki.bash-hackers.org/howto/getopts_tutorial
+while getopts ":h" option ; do
+    case ${option} in
+        h) usage; exit ;;
+	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
+    esac
+done
 
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
@@ -62,15 +78,17 @@ fi
 
 ## Main body from here
 
-# Ensure there is a single argument, defining the routing edition, or end
-if [ $# -ne 1 ]
+# Check the supplied argument - if exactly one use it, else default to latest routing db
+if [ $# -eq 1 ]
 then
-  echo "#	Usage: `basename $0` importedition"
-  exit 1
-fi
 
-# Allocate that argument
-newEdition=$1
+    # Allocate that argument
+    newEdition=$1
+else
+
+    # Determine latest edition (the -s suppresses the tabular output)
+    newEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME desc limit 1;")
+fi
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then

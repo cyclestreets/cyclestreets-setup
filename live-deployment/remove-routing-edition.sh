@@ -84,6 +84,7 @@ then
 else
 
     # Determine oldest edition (the -s suppresses the tabular output)
+    # !! May also be wise to check that there are at least two or three routing editions - to avoid removing the latest ones.
     oldEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME asc limit 1;")
 fi
 
@@ -158,123 +159,18 @@ if [[ ! "$oldEdition" =~ routing([0-9]{6}) ]]; then
   exit 1
 fi
 
-echo "#	Tested to here: ${oldEdition}."
-exit 1
-
-
 # Extract the date part of the routing database
 importDate=${BASH_REMATCH[1]}
 
-### Confirm existence of the routing import database and files
+# Drop the routing and planet databases
+${superMysql} cyclestreets -e "drop database if exists ${oldEdition};";
+${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${importDate};";
 
-# Check to see that this routing database exists
-if ! ${superMysql} -e "use ${oldEdition}"; then
-	echo "#	The routing database ${oldEdition} is not present"
-	exit 1
-fi
-
-# Check that the data for this routing edition exists
-if [ ! -d "${websitesContentFolder}/data/routing/${oldEdition}" ]; then
-	echo "#	The routing data ${oldEdition} is not present"
-	exit 1
-fi
-
-# Check that the installation completed
-if [ ! -e "${websitesContentFolder}/data/routing/${oldEdition}/installationCompleted.txt" ]; then
-	echo "#	Switching cannot continue because the routing installation did not appear to complete."
-	exit 1
-fi
-
-### Do switch-over
-
-# Clear this cache - (whose rows relate to a specific routing edition)
-${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
-
-# If a fallbackRoutingServer is supplied, check it is running and using the proposed edition
-if [ -n "${fallbackRoutingServer}" ]; then
-
-    # POST the request to the server
-    fallbackRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${fallbackRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
-
-    # Check the fallback routing edition is the same as the proposed edition
-    if [ "${oldEdition}" != "${fallbackRoutingEdition}" ]; then
-	echo "#	The fallback server is running: ${fallbackRoutingEdition} which differs from the proposed edition: ${oldEdition}"
-	exit 1
-    fi
-
-    # Use the fallback server during switch over
-    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${oldEdition}', routeServerUrl = '${fallbackRoutingServer}' WHERE id = 1;";
-    echo "#	Now using fallback routing service"
-else
-
-    # Set the journeyPlannerStatus to closed for the duration
-    ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'closed' WHERE id = 1;";
-    echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
-fi
-
-# Configure the routing engine to use the new edition
-echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${oldEdition}" > $routingEngineConfigFile
-
-# Ensure it is executable
-chmod a+x $routingEngineConfigFile
-
-# Restart the routing service
-# Rather than use the restart option to the service, it is stopped then started. This enables the script to verify that the service did stop properly in between.
-# This seems to be necessary when there are large amounts of memory being freed by stopping.
-
-# Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-sudo ${routingDaemonLocation} stop
-
-# Check the local routing service has stopped
-localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
-echo "#	Initial status: ${localRoutingStatus}"
-
-# Wait until it has stopped
-while [[ ! "$localRoutingStatus" =~ stopped ]]; do
-    sleep 10
-    localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
-    echo "#	Status: ${localRoutingStatus}"
-done
-
-# Start
-sudo ${routingDaemonLocation} start
-
-
-# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
-echo "#	Initial status: ${localRoutingStatus}"
-
-# Wait until it has restarted
-# !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
-while [[ ! "$localRoutingStatus" =~ serving ]]; do
-    sleep 10
-    localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
-    echo "#	Status: ${localRoutingStatus}"
-done
-
-# Get the locally running service
-locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
-
-# Check the local service is as requested
-if [ "${locallyRunningEdition}" != "${oldEdition}" ]; then
-	echo "#	The local server is running: ${locallyRunningEdition} not the requested edition: ${oldEdition}"
-	exit 1
-fi
-
-# Switch the website to the local server and ensure the routingDb is also set
-${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${oldEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
-
-# Restore the journeyPlannerStatus
-${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
-
-
-### Finishing
-
-# Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
-${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+# Remove the routing folder
+rm -r ${websitesContentFolder}/data/routing/${oldEdition}
 
 # Report
-echo "#	$(date)	Completed switch to $oldEdition"
+echo "#	$(date)	Removed: $oldEdition"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

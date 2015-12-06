@@ -83,8 +83,8 @@ then
     oldEdition=$1
 else
 
-    # Count the number of routing editions
-    numEditions=$(${superMysql} -s cyclestreets<<<"SELECT count(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%';")
+    # Count the number of routing editions not including the null edition
+    numEditions=$(${superMysql} -s cyclestreets<<<"SELECT count(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME != 'routing000000' and SCHEMA_NAME LIKE 'routing%';")
 
     # Check that there are at least three routing editions - to avoid removing the latest ones.
     if [ -z "${numEditions}" -o "${numEditions}" -lt 3 ]
@@ -93,8 +93,8 @@ else
 	exit 1
     fi
 
-    # Determine oldest edition (the -s suppresses the tabular output)
-    oldEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME asc limit 1;")
+    # Determine oldest edition not including the null edition (the -s suppresses the tabular output)
+    oldEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME != 'routing000000' and SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME asc limit 1;")
 fi
 
 # Ensure there is a cyclestreets user account

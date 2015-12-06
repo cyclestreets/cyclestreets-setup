@@ -175,8 +175,8 @@ importDate=${BASH_REMATCH[1]}
 ${superMysql} cyclestreets -e "drop database if exists ${oldEdition};";
 ${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${importDate};";
 
-# Remove the routing folder
-rm -r ${websitesContentFolder}/data/routing/${oldEdition}
+# Remove the routing folder without generating any prompts or warnings
+rm -rf ${websitesContentFolder}/data/routing/${oldEdition}
 
 # Report
 echo "#	$(date)	Removed: $oldEdition"

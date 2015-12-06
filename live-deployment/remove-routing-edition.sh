@@ -36,7 +36,8 @@ quietmode()
 while getopts ":hq" option ; do
     case ${option} in
         h) usage; exit ;;
-        q) quietmode ;;
+	# Consume this argument, set quiet mode and proceed
+        q) shift $((OPTIND-1)); quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done

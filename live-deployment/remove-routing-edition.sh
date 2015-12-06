@@ -3,36 +3,59 @@
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
+# Controls echoed output default to on
+verbose=1
+
 # http://ubuntuforums.org/showthread.php?t=1783298
 usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h [newEdition]
+	$0 -h -q [routingEdition]
 
 OPTIONS
 	-h Show this message
+	-q Suppress helpful messages, error messages are still produced
 
 DESCRIPTION
-	newEdition
+	routingEdition
 		Names a routing database of the form routingYYMMDD, eg. routing151205
 		Defaults to the oldest version avaialble.
 EOF
 }
 
+
+quietmode()
+{
+    # Turn off verbose messages by setting this variable to the empty string
+    verbose=
+}
+
+
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
-while getopts ":h" option ; do
+while getopts ":hq" option ; do
     case ${option} in
         h) usage; exit ;;
+        q) quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
 
 
+# Echo output only if the verbose option has been set
+vecho()
+{
+	if [ "${verbose}" ]; then
+		echo $1
+	fi
+}
+
+
+
 ### Stage 1 - general setup
 
 # Announce start
-echo "#	$(date)	CycleStreets routing edition removal"
+vecho "#	$(date)	CycleStreets routing edition removal"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
@@ -89,7 +112,7 @@ else
     # Check that there are at least three routing editions - to avoid removing the latest ones.
     if [ -z "${numEditions}" -o "${numEditions}" -lt 3 ]
     then
-	echo "# There are ${numEditions} editions which is too few to use the oldest as a default value."
+	vecho "# There are ${numEditions} editions which is too few to use the oldest as a default value."
 	exit 1
     fi
 
@@ -138,7 +161,7 @@ set +e
 localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
-  echo "#	Note: there is no current routing service. Routing edition ${oldEdition} removal will proceed."
+  vecho "#	Note: there is no current routing service. Routing edition ${oldEdition} removal will proceed."
 else
 
     # Check not already serving this edition
@@ -147,14 +170,14 @@ else
     currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     if [ -z "${currentRoutingEdition}" ]; then
-	echo "#	The current edition at ${localRoutingServer} could not be determined."
+	vecho "#	The current edition at ${localRoutingServer} could not be determined."
 	exit 1
     fi
 
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${oldEdition}" == "${currentRoutingEdition}" ]; then
-	echo "#	The proposed edition to remove: ${oldEdition} is currently being served from ${localRoutingServer}"
-	echo "#	Stop it using: sudo service cycleroutingd stop"
+	vecho "#	The proposed edition to remove: ${oldEdition} is currently being served from ${localRoutingServer}"
+	vecho "#	Stop it using: sudo service cycleroutingd stop"
 	exit 1
     fi
 fi
@@ -179,7 +202,7 @@ ${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${importD
 rm -rf ${websitesContentFolder}/data/routing/${oldEdition}
 
 # Report
-echo "#	$(date)	Removed: $oldEdition"
+vecho "#	$(date)	Removed: $oldEdition"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

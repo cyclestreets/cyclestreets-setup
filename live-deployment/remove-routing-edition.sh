@@ -202,6 +202,9 @@ ${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${importD
 # Remove the routing folder without generating any prompts or warnings
 rm -rf ${websitesContentFolder}/data/routing/${oldEdition}
 
+# Remove from the import output (may only be a symlink from there)
+rm -rf ${importContentFolder}/output/${oldEdition}
+
 # Report
 vecho "#	$(date)	Removed: $oldEdition"
 

@@ -1,9 +1,5 @@
 #!/bin/bash
 # Script to produce a sample cyclestreets database dump for use in a repository
-#
-# Tested on 14.04.1 LTS. View Ubuntu version using: lsb_release -a
-
-echo "#	CycleStreets schema script $(date)"
 
 # Ensure this script is not run as root
 if [ "$(id -u)" == "0" ]; then
@@ -33,14 +29,14 @@ fi
 # Load the credentials
 . ./${configFile}
 
-# Report
-echo "#	CycleStreets schema script starting"
+# Narrative
+echo "#	CycleStreets schema script starting $(date)"
 
 # Main Body
 sampleDb=csSample
 csBackup=${websitesBackupsFolder}/www_cyclestreets.sql.gz
 
-# Check a backup of the cyclestreets database is available
+# Check that a backup of the cyclestreets database is available
 if [ ! -r ${csBackup} ]; then
 
     echo "#	First obtain an up to date copy of the cyclestreets database, usually from the daily backup:"
@@ -66,8 +62,8 @@ mysqldump --defaults-extra-file=${mySuperCredFile} ${sampleDb} --routines --no-c
 
 #	Advise
 echo "#	Actions required next:"
-echo "#	Build a routing sample db."
 echo "#	Commit the updated schema to the repository."
+echo "#	Build a routing sample db."
 
 # Confirm end of script
 echo "#	Script completed $(date)"

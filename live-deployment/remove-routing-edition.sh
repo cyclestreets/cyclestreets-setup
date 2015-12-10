@@ -200,10 +200,12 @@ ${superMysql} cyclestreets -e "drop database if exists ${oldEdition};";
 ${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${importDate};";
 
 # Remove the routing folder without generating any prompts or warnings
-rm -rf ${websitesContentFolder}/data/routing/${oldEdition}
+if [ -n "${websitesContentFolder}" -a -d ${websitesContentFolder}/data/routing/ ]; then
+    rm -rf ${websitesContentFolder}/data/routing/${oldEdition}
+fi
 
 # Remove from the import output (may only be a symlink from there)
-if [ -n "${importContentFolder}" ]; then
+if [ -n "${importContentFolder}" -a -d ${importContentFolder}/output/ ]; then
     rm -rf ${importContentFolder}/output/${oldEdition}
 fi
 

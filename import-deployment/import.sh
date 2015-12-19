@@ -81,6 +81,15 @@ if [ -n "${importDisk}" ]; then
     fi
 fi
 
+# Guess the likely name of the routing edition, which is usually routingYYMMDD
+likelyEdition=routing$(date +%y%m%d)
+
+# Check whether the edition already exists either as a directory or symbolic link
+if [ -d ${importMachineEditions}/${likelyEdition} -o -L ${importMachineEditions}/${likelyEdition} ]; then
+    echo "#	The edition already exists, check this folder: ${importMachineEditions}/${likelyEdition}"
+    exit 1
+fi
+
 # Lock directory
 lockdir=/var/lock/cyclestreets
 mkdir -p $lockdir

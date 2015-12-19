@@ -100,8 +100,9 @@ fi
 
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
-    echo "#	Edition ${latestEdition} is already installed - removing."
-    rm -r ${websitesContentFolder}/data/routing/${latestEdition};
+    echo "#	Edition ${latestEdition} is already installed - to remove it use:"
+    echo "#	rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
+    exit 1
 fi
 
 #	Report finding

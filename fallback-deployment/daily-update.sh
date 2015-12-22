@@ -62,7 +62,7 @@ touch ${setupLogFile}
 echo "$(date)	CycleStreets daily update $(id)" >> ${setupLogFile}
 
 # Ensure live machine has been defined
-if [ -z "${liveMachineAddress}" ]; then
+if [ -z "${liveMachineHostname}" ]; then
     # Echoed messages like this will generate emails when run via cron
     echo "# A live machine must be defined in order to run updates"
     exit 1
@@ -92,7 +92,7 @@ fi
 #	Download and restore the CycleStreets database.
 #	This section is simlar to fallback-deployment/fromFallback.sh
 #	Folder locations
-server=${liveMachineAddress}
+server=${liveMachineHostname}
 dumpPrefix=www
 
 # Restore recent data

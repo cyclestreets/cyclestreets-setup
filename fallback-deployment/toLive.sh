@@ -48,7 +48,7 @@ echo "#	CycleStreets toLive in progress"
 echo "#	$(date)	CycleStreets toLive $(id)"
 
 # Ensure live machine has been defined
-if [ -z "${liveMachineAddress}" ]; then
+if [ -z "${liveMachineHostname}" ]; then
     echo "# A live machine must be defined in order to run updates"
     exit 1
 fi

@@ -11,14 +11,15 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q
+	$0 -h -q [importHostname]
 
 OPTIONS
 	-h Show this message
 	-q Suppress helpful messages, error messages are still produced
 
 DESCRIPTION
- 	Checks whether there's is a new edition of routing data on the server identified by configuration settings.
+ 	Checks whether there's is a new edition of routing data on the importHostname.
+	If not supplied a hostname from the configuration is used.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The routing edition database is installed.
 	If successful it prompts to use the switch-routing-edition.sh script to start using the new routing edition.
@@ -43,7 +44,8 @@ quietmode()
 while getopts ":hq" option ; do
     case ${option} in
         h) usage; exit ;;
-        q) quietmode ;;
+	# Consume this argument, set quiet mode and proceed
+        q) shift $((OPTIND-1)); quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
@@ -135,8 +137,15 @@ fi
 
 ### Stage 2 - obtain the routing import definition
 
+# Check there is an arugment
+if [ $# -eq 1 ]
+then
+    # Override the setting from the configuration
+    importHostname=$1
+fi
+
 # Ensure import machine and definition file variables has been defined
-if [ -z "${importMachineAddress}" -o -z "${importMachineEditions}" ]; then
+if [ -z "${importHostname}" -o -z "${importMachineEditions}" ]; then
 
 	# Avoid echoing as these are called by a cron job
 	vecho "# An import machine with an editions folder must be defined in order to run an import"
@@ -148,11 +157,11 @@ fi
 set +e
 
 # Read the folder of routing editions, one per line, newest first, getting first one
-latestEdition=`ssh ${username}@${importMachineAddress} ls -1t ${importMachineEditions} | head -n1`
+latestEdition=`ssh ${username}@${importHostname} ls -1t ${importMachineEditions} | head -n1`
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then
-	vecho "# No routing editions found on ${importMachineAddress}"
+	vecho "# No routing editions found on ${importHostname}"
 	exit 1
 fi
 
@@ -173,10 +182,10 @@ vecho "#	Latest edition: ${latestEdition}"
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
 
 #	Copy definition file
-scp ${username}@${importMachineAddress}:${importMachineEditions}/${latestEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
+scp ${username}@${importHostname}:${importMachineEditions}/${latestEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#	The import machine file could not be retrieved; please check the 'importMachineAddress': ${importMachineAddress} and 'newImportDefinition': ${newImportDefinition} settings."
+	vecho "#	The import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
 	exit 1
 fi
 
@@ -228,7 +237,7 @@ fi
 
 # Begin the file transfer
 echo "#	$(date)	CycleStreets routing data installation"
-echo "#	$(date)	Transferring the routing files from the import machine ${importMachineAddress}"
+echo "#	$(date)	Transferring the routing files from the import machine ${importHostname}"
 
 # Create the folder
 mkdir -p ${newEditionFolder}
@@ -237,13 +246,13 @@ mkdir -p ${newEditionFolder}
 mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 
 #	Transfer the TSV file
-scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/
 
 #	Hot-copied tables file
-scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/tables.tar.gz ${newEditionFolder}/
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/tables.tar.gz ${newEditionFolder}/
 
 #	Sieve file
-scp ${username}@${importMachineAddress}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
 #	Note that all files are downloaded
 echo "#	$(date)	File transfer stage complete"

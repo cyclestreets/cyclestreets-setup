@@ -115,7 +115,7 @@ if [ ! -f ${routingDaemonLocation} ]; then
 fi
 
 # Check a local routing server is configure
-if [ -z "${localRoutingServer}" ]; then
+if [ -z "${localRoutingUrl}" ]; then
 	echo "#	The local routing service is not specified."
 	exit 1
 fi
@@ -137,16 +137,16 @@ else
     # Check not already serving this edition
 
     # POST the request to the server
-    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     if [ -z "${currentRoutingEdition}" ]; then
-	echo "#	The current edition at ${localRoutingServer} could not be determined."
+	echo "#	The current edition at ${localRoutingUrl} could not be determined."
 	exit 1
     fi
 
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
-	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingServer}"
+	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
 	echo "#	Restart it using: sudo service cycleroutingd restart"
 	exit 1
     fi
@@ -252,7 +252,7 @@ while [[ ! "$localRoutingStatus" =~ serving ]]; do
 done
 
 # Get the locally running service
-locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
 # Check the local service is as requested
 if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
@@ -261,7 +261,7 @@ if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
 fi
 
 # Switch the website to the local server and ensure the routingDb is also set
-${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingServer}' WHERE id = 1;";
+${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' WHERE id = 1;";
 
 # Restore the journeyPlannerStatus
 ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";

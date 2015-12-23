@@ -166,7 +166,7 @@ if [ ! -f ${routingDaemonLocation} ]; then
 fi
 
 # Check a local routing server is configured
-if [ -z "${localRoutingServer}" ]; then
+if [ -z "${localRoutingUrl}" ]; then
 	echo "#	The local routing service is not specified."
 	exit 1
 fi
@@ -188,16 +188,16 @@ else
     # Check not already serving this edition
 
     # POST the request to the server
-    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     if [ -z "${currentRoutingEdition}" ]; then
-	vecho "#	The current edition at ${localRoutingServer} could not be determined."
+	vecho "#	The current edition at ${localRoutingUrl} could not be determined."
 	exit 1
     fi
 
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${removeEdition}" == "${currentRoutingEdition}" ]; then
-	vecho "#	The proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingServer}"
+	vecho "#	The proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
 	vecho "#	Stop it using: sudo service cycleroutingd stop"
 	exit 1
     fi

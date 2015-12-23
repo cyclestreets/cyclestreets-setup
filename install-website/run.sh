@@ -152,11 +152,11 @@ if [ ! -r ${localVirtualHostFile} ]; then
 
 	# Available URL(s)
 	# Note: ServerName should not use wildcards, use ServerAlias for that.
-	ServerName ${csServerName}
+	ServerName ${csHostname}
 
 	# Logging
-	CustomLog /websites/www/logs/${csServerName}-access.log combined
-	ErrorLog /websites/www/logs/${csServerName}-error.log
+	CustomLog /websites/www/logs/${csHostname}-access.log combined
+	ErrorLog /websites/www/logs/${csHostname}-error.log
 
 	# Where the files are
 	DocumentRoot /websites/www/content/
@@ -183,21 +183,21 @@ fi
 a2ensite ${cslocalconf}
 
 # Add the api address to /etc/hosts if it is not already present
-if ! cat /etc/hosts | grep "\b${apiServerName}\b" > /dev/null 2>&1
+if ! cat /etc/hosts | grep "\b${apiHostname}\b" > /dev/null 2>&1
 then
 
     # Start a list of aliases to add
-    aliases=${apiServerName}
+    aliases=${apiHostname}
 
     # Unless localhost is being used, check cs server name
-    if [ "${csServerName}" != "localhost" ]; then
+    if [ "${csHostname}" != "localhost" ]; then
 
 	# If the servername is not present add an alias to localhost
-	if  ! cat /etc/hosts | grep "\b${csServerName}\b" > /dev/null 2>&1
+	if  ! cat /etc/hosts | grep "\b${csHostname}\b" > /dev/null 2>&1
 	then
 
 	    # Add to aliases
-	    aliases="${csServerName} ${aliases}"
+	    aliases="${csHostname} ${aliases}"
 	fi
     fi
 
@@ -216,11 +216,11 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
     cat > ${apiLocalVirtualHostFile} << EOF
 <VirtualHost *:80>
 
-	ServerName ${apiServerName}
+	ServerName ${apiHostname}
 	
 	# Logging
-	CustomLog /websites/www/logs/${apiServerName}-access.log combined
-	ErrorLog /websites/www/logs/${apiServerName}-error.log
+	CustomLog /websites/www/logs/${apiHostname}-access.log combined
+	ErrorLog /websites/www/logs/${apiHostname}-error.log
 	
 	# Where the files are
 	DocumentRoot /websites/www/content/
@@ -390,14 +390,14 @@ then
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
--e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup for csServerName: ${csServerName}${sourceConfig}|" \
+-e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup for csHostname: ${csHostname}${sourceConfig}|" \
 -e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
--e "s/YOUR_CSSERVERNAME/${csServerName}/g" \
--e "s/YOUR_APISERVERNAME/${apiServerName}/g" \
+-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
+-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	${phpConfig}
 fi
 
@@ -414,11 +414,11 @@ then
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
-    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csServerName}:9000/', apiV2Url='http://${apiServerName}/v2/' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csHostname}:9000/', apiV2Url='http://${apiHostname}/v2/' where id = 1;"
 
     # Set the gui server
     # #!# This needs review - on one live machine it is set as localhost and always ignored
-    ${superMysql} cyclestreets -e "update map_gui set server='${csServerName}' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_gui set server='${csHostname}' where id = 1;"
 
     # Create an admin user
     encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`
@@ -634,13 +634,13 @@ fi
 
 
 # Advise setting up
-if [ "${csServerName}" != "localhost" ]; then
-    echo "#	Ensure ${csServerName} routes to this machine, eg by adding this line to /etc/hosts"
-    echo "127.0.0.1	${csServerName} ${apiServerName}"
+if [ "${csHostname}" != "localhost" ]; then
+    echo "#	Ensure ${csHostname} routes to this machine, eg by adding this line to /etc/hosts"
+    echo "127.0.0.1	${csHostname} ${apiHostname}"
 fi
 
 # Announce end of script
-echo "#	CycleStreets installed $(date), visit http://${csServerName}/"
+echo "#	CycleStreets installed $(date), visit http://${csHostname}/"
 
 # Return true to indicate success
 :

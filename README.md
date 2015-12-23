@@ -75,7 +75,7 @@ Once the script has run you should be able to go to:
 
     or
 
-    http://*csServerName*/
+    http://*csHostname*/
 
 to see the CycleStreets home page.
 
@@ -92,4 +92,4 @@ to see the CycleStreets home page.
 
 Check apache2 logs in `/websites/www/logs/` or `/var/log/apache2/`.
 
-If you've chosen a *csServerName* other than *localhost* make sure it routes to the server, eg by adding a line to /etc/hosts
+If you've chosen a *csHostname* other than *localhost* make sure it routes to the server, eg by adding a line to /etc/hosts

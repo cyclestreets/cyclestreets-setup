@@ -54,7 +54,7 @@ fi
 echo "# Tilecache installation $(date)"
 
 # Check the options
-if [ -z "${tilecacheUrl}" -o -z "${tilecacheContentFolder}" ]; then
+if [ -z "${tilecacheHostname}" -o -z "${tilecacheContentFolder}" ]; then
     echo "#	The tilecache options are not configured, abandoning installation."
     exit 1
 fi
@@ -100,7 +100,7 @@ fi
 vhConf=/etc/apache2/sites-available/tile.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhConf}
-	sed -i "s|tile.example.com|${tilecacheUrl}|g" ${vhConf}
+	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhConf}
 	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhConf}
 	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhConf}
 fi
@@ -114,7 +114,7 @@ fi
 vhSslConf=/etc/apache2/sites-available/tile_ssl.conf
 if [ ! -f ${vhSslConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhSslConf}
-	sed -i "s|tile.example.com|${tilecacheUrl}|g" ${vhSslConf}
+	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhSslConf}
 	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhSslConf}
 	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhSslConf}
 

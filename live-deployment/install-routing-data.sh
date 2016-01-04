@@ -11,7 +11,7 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q [importHostname]
+	$0 -h -q importHostname
 
 OPTIONS
 	-h Show this message
@@ -19,7 +19,6 @@ OPTIONS
 
 DESCRIPTION
  	Checks whether there's is a new edition of routing data on the importHostname.
-	If not supplied a hostname from the configuration is used.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The routing edition database is installed.
 	If successful it prompts to use the switch-routing-edition.sh script to start using the new routing edition.
@@ -28,10 +27,6 @@ EOF
 
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 # Requires password-less access to the import machine, using a public key.
-
-# When in fallback mode uncomment the next two lines:
-#echo "# Skipping in fallback mode"
-#exit 1
 
 quietmode()
 {
@@ -60,12 +55,20 @@ vecho()
 
 ### Stage 1 - general setup
 
-# Avoid echo if possible as this generates cron emails
-# echo "#	CycleStreets routing data installation $(date)"
-
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
     echo "#	This script must NOT be run as root." 1>&2
+    exit 1
+fi
+
+# Check there is an arugment
+if [ $# -eq 1 ]
+then
+    # Override the setting from the configuration
+    importHostname=$1
+else
+    # Report and abandon
+    echo "#	Import host name is a required argument." 1>&2
     exit 1
 fi
 
@@ -136,13 +139,6 @@ fi
 
 
 ### Stage 2 - obtain the routing import definition
-
-# Check there is an arugment
-if [ $# -eq 1 ]
-then
-    # Override the setting from the configuration
-    importHostname=$1
-fi
 
 # Ensure import machine and definition file variables has been defined
 if [ -z "${importHostname}" -o -z "${importMachineEditions}" ]; then

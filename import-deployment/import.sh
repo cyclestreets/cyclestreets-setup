@@ -51,10 +51,13 @@ if [ ! "$(id -nu)" = "${username}" ]; then
 fi
 
 # Check the import folder is defined
-if [ -z "${importMachineEditions}" ]; then
-    echo "#	The import output folder is not defined."
+if [ -z "${importContentFolder}" ]; then
+    echo "#	The import folder is not defined."
     exit 1
 fi
+
+# The new routing edition will be written to this location
+importMachineEditions=${importContentFolder}/output
 
 #	Report where logging is occurring
 echo "#	Progress is logged in ${importContentFolder}/log.txt"

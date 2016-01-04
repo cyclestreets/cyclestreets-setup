@@ -1,5 +1,6 @@
 #!/bin/bash
-# Tested on Ubuntu 14.04 (View Ubuntu version using 'lsb_release -a')
+# Installs new editions of cycle routing data from another host.
+#
 # This script is idempotent - it can be safely re-run without destroying existing data
 #
 # Controls echoed output default to on
@@ -11,11 +12,19 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q importHostname
+	$0 -h -q importHostname [path]
 
 OPTIONS
 	-h Show this message
 	-q Suppress helpful messages, error messages are still produced
+
+ARGUMENTS
+	importHostname
+		A hostname eg yorick.cyclestreets.net
+
+	path
+		The optional second argument (a non slash terminated directory path) says where on the host the routing edition can be found.
+		Defaults to the hardwired location: /websites/www/import/output
 
 DESCRIPTION
  	Checks whether there's is a new edition of routing data on the importHostname.
@@ -61,14 +70,32 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Check there is an arugment
-if [ $# -eq 1 ]
+# Check there is an argument
+if [ $# -lt 1 ]
 then
-    # Override the setting from the configuration
-    importHostname=$1
-else
     # Report and abandon
     echo "#	Import host name is a required argument." 1>&2
+    exit 1
+fi
+   
+# Bind the source of the new routing editions
+importHostname=$1
+
+# Optional second argument says where on the host the routing edition can be found
+if [ $# -gt 1 ]
+then
+    # Use supplied location
+    importMachineEditions=$2
+else
+    # Default to this hardwired location - as live installs cannot expect the config option: importContentFolder
+    importMachineEditions=/websites/www/import/output
+fi
+
+# Check the source is OK
+if [ -z "${importMachineEditions}" ]
+then
+    # Report and abandon
+    echo "#	importMachineEditions is not valid" 1>&2
     exit 1
 fi
 

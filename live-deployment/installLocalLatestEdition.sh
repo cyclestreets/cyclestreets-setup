@@ -75,11 +75,8 @@ fi
 
 ### Determine latest import
 
-# Check the import folder is defined
-if [ -z "${importMachineEditions}" ]; then
-    echo "Error: The import output folder is not defined."
-    exit 1
-fi
+# New routing editions should be found at this location
+importMachineEditions=${importContentFolder}/output
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`

@@ -123,9 +123,6 @@ localRoutingUrl=http://localhost:9000/
 ## Specify the machine that provides backups of live data (only used by fallback-deployment)
 liveMachineHostname=
 
-## Location of generated routing editions
-importMachineEditions=${importContentFolder}/output
-
 # Specify the import disk, eg. /dev/sda1 that will be checked for sufficient space (leave blank to skip this check)
 importDisk=
 

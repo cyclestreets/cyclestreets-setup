@@ -99,8 +99,15 @@ fi
 
 ## Main body from here
 
-# Check there is exactly one arugment - the routing edition
-if [ $# -ne 1 ]
+# Check the required argument
+if [ $# -lt 1 ]
+then
+    echo "#	Missing required argument: the routing edition to remove."
+    exit 1
+fi
+    
+# Check there no additional arguments
+if [ $# -gt 1 ]
 then
     echo "#	The only permitted argument is the edition to remove."
     exit 1

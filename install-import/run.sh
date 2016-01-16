@@ -204,7 +204,26 @@ if [ -n "${ordnanceSurveyDataFile}" -a ! -d ${unpackOSfolder} ]; then
 	tar xf ${websitesBackupsFolder}/${ordnanceSurveyDataFile} -C ${unpackOSfolder}
 fi
 
-# Check if srtm data is desired and that it has not already been downloaded
+# Check if Ordnance Survey Terrain 50 data is desired and that it has not already been downloaded and unpacked
+unpackOsTerrain50folder=${importContentFolder}/data/elevation/osTerrain50
+if [ -n "${osTerrain50DataFile}" -a ! -d ${unpackOsTerrain50folder} ]; then
+
+	# Report
+	echo "#	Starting download of OS Terrain 50 data 94M"
+
+	# Download
+	osTerrain50DataFile=osTerrain50_wgs84.tiff.bz2
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${osTerrain50DataFile} -O ${websitesBackupsFolder}/${osTerrain50DataFile}
+
+	# Report
+	echo "#	Starting installation of OS Terrain 50 data"
+
+	# Create folder and unpack
+	mkdir -p ${unpackOsTerrain50folder}
+	tar xf ${websitesBackupsFolder}/${osTerrain50DataFile} -C ${unpackOsTerrain50folder}
+fi
+
+# Check if SRTM data is desired and that it has not already been downloaded
 unpackSRTMfolder=${importContentFolder}/data/elevation/srtmV4.1
 if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then
 

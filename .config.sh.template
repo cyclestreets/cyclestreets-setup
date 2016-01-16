@@ -146,6 +146,7 @@ installCronJobs=false
 # Import installation
 # Options for installing the import - leave blank to skip these steps, or add string true to enable
 ordnanceSurveyDataFile=
+osTerrain50DataFile=
 srtmDataFile=
 asterDataFile=
 usgsnedDataFile=

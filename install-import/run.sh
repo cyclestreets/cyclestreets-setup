@@ -218,9 +218,11 @@ if [ -n "${osTerrain50DataFile}" -a ! -d ${unpackOsTerrain50folder} ]; then
 	# Report
 	echo "#	Starting installation of OS Terrain 50 data"
 
-	# Create folder and unpack
+	# Create folder and unpack the file
 	mkdir -p ${unpackOsTerrain50folder}
-	tar xf ${websitesBackupsFolder}/${osTerrain50DataFile} -C ${unpackOsTerrain50folder}
+	mv ${websitesBackupsFolder}/${osTerrain50DataFile} ${unpackOsTerrain50folder}
+	cd ${unpackOsTerrain50folder}
+	bunzip2 ${osTerrain50DataFile}
 fi
 
 # Check if SRTM data is desired and that it has not already been downloaded

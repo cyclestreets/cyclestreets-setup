@@ -67,13 +67,9 @@ do
     #	Get the latest copy of www's current IJS tables.
     $download $administratorEmail $server $folder $fileName
 
-    #	Add them
-    gunzip < /websites/www/backups/$fileName | ${superMysql} cyclestreets
+    #   Load them directly into the archive
+    gunzip < /websites/www/backups/$fileName | ${superMysql} csArchive
 done
-
-#
-#	Repartition, which copies the current to the archived tables, and log output.
-${superMysql} cyclestreets -e "call repartitionIJS()" >> ${setupLogFile}
 
 #	CycleStreets Blog
 $download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz

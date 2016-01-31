@@ -1,18 +1,21 @@
 #!/bin/bash
 # Description
 #	Utility to dump recent CycleStreets data
+#	It moves all the data in the itinerary, journey, waypoint, error tables to their archive equivalents in the csArchive database.
+#	The reason for doing this is that it keeps these tables small and hence quick to insert new data as the indexes remain small.
 # Synopsis
-#	dumpPrefix should be setup by the caller and is used as a prefix for all the dump files
+#	dumpPrefix (string)
+#	Eg. "www" is used to indicate which server created the dump. Used as a prefix for all the dump file names.
 
 # The minimum itinerary id can be used as the handle for a batch of routes.
 # Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
 minItineraryId=$(${superMysql} cyclestreets -Nse "select min(id) from map_itinerary")
 
-# If the minItineraryId is NULL then the repartitioning can be skipped
-if [ $minItineraryId = "NULL" ]; then
+# Check the minItineraryId
+if [ "${minItineraryId}" = "NULL" ]; then
 
     #	No new routes to partition (can happen e.g if the site is in a fallback mode)
-    echo "$(date)	Skipping repartition" >> ${setupLogFile}
+    echo "$(date)	No new routes, so skipping repartition." >> ${setupLogFile}
 
 else
     #	Repartition latest routes
@@ -22,19 +25,37 @@ else
     #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
     ${superMysql} cyclestreets -e "update map_config set journeyPlannerStatus='closed',whenStatusChanged=NOW(),notice='Brief closure to archive Journeys.'";
 
-    #	Archive the IJS tables
-    dump=${websitesBackupsFolder}/${dumpPrefix}_routes_${minItineraryId}.sql.gz
-    #	Skip disable keys because renabling them takes a long time on the archive
-    mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys cyclestreets map_itinerary map_journey map_street map_wpt map_jny_poi map_error | gzip > ${dump}
-
+    # The minimum error id - which needs to be captured before repartitioning
+    minErrorId=$(${superMysql} cyclestreets -Nse "select min(id) from map_error")
+    
     #	Repartition, which moves the current to the archived tables, and log the output. See: documentation/schema/repartition.sql
     ${superMysql} cyclestreets -e "call repartitionIJS()" >> ${setupLogFile}
 
-    #	Re-open the journey planner.
+    #	Re-open the journey planner
     ${superMysql} cyclestreets -e "update map_config set journeyPlannerStatus='live',notice=''";
 
     #	Notify re-opened
     echo "$(date)	Re-opened site to routing." >> ${setupLogFile}
+
+    #	Archive the IJS tables
+    dump=${websitesBackupsFolder}/${dumpPrefix}_routes_${minItineraryId}.sql.gz
+    
+    #	Skip disable keys because re-enabling them takes a long time on the archive
+    dumpOptions="--defaults-extra-file=${mySuperCredFile} -hlocalhost --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys"
+
+    # Dump itinerary
+    mysqldump ${dumpOptions} csArchive map_itinerary_archive --where="id>=${minItineraryId}" | gzip > ${dump}
+
+    # Append the other tables (different where)
+    mysqldump ${dumpOptions} csArchive map_journey_archive map_street_archive map_wpt_archive map_jny_poi_archive --where="itineraryId>=${minItineraryId}" | gzip >> ${dump}
+
+    # Append the error table
+    if [ "${minErrorId}" != "NULL" ]; then
+	mysqldump ${dumpOptions} csArchive map_error_archive --where="id>=${minErrorId}" | gzip >> ${dump}
+    fi
+
+    #	Notify dumped
+    echo "$(date)	Dump file created." >> ${setupLogFile}
 
     #	Create md5 hash
     openssl dgst -md5 ${dump} > ${dump}.md5

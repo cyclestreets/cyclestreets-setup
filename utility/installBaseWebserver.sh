@@ -116,8 +116,7 @@ a2enmod headers
 # The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:
 $packageInstall python-software-properties software-properties-common
 
-# PHP 5.6; see: http://phpave.com/upgrade-to-php-56-on-ubuntu-1404-lts/
-add-apt-repository -y ppa:ondrej/php5-5.6
+# PHP
 $packageUpdate
 $packageInstall php5 php5-gd php5-cli php5-mysql
 

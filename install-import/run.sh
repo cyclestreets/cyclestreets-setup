@@ -211,8 +211,12 @@ if [ -n "${osTerrain50DataFile}" -a ! -d ${unpackOsTerrain50folder} ]; then
 	# Report
 	echo "#	Starting download of OS Terrain 50 data 94M"
 
+	# Default the file to provide coverage of all Great Britain (94M which expands to 1.7GB)
+	if [ "${osTerrain50DataFile}" = "true" ]; then
+	    osTerrain50DataFile=osTerrain50_wgs84.tiff.bz2
+	fi
+
 	# Download
-	osTerrain50DataFile=osTerrain50_wgs84.tiff.bz2
 	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${osTerrain50DataFile} -O ${websitesBackupsFolder}/${osTerrain50DataFile}
 
 	# Report

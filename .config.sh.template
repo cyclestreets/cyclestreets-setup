@@ -145,6 +145,7 @@ installCronJobs=false
 
 # Import installation
 # Options for installing the import - leave blank to skip these steps, or add string true to enable
+# For smaller download the osTerrain value can be set to the filename which covers West Anglia area: osTerrain50_TL_wgs84.tiff.bz2
 ordnanceSurveyDataFile=
 osTerrain50DataFile=
 srtmDataFile=

@@ -206,7 +206,8 @@ fi
 
 # Check if Ordnance Survey Terrain 50 data is desired and that it has not already been downloaded and unpacked
 unpackOsTerrain50folder=${importContentFolder}/data/elevation/osTerrain50
-if [ -n "${osTerrain50DataFile}" -a ! -d ${unpackOsTerrain50folder} ]; then
+osTerrainInstalled=${unpackOsTerrain50folder}/dataInstalled
+if [ -n "${osTerrain50DataFile}" -a ! -e ${osTerrainInstalled} ]; then
 
 	# Report
 	echo "#	Starting download of OS Terrain 50 data 94M"
@@ -227,6 +228,9 @@ if [ -n "${osTerrain50DataFile}" -a ! -d ${unpackOsTerrain50folder} ]; then
 	mv ${websitesBackupsFolder}/${osTerrain50DataFile} ${unpackOsTerrain50folder}
 	cd ${unpackOsTerrain50folder}
 	bunzip2 ${osTerrain50DataFile}
+
+	# Mark is has been installed
+	touch ${osTerrainInstalled}
 fi
 
 # Check if SRTM data is desired and that it has not already been downloaded

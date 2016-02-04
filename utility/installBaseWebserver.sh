@@ -226,8 +226,10 @@ EOF
 
 fi
 
-# Disable AppArmor for MySQL if present, which interferes with LOAD DATA INFILE; see: https://blogs.oracle.com/jsmyth/entry/apparmor_and_mysql and http://www.cyberciti.biz/faq/ubuntu-linux-howto-disable-apparmor-commands/
-if [ -f /etc/apparmor.d/usr.sbin.mysqld ]; then
+# Disable AppArmor for MySQL if present and not already disabled.
+# It interferes with LOAD DATA INFILE;
+# See: https://blogs.oracle.com/jsmyth/entry/apparmor_and_mysql and http://www.cyberciti.biz/faq/ubuntu-linux-howto-disable-apparmor-commands/
+if [ -f /etc/apparmor.d/usr.sbin.mysqld -a ! -f /etc/apparmor.d/disable/usr.sbin.mysqld ]; then
 	ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
 	apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
 fi

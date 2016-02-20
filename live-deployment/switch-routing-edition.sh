@@ -270,7 +270,8 @@ ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'liv
 ### Finishing
 
 # Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
-${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${importDate} YYMMDD, details: http://cycle.st/journey/help/osmconversion/');";
+formattedDate=`date -d "20${importDate}" "+%-d %B %Y"`
+${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${formattedDate}, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Report
 echo "#	$(date)	Completed switch to $newEdition"

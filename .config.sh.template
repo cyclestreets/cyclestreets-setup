@@ -156,8 +156,8 @@ usgsnedDataFile=
 externalDb=csExternal
 csExternalDataFile=csExternal.sql.gz
 
-# Batch database
-batchDb=csBatch
+# Batch database: csBatch
+batchDb=
 
 # Mobile web site (not part of CycleStreets itself)
 mobilewebContentFolder=

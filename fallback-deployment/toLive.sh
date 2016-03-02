@@ -44,8 +44,12 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Logging
+setupLogFile=$SCRIPTDIRECTORY/log.txt
+touch ${setupLogFile}
+
+# Logging
 echo "#	CycleStreets toLive in progress"
-echo "#	$(date)	CycleStreets toLive $(id)"
+echo "#	$(date)	CycleStreets toLive $(id)" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineHostname}" ]; then

@@ -29,21 +29,19 @@ do
   DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+SCRIPTDIRECTORY=$DIR
 
-# Use this to remove the ../
-ScriptHome=$(readlink -f "${DIR}/..")
-
-# Name of the credentials file
-configFile=${ScriptHome}/.config.sh
+# Define the location of the credentials file relative to script directory
+configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file."
+if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
+    echo "# The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ${configFile}
+. $SCRIPTDIRECTORY/${configFile}
 
 
 ## Main body of script
@@ -73,15 +71,15 @@ server=${fallbackServer}
 dumpPrefix=fallback
 
 # Restore recent data
-. ${ScriptHome}/utility/restore-recent.sh
+. ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
 # Restart the pseudoCron at today's date
 ${superMysql} cyclestreets -e "update map_config set pseudoCron = curdate();";
 
 # Restore these cronjobs - note the timings of these should be the same as in the run.sh
 echo "#	$(date)	It is recommended to manually uncomment relevant cron jobs"
-#cat <(crontab -l) <(echo "4 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh") | crontab -
-#cat <(crontab -l) <(echo "34 11 * * * ${ScriptHome}/live-deployment/install-routing-data.sh") | crontab -
+#cat <(crontab -l) <(echo "4 1 * * * ${SCRIPTDIRECTORY}/../live-deployment/daily-dump.sh") | crontab -
+#cat <(crontab -l) <(echo "34 11 * * * ${SCRIPTDIRECTORY}/../live-deployment/install-routing-data.sh") | crontab -
 
 # Finish
 echo "#	$(date)	All done"

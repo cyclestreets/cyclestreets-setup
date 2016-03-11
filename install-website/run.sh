@@ -270,8 +270,11 @@ if [ ! -r ${globalApacheConfigFile} ]; then
     cat > ${globalApacheConfigFile} << EOF
 # Provides local configuration that affects all hosted sites.
 
-# This file is loaded from the /etc/apache2/conf.d folder, it's name begins with a z so that it is loaded last from that folder.
+# This file is loaded from the /etc/apache2/conf.d folder, its name begins with a z so that it is loaded last from that folder.
 # The files in the conf.d folder are all loaded before any VirtualHost files.
+
+# Increase threads
+MaxRequestWorkers 256
 
 # Avoid giving away unnecessary information about the webserver configuration
 ServerSignature Off

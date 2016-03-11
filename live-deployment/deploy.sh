@@ -94,6 +94,11 @@ echo "#	MySQL configured, but consider running the following security step from 
 echo "#	$(date)	Restarting MySQL"
 sudo service mysql restart
 
+# Munin
+#!# TODO
+# Include dependency for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
+apt-get install libcache-perl libcache-cache-perl
+
 # Cron jobs - note the timings of these should be the same as in the fromFallback.sh
 if $installCronJobs ; then
 

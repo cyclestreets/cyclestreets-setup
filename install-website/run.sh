@@ -6,9 +6,9 @@
 # Announce start
 echo "#	$(date)	CycleStreets installation"
 
-# Ensure this script is run as root
+# Ensure this script is run using sudo
 if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run as root."
+    echo "#	This script must be run using sudo from an account that has access to the CycleStreets svn repo."
     exit 1
 fi
 

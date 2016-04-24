@@ -52,6 +52,8 @@ while getopts ":hqm:" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
+	    # Consume this argument
+            shift $((OPTIND-1));
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
 	    ;;

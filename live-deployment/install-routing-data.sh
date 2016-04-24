@@ -12,10 +12,11 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q importHostname [path]
+	$0 -h -m email -q importHostname [path]
 
 OPTIONS
 	-h Show this message
+	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
 
 ARGUMENTS
@@ -43,11 +44,17 @@ quietmode()
     verbose=
 }
 
+# Default to no notification
+notifyEmail=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
-while getopts ":hq" option ; do
+while getopts ":hqm:" option ; do
     case ${option} in
         h) usage; exit ;;
+	m)
+	    # Set the notification email address
+	    notifyEmail=$OPTARG
+	    ;;
 	# Consume this argument, set quiet mode and proceed
         q) shift $((OPTIND-1)); quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
@@ -77,7 +84,7 @@ then
     echo "#	Import host name is a required argument." 1>&2
     exit 1
 fi
-   
+
 # Bind the source of the new routing editions
 importHostname=$1
 
@@ -255,6 +262,11 @@ fi
 
 
 ### Stage 3 - get the routing files and check data integrity
+
+# Notify that an installation has begun
+if [ -n "${notifyEmail}" ]; then
+    echo "This may lead to notifications and disk hiatus on the server in about an hour." | mail -s "Import install has started on ${importHostname}" "${notifyEmail}"
+fi
 
 # Begin the file transfer
 echo "#	$(date)	CycleStreets routing data installation"

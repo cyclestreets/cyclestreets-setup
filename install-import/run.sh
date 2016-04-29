@@ -233,6 +233,19 @@ if [ -n "${osTerrain50DataFile}" -a ! -e ${osTerrainInstalled} ]; then
 	touch ${osTerrainInstalled}
 fi
 
+# Check if France data is desired and that it has not already been downloaded
+unpackFranceFolder=${importContentFolder}/data/elevation/france/tiff
+if [ -n "${franceDataFile}" -a ! -d ${unpackFranceFolder} ]; then
+	echo "#	Starting download of France elevation data 93MB"
+	franceDataFile=france_wgs84.tiff.bz2
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${franceDataFile} -O ${websitesBackupsFolder}/${franceDataFile}
+	echo "#	Starting installation of France elevation data"
+	mkdir -p ${unpackFranceFolder}/
+	mv ${websitesBackupsFolder}/${franceDataFile} ${unpackFranceFolder}/
+	cd ${unpackFranceFolder}/
+	bunzip2 ${franceDataFile}
+fi
+
 # Check if SRTM data is desired and that it has not already been downloaded
 unpackSRTMfolder=${importContentFolder}/data/elevation/srtmV4.1
 if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then

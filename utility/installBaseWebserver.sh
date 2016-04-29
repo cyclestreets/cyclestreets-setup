@@ -117,6 +117,7 @@ a2enmod headers
 $packageInstall python-software-properties software-properties-common
 
 # PHP
+# Note that Ubuntu's PHP5 has mbstring built-in, so no need to add it an extension; see: http://askubuntu.com/questions/491629/
 $packageUpdate
 $packageInstall php5 php5-gd php5-cli php5-mysql
 

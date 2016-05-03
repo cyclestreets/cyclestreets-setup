@@ -267,7 +267,7 @@ fi
 
 # Notify that an installation has begun
 if [ -n "${notifyEmail}" ]; then
-    echo "This may lead to notifications and disk hiatus on the server in about an hour." | mail -s "Import install has started on ${importHostname}" "${notifyEmail}"
+    echo "Data transfer from ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
 fi
 
 # Begin the file transfer

@@ -266,6 +266,9 @@ ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}'
 # Copy the speeds - any row from map_layer will do as they should all have the same value.
 ${superMysql} cyclestreets -e "UPDATE map_config set speedsKmphCSV = (select speedsKmphCSV from ${newEdition}.map_layer limit 1);";
 
+# Copy the default speed
+${superMysql} cyclestreets -e "UPDATE map_config set defaultCyclingSpeedKmph = (select defaultCyclingSpeedKmph from ${newEdition}.map_layer limit 1);";
+
 # Restore the journeyPlannerStatus
 ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
 

@@ -263,12 +263,6 @@ fi
 # Switch the website to the local server and ensure the routingDb is also set
 ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' WHERE id = 1;";
 
-# Copy the speeds - from map_layer.id=18
-${superMysql} cyclestreets -e "UPDATE map_config set speedsKmphCSV = (select speedsKmphCSV from ${newEdition}.map_layer where id=18);";
-
-# Copy the default speed - from map_layer.id=18
-${superMysql} cyclestreets -e "UPDATE map_config set defaultCyclingSpeedKmph = (select defaultCyclingSpeedKmph from ${newEdition}.map_layer where id=18);";
-
 # Restore the journeyPlannerStatus
 ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
 

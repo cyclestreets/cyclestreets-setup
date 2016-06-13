@@ -8,7 +8,6 @@ class doCheck
 {
 	# Class properties
 	private $debugging = false;
-	private $timeoutSeconds = 15;
 	private $enableSms = true;
 	private $serverUrlMain = 'http://www.cyclestreets.net';
 	private $apiV2UrlMain = 'https://api.cyclestreets.net/v2';
@@ -29,9 +28,13 @@ class doCheck
 		$this->emailAddress = $emailAddress;
 		
 		# Ensure that the settings have been defined
+		if (!isSet ($timeoutSeconds))	{$this->email ('Setup', '$timeoutSeconds is not defined');}
 		if (!isSet ($smsProviderApiKey))	{$this->email ('Setup', '$smsProviderApiKey is not defined');}
 		if (!isSet ($smsNumbers))		{$this->email ('Setup', '$smsNumbers is not defined');}
 		if (!isSet ($testApiKeys))	{$this->email ('Setup', '$testApiKeys is not defined');}
+		
+		# Set settings as properties
+		$this->timeoutSeconds	= $timeoutSeconds;
 		$this->smsProviderApiKey	= $smsProviderApiKey;
 		if (is_string ($smsNumbers)) {$smsNumbers = array ($smsNumbers);}
 		foreach ($smsNumbers as $index => $smsNumber) {

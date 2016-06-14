@@ -67,7 +67,12 @@ apt-get -y install python php5-xmlrpc php5-curl
 
 # Utilities
 echo "#	Some utilities"
-# ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
+
+# ffmpeg; use 15.04 backport as 14.04 has officially removed it, though it is back in 16.04
+add-apt-repository -y ppa:kirillshkrogalev/ffmpeg-next
+apt-get update
+apt-get -y install ffmpeg
+
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets - maybe was needed with ffmpeg?)
 # apt-get -y install libapache2-mod-macro
 

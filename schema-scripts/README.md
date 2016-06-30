@@ -26,7 +26,7 @@ The result is saved to:
 
 To create sample routing data
     Run an import for a small sized city
-    Switch over to the new import via the control panel
+    Switch over to the new import via Control
     Run in this order:
     schema-scripts/csSampleDb.sh
     schema-scripts/routingSample.sh

@@ -104,6 +104,7 @@ echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | deb
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
 # Install MySQL 5.7, which will also start it
+#!# Seems to be a problem as described at "Job for mysql.service failed" in: https://bugs.launchpad.net/ubuntu/+source/mysql-5.7/+bug/1567884/comments/6 - re-running but clearing out /var/lib/mysql helps
 $packageInstall mysql-server-5.7 mysql-client-5.7
 
 # Install Apache (2.4)

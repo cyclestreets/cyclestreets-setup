@@ -65,8 +65,8 @@ fi
 asCS="sudo -u ${username}"
 
 # Ensure that dependencies are present; GD is needed for thumbnailing
-apt-get -y install apache2 php5
-apt-get -y install php5-gd
+apt-get -y install apache2 php
+apt-get -y install php-gd
 
 # Install path to content and go there
 mkdir -p "${telluswhereContentFolder}"
@@ -108,7 +108,7 @@ if [ ! -L /etc/apache2/sites-enabled/600-telluswhere.conf ]; then
 fi
 
 # Add support for SQLite, and add client program
-apt-get -y install php5-sqlite
+apt-get -y install php-sqlite3
 apt-get -y install sqlite3
 
 # Reload apache

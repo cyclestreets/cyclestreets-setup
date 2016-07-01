@@ -99,11 +99,12 @@ if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
 	echo "# Abandoning the installation."
 	exit 1
 fi
+apt-get install debconf-utils
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
-# Install MySQL 5.6, which will also start it
-$packageInstall mysql-server-5.6 mysql-client-5.6
+# Install MySQL 5.7, which will also start it
+$packageInstall mysql-server-5.7 mysql-client-5.7
 
 # Install Apache (2.4)
 echo "#	Installing core webserver packages"
@@ -113,13 +114,13 @@ $packageInstall apache2
 a2enmod rewrite
 a2enmod headers
 
-# The server version of ubuntu 14.04.2 LTS does not include add-apt-repository so this adds it:
+# Ubuntu Server 16.04 LTS does not include add-apt-repository so this adds it:
 $packageInstall python-software-properties software-properties-common
 
 # PHP
 # Note that Ubuntu's PHP5 has mbstring built-in, so no need to add it an extension; see: http://askubuntu.com/questions/491629/
 $packageUpdate
-$packageInstall php5 php5-gd php5-cli php5-mysql
+$packageInstall php php-gd php-cli php-mysql
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # $packageInstall phpmyadmin

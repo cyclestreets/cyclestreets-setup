@@ -1,7 +1,7 @@
 #!/bin/bash
 # Script to install CycleStreets import sources and data on Ubuntu
 #
-# Tested on 14.04.2 LTS. View Ubuntu version using: lsb_release -a
+# Written for Ubuntu Server 16.04 LTS. View Ubuntu version using: lsb_release -a
 # This script is idempotent - it can be safely re-run without destroying existing data
 # It should be run after the website system has been installed.
 

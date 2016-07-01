@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to run an import of fresh CycleStreets data on Ubuntu
-# Tested on 14.04.2 LTS Desktop (View Ubuntu version using 'lsb_release -a')
+# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 

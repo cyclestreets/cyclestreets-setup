@@ -6,7 +6,7 @@
 # DESCRIPTION
 #	Script to deploy a CycleStreets import system that has been installed by ../install-import/run.sh
 #	All it does is to configure MySQL to be capabable of handling large imports, and optionally schedule some cron jobs.
-#	Tested on 14.04 LTS (View Ubuntu version using 'lsb_release -a')
+#	Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
 #	This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets import deployment $(date)"

@@ -1,12 +1,13 @@
 # cyclestreets-setup
 
-Scripts for installing CycleStreets, developing for Ubuntu 14.04.2 LTS
+Scripts for installing CycleStreets, written for Ubuntu Server 16.04 LTS
 
 **Note this is work-in-progress and the CycleStreets repo which is needed is not yet publicly available.**
 
 ## Requirements
 
-Tested, March 2015 on a Ubuntu Server 14.04.2 LTS VM with 1 GB RAM, 8GB HD.
+Written for Ubuntu Server 16.04 LTS.
+Earlier versions of scripts tested, March 2015 on a Ubuntu Server 14.04.2 LTS VM with 1 GB RAM, 8GB HD.
 
 
 ## Setup
@@ -21,6 +22,7 @@ sudo apt-get -y install git
 # Tell git who you are
 # git config --global user.name "Your git username"
 # git config --global user.email "Your git email"
+# git config --global push.default simple
 
 # Clone the cyclestreets-setup repo
 git clone https://github.com/cyclestreets/cyclestreets-setup.git

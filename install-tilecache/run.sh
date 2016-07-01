@@ -66,7 +66,7 @@ fi
 asCS="sudo -u ${username}"
 
 # Ensure that dependencies are present
-apt-get -y install apache2 php5
+apt-get -y install apache2 php
 
 # Install path to content and go there
 mkdir -p "${tilecacheContentFolder}"

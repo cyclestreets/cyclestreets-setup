@@ -3,6 +3,9 @@
 # E-mail address
 $emailAddress = '';
 
+# Timeout
+$timeoutSeconds = 15;
+
 # API key for the SMS provider
 $smsProviderApiKey = '';
 

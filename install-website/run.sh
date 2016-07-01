@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to install CycleStreets on Ubuntu
-# Tested on 14.04.2 LTS Desktop (View Ubuntu version using 'lsb_release -a')
+# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # Announce start
@@ -52,10 +52,11 @@ echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 
-# Note: some new versions of php5.5 are missing json functions. This can be easily remedied by including the package: php5-json
+# Ensure JSON support
+apt-get -y install php-json
 
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
-apt-get -y install imagemagick php5-imagick
+apt-get -y install imagemagick php-imagick
 
 # Enable mod_deflate for Apache
 sudo a2enmod deflate
@@ -63,11 +64,14 @@ service apache2 restart
 
 # Install Python
 echo "#	Installing python"
-apt-get -y install python php5-xmlrpc php5-curl
+apt-get -y install python php-xmlrpc php-curl
 
 # Utilities
 echo "#	Some utilities"
-# ffmpeg has been removed from this line as not available (needed for translating videos uploaded to photomap)
+
+# ffmpeg; this has been restored in 16.04 as an official package
+apt-get -y install ffmpeg
+
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets - maybe was needed with ffmpeg?)
 # apt-get -y install libapache2-mod-macro
 
@@ -94,13 +98,7 @@ chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 # Note: using "apt-get -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
 # See: http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
 # See: http://xfloyd.net/blog/?p=745
-# Note if it breaks here try: apt-get -f install
-if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
-	apt-get -y install wkhtmltopdf  # Install dependencies
-	wget -P /tmp/ http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
-	dpkg -i /tmp/wkhtmltox*.deb
-	rm /tmp/wkhtmltox*.deb
-fi
+sudo apt-get install xfonts-75dpi wkhtmltopdf
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
 # brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb
 

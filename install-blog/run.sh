@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to install the CycleStreets blog on Ubuntu
-# Tested on 14.04 LTS Server (View Ubuntu version using 'lsb_release -a')
+# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets blog installation $(date)"

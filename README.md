@@ -21,6 +21,7 @@ sudo apt-get -y install git
 # Tell git who you are
 # git config --global user.name "Your git username"
 # git config --global user.email "Your git email"
+# git config --global push.default simple
 
 # Clone the cyclestreets-setup repo
 git clone https://github.com/cyclestreets/cyclestreets-setup.git

@@ -65,6 +65,13 @@ apt-get upgrade
 apt-get dist-upgrade
 apt-get autoremove
 
+# Install load balancer
+apt-get install pound
+
+# Archive original config
+if [ ! -f /etc/pound/pound.cfg.original ]; then
+	cp -pr /etc/pound/pound.cfg /etc/pound/pound.cfg.original
+fi
 
 
 # Report completion

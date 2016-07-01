@@ -98,7 +98,7 @@ chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 # Note: using "apt-get -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
 # See: http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
 # See: http://xfloyd.net/blog/?p=745
-sudo apt-get install xfonts-75dpi wkhtmltopdf
+apt-get -y install xfonts-75dpi wkhtmltopdf
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
 # brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb
 

@@ -1,9 +1,9 @@
 #!/bin/bash
-# Installs the load balancer
+# Installs the ???
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets: install load balancer"
+echo "#	CycleStreets: install ???"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -51,7 +51,7 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Announce starting
-echo "# Load balancer installation $(date)"
+echo "# ??? installation $(date)"
 
 
 ## Main body
@@ -68,7 +68,7 @@ apt-get autoremove
 
 
 # Report completion
-echo "#	Installing load balancer completed"
+echo "#	Installing ??? completed"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -197,6 +197,10 @@ character-set-client-handshake = FALSE
 collation-server = utf8mb4_unicode_ci
 character-set-server = utf8mb4
 sql_mode=NO_ENGINE_SUBSTITUTION
+
+# Enable query cache for mysql 5.7
+# !! This is not part of utf8 configuration but is a convenient to put it.
+query_cache_type = 1
 EOF
 
     # Restart mysql

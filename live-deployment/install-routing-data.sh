@@ -32,6 +32,15 @@ DESCRIPTION
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The routing edition database is installed.
 	If successful it prompts to use the switch-routing-edition.sh script to start using the new routing edition.
+
+	Secure shell access is required to the importHostname which can be setup as follows:
+# cyclestreets@theghost:~$
+ssh-keygen
+# accept defaults ie: suggested file and no passphrase
+
+# Copy to the importHostname eg:
+ssh-copy-id -i ~/.ssh/id_rsa.pub yorick.cyclestreets.net
+
 EOF
 }
 

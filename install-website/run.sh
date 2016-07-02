@@ -553,9 +553,7 @@ sudo apt-get -y install gcc g++ python-dev
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/routingengine/"
-	${asCS} python setup.py build
-	${asCS} mv build/lib.*/astar_impl.so ./
-	${asCS} rm -rf build/
+	${asCS} ./buildre.sh
 	cd ${websitesContentFolder}
 fi
 

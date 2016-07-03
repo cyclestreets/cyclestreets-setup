@@ -15,7 +15,7 @@
 # Create a link to this script from the munin configuration:
 # sudo ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
 #
-# Then restart munin
+# Then restart munin node
 # sudo /etc/init.d/munin-node restart
 #
 # Example calls
@@ -66,21 +66,21 @@ fi
 output_config() {
     echo "graph_title CycleStreets usage"
     echo "graph_category CycleStreets"
-    echo "itineraries.label Itineraries per 5 mins"
-    echo "failedItineraries.label Failed itineraries per 5 mins"
+    echo "journeys.label Journeys per 5 mins"
+    echo "failedJourneys.label Failed journeys per 5 mins"
     echo "errors.label Errors per 5 mins"
 }
 
 # Outputs the statistics
 output_values() {
-    printf "itineraries.value %d\n" $(number_of_itineraries)
-    printf "failedItineraries.value %d\n" $(number_of_failed_itineraries)
+    printf "journeys.value %d\n" $(number_of_journeys)
+    printf "failedJourneys.value %d\n" $(number_of_failed_journeys)
     printf "errors.value %d\n" $(number_of_errors)
 }
 
 # Explain arguments to this script
 output_usage() {
-    printf >&2 "%s - CycleStreets itineraries graphs\n" ${0##*/}
+    printf >&2 "%s - CycleStreets graphs\n" ${0##*/}
     printf >&2 "Usage: %s [config]\n" ${0##*/}
 }
 
@@ -88,19 +88,23 @@ output_usage() {
 ## Internal functions that provide the statistics
 
 # Number of itineraries in a five minute period
-# Avoids the latest minute's worth of data as that would include unfinished route calculations.
 number_of_itineraries() {
-    ${superMysql} cyclestreets -sNe "select count(distinct itineraryId) count from map_journey where datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
+    ${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";
 }
 
-# Number of itineraries in a five minute period
-number_of_failed_itineraries() {
-    ${superMysql} cyclestreets -sNe "select count(distinct itineraryId) count from map_journey where length = 0 and datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
+# Number of journeys in a five minute period
+number_of_journeys() {
+    ${superMysql} cyclestreets -sNe "select countJourneysLastFiveMinutes()";
+}
+
+# Number of journeys in a five minute period
+number_of_failed_journeys() {
+    ${superMysql} cyclestreets -sNe "select countFailedJourneysLastFiveMinutes()";
 }
 
 # Number of errors in a five minute period
 number_of_errors() {
-    ${superMysql} cyclestreets -sNe "select count(*) count from map_error where datetime > now() - interval 6 minute and datetime < now() - interval 1 minute";
+    ${superMysql} cyclestreets -sNe "select countErrorsLastFiveMinutes()";
 }
 
 

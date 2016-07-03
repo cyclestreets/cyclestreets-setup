@@ -66,6 +66,7 @@ fi
 output_config() {
     echo "graph_title CycleStreets usage"
     echo "graph_category CycleStreets"
+    echo "itineraries.label Itineraries per 5 mins"
     echo "journeys.label Journeys per 5 mins"
     echo "failedJourneys.label Failed journeys per 5 mins"
     echo "errors.label Errors per 5 mins"
@@ -73,6 +74,7 @@ output_config() {
 
 # Outputs the statistics
 output_values() {
+    printf "itineraries.value %d\n" $(number_of_itineraries)
     printf "journeys.value %d\n" $(number_of_journeys)
     printf "failedJourneys.value %d\n" $(number_of_failed_journeys)
     printf "errors.value %d\n" $(number_of_errors)

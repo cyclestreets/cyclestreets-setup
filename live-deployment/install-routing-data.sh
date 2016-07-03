@@ -21,7 +21,7 @@ OPTIONS
 
 ARGUMENTS
 	importHostname
-		A hostname eg yorick.cyclestreets.net
+		A hostname eg machinename.cyclestreets.net
 
 	path
 		The optional second argument (a non slash terminated directory path) says where on the host the routing edition can be found.
@@ -34,12 +34,12 @@ DESCRIPTION
 	If successful it prompts to use the switch-routing-edition.sh script to start using the new routing edition.
 
 	Secure shell access is required to the importHostname which can be setup as follows:
-# cyclestreets@theghost:~$
+# cyclestreets@machinename1:~$
 ssh-keygen
 # accept defaults ie: suggested file and no passphrase
 
 # Copy to the importHostname eg:
-ssh-copy-id -i ~/.ssh/id_rsa.pub yorick.cyclestreets.net
+ssh-copy-id -i ~/.ssh/id_rsa.pub machinename2.cyclestreets.net
 
 EOF
 }

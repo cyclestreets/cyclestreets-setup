@@ -239,7 +239,7 @@ importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 md5Dump=`sed -n                       's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 
-tsvFile=${tsvFile}
+tsvFile=tsv.tar.gz
 dumpFile=dump.sql.gz
 
 # Ensure the key variables are specified

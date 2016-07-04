@@ -21,8 +21,8 @@ mainEmail="${administratorEmail}"
 apiHostname=api-"${csHostname}"
 apiHostnamePort=
 
-# Main api key
-mainApiKey=
+# Tests api key
+testsApiKey=
 
 # Define the username for CycleStreets to install/run under, so that it can run independent of any individual personal account on the machine
 # No spaces, all lower case, minimum five chars - so that can also be used as a cyclestreets sign in username.

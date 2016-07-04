@@ -240,10 +240,11 @@ timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
+md5Dump=`sed -n                       's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 
 # Ensure the key variables are specified
-if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Tables" ]; then
-	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Tables"
+if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; then
+	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Dump"
 	exit 1
 fi
 
@@ -292,8 +293,8 @@ mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 #	Transfer the TSV file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/
 
-#	Hot-copied tables file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/tables.tar.gz ${newEditionFolder}/
+#	Hot-copied dump file
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/dump.tar.gz ${newEditionFolder}/
 
 #	Sieve file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
@@ -306,8 +307,8 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/tsv.tar.gz)" != "MD5(${newEditionF
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/tables.tar.gz)" != "MD5(${newEditionFolder}/tables.tar.gz)= ${md5Tables}" ]; then
-	echo "#	Stopping: Tables md5 does not match"
+if [ "$(openssl dgst -md5 ${newEditionFolder}/dump.tar.gz)" != "MD5(${newEditionFolder}/dump.tar.gz)= ${md5Dump}" ]; then
+	echo "#	Stopping: dump md5 does not match"
 	exit 1
 fi
 
@@ -339,12 +340,15 @@ if [ $? != 0 ]; then
    exit 1
 fi
 
-# Create a place to unpack mysql tables
-mysqlTablesFolder=${newEditionFolder}/mysqltables
-mkdir -p ${mysqlTablesFolder}
+# Create a place to unpack mysql dump
+mysqlDumpFolder=${newEditionFolder}/mysqldump
+mkdir -p ${mysqlDumpFolder}
 
 # Unpack the database files, preserve permissions, verbose
-echo $password | sudo -S tar xpvf tables.tar.gz -C ${mysqlTablesFolder}
+echo $password | sudo -S tar xpvf dump.tar.gz -C ${mysqlDumpFolder}
+
+# Changing tables to dump - WIP implemented to here
+exit 1
 
 # Move into mysql
 echo $password | sudo -S mv ${mysqlTablesFolder}/* ${dbFilesLocation}${importEdition}

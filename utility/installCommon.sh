@@ -40,8 +40,6 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]
     cat > ${csSudoers} << EOF
 # Permit cyclestreets user to control the routing service without a password
 cyclestreets ALL = (root) NOPASSWD: ${routingDaemonLocation}
-# Permit cyclestreets user to run the routing compression using sudo without a password
-cyclestreets ALL = (root) NOPASSWD: ${importContentFolder}/compressRouting.sh
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
 # Passwordless sudo to chown photomap files

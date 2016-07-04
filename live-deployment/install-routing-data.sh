@@ -294,7 +294,7 @@ mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/
 
 #	Hot-copied dump file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/dump.tar.gz ${newEditionFolder}/
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/dump.sql.gz ${newEditionFolder}/
 
 #	Sieve file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
@@ -307,7 +307,7 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/tsv.tar.gz)" != "MD5(${newEditionF
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/dump.tar.gz)" != "MD5(${newEditionFolder}/dump.tar.gz)= ${md5Dump}" ]; then
+if [ "$(openssl dgst -md5 ${newEditionFolder}/dump.sql.gz)" != "MD5(${newEditionFolder}/dump.sql.gz)= ${md5Dump}" ]; then
 	echo "#	Stopping: dump md5 does not match"
 	exit 1
 fi
@@ -345,7 +345,7 @@ mysqlDumpFolder=${newEditionFolder}/mysqldump
 mkdir -p ${mysqlDumpFolder}
 
 # Unpack the database files, preserve permissions, verbose
-echo $password | sudo -S tar xpvf dump.tar.gz -C ${mysqlDumpFolder}
+echo $password | sudo -S tar xpvf dump.sql.gz -C ${mysqlDumpFolder}
 
 # Changing tables to dump - WIP implemented to here
 exit 1

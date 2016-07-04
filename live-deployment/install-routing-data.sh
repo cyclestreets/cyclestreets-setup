@@ -329,6 +329,13 @@ echo "#	$(date)	Installing the routing database: ${importEdition}"
 ${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
 ${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
+# !! Changing tables to dump - WIP implemented to here
+exit 1
+
+# Something like
+gunzip < /websites/www/content/data/routing/routing160704/dump.sql.gz | smysql routing160704 
+
+
 #!# Hard-coded location
 dbFilesLocation=/var/lib/mysql/
 
@@ -347,8 +354,6 @@ mkdir -p ${mysqlDumpFolder}
 # Unpack the database files, preserve permissions, verbose
 echo $password | sudo -S tar xpvf dump.sql.gz -C ${mysqlDumpFolder}
 
-# Changing tables to dump - WIP implemented to here
-exit 1
 
 # Move into mysql
 echo $password | sudo -S mv ${mysqlTablesFolder}/* ${dbFilesLocation}${importEdition}

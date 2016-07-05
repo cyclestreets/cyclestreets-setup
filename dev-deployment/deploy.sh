@@ -70,20 +70,6 @@ phpenmod mcrypt
 a2disconf phpmyadmin
 service apache2 reload
 
-# Munin; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
-apt-get install -y apache2-utils
-apt-get install -y libcgi-fast-perl libapache2-mod-fcgid
-a2enmod fcgid
-apt-get install -y munin
-# Disable by default, as this will add to all VirtualHosts; instead, add the following to an Apache VirtualHost:
-#  Include /etc/apache2/conf-available/munin.conf
-#  Alias / /var/cache/munin/www/
-a2disconf munin
-service apache2 reload
-
-# Downloads area
-. ${ScriptHome}/dev-deployment/install-downloads.sh
-
 # Exim
 # Mail Transfer Agent (MTA); NB load before Python otherwise Ubuntu will choose Postfix
 # See: https://help.ubuntu.com/lts/serverguide/exim4.html and http://manpages.ubuntu.com/manpages/hardy/man8/update-exim4.conf.8.html
@@ -99,7 +85,19 @@ if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 	sudo service exim4 restart
 fi
 
+# Munin Server; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
+apt-get install -y apache2-utils
+apt-get install -y libcgi-fast-perl libapache2-mod-fcgid
+a2enmod fcgid
+apt-get install -y munin
+# Disable by default, as this will add to all VirtualHosts; instead, add the following to an Apache VirtualHost:
+#  Include /etc/apache2/conf-available/munin.conf
+#  Alias / /var/cache/munin/www/
+a2disconf munin
+service apache2 reload
 
+# Downloads area
+. ${ScriptHome}/dev-deployment/install-downloads.sh
 
 # Load cron job function
 . ${ScriptHome}/utility/helper.sh

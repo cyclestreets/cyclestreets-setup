@@ -94,10 +94,19 @@ echo "#	MySQL configured, but consider running the following security step from 
 echo "#	$(date)	Restarting MySQL"
 sudo service mysql restart
 
-# Munin
-#!# TODO
+# Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependency for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
-apt-get install libcache-perl libcache-cache-perl
+apt-get install -y libcache-perl libcache-cache-perl
+# Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: http://stackoverflow.com/questions/20568836/cant-locate-dbi-pm
+apt-get install -y libdbi-perl
+apt-get install -y munin-node
+apt-get install -y munin-plugins-extra
+ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+# See: http://munin-monitoring.org/wiki/munin-node-configure
+munin-node-configure --suggest --shell | sh
+/etc/init.d/munin-node restart
+echo "Munin plugins enabled as follows:"
+munin-node-configure --suggest
 
 # Cron jobs - note the timings of these should be the same as in the fromFallback.sh
 if $installCronJobs ; then

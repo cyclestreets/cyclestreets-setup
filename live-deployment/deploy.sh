@@ -104,6 +104,7 @@ apt-get install -y munin-plugins-extra
 ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
+#!# MySQL 5.7 doesn't seem to work; gives error "Wrong amount of autoconf"; reported at: https://github.com/munin-monitoring/munin/issues/713
 /etc/init.d/munin-node restart
 echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest

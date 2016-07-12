@@ -105,7 +105,7 @@ apt-get -y install xfonts-75dpi wkhtmltopdf
 
 # Install Potlatch editor
 #!# This currently assumes the existence of the .tgz file; need to make this part of a repo at some point
-#!# Ideally we would: 
+#!# Ideally we would:
 #    1) Pull down the latest dev code from https://github.com/openstreetmap/potlatch2
 #    2) Compile using Flex as detailed in the README, using the Flex install instructions at http://thomas.deuling.org/2011/05/install-flex-sdk-under-ubuntu-linux/
 #    3) Add in the local config, which are believed to be map_features.xml (position of transport block moved) and vectors.xml (which defines the external sources); possibly there are other files - needs to be checked
@@ -138,36 +138,36 @@ chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectCh
 touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 chown www-data:${rollout} ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 
-# Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
+# VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
 cslocalconf=cyclestreets.conf
 localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 
-# Check if the local virtual host exists already
+# Check if the local VirtualHost exists already
 if [ ! -r ${localVirtualHostFile} ]; then
-    # Create the local virtual host (avoid any backquotes in the text as they'll spawn sub-processes)
+    # Create the local VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
     cat > ${localVirtualHostFile} << EOF
 <VirtualHost *:80>
-
+	
 	# Available URL(s)
-	# Note: ServerName should not use wildcards, use ServerAlias for that.
+	# Note: ServerName should not use wildcards; use ServerAlias for that.
 	ServerName ${csHostname}
 	ServerAlias *.cyclestreets.net
 	
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}-access.log combined
 	ErrorLog /websites/www/logs/${csHostname}-error.log
-
+	
 	# Where the files are
 	DocumentRoot /websites/www/content/
-		
+	
 	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit rescans
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
-
+	
 	# This is necessary to enable cookies to work on the domain http://localhost/
 	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
 	php_admin_value session.cookie_domain none
-
+	
 </VirtualHost>
 EOF
 
@@ -175,10 +175,10 @@ EOF
     chown ${username}:${rollout} ${localVirtualHostFile}
 
 else
-    echo "#	Virtual host already exists: ${localVirtualHostFile}"
+    echo "#	VirtualHost already exists: ${localVirtualHostFile}"
 fi
 
-# Enable this virtual host
+# Enable this VirtualHost
 a2ensite ${cslocalconf}
 
 # Add the api address to /etc/hosts if it is not already present
@@ -205,13 +205,13 @@ then
     echo "127.0.1.1	${aliases}" >> /etc/hosts
 fi
 
-# Virtual host configuration - for best compatibiliy use *.conf for the apache configuration files
+# VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
 apilocalconf=api.cyclestreets.conf
 apiLocalVirtualHostFile=/etc/apache2/sites-available/${apilocalconf}
 
-# Check if the local virtual host exists already
+# Check if the local VirtualHost exists already
 if [ ! -r ${apiLocalVirtualHostFile} ]; then
-    # Create the local virtual host (avoid any backquotes in the text as they'll spawn sub-processes)
+    # Create the local VirtualHost (avoid any backquotes in the text as they'll spawn sub-processes)
     cat > ${apiLocalVirtualHostFile} << EOF
 <VirtualHost *:80>
 
@@ -238,10 +238,10 @@ EOF
     chown ${username}:${rollout} ${apiLocalVirtualHostFile}
 
 else
-    echo "#	Virtual host already exists: ${apiLocalVirtualHostFile}"
+    echo "#	VirtualHost already exists: ${apiLocalVirtualHostFile}"
 fi
 
-# Enable this virtual host
+# Enable this VirtualHost
 a2ensite ${apilocalconf}
 
 
@@ -257,11 +257,11 @@ elif [ -d /etc/apache2/conf.d ]; then
     # Apache 2.2 location
     globalApacheConfigFile=/etc/apache2/conf.d/${zcsGlobalConf}
 else
-    echo "#	Could not decide where to put global virtual host configuration"
+    echo "#	Could not decide where to put global VirtualHost configuration"
     exit 1
 fi
 
-echo "#	Setting global virtual host configuration in ${globalApacheConfigFile}"
+echo "#	Setting global VirtualHost configuration in ${globalApacheConfigFile}"
 
 # Check if the local global apache config file exists already
 if [ ! -r ${globalApacheConfigFile} ]; then

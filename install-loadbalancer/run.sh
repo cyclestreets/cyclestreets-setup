@@ -65,6 +65,7 @@ apt-get upgrade
 apt-get dist-upgrade
 apt-get autoremove
 
+
 # Install load balancer
 apt-get install pound
 
@@ -72,6 +73,12 @@ apt-get install pound
 if [ ! -f /etc/pound/pound.cfg.original ]; then
 	cp -pr /etc/pound/pound.cfg /etc/pound/pound.cfg.original
 fi
+
+# Enable pound to start; see: https://help.ubuntu.com/community/Pound
+sed -i 's/startup=0/startup=1/' /etc/default/pound
+
+# Start the service; note that this uses init.d, not service
+/etc/init.d/pound start
 
 
 # Report completion

@@ -60,14 +60,14 @@ echo "# Load balancer installation $(date)"
 asCS="sudo -u ${username}"
 
 # Update sources and packages
-apt-get update
-apt-get upgrade
-apt-get dist-upgrade
-apt-get autoremove
+apt-get -y update
+apt-get -y upgrade
+apt-get -y dist-upgrade
+apt-get -y autoremove
 
 
 # Install load balancer
-apt-get install pound
+apt-get -y install pound
 
 # Archive original config
 if [ ! -f /etc/pound/pound.cfg.original ]; then

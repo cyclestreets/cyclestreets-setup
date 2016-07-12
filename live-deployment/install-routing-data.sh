@@ -234,13 +234,13 @@ set -e
 # Get the required variables from the routing definition file; this is not directly executed for security
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
 # NB the timestamp parameter is not really used yet in the script below
-# !! Note: the md5Dump option (which loads the database from a mysqldump generated file, and is an alternative to the hotcopy option md5Tables) is not yet supported
-# Note also that hotcopy is deprecated at MySQL 5.6 and will be removed in 5.7, see: https://dev.mysql.com/doc/refman/5.6/en/mysqlhotcopy.html
 timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $newImportDefinition`
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
-md5Tables=`sed -n                       's/^md5Tables\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 md5Dump=`sed -n                       's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
+
+tsvFile=tsv.tar.gz
+dumpFile=dump.sql.gz
 
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; then
@@ -291,10 +291,10 @@ mkdir -p ${newEditionFolder}
 mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 
 #	Transfer the TSV file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/tsv.tar.gz ${newEditionFolder}/
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 
-#	Hot-copied dump file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/dump.sql.gz ${newEditionFolder}/
+#	Mysql dump file
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
 
 #	Sieve file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
@@ -303,11 +303,11 @@ scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/siev
 echo "#	$(date)	File transfer stage complete"
 
 # MD5 checks
-if [ "$(openssl dgst -md5 ${newEditionFolder}/tsv.tar.gz)" != "MD5(${newEditionFolder}/tsv.tar.gz)= ${md5Tsv}" ]; then
+if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionFolder}/${tsvFile})= ${md5Tsv}" ]; then
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/dump.sql.gz)" != "MD5(${newEditionFolder}/dump.sql.gz)= ${md5Dump}" ]; then
+if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
 	echo "#	Stopping: dump md5 does not match"
 	exit 1
 fi
@@ -315,10 +315,10 @@ fi
 
 ### Stage 4 - unpack and install the TSV files
 cd ${newEditionFolder}
-tar xf tsv.tar.gz
+tar xf ${tsvFile}
 
 #	Clean up the compressed TSV data
-rm tsv.tar.gz
+rm -f ${tsvFile}
 
 ### Stage 5 - create the routing database
 
@@ -329,40 +329,11 @@ echo "#	$(date)	Installing the routing database: ${importEdition}"
 ${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
 ${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
-# !! Changing tables to dump - WIP implemented to here
-exit 1
-
-# Something like
-gunzip < /websites/www/content/data/routing/routing160704/dump.sql.gz | smysql routing160704 
-
-
-#!# Hard-coded location
-dbFilesLocation=/var/lib/mysql/
-
-# Ensure the MySQL directory has been created
-# Requires root permissions to check this and so sudo is used.
-echo $password | sudo -S test -d ${dbFilesLocation}${importEdition}
-if [ $? != 0 ]; then
-   echo "#	$(date) !! The MySQL database does not seem to be installed in the expected location."
-   exit 1
-fi
-
-# Create a place to unpack mysql dump
-mysqlDumpFolder=${newEditionFolder}/mysqldump
-mkdir -p ${mysqlDumpFolder}
-
-# Unpack the database files, preserve permissions, verbose
-echo $password | sudo -S tar xpvf dump.sql.gz -C ${mysqlDumpFolder}
-
-
-# Move into mysql
-echo $password | sudo -S mv ${mysqlTablesFolder}/* ${dbFilesLocation}${importEdition}
-
-# Remove the folder, which should by now be empty
-rmdir ${mysqlTablesFolder}
+# Unpack and restore the database
+gunzip < ${dumpFile} | ${superMysql} ${importEdition}
 
 # Remove the zip
-rm tables.tar.gz
+rm -f ${dumpFile}
 
 ### Stage 6 - run post-install stored procedures
 

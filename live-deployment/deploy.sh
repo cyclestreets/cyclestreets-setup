@@ -94,6 +94,9 @@ echo "#	MySQL configured, but consider running the following security step from 
 echo "#	$(date)	Restarting MySQL"
 sudo service mysql restart
 
+# Monitoring tools
+apt-get install -y iotop
+
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependency for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
 apt-get install -y libcache-perl libcache-cache-perl

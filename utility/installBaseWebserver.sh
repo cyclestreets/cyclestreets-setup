@@ -83,7 +83,7 @@ apt-get -y dist-upgrade
 apt-get -y autoremove
 
 # Install basic software
-$packageInstall wget dnsutils man-db subversion git emacs nano bzip2
+$packageInstall wget dnsutils man-db locate subversion git emacs nano bzip2
 
 # Install Apache, PHP
 echo "#	Installing Apache, MySQL, PHP"

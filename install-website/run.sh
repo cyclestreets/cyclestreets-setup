@@ -273,6 +273,7 @@ if [ ! -r ${globalApacheConfigFile} ]; then
 # The files in the conf.d folder are all loaded before any VirtualHost files.
 
 # Increase threads
+# Note: 'a2query -M' shows the type (prefork/worker) which is in use
 MaxRequestWorkers 256
 
 # Avoid giving away unnecessary information about the webserver configuration

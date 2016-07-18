@@ -280,6 +280,15 @@ ServerSignature Off
 ServerTokens ProductOnly
 php_admin_value expose_php 0
 
+# Enable status page (login version - there will also be /server-status for localhost for Munin access)
+<Location /status>
+	SetHandler server-status
+	AuthUserFile /etc/apache2/.htpasswd
+	AuthName "Status"
+	AuthType Basic
+	Require valid-user
+</Location>
+
 # ServerAdmin
 ServerAdmin ${administratorEmail}
 

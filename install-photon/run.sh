@@ -99,6 +99,9 @@ if [ ! -L /etc/init.d/photon ]; then
 	chmod +x /opt/photon/photon.init.d
 fi
 
+# Start service at startup
+sudo update-rc.d photon defaults
+
 # Start the service
 service photon start
 echo "Photon started using: service photon start"

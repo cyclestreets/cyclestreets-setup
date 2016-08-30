@@ -568,7 +568,7 @@ if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	cd ${websitesContentFolder}
 fi
 
-# Add this python module which is needed by the routing_server.py script
+# Add this python module which is needed by the routing service
 sudo apt-get -y install python-argparse
 
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
@@ -599,7 +599,7 @@ if $installRoutingAsDaemon ; then
 
     # Ensure the relevant files are executable
     chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
-    chmod ug+x ${websitesContentFolder}/routingengine/routing_server.py
+    chmod ug+x ${websitesContentFolder}/routingengine/server.py
 
     # Check the local routing service
     # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
@@ -624,7 +624,7 @@ else
 
     echo "#	Routing service - (not installed as a daemon)"
     echo "#	Can be manually started from the command line using:"
-    echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/routing_server.py"
+    echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/server.py"
 
     # If it was previously setup as a daemon, remove it
     if [ -L ${routingDaemonLocation} ]; then

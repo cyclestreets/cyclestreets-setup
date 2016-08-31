@@ -204,9 +204,13 @@ collation-server = utf8mb4_unicode_ci
 character-set-server = utf8mb4
 sql_mode=NO_ENGINE_SUBSTITUTION
 
+# !! The following are not part of utf8 configuration but this a convenient to put them.
+
 # Enable query cache for mysql 5.7
-# !! This is not part of utf8 configuration but is a convenient to put it.
 query_cache_type = 1
+
+# Set this variable as empty which allows access to any files in any local directory (needed for reading elevations)
+secure_file_priv =
 EOF
 
     # Restart mysql

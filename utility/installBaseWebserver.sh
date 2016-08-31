@@ -101,7 +101,7 @@ if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
 	echo "# Abandoning the installation."
 	exit 1
 fi
-apt-get install debconf-utils
+apt-get install debconf-i18n
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 

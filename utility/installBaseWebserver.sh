@@ -110,7 +110,8 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 $packageInstall mysql-server-5.7 mysql-client-5.7
 
 # Add performance monitoring for MySQL
-$packageInstall mytop
+# !! Not available in 16.04
+#$packageInstall mytop
 
 # Install Apache (2.4)
 echo "#	Installing core webserver packages"
@@ -121,7 +122,7 @@ a2enmod rewrite
 a2enmod headers
 
 # Ubuntu Server 16.04 LTS does not include add-apt-repository so this adds it:
-$packageInstall python-software-properties software-properties-common
+$packageInstall software-properties-common
 
 # PHP
 # Note that Ubuntu's PHP has mbstring built-in, so no need to add it an extension; see: http://askubuntu.com/questions/491629/

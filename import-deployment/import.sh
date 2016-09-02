@@ -90,7 +90,14 @@ likelyEdition=routing$(date +%y%m%d)
 # Check whether the edition already exists either as a directory or symbolic link
 if [ -d ${importMachineEditions}/${likelyEdition} -o -L ${importMachineEditions}/${likelyEdition} ]; then
     echo "#	The edition already exists, check this folder: ${importMachineEditions}/${likelyEdition}"
-    exit 1
+
+    # !! An argument could be used to force this to continue
+    if [ "$1" != 'force' ]; then
+	echo "#	Abandoning - use force option to override"
+	exit 1
+    else
+	echo "#	Continuing due to force option"
+    fi
 fi
 
 # Lock directory

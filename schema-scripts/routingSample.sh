@@ -46,7 +46,7 @@ ${superMysql} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema
 
 #	Run the zapper - which eliminates unnecessary data, leaving only essential data required to provide routing
 #	(This smashes the routing db so consider making a copy first.)
-${superMysql} ${sampleRoutingDb} -e "call cleanSampleRouting();"
+${superMysql} ${sampleRoutingDb} -e "call cleanSampleRouting(\"${sampleRoutingDb}\");"
 
 #	Write
 mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost --routines --no-create-db --hex-blob ${sampleRoutingDb} | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz

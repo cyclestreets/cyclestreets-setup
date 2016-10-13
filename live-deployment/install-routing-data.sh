@@ -12,7 +12,7 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -m email -q importHostname [path]
+	$0 -h -m email -q importHostname [edition] [path]
 
 OPTIONS
 	-h Show this message
@@ -23,8 +23,11 @@ ARGUMENTS
 	importHostname
 		A hostname eg machinename.cyclestreets.net
 
+	edition
+		The optional second argument identifies the routing edition e.g. routing161012.
+		If not specified, or given the value 'latest', the latest edition on the host will be found and used.
 	path
-		The optional second argument (a non slash terminated directory path) says where on the host the routing edition can be found.
+		The optional third argument (a non slash terminated directory path) says where on the host the routing edition can be found.
 		Defaults to the hardwired location: /websites/www/import/output
 
 DESCRIPTION
@@ -99,11 +102,21 @@ fi
 # Bind the source of the new routing editions
 importHostname=$1
 
-# Optional second argument says where on the host the routing edition can be found
+# Optional second argument 'edition' names the desired routing edition
 if [ $# -gt 1 ]
 then
+    # Use as supplied
+    desiredEdition=$2
+else
+    # Default
+    desiredEdition="latest"
+fi
+
+# Optional third argument 'path' says where on the host the routing edition can be found
+if [ $# -gt 2 ]
+then
     # Use supplied location
-    importMachineEditions=$2
+    importMachineEditions=$3
 else
     # Default to this hardwired location - as live installs cannot expect the config option: importContentFolder
     importMachineEditions=/websites/www/import/output
@@ -197,31 +210,35 @@ fi
 # Tolerate errors
 set +e
 
-# Read the folder of routing editions, one per line, newest first, getting first one
-latestEdition=`ssh ${username}@${importHostname} ls -1t ${importMachineEditions} | head -n1`
+# Determine which edition to fetch
+if [ ${desiredEdition} == "latest" ]; then
+    # Read the folder of routing editions, one per line, newest first, getting first one
+    desiredEdition=`ssh ${username}@${importHostname} ls -1t ${importMachineEditions} | head -n1`
+fi
+
 
 # Abandon if not found
-if [ -z "${latestEdition}" ]; then
+if [ -z "${desiredEdition}" ]; then
 	vecho "# No routing editions found on ${importHostname}"
 	exit 1
 fi
 
 # Check this edition is not already installed
-if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
+if [ -d ${websitesContentFolder}/data/routing/${desiredEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#	Edition ${latestEdition} is already installed."
+	vecho "#	Edition ${desiredEdition} is already installed."
 	exit 1
 fi
 
 #	Report finding
 # Avoid echo if possible as this generates cron emails
-vecho "#	Latest edition: ${latestEdition}"
+vecho "#	Found edition: ${desiredEdition}"
 
 # Useful binding
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
 
 #	Copy definition file
-scp ${username}@${importHostname}:${importMachineEditions}/${latestEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
+scp ${username}@${importHostname}:${importMachineEditions}/${desiredEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	The import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
@@ -249,8 +266,8 @@ if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; 
 fi
 
 #	Ensure these variables match
-if [ "$importEdition" != "$latestEdition" ]; then
-	echo "# The import edition: $importEdition does not match the latest edition: $latestEdition"
+if [ "$importEdition" != "$desiredEdition" ]; then
+	echo "# The import edition: $importEdition does not match the desired edition: $desiredEdition"
 	exit 1
 fi
 

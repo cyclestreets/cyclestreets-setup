@@ -126,7 +126,7 @@ $packageInstall software-properties-common
 
 # PHP
 $packageUpdate
-$packageInstall php php-xml php-gd php-cli php-mysql php-mbstring libapache2-mod-php
+$packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php
 
 # This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
 # $packageInstall phpmyadmin

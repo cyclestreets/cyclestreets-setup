@@ -141,6 +141,7 @@ fallbackServer=
 # Tilecache
 tilecacheHostname=tile.cyclestreets.net
 tilecacheContentFolder=/websites/tile/content
+tilecacheSSL=true
 
 # Main mailserver
 dc_other_hostnames=

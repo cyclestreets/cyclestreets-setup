@@ -1,5 +1,7 @@
 #!/bin/bash
 # Script to produce a sample routing database dump for use in a repository
+#
+# See the README.md file which explains how to use this with the csSampleDb.sh script.
 
 echo "#	CycleStreets schema script $(date)"
 
@@ -57,6 +59,7 @@ tar czf ${websitesContentFolder}/documentation/schema/${sampleRoutingData} -C ${
 
 #	Advise
 echo "#	Actions required next:"
+echo "# See the README.md file which explains how to use this with the csSampleDb.sh script."
 echo "#	Commit the replacement files, routingSample.sql.gz and ${sampleRoutingData} (in /documentation/schema/) to the repo."
 
 # Confirm end of script

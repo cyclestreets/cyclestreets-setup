@@ -105,6 +105,11 @@ apt-get install -y libdbi-perl libdbd-mysql-perl
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
 ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+if [ -f /etc/munin/plugins/dnsresponsetime ]; then
+	wget -P /usr/share/munin/plugins/ --user-agent="Foo" http://ccgi.ambrosia.plus.com/debian/dnsresponsetime
+	chmod +x /usr/share/munin/plugins/dnsresponsetime
+	ln -s /usr/share/munin/plugins/dnsresponsetime /etc/munin/plugins
+fi
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart

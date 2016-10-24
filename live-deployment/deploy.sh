@@ -110,6 +110,15 @@ if [ -f /etc/munin/plugins/dnsresponsetime ]; then
 	chmod +x /usr/share/munin/plugins/dnsresponsetime
 	ln -s /usr/share/munin/plugins/dnsresponsetime /etc/munin/plugins
 fi
+if [ -f /etc/munin/plugins/packetloss ]; then
+	wget -P /usr/share/munin/plugins/ https://raw.githubusercontent.com/munin-monitoring/contrib/master/plugins/network/packetloss
+	chmod +x /usr/share/munin/plugins/packetloss
+	ln -s /usr/share/munin/plugins/packetloss /etc/munin/plugins
+	echo '[packetloss_*]' >> /etc/munin/plugin-conf.d/munin-node
+	echo 'timeout 60'     >> /etc/munin/plugin-conf.d/munin-node
+	echo 'user root'      >> /etc/munin/plugin-conf.d/munin-node
+
+fi
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart

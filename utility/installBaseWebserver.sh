@@ -128,8 +128,10 @@ $packageInstall software-properties-common
 $packageUpdate
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php
 
-# This package prompts for configuration, and so is left out of this script as it is only a developer tool which can be installed later.
-# $packageInstall phpmyadmin
+# This package has given some trouble as it has been part of php7 but no longer.
+# If it doesn't work to install php-mbstring here try it post-installation.
+# The system will work without it - until unicode strings are encountered and will then produce errors like 'malformed utf8'.
+$packageInstall php-mbstring
 
 # Determine the current actual user
 currentActualUser=`who am i | awk '{print $1}'`

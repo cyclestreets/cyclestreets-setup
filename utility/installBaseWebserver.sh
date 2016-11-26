@@ -206,8 +206,8 @@ sql_mode=NO_ENGINE_SUBSTITUTION
 
 # !! The following are not part of utf8 configuration but this a convenient to put them.
 
-# Enable query cache for mysql 5.7
-query_cache_type = 1
+# Enable query cache on demand for mysql 5.7
+query_cache_type = 2
 
 # Set this variable as empty which allows access to any files in any local directory (needed for reading elevations)
 secure_file_priv =

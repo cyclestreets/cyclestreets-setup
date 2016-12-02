@@ -155,8 +155,8 @@ installCronJobs=false
 
 # Elevation datasources - add to list (assuming source present on downloads server) or comment-out if not wanted, listed in priority order
 elevationDatasources=(
-	'prague.gz'
-	'osterrain50.bz2'
+	'prague.tar.bz2'
+	'osterrain50.tar.bz2'
 	'srtm.tar.bz2'
 	'aster.bz2'
 )

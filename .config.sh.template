@@ -152,13 +152,14 @@ installCronJobs=false
 
 # Import installation
 # Options for installing the import - leave blank to skip these steps, or add string true to enable
-# For smaller download the osTerrain value can be set to the filename which covers West Anglia area: osTerrain50_TL_wgs84.tiff.bz2
-ordnanceSurveyDataFile=
-osTerrain50DataFile=
-srtmDataFile=
-asterDataFile=
-usgsnedDataFile=
-franceDataFile=
+
+# Elevation datasources - add to list (assuming source present on downloads server) or comment-out if not wanted, listed in priority order
+elevationDatasources=(
+	'prague.gz'
+	'osterrain50.bz2'
+	'srtm.tar.bz2'
+	'aster.bz2'
+)
 
 # External database
 externalDb=csExternal

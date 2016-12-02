@@ -181,128 +181,48 @@ importpermissions="grant select, insert, update, delete, create, drop, index, al
 ${superMysql} -e "${importpermissions} \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`routing%\` . * to '${mysqlImportUsername}'@'localhost';"
 
-# Elevation data - download 33GB of data, which expands to 180G.
-# Tip: These are big files use this to resume a broken copy
-# rsync --partial --progress --rsh=ssh user@host:remote_file local_file
+# Elevation data - these are often multiple GB in size
+# Tip: These are big files; so can use this to resume a broken copy:
+#  rsync --partial --progress --rsh=ssh user@host:remote_file local_file
 
-# Check if Ordnance Survey NTF data is desired and that it has not already been downloaded and unpacked
-unpackOSfolder=${importContentFolder}/data/elevation/ordnanceSurvey
-if [ -n "${ordnanceSurveyDataFile}" -a ! -d ${unpackOSfolder} ]; then
-
-	# Report
-	echo "#	Starting download of OS NTF data 48M"
-
-	# Download
-	ordnanceSurveyDataFile=ordnanceSurveyNTF.tar.bz2
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${ordnanceSurveyDataFile} -O ${websitesBackupsFolder}/${ordnanceSurveyDataFile}
-
-	# Report
-	echo "#	Starting installation of OS NTF data"
-
-	# Create folder and unpack
-	mkdir -p ${unpackOSfolder}
-	tar xf ${websitesBackupsFolder}/${ordnanceSurveyDataFile} -C ${unpackOSfolder}
-fi
-
-# Check if Ordnance Survey Terrain 50 data is desired and that it has not already been downloaded and unpacked
-unpackOsTerrain50folder=${importContentFolder}/data/elevation/osTerrain50
-osTerrainInstalled=${unpackOsTerrain50folder}/dataInstalled
-if [ -n "${osTerrain50DataFile}" -a ! -e ${osTerrainInstalled} ]; then
-
-	# Report
-	echo "#	Starting download of OS Terrain 50 data 94M"
-
-	# Default the file to provide coverage of all Great Britain (94M which expands to 1.7GB)
-	if [ "${osTerrain50DataFile}" = "true" ]; then
-	    osTerrain50DataFile=osTerrain50_wgs84.tiff.bz2
+# Loop through each enabled elevation datasource
+for elevationDatasourceFile in "${elevationDatasources[@]}"; do
+	
+	# Split into subdirectory and filetype, e.g. srtm.tar.bz2 would have srtm/ and tar.bz2 ; see: http://unix.stackexchange.com/a/53315/168900
+	IFS='.' read -r subdirectory filetype <<< "${elevationDatasourceFile}"
+	
+	# Determine the expected location, where the subdirectory is the same as the filename base, e.g. srtm/ for srtm.tar.bz2
+	unpackFolder="${importContentFolder}/data/elevation/${subdirectory}/"
+	if [ ! -d ${unpackFolder} ]; then
+		
+		# Obtain the file
+		echo "# Starting download of ${elevationDatasourceFile} elevation data file to ${websitesBackupsFolder}"
+		wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${subdirectory}/${elevationDatasourceFile} -O ${websitesBackupsFolder}/${elevationDatasourceFile}
+		
+		# Create folder and unpack
+		echo "# Starting installation of ${subdirectory} elevation data to ${unpackFolder}"
+		mkdir -p ${unpackFolder}
+		case "${filetype}" in
+			'tar.bz2' )
+				tar -xf ${websitesBackupsFolder}/${elevationDatasourceFile} -C ${unpackFolder}
+			;;
+			'bz2' )
+				cp -p ${websitesBackupsFolder}/${elevationDatasourceFile} ${unpackFolder}
+				cd ${unpackFolder}
+				bunzip2 ${elevationDatasourceFile}
+			;;
+			'gz' )
+				cp -p ${websitesBackupsFolder}/${elevationDatasourceFile} ${unpackFolder}
+				cd ${unpackFolder}
+				gunzip ${elevationDatasourceFile}
+			;;
+		esac
+		
+		# Delete the downloaded file to free up space
+		rm ${websitesBackupsFolder}/${elevationDatasourceFile}
 	fi
+done
 
-	# Download
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${osTerrain50DataFile} -O ${websitesBackupsFolder}/${osTerrain50DataFile}
-
-	# Report
-	echo "#	Starting installation of OS Terrain 50 data"
-
-	# Create folder and unpack the file
-	mkdir -p ${unpackOsTerrain50folder}
-	mv ${websitesBackupsFolder}/${osTerrain50DataFile} ${unpackOsTerrain50folder}
-	cd ${unpackOsTerrain50folder}
-	bunzip2 ${osTerrain50DataFile}
-
-	# Mark is has been installed
-	touch ${osTerrainInstalled}
-fi
-
-# Check if France data is desired and that it has not already been downloaded
-unpackFranceFolder=${importContentFolder}/data/elevation/france/tiff
-if [ -n "${franceDataFile}" -a ! -d ${unpackFranceFolder} ]; then
-	echo "#	Starting download of France elevation data 93MB"
-	franceDataFile=france_wgs84.tiff.bz2
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${franceDataFile} -O ${websitesBackupsFolder}/${franceDataFile}
-	echo "#	Starting installation of France elevation data"
-	mkdir -p ${unpackFranceFolder}/
-	mv ${websitesBackupsFolder}/${franceDataFile} ${unpackFranceFolder}/
-	cd ${unpackFranceFolder}/
-	bunzip2 ${franceDataFile}
-fi
-
-# Check if SRTM data is desired and that it has not already been downloaded
-unpackSRTMfolder=${importContentFolder}/data/elevation/srtmV4.1
-if [ -n "${srtmDataFile}" -a ! -d ${unpackSRTMfolder} ]; then
-
-	# Report
-	echo "#	Starting download of SRTM data 8.2G"
-
-	# Download
-	srtmDataFile=srtm4.1.tiff.tar.bz2
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${srtmDataFile} -O ${websitesBackupsFolder}/${srtmDataFile}
-
-	# Report
-	echo "#	Starting installation of SRTM data"
-
-	# Create folder and unpack
-	mkdir -p ${unpackSRTMfolder}/tiff
-	tar xf ${websitesBackupsFolder}/${srtmDataFile} -C ${unpackSRTMfolder}
-fi
-
-# Check if ASTER data is desired and that it has not already been downloaded
-unpackASTERfolder=${importContentFolder}/data/elevation/asterV2
-if [ -n "${asterDataFile}" -a ! -d ${unpackASTERfolder} ]; then
-
-	# Report
-	echo "#	Starting download of ASTER data 25G"
-
-	# Download
-	asterDataFile=asterV2tiff.bz2
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${asterDataFile} -O ${websitesBackupsFolder}/${asterDataFile}
-
-	# Report
-	echo "#	Starting installation of ASTER data"
-
-	# Create folder and unpack
-	mkdir -p ${unpackASTERfolder}/tiff
-	tar xf ${websitesBackupsFolder}/${asterDataFile} -C ${unpackASTERfolder}
-fi
-
-# Check if USGS NED data is desired and that it has not already been downloaded
-unpackUSGSNEDfolder=${importContentFolder}/data/elevation/usgsned
-if [ -n "${usgsnedDataFile}" -a ! -d ${unpackUSGSNEDfolder} ]; then
-
-	# Report
-	echo "#	Starting download of USGSNED data 850M"
-
-	# Download
-	usgsnedDataFile=USGS_NED_13.tar.bz2
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${usgsnedDataFile} -O ${websitesBackupsFolder}/${usgsnedDataFile}
-
-	# Report
-	echo "#	Starting installation of USGSNED data"
-
-	# Create folder and unpack
-	# Was packed using: tar cjvf /websites/data/content/USGS_NED_13.tar.bz2 -C /websites/www/import/data/elevation/usgsned img
-	mkdir -p ${unpackUSGSNEDfolder}/img
-	tar xf ${websitesBackupsFolder}/${usgsnedDataFile} -C ${unpackUSGSNEDfolder}
-fi
 
 # Confirm end of script
 echo "#	$(date)	All now installed."

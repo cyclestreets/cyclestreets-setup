@@ -204,17 +204,13 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 		mkdir -p ${unpackFolder}
 		case "${filetype}" in
 			'tar.bz2' )
+				# note: create files using using `tar -cvjSf source.tar.bz2 file.tiff`
 				tar -xf ${websitesBackupsFolder}/${elevationDatasourceFile} -C ${unpackFolder}
 			;;
 			'bz2' )
 				cp -p ${websitesBackupsFolder}/${elevationDatasourceFile} ${unpackFolder}
 				cd ${unpackFolder}
 				bunzip2 ${elevationDatasourceFile}
-			;;
-			'gz' )
-				cp -p ${websitesBackupsFolder}/${elevationDatasourceFile} ${unpackFolder}
-				cd ${unpackFolder}
-				gunzip ${elevationDatasourceFile}
 			;;
 		esac
 		

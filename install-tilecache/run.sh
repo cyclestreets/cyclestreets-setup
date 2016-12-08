@@ -112,7 +112,9 @@ fi
 
 # Create the SSL VirtualHost config if it doesn't exist, and write in the configuration
 vhSslConf=/etc/apache2/sites-available/tile_ssl.conf
-if [ ${tilecacheSSL} -a ! -f ${vhSslConf} ]; then
+
+# Note: tilecacheSSL is boolean and cannot be used in the square brackets
+if ${tilecacheSSL} && [ ! -f ${vhSslConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhSslConf}
 	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhSslConf}
 	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhSslConf}
@@ -124,7 +126,7 @@ if [ ${tilecacheSSL} -a ! -f ${vhSslConf} ]; then
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
-if [ ${tilecacheSSL} -a ! -L /etc/apache2/sites-enabled/701-tile_ssl.conf ]; then
+if ${tilecacheSSL} && [ ! -L /etc/apache2/sites-enabled/701-tile_ssl.conf ]; then
     ln -s ${vhSslConf} /etc/apache2/sites-enabled/701-tile_ssl.conf
 fi
 
@@ -132,7 +134,7 @@ fi
 a2enmod headers
 
 # SSL is installed by default, but may need enabling which requires a restart
-if $tilecacheSSL -a ! apache2ctl -M | grep ssl_module > /dev/null 2>&1
+if ${tilecacheSSL} && ! apache2ctl -M | grep ssl_module > /dev/null 2>&1
 then
     echo "#	Activating apache ssl"
     a2enmod ssl

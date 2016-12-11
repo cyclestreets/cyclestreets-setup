@@ -158,7 +158,7 @@ elevationDatasources=(
 	'prague.tar.bz2'
 	'osterrain50.tar.bz2'
 	'srtm.tar.bz2'
-	'aster.bz2'
+	'aster.tar.bz2'
 )
 
 # External database

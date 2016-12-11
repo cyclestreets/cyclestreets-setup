@@ -214,6 +214,9 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 			;;
 		esac
 		
+		# Ensure files can be read by the webserver
+		chown -R ${username}.${rollout} ${unpackFolder}
+		
 		# Delete the downloaded file to free up space
 		rm ${websitesBackupsFolder}/${elevationDatasourceFile}
 	fi

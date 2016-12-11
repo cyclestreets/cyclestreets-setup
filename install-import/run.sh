@@ -200,7 +200,7 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 		wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/elevations/${subdirectory}/${elevationDatasourceFile} -O ${websitesBackupsFolder}/${elevationDatasourceFile}
 		
 		# Create folder and unpack
-		echo "# Starting installation of ${subdirectory} elevation data to ${unpackFolder}"
+		echo "# Unpacking ${subdirectory} elevation data to ${unpackFolder}"
 		mkdir -p ${unpackFolder}
 		case "${filetype}" in
 			'tar.bz2' )

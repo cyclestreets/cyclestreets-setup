@@ -82,6 +82,9 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
+# Ensure locale; see: http://stackoverflow.com/questions/11300633/svn-cannot-set-lc-ctype-locale
+$packageInstall language-pack-en-base
+
 # Install basic software
 $packageInstall wget dnsutils man-db subversion git emacs nano bzip2
 $packageInstall mlocate

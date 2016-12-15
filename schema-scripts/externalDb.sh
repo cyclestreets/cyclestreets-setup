@@ -54,8 +54,10 @@ if [ ! -z "${csExternalDataFile}" ]; then
     mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost -uroot -p${mysqlRootPassword} csExternal | gzip > ${websitesBackupsFolder}/${csExternalDataFile}
 
     # Advise
-    echo "#	Advise: on the backup machine run this to copy the dump:"
-    echo "#	scp www.cyclestreets.net:${websitesBackupsFolder}/${csExternalDataFile} ${websitesBackupsFolder}"
+    echo "#	Next steps"
+    echo "#	The install-website script expects to find this dump from: downloads.cyclestreets.net/csExternal.sql.gz"
+    echo "#	So on the backup machine: downloads.cyclestreets.net run this to fetch the dump:"
+    echo "#	scp www.cyclestreets.net:${websitesBackupsFolder}/${csExternalDataFile} /websites/downloads/content/"
     echo "#	Create a new csExternal database (or drop all the tables from any existing one) and use this to restore:"
     echo "#	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | mysql csExternal -uroot -pROOT PASSWORD HERE"
 

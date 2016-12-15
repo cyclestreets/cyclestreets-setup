@@ -53,16 +53,20 @@ if [ ! -r ONSdata.csv ]; then
     echo "#
 #	STOPPING: Required data files are not present.
 #
-#	Download the csv version of ONSPD data from:
+#	Download the archived csv version of ONSPD data from:
 #	http://www.ons.gov.uk/ons/guide-method/geography/products/postcode-directories/-nspp-/index.html
 #
 #	Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
 #	cd ${onsFolder}
+#
 #	This is an alternative source of data:
-#	wget http://parlvid.mysociety.org:81/os/ONSPD_FEB_2011_UK_O.zip
-#	unzip ONSPD_FEB_2011_UK_O.zip
-#	rm ONSPD_FEB_2011_UK_O.zip
-#	mv ONSPD_FEB_2011_UK_O.csv ONSdata.csv";
+#	http://parlvid.mysociety.org/os/
+#
+#	wget http://parlvid.mysociety.org/os/ONSPD_NOV_2016_csv.zip
+#	unzip ONSPD_NOV_2016_csv.zip
+#	rm ONSPD_NOV_2016_csv.zip
+#	mv ONSnov2016/Data/ONSPD_NOV_2016_UK.csv ${onsFolder}/ONSdata.csv
+";
 
  # Terminate the script
  exit 1;

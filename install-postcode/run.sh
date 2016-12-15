@@ -114,9 +114,9 @@ rm map_postcodes.csv
 echo "#	Creating new postcode table"
 ${superMysql} ${externalDb} < newPostcodeTable.sql
 
-# Create the short district postcodes
-echo "#	Creating short postcode table"
-${superMysql} ${externalDb} < shortPostcode.sql
+# Create the partial and district postcodes
+echo "#	Creating partial and postcode table"
+${superMysql} ${externalDb} < PartialPostcode.sql
 
 # Confirm end of script
 echo -e "#	All now installed $(date)"

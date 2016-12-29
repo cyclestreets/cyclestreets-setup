@@ -150,12 +150,12 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	
 	# Available URL(s)
 	# Note: ServerName should not use wildcards; use ServerAlias for that.
-	ServerName ${csHostname}
+	ServerName cyclestreets.net
 	ServerAlias *.cyclestreets.net
 	
 	# Logging
-	CustomLog /websites/www/logs/${csHostname}-access.log combined
-	ErrorLog /websites/www/logs/${csHostname}-error.log
+	CustomLog /websites/www/logs/cyclestreets.net-access.log combined
+	ErrorLog /websites/www/logs/cyclestreets.net-error.log
 	
 	# Where the files are
 	DocumentRoot /websites/www/content/

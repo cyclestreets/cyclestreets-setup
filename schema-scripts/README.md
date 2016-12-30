@@ -2,8 +2,7 @@
 
 Contains some scripts for managing the CycleStreets schema.
 
-!! Note: there are problems with mysqldump for tables that contain geometry, so produce the sample databases on machines with the patch
-http://bugs.mysql.com/bug.php?id=43544
+Note: there are problems with mysqldump for tables that contain geometry, but using option --hex-blob should work.
 
 ## csSampleDb.sh
 

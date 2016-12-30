@@ -41,7 +41,7 @@ else
     dump=${websitesBackupsFolder}/${dumpPrefix}_routes_${minItineraryId}.sql.gz
     
     #	Skip disable keys because re-enabling them takes a long time on the archive
-    dumpOptions="--defaults-extra-file=${mySuperCredFile} -hlocalhost --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys"
+    dumpOptions="--defaults-extra-file=${mySuperCredFile} -hlocalhost --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys --hex-blob"
 
     # Dump itinerary
     mysqldump ${dumpOptions} csArchive map_itinerary_archive --where="id>=${minItineraryId}" | gzip > ${dump}
@@ -64,7 +64,7 @@ fi
 #	Backup the CycleStreets database
 #	Option -R dumps stored procedures & functions
 dump=${websitesBackupsFolder}/${dumpPrefix}_cyclestreets.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost -R cyclestreets | gzip > ${dump}
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost -R cyclestreets | gzip > ${dump}
 #	Create md5 hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 
@@ -72,7 +72,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 #	This allows the schema to be viewed at the page: http://www.cyclestreets.net/schema/sql/
 #	Option -R dumps stored procedures & functions
 dump=${websitesBackupsFolder}/${dumpPrefix}_schema_cyclestreets.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost -R --no-data cyclestreets | gzip > ${dump}
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost -R --no-data cyclestreets | gzip > ${dump}
 #	Create md5 hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 
@@ -83,7 +83,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 #	CycleStreets
 #	Database dump
 dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost blogcyclestreets | gzip > ${dump}
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost blogcyclestreets | gzip > ${dump}
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 
@@ -91,7 +91,7 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 #	Cyclescape
 #	Database dump
 dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blogcyclescape_database.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost blogcyclescape | gzip > ${dump}
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost blogcyclescape | gzip > ${dump}
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 

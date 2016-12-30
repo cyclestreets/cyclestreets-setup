@@ -46,9 +46,9 @@ echo "# Using routing data from the db named: ${sampleRoutingDb} and planet ${sa
 
 #	Write
 #	Routing db
-mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost ${sampleRoutingDb} map_way map_routingFactor map_wayName map_osmBicycleRoute map_way_tags | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost ${sampleRoutingDb} map_way map_routingFactor map_wayName map_osmBicycleRoute map_way_tags | gzip > ${websitesContentFolder}/${sampleRoutingDb}Project.sql.gz
 #	Planet Extract db
-mysqldump --defaults-extra-file=${mySuperCredFile} -hlocalhost ${samplePlanetDb} osm_wayTag | gzip > ${websitesContentFolder}/${samplePlanetDb}Project.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost ${samplePlanetDb} osm_wayTag | gzip > ${websitesContentFolder}/${samplePlanetDb}Project.sql.gz
 
 #	Advise
 echo "#	Actions required next:"

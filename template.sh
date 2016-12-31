@@ -38,17 +38,20 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 SCRIPTDIRECTORY=$DIR
 
+# Use this to remove the ../ to get the repository root; assumes the script is always down one level
+ScriptHome=$(readlink -f "${SCRIPTDIRECTORY}/..")
+
 # Define the location of the credentials file relative to script directory
-configFile=../.config.sh
+configFile=$ScriptHome/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
+if [ ! -x $configFile ]; then
     echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. $SCRIPTDIRECTORY/${configFile}
+. $configFile
 
 # Announce starting
 echo "# ??? installation $(date)"

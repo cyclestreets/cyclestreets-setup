@@ -79,7 +79,7 @@ cd "${placefordContentFolder}"
 # Create/update the repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
 if [ ! -d "${placefordContentFolder}/.git" ]
 then
-	${asCS} git clone git://github.com/cyclestreets/placeford.git "${placefordContentFolder}/"
+	${asCS} git clone https://github.com/cyclestreets/placeford.git "${placefordContentFolder}/"
 else
 	${asCS} git pull
 fi

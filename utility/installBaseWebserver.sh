@@ -258,15 +258,17 @@ fi
 # It interferes with LOAD DATA INFILE;
 # See: https://blogs.oracle.com/jsmyth/entry/apparmor_and_mysql and http://www.cyberciti.biz/faq/ubuntu-linux-howto-disable-apparmor-commands/
 if [ -f /etc/apparmor.d/usr.sbin.mysqld -a ! -f /etc/apparmor.d/disable/usr.sbin.mysqld ]; then
-
-    # Narrative
-    echo "#	Deactivate apparmor for mysql"
-
-    # Symlinking here stops this block from being repeated if the script is re-run
-    ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
-
-    # This may fail - but if so just re-run the script
-    apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+	
+	# Narrative
+	echo "#	Deactivate apparmor for mysql"
+	
+	# Symlinking here stops this block from being repeated if the script is re-run
+	ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
+	
+	# This may fail, so set -e is disabled temporarily
+	set +e
+	apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
+	set -e
 fi
 
 

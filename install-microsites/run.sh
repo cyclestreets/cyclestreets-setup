@@ -66,6 +66,12 @@ asCS="sudo -u ${username}"
 . $ScriptHome/utility/installBaseWebserver.sh
 
 
+# Install mobile website
+mobilewebContentFolder=/websites/mobileweb/content
+mobilewebLogsFolder=/websites/www/logs
+. $ScriptHome/install-mobileweb/run.sh
+
+
 
 # Report completion
 echo "#	Installing Microsites completed"

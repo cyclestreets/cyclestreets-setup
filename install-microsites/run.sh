@@ -71,6 +71,11 @@ mobilewebContentFolder=/websites/mobileweb/content
 mobilewebLogsFolder=/websites/www/logs
 . $ScriptHome/install-mobileweb/run.sh
 
+# Install Placeford site
+placefordContentFolder=/websites/placeford/content
+placefordLogsFolder=/websites/www/logs
+. $ScriptHome/install-placeford/run.sh
+
 
 
 # Report completion

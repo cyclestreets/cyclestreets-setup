@@ -168,10 +168,6 @@ csExternalDataFile=csExternal.sql.gz
 # Batch database: csBatch
 batchDb=
 
-# Placeford site (not part of CycleStreets itself)
-placefordContentFolder=
-placefordLogsFolder=
-
 # Telluswhere site (not part of CycleStreets itself)
 telluswhereContentFolder=
 telluswhereLogsFolder=

@@ -42,8 +42,8 @@ sudo addgroup rollout
 # Add your username to the rollout group
 sudo adduser `whoami` rollout
 
-# Your existing shell cannot obtain the privileges of this new group;
-# you may replace it with:
+# The adduser command above can't add your existing shell process to the
+# new rollout group; you may want to replace it by doing:
 exec newgrp rollout
 
 # Login

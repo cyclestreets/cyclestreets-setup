@@ -15,12 +15,12 @@ fi
 set -e
 
 # Lock directory
-lockdir=/var/lock/cyclestreets
+lockdir=/var/lock/cyclestreets_outer
 mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo '#	An installation is already running' ; exit 1; }
+	flock -n 900 || { echo '#	An installation is already running' ; exit 1; }
 
 
 ### CREDENTIALS ###
@@ -68,9 +68,9 @@ asCS="sudo -u ${username}"
 
 
 # Report completion
-echo "#	Installing ??? completed"
+echo "#	Installing Microsites completed"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
-) 9>$lockdir/${0##*/}
+) 900>$lockdir/${0##*/}
 
 # End of file

@@ -87,6 +87,10 @@ fi
 # Make the repository writable to avoid permissions problems when manually editing
 chmod -R g+w "${placefordContentFolder}"
 
+# Enable mod_proxy
+a2enmod proxy
+a2enmod proxy_http
+
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
 vhConf=/etc/apache2/sites-available/placeford-proxied.conf
 if [ ! -f ${vhConf} ]; then

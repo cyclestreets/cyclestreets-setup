@@ -125,10 +125,12 @@ a2enmod rewrite
 a2enmod headers
 
 # Install a catch-all VirtualHost in Apache to thwart firing of unauthorised CNAMEs at the machine
-cp -pr ${ScriptHome}/utility/catchall.conf /etc/apache2/sites-available/
-ln -s /etc/apache2/sites-available/catchall.conf /etc/apache2/sites-enabled/000-catchall.conf
-mv /var/www/html/index.html /var/www/html/index.html.original
-cp -pr ${ScriptHome}/utility/catchall.html /var/www/html/index.html
+if [ ! -f /etc/apache2/sites-available/catchall.conf ]; then
+	cp -pr ${ScriptHome}/utility/catchall.conf /etc/apache2/sites-available/
+	ln -s /etc/apache2/sites-available/catchall.conf /etc/apache2/sites-enabled/000-catchall.conf
+	mv /var/www/html/index.html /var/www/html/index.html.original
+	cp -pr ${ScriptHome}/utility/catchall.html /var/www/html/index.html
+fi
 
 # Ubuntu Server 16.04 LTS does not include add-apt-repository so this adds it:
 $packageInstall software-properties-common

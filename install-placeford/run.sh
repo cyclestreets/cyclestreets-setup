@@ -54,7 +54,7 @@ fi
 echo "# Placeford site installation $(date)"
 
 # Check the options
-if [ -zz "${placefordContentFolder}" -o -z "${placefordLogsFolder}" ]; then
+if [ -z "${placefordContentFolder}" -o -z "${placefordLogsFolder}" ]; then
     echo "#     The Placeford site options are not configured; abandoning installation."
     exit 1
 fi

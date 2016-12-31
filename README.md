@@ -42,9 +42,9 @@ sudo addgroup rollout
 # Add your username to the rollout group
 sudo adduser `whoami` rollout
 
-# Some command shells won't detect the preceding group change,
-# so reset your shell eg. by logging out and then back in again:
-exit
+# Your existing shell cannot obtain the privileges of this new group;
+# you may replace it with:
+exec newgrp rollout
 
 # Login
 # user@other-machine:~$

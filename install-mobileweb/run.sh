@@ -54,7 +54,7 @@ fi
 echo "# Mobile web site installation $(date)"
 
 # Check the options
-if [ -zz "${mobilewebContentFolder}" -o -z "${mobilewebLogsFolder}" ]; then
+if [ -z "${mobilewebContentFolder}" -o -z "${mobilewebLogsFolder}" ]; then
     echo "#     The mobile web site options are not configured; abandoning installation."
     exit 1
 fi

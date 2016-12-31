@@ -128,7 +128,6 @@ a2enmod headers
 $packageInstall software-properties-common
 
 # PHP
-$packageUpdate
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php
 
 # This package has given some trouble as it has been part of php7 but no longer.
@@ -220,7 +219,6 @@ EOF
     service mysql restart
 
 fi
-
 
 # Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 # !! Be wary of this as the settings in here will override those in any supplied defaults-extra-file

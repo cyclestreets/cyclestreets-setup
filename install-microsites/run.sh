@@ -1,9 +1,9 @@
 #!/bin/bash
-# Installs the ???
+# Installs the Microsites
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets: install ???"
+echo "#	CycleStreets: install Microsites"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -54,7 +54,7 @@ fi
 . $configFile
 
 # Announce starting
-echo "# ??? installation $(date)"
+echo "# Microsites installation $(date)"
 
 
 ## Main body
@@ -62,11 +62,8 @@ echo "# ??? installation $(date)"
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Update sources and packages
-apt-get update
-apt-get upgrade
-apt-get dist-upgrade
-apt-get autoremove
+# Install base webserver software
+. $ScriptHome/utility/installBaseWebserver.sh
 
 
 

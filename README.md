@@ -23,7 +23,6 @@ sudo apt-get -y install git
 # git config --global user.name "Your git username"
 # git config --global user.email "Your git email"
 # git config --global push.default simple
-# git config --global credential.helper cache
 # git config --global credential.helper 'cache --timeout=86400'
 
 # Clone the cyclestreets-setup repo

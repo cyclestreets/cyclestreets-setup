@@ -91,15 +91,23 @@ chmod -R g+w "${placefordContentFolder}"
 a2enmod proxy
 a2enmod proxy_http
 
-# Create the VirtualHost config if it doesn't exist, and write in the configuration
-vhConf=/etc/apache2/sites-available/placeford-proxied.conf
+# Create the VirtualHost configs if they don't exist, and write in the configuration, then enable
+vhConf=/etc/apache2/sites-available/placeford-subdomain.conf
 if [ ! -f ${vhConf} ]; then
-	cp -p .apache-vhost.conf.template ${vhConf}
+	cp -p .apache-vhost-subdomain.conf.template ${vhConf}
 	sed -i "s|/path/to/files|${placefordContentFolder}|g" ${vhConf}
 	sed -i "s|/path/to/logs|${placefordLogsFolder}|g" ${vhConf}
 fi
+if [ ! -L /etc/apache2/sites-enabled/930-placeford-subdomain.conf ]; then
+    ln -s ${vhConf} /etc/apache2/sites-enabled/930-placeford-subdomain.conf
+fi
 
-# Enable the VirtualHost; this is done manually to ensure the ordering is correct
+vhConf=/etc/apache2/sites-available/placeford-proxied.conf
+if [ ! -f ${vhConf} ]; then
+	cp -p .apache-vhost-proxied.conf.template ${vhConf}
+	sed -i "s|/path/to/files|${placefordContentFolder}|g" ${vhConf}
+	sed -i "s|/path/to/logs|${placefordLogsFolder}|g" ${vhConf}
+fi
 if [ ! -L /etc/apache2/sites-enabled/931-placeford-proxied.conf ]; then
     ln -s ${vhConf} /etc/apache2/sites-enabled/931-placeford-proxied.conf
 fi

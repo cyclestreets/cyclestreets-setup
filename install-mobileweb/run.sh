@@ -91,8 +91,8 @@ chmod -R g+w "${mobilewebContentFolder}"
 vhConf=/etc/apache2/sites-available/mobi.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhConf}
-	sed -i "s|/path/to/files|${mobilewebContentFolder}|g" ${vhConf}
-	sed -i "s|/path/to/logs|${mobilewebLogsFolder}|g" ${vhConf}
+	sed -i "s|/var/www/mobileweb|${mobilewebContentFolder}|g" ${vhConf}
+	sed -i "s|/var/log/apache2|${mobilewebLogsFolder}|g" ${vhConf}
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct

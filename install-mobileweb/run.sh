@@ -103,6 +103,10 @@ fi
 # Reload apache
 service apache2 reload
 
+# Add cronjob to update from Git regularly
+cp -pr $SCRIPTDIRECTORY/mobileweb.cron /etc/cron.d/mobileweb
+sed -i "s|/var/www/mobileweb|${mobilewebContentFolder}|g" /etc/cron.d/mobileweb
+
 # Report completion
 echo "#	Installing mobile web site completed"
 

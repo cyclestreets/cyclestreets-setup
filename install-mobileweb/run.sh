@@ -88,7 +88,7 @@ fi
 chmod -R g+w "${mobilewebContentFolder}"
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
-vhConf=/etc/apache2/sites-available/mobi.conf
+vhConf=/etc/apache2/sites-available/mobileweb.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhConf}
 	sed -i "s|/var/www/mobileweb|${mobilewebContentFolder}|g" ${vhConf}
@@ -96,8 +96,8 @@ if [ ! -f ${vhConf} ]; then
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
-if [ ! -L /etc/apache2/sites-enabled/890-mobi.conf ]; then
-    ln -s ${vhConf} /etc/apache2/sites-enabled/890-mobi.conf
+if [ ! -L /etc/apache2/sites-enabled/890-mobileweb.conf ]; then
+    ln -s ${vhConf} /etc/apache2/sites-enabled/890-mobileweb.conf
 fi
 
 # Reload apache

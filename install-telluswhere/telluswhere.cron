@@ -1,0 +1,2 @@
+# Update site each hour from Git
+0 * * * * cyclestreets cd /var/www/telluswhere/ && git pull --quiet

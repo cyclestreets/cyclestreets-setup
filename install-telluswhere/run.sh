@@ -114,6 +114,10 @@ apt-get -y install sqlite3
 # Reload apache
 service apache2 reload
 
+# Add cronjob to update from Git regularly
+# cp -pr $SCRIPTDIRECTORY/telluswhere.cron /etc/cron.d/telluswhere
+# sed -i "s|/var/www/telluswhere|${telluswhereContentFolder}|g" /etc/cron.d/telluswhere
+
 # Report completion
 echo "#	Installing telluswhere site completed"
 

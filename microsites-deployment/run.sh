@@ -91,6 +91,12 @@ placefordContentFolder=/websites/placeford/content
 placefordLogsFolder=/websites/www/logs
 . $ScriptHome/install-placeford/run.sh
 
+# Install transporthack site
+transporthackContentFolder=/websites/transporthack/content
+transporthackLogsFolder=/websites/www/logs
+. $ScriptHome/install-transporthack/run.sh
+
+
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
 apt-get install -y libcache-perl libcache-cache-perl

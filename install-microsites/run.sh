@@ -76,6 +76,11 @@ bikedataContentFolder=/websites/bikedata/content
 bikedataLogsFolder=/websites/www/logs
 . $ScriptHome/install-bikedata/run.sh
 
+# Install Cyclescape issuemap website
+cyclescapeissuemapContentFolder=/websites/cyclescape-issuemap/content
+cyclescapeissuemapLogsFolder=/websites/www/logs
+. $ScriptHome/install-cyclescape-issuemap/run.sh
+
 # Install Placeford site
 placefordContentFolder=/websites/placeford/content
 placefordLogsFolder=/websites/www/logs

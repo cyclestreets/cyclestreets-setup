@@ -76,6 +76,11 @@ bikedataContentFolder=/websites/bikedata/content
 bikedataLogsFolder=/websites/www/logs
 . $ScriptHome/install-bikedata/run.sh
 
+# Install Telluswhere websites
+telluswhereContentFolder=/websites/telluswhere/content
+telluswhereLogsFolder=/websites/www/logs
+. $ScriptHome/install-telluswhere/run.sh
+
 # Install Cyclescape issuemap website
 cyclescapeissuemapContentFolder=/websites/cyclescape-issuemap/content
 cyclescapeissuemapLogsFolder=/websites/www/logs

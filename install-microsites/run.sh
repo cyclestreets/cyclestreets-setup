@@ -71,6 +71,11 @@ mobilewebContentFolder=/websites/mobileweb/content
 mobilewebLogsFolder=/websites/www/logs
 . $ScriptHome/install-mobileweb/run.sh
 
+# Install Bikedata website
+bikedataContentFolder=/websites/bikedata/content
+bikedataLogsFolder=/websites/www/logs
+. $ScriptHome/install-bikedata/run.sh
+
 # Install Placeford site
 placefordContentFolder=/websites/placeford/content
 placefordLogsFolder=/websites/www/logs

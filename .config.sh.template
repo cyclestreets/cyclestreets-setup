@@ -168,9 +168,5 @@ csExternalDataFile=csExternal.sql.gz
 # Batch database: csBatch
 batchDb=
 
-# Telluswhere site (not part of CycleStreets itself)
-telluswhereContentFolder=
-telluswhereLogsFolder=
-
 
 # End of file

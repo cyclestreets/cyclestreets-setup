@@ -81,7 +81,7 @@ cd "${telluswhereContentFolder}"
 # #!# Repo is currently private so this stage will fail; as a workaround, clone the repo manually first as a user which has access
 # if [ ! -d "${telluswhereContentFolder}/.git" ]
 # then
-# 	${asCS} git clone http://github.com/cyclestreets/telluswhere.git "${telluswhereContentFolder}/"
+# 	${asCS} git clone https://github.com/cyclestreets/telluswhere.git "${telluswhereContentFolder}/"
 # else
 # 	${asCS} git pull
 # fi

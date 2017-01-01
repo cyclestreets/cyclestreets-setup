@@ -98,8 +98,8 @@ sudo chown -R www-data images/news/
 vhConf=/etc/apache2/sites-available/telluswhere.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhConf}
-	sed -i "s|/path/to/files|${telluswhereContentFolder}|g" ${vhConf}
-	sed -i "s|/path/to/logs|${telluswhereLogsFolder}|g" ${vhConf}
+	sed -i "s|/var/www/telluswhere|${telluswhereContentFolder}|g" ${vhConf}
+	sed -i "s|/var/log/apache2|${telluswhereLogsFolder}|g" ${vhConf}
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct

@@ -96,6 +96,9 @@ transporthackContentFolder=/websites/transporthack/content
 transporthackLogsFolder=/websites/www/logs
 . $ScriptHome/install-transporthack/run.sh
 
+# Install Cyclescape blog
+. $ScriptHome/install-blog/run.sh
+
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html

@@ -55,61 +55,71 @@ if [ -z "${blogDatabasename}" ]; then
 	exit 1
 fi;
 
+# Ensure that the blog moniker is defined
+if [ -z "${blogMoniker}" ]; then
+	echo "# No blog moniker has been defined, so there is nothing to do."
+	exit 1
+fi;
+
 # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
 blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
 ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
-${superMysql} -e "grant ${blogPermissions} on ${cyclescapeBlogDatabasename}.* to '${cyclescapeBlogUsername}'@'localhost' identified by '${cyclescapeBlogPassword}';" >> ${setupLogFile}
 
+# Install Wordpress unattended
+mkdir -p /websites/${blogMoniker}/content/
+wget -P /tmp/ https://wordpress.org/latest.zip
+tar -xzvf /tmp/latest.tar.gz --strip 1 -C /websites/${blogMoniker}/content/
 
-#!# Install Wordpress unattended
+# Ensure the blog files are writable, as otherwise automatic upgrade will fail
+chown -R www-data.rollout /websites/${blogMoniker}/content/
 
-
-# Define an Apache configuration file that will be used for blog directives
-if [ -d /etc/apache2/conf-available ]; then
-    # Apache 2.4 location
-    blogsConfigFile=/etc/apache2/conf-available/blogs.conf
-elif [ -d /etc/apache2/conf.d ]; then
-    # Apache 2.2 location
-    blogsConfigFile=/etc/apache2/conf.d/blogs.conf
-else
-    echo "#	Could not decide where to put global virtual host configuration"
-    exit 1
-fi
-
-# If the Apache blog directives file doesn't exist, create it, adding the directives
+# Create the VirtualHost
+vhConf=/etc/apache2/sites-available/${blogMoniker}.conf
 if [ ! -f ${blogsConfigFile} ]; then
     cat > ${blogsConfigFile} << EOF
 
-
-## This file contains directives applying to all blogs on the server
-
-# Allow use of RewriteRules (which one of the things allowed by the FileInfo type of override)
-<Directory /websites/www/content/blog/>
-	AllowOverride FileInfo
-</Directory>
-
-# Use an authentication dialog for login to the blog as this page is subject to attack
-<FilesMatch wp-login.php>
-	AuthName "WordPress Admin"
-	AuthType Basic
-	AuthUserFile /websites/configuration/apache/.htpasswd
-	Require valid-user
-</FilesMatch>
-
+<VirtualHost *:80>
+	
+	# Available URL(s)
+	ServerName ${blogMoniker}.example.com
+	
+	# Where the files are
+	DocumentRoot /websites/${blogMoniker}/content/
+	
+	# Logging
+	CustomLog /websites/www/logs/${blogMoniker}-access.log combined
+	ErrorLog /websites/www/logs/${blogMoniker}-error.log
+	
+	# Allow access
+	<Location />
+		Require all granted
+	</Location>
+	
+	# Allow use of RewriteRules (which one of the things allowed by the FileInfo type of override)
+	<Directory /websites/${blogMoniker}/content/>
+		AllowOverride FileInfo
+	</Directory>
+	
+	# Use an authentication dialog for login to the blog as this page is subject to attack
+	<FilesMatch wp-login.php>
+		AuthName "WordPress Admin"
+		AuthType Basic
+		AuthUserFile /websites/configuration/apache/.htpasswd
+		Require valid-user
+	</FilesMatch>
+	
+</VirtualHost>
 
 EOF
 fi
 
 # Enable the new configuration (Apache 2.4 only)
-if [ -d /etc/apache2/conf-available ]; then
-	a2enconf blogs
+if [ -d /etc/apache2/sites-available ]; then
+	a2ensite blogs
 fi
 
 # Reload apache
 service apache2 reload >> ${setupLogFile}
-
-# Ensure the blog files are writable, as otherwise automatic upgrade will fail
-chown -R www-data /websites/blog/content/
 
 # Confirm end of script
 msg="#	All now installed $(date)"

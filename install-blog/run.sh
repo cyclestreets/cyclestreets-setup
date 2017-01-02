@@ -68,9 +68,9 @@ ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUs
 # Install Wordpress unattended
 if [ ! -f /websites/${blogMoniker}/content/index.php ]; then
 	mkdir -p /websites/${blogMoniker}/content/
-	wget -P /tmp/ https://wordpress.org/latest.zip
+	wget -P /tmp/ https://wordpress.org/latest.tar.gz
 	tar -xzvf /tmp/latest.tar.gz --strip 1 -C /websites/${blogMoniker}/content/
-	rm /tmp/latest.zip
+	rm /tmp/latest.tar.gz
 	echo "Unpacked Wordpress files"
 fi
 

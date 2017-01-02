@@ -8,3 +8,4 @@ Currently includes:
  * Placeford (proxied version)
  * Telluswhere sites
  * Transport hack
+ * Cyclescape blog

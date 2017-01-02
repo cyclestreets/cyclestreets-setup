@@ -113,8 +113,7 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 $packageInstall mysql-server-5.7 mysql-client-5.7
 
 # Add performance monitoring for MySQL
-# !! Not available in 16.04
-#$packageInstall mytop
+$packageInstall mytop
 
 # Install Apache (2.4)
 echo "#	Installing core webserver packages"

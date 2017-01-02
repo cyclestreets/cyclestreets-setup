@@ -66,17 +66,21 @@ blogPermissions="select, insert, update, delete, alter, create, index, drop, cre
 ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
 
 # Install Wordpress unattended
-mkdir -p /websites/${blogMoniker}/content/
-wget -P /tmp/ https://wordpress.org/latest.zip
-tar -xzvf /tmp/latest.tar.gz --strip 1 -C /websites/${blogMoniker}/content/
+if [ ! -f /websites/${blogMoniker}/content/index.php ]; then
+	mkdir -p /websites/${blogMoniker}/content/
+	wget -P /tmp/ https://wordpress.org/latest.zip
+	tar -xzvf /tmp/latest.tar.gz --strip 1 -C /websites/${blogMoniker}/content/
+	rm /tmp/latest.zip
+	echo "Unpacked Wordpress files"
+fi
 
 # Ensure the blog files are writable, as otherwise automatic upgrade will fail
 chown -R www-data.rollout /websites/${blogMoniker}/content/
 
 # Create the VirtualHost
 vhConf=/etc/apache2/sites-available/${blogMoniker}.conf
-if [ ! -f ${blogsConfigFile} ]; then
-    cat > ${blogsConfigFile} << EOF
+if [ ! -f ${vhConf} ]; then
+    cat > ${vhConf} << EOF
 
 <VirtualHost *:80>
 	
@@ -113,10 +117,8 @@ if [ ! -f ${blogsConfigFile} ]; then
 EOF
 fi
 
-# Enable the new configuration (Apache 2.4 only)
-if [ -d /etc/apache2/sites-available ]; then
-	a2ensite blogs
-fi
+# Enable the new configuration
+a2ensite ${blogMoniker}
 
 # Reload apache
 service apache2 reload >> ${setupLogFile}

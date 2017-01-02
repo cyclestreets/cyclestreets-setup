@@ -78,15 +78,10 @@ EOF`
 
 
 # Credentials for the blog user (leave empty if not setting up a blog)
+blogMoniker=
 blogDatabasename=
 blogUsername=
 blogPassword=
-
-# Credentials for the cyclescape blog user (leave empty if not setting up a blog)
-# !! Temporary - as this block should move over to a new script
-cyclescapeBlogDatabasename=
-cyclescapeBlogUsername=
-cyclescapeBlogPassword=
 
 ## Working directories
 websitesContentFolder=/websites/www/content

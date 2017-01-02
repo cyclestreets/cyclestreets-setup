@@ -45,6 +45,9 @@ datapassword=
 # The mysql root password - to avoid being prompted during installation.
 mysqlRootPassword=
 
+# Central PhpMyAdmin installation
+phpmyadminMachine=
+
 # Credentials for the website user
 mysqlWebsiteUsername=website
 mysqlWebsitePassword="${password}"

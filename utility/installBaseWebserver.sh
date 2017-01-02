@@ -112,6 +112,14 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 #!# Seems to be a problem as described at "Job for mysql.service failed" in: https://bugs.launchpad.net/ubuntu/+source/mysql-5.7/+bug/1567884/comments/6 - re-running but clearing out /var/lib/mysql helps
 $packageInstall mysql-server-5.7 mysql-client-5.7
 
+# Allow administrative access to this new server from central PhpMyAdmin installation
+if [[ $mysqlRootPassword && ${mysqlRootPassword-x} ]] ; then
+	mysql -u root -p${mysqlRootPassword} -e "DROP USER IF EXISTS 'root'@'${phpmyadminMachine}';"
+	mysql -u root -p${mysqlRootPassword} -e "CREATE USER 'root'@'${phpmyadminMachine}' IDENTIFIED BY '${mysqlRootPassword}';"
+	mysql -u root -p${mysqlRootPassword} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'${phpmyadminMachine}' WITH GRANT OPTION;"
+	mysql -u root -p${mysqlRootPassword} -e "FLUSH PRIVILEGES;"
+fi
+
 # Add performance monitoring for MySQL
 $packageInstall mytop
 

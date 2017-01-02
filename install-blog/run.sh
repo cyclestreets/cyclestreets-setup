@@ -61,9 +61,14 @@ if [ -z "${blogMoniker}" ]; then
 	exit 1
 fi;
 
+# Create database
+${superMysql} -e "CREATE DATABASE ${blogDatabasename};"
+
+# Create database permissions
 # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
 blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
 ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
+${superMysql} -e "FLUSH PRIVILEGES;"
 
 # Install Wordpress unattended
 if [ ! -f /websites/${blogMoniker}/content/index.php ]; then

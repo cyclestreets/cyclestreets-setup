@@ -68,7 +68,7 @@ do
     $download $administratorEmail $server $folder $fileName
 
     #   Load them directly into the archive
-    gunzip < /websites/www/backups/$fileName | ${superMysql} csArchive
+    gunzip < ${websitesBackupsFolder}/$fileName | ${superMysql} csArchive
 done
 
 #	CycleStreets Blog

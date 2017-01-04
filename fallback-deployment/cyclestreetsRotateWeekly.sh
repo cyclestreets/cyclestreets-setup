@@ -57,7 +57,7 @@ rotateWeekly=${SCRIPTDIRECTORY}/../utility/rotateWeekly.sh
 #	CycleStreets Rotate
 $rotateWeekly $folder www_cyclestreets.sql.gz
 $rotateWeekly $folder www_schema_blogcyclestreets_database.sql.gz
-$rotateWeekly $folder www_schema_blogcyclescape_database.sql.gz
+
 #	CS Dev rotation
 $rotateWeekly $folder csTracBackup.tar.bz2
 $rotateWeekly $folder cyclestreetsRepo.dump.bz2

@@ -43,9 +43,7 @@ sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFold
 #	Also sync the blog code
 # Note: WordPress checks that files are owned by the webserver user (rather than just checking they are writable) so these fixes may be necessary
 # chown -R www-data:${rollout} /websites/blog/content/
-# chown -R www-data:${rollout} /websites/cyclescape-blog/content/
 # chmod -R g+w /websites/blog/content/
-# chmod -R g+w /websites/cyclescape-blog/content/
 # !! Hardwired locations
 # Include the l option to copy symlinks as symlinks
 rsync -rtOl --cvs-exclude ${server}:/websites/blog/content /websites/blog

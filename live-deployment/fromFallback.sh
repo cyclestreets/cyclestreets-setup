@@ -31,6 +31,10 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 SCRIPTDIRECTORY=$DIR
 
+# Logging
+setupLogFile=$SCRIPTDIRECTORY/log.txt
+touch ${setupLogFile}
+
 # Define the location of the credentials file relative to script directory
 configFile=../.config.sh
 

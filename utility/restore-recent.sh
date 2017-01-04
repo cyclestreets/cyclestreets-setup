@@ -77,10 +77,4 @@ ${superMysql} cyclestreets -e "drop database if exists blogcyclestreets;";
 ${superMysql} cyclestreets -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
 gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | ${superMysql} blogcyclestreets
 
-#	Cyclescape Blog
-$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclescape_database.sql.gz
-${superMysql} cyclestreets -e "drop database if exists blogcyclescape;";
-${superMysql} cyclestreets -e "CREATE DATABASE blogcyclescape DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclescape_database.sql.gz | ${superMysql} blogcyclescape
-
-### Final Stage
+#	End of file

@@ -88,11 +88,4 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost blogcy
 openssl dgst -md5 ${dump} > ${dump}.md5
 
 
-#	Cyclescape
-#	Database dump
-dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blogcyclescape_database.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost blogcyclescape | gzip > ${dump}
-#	Hash
-openssl dgst -md5 ${dump} > ${dump}.md5
-
 # End of file

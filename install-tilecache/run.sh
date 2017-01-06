@@ -83,7 +83,7 @@ chown -R www-data.${rollout} "${tilecacheContentFolder}"
 # Create/update the tilecache repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
 if [ ! -d "${tilecacheContentFolder}/.git" ]
 then
-	${asCS} git clone git://github.com/cyclestreets/tilecache.git "${tilecacheContentFolder}/"
+	${asCS} git clone https://github.com/cyclestreets/tilecache.git "${tilecacheContentFolder}/"
 else
 	${asCS} git pull
 fi

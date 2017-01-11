@@ -55,6 +55,9 @@ echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 # Ensure JSON support
 apt-get -y install php-json
 
+# Ensure Zip support
+apt-get -y install php7.0-zip
+
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
 apt-get -y install imagemagick php-imagick
 

@@ -35,9 +35,6 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Load helper functions
-. ${ScriptHome}/utility/helper.sh
-
 # Main body of script
 
 # Install the website
@@ -124,25 +121,6 @@ munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart
 echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest
-
-# Cron jobs - note the timings of these should be the same as in the fromFallback.sh
-if $installCronJobs ; then
-
-    # Update scripts
-    installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
-
-    # Dump data every day at 1:01 am
-    # Choose a timing that allows the script to complete before being polled by the automatic testing - which currently (April 2015) happens on each five minute boundary
-    installCronJob ${username} "1 1 * * * ${ScriptHome}/live-deployment/daily-dump.sh"
-
-    # Hourly zapping at 13 mins past every hour
-    installCronJob ${username} "13 * * * * ${ScriptHome}/utility/remove-tempgenerated.sh"
-
-    # Install routing data, using quiet option to suppress advice messages
-    # A time in the middle of the day is probably best overall as likely to be awake to handle any issues.
-    # Experience has shown that doing it in the middle of the night is likely to lead to ping messages caused by temporary routing test failures due to the heavy i/o.
-    installCronJob ${username} "34 11 * * * ${ScriptHome}/live-deployment/install-routing-data.sh -q"
-fi
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

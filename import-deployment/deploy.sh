@@ -41,20 +41,7 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Load helper functions
-. ${ScriptHome}/utility/helper.sh
-
 # Main body of script
-
-# Cron jobs
-if $installCronJobs ; then
-
-    # Update scripts
-    installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
-
-    # Import data every day
-    installCronJob ${username} "0 10 * * * ${ScriptHome}/import-deployment/import.sh"
-fi
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

@@ -99,19 +99,6 @@ service apache2 reload
 # Downloads area
 . ${ScriptHome}/dev-deployment/install-downloads.sh
 
-# Load cron job function
-. ${ScriptHome}/utility/helper.sh
-
-# Update scripts daily at 6:25am
-installCronJob ${username} "25 6 * * * cd ${ScriptHome} && git pull -q"
-
-# Backup data every day at 6:26am
-installCronJob ${username} "26 6 * * * ${ScriptHome}/dev-deployment/dailybackup.sh"
-
-# Enable SMS site monitoring, every 5 minutes
-installCronJob ${username} "0,5,10,15,20,25,30,35,40,45,50,55 * * * * php ${ScriptHome}/sms-monitoring/run.php"
-
-
 # Confirm end of script
 echo -e "#	All now deployed $(date)"
 

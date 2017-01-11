@@ -518,11 +518,6 @@ if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW D
     echo "#	Note: this contains table definitions only and contains no data."
     ${superMysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql
     
-    # Install the batch routing cron job
-    # #!# the token will need to be changed manually
-    . ${ScriptHome}/utility/helper.sh
-    installCronJob ${username} "* * * * * curl -s 'https://www.cyclestreets.net/journey/batch/cron.html?key=token' &>/dev/null"
-    
 else
     echo "#	Skipping batch database"
 fi

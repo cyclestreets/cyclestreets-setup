@@ -346,8 +346,8 @@ echo "#	$(date)	Installing the routing database: ${importEdition}"
 ${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
 ${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
 
-# Unpack and restore the database
-gunzip < ${dumpFile} | ${superMysql} ${importEdition}
+# Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
+gunzip < ${dumpFile} | nice -n19 ${superMysql} ${importEdition}
 
 # Remove the zip
 rm -f ${dumpFile}

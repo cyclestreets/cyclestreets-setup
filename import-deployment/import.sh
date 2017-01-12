@@ -118,11 +118,12 @@ if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
     sudo ${routingDaemonLocation} stop
 fi
 
-#       Move to the right place
+# Move to the right place
 cd ${importContentFolder}
 
-#       Start the import (which sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
-php run.php
+# Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
+# Use a low priority to allow the server to be useful for serving other tasks such as tiles if necessary.
+nice -n10 php run.php
 
 # Restart mysql - as setup for passwordless sudo by the installer. This resets the MySQL configuration to default values, more suited to serving web pages and routes.
 echo "#	$(date)	Restarting MySQL to restore default configuration."

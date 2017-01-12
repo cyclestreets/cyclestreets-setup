@@ -136,6 +136,7 @@ if ${tilecacheSSL} && [ ! -f ${vhSslConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhSslConf}
 	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhSslConf}
 	sed -i "s|/var/www/tile|${tilecacheContentFolder}|g" ${vhSslConf}
+	sed -i "s|/var/log/apache2/tile-|/var/log/apache2/tile_ssl-|g" ${vhSslConf}
 	sed -i "s|/var/log/apache2|${websitesLogsFolder}|g" ${vhSslConf}
 	sed -i "s|/etc/ssl/certs|/etc/apache2/sslcerts|g" ${vhSslConf}
 	

@@ -68,6 +68,9 @@ asCS="sudo -u ${username}"
 # Ensure that dependencies are present
 apt-get -y install apache2 php
 
+# ImageMagick needed for upscaling
+apt-get -y install imagemagick php-imagick
+
 # Install path to content and go there
 mkdir -p "${tilecacheContentFolder}"
 

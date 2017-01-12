@@ -65,8 +65,13 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Ensure that dependencies are present
-apt-get -y install apache2 php
+# Apache
+apt-get -y install apache2
+a2enmod rewrite
+a2enmod ssl
+
+# PHP
+apt-get -y install php libapache2-mod-php
 
 # ImageMagick needed for upscaling
 apt-get -y install imagemagick php-imagick
@@ -106,6 +111,9 @@ if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then
 	${asCS} cp -p .config.php.template .config.php
 fi
 
+# Create logs folder
+mkdir -p "${websitesLogsFolder}"
+
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
 vhConf=/etc/apache2/sites-available/tile.conf
 if [ ! -f ${vhConf} ]; then
@@ -129,10 +137,15 @@ if ${tilecacheSSL} && [ ! -f ${vhSslConf} ]; then
 	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhSslConf}
 	sed -i "s|/var/www/tile|${tilecacheContentFolder}|g" ${vhSslConf}
 	sed -i "s|/var/log/apache2|${websitesLogsFolder}|g" ${vhSslConf}
+	sed -i "s|/etc/ssl/certs|/etc/apache2/sslcerts|g" ${vhSslConf}
 	
 	#  Special SSL customizations
 	sed -i "s|:80|:443|g" ${vhSslConf}
 	sed -i "s|#SSL|SSL|g" ${vhSslConf}
+	
+	# Certs directory
+	mkdir -p /etc/apache2/sslcerts/
+	chmod 750 /etc/apache2/sslcerts/
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
@@ -148,8 +161,10 @@ if ${tilecacheSSL} && ! apache2ctl -M | grep ssl_module > /dev/null 2>&1
 then
     echo "#	Activating apache ssl"
     a2enmod ssl
-    service apache2 restart
 fi
+
+# Restart Apache
+service apache2 restart
 
 # Report completion
 echo "#	Installing tilecache completed"

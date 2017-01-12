@@ -104,7 +104,7 @@ fi
 
 # Make the repository writable to avoid permissions problems when manually editing
 chmod -R g+w "${tilecacheContentFolder}"
-chown ${username}.${rollout} -R "${tilecacheContentFolder}"
+chgrp -R ${rollout} -R "${tilecacheContentFolder}"
 
 # Create the config file if it doesn't exist, and write in the configuration
 if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then

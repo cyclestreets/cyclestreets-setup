@@ -110,8 +110,8 @@ vhConf=/etc/apache2/sites-available/tile.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhConf}
 	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhConf}
-	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhConf}
-	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhConf}
+	sed -i "s|/var/www/tile|${tilecacheContentFolder}|g" ${vhConf}
+	sed -i "s|/var/log/apache2|${websitesLogsFolder}|g" ${vhConf}
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
@@ -126,9 +126,9 @@ vhSslConf=/etc/apache2/sites-available/tile_ssl.conf
 if ${tilecacheSSL} && [ ! -f ${vhSslConf} ]; then
 	cp -p .apache-vhost.conf.template ${vhSslConf}
 	sed -i "s|tile.example.com|${tilecacheHostname}|g" ${vhSslConf}
-	sed -i "s|/path/to/files|${tilecacheContentFolder}|g" ${vhSslConf}
-	sed -i "s|/path/to/logs|${websitesLogsFolder}|g" ${vhSslConf}
-
+	sed -i "s|/var/www/tile|${tilecacheContentFolder}|g" ${vhSslConf}
+	sed -i "s|/var/log/apache2|${websitesLogsFolder}|g" ${vhSslConf}
+	
 	#  Special SSL customizations
 	sed -i "s|:80|:443|g" ${vhSslConf}
 	sed -i "s|#SSL|SSL|g" ${vhSslConf}
@@ -136,7 +136,7 @@ fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct
 if ${tilecacheSSL} && [ ! -L /etc/apache2/sites-enabled/701-tile_ssl.conf ]; then
-    ln -s ${vhSslConf} /etc/apache2/sites-enabled/701-tile_ssl.conf
+	ln -s ${vhSslConf} /etc/apache2/sites-enabled/701-tile_ssl.conf
 fi
 
 # Enable mod_headers, so that the Access-Control-Allow-Origin header is sent

@@ -83,9 +83,6 @@ cd "${tilecacheContentFolder}"
 # Make sure the webserver user can write to the tilecache, by setting this as the owner
 chown -R www-data.${rollout} "${tilecacheContentFolder}"
 
-# Make the repository writable to avoid permissions problems when manually editing
-chmod -R g+w "${tilecacheContentFolder}"
-
 # Add the user to the rollout group, if not already there
 if ! groups ${username} | grep "\b${rollout}\b" > /dev/null 2>&1
 then
@@ -99,6 +96,10 @@ then
 else
 	${asCS} git pull
 fi
+
+# Make the repository writable to avoid permissions problems when manually editing
+chmod -R g+w "${tilecacheContentFolder}"
+chown ${username}.${rollout} -R "${tilecacheContentFolder}"
 
 # Create the config file if it doesn't exist, and write in the configuration
 if [ ! -f "${tilecacheContentFolder}/.config.php" ]; then

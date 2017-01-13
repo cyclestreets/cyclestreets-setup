@@ -120,6 +120,9 @@ if [[ $mysqlRootPassword && ${mysqlRootPassword-x} ]] ; then
 	mysql -u root -p${mysqlRootPassword} -e "FLUSH PRIVILEGES;"
 fi
 
+# Disable MySQL password expiry system; see: http://stackoverflow.com/a/41552022
+mysql -u root -p${mysqlRootPassword} -e "SET GLOBAL default_password_lifetime = 0;"
+
 # Add performance monitoring for MySQL
 $packageInstall mytop
 

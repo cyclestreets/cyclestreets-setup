@@ -99,6 +99,13 @@ transporthackLogsFolder=/websites/www/logs
 # Install Cyclescape blog
 . $ScriptHome/install-blog/run.sh
 
+# Enable mod_proxy_html for proxy installations
+a2enmod proxy_html
+a2enmod xml2enc
+a2enmod headers
+apt-get install -y libxml2-dev
+service apache2 restart
+
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html

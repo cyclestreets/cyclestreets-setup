@@ -141,6 +141,9 @@ chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectCh
 touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 chown www-data:${rollout} ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 
+# Tests autogeneration
+chown www-data:${rollout} ${websitesContentFolder}/tests/
+
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
 cslocalconf=cyclestreets.conf
 localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}

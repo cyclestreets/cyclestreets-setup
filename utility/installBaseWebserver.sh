@@ -86,7 +86,7 @@ apt-get -y autoremove
 $packageInstall language-pack-en-base
 
 # Install basic software
-$packageInstall wget dnsutils man-db subversion git emacs nano bzip2
+$packageInstall wget dnsutils man-db subversion git emacs nano bzip2 screen
 $packageInstall mlocate
 updatedb
 

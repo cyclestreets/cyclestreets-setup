@@ -147,7 +147,7 @@ else
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
-	echo "#	Restart it using: sudo service cycleroutingd restart"
+	echo "#	Restart it using: sudo /bin/systemctl restart cycleroutingd"
 	exit 1
     fi
 fi

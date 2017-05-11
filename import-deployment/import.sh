@@ -115,7 +115,7 @@ sudo ${ScriptHome}/utility/removeCoverageCSV.sh
 if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
 
     # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-    sudo ${routingDaemonLocation} stop
+    sudo ${routingDaemonStop}
 fi
 
 # Move to the right place

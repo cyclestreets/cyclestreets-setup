@@ -611,7 +611,7 @@ if $installRoutingAsDaemon ; then
     if [ $? -ne 0 ]
     then
 	# Start the service
-	${routingDaemonLocation} start
+	${routingDaemonStart}
 	echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
     fi
     # Restore abandon-on-error
@@ -631,7 +631,7 @@ else
     if [ -L ${routingDaemonLocation} ]; then
 
 	# Ensure it is stopped
-	${routingDaemonLocation} stop
+	${routingDaemonStop}
 
 	# Remove the symlink
 	rm ${routingDaemonLocation}

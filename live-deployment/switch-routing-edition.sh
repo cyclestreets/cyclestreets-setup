@@ -222,7 +222,7 @@ chmod a+x $routingEngineConfigFile
 # This seems to be necessary when there are large amounts of memory being freed by stopping.
 
 # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-sudo ${routingDaemonLocation} stop
+sudo ${routingDaemonStop}
 
 # Check the local routing service has stopped
 localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
@@ -236,7 +236,7 @@ while [[ ! "$localRoutingStatus" =~ stopped ]]; do
 done
 
 # Start
-sudo ${routingDaemonLocation} start
+sudo ${routingDaemonStart}
 
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)

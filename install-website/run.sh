@@ -271,104 +271,14 @@ echo "#	Setting global VirtualHost configuration in ${globalApacheConfigFile}"
 
 # Check if the local global apache config file exists already
 if [ ! -r ${globalApacheConfigFile} ]; then
-    # Create the global apache config file
-    cat > ${globalApacheConfigFile} << EOF
-# Provides local configuration that affects all hosted sites.
-
-# This file is loaded from the /etc/apache2/conf.d folder, its name begins with a z so that it is loaded last from that folder.
-# The files in the conf.d folder are all loaded before any VirtualHost files.
-
-# Increase threads
-# Note: 'a2query -M' shows the type (prefork/worker) which is in use
-MaxRequestWorkers 256
-
-# Avoid giving away unnecessary information about the webserver configuration
-ServerSignature Off
-ServerTokens ProductOnly
-php_admin_value expose_php 0
-
-# Enable status page (login version - there will also be /server-status for localhost for Munin access)
-<Location /status>
-	SetHandler server-status
-	AuthUserFile /etc/apache2/.htpasswd
-	AuthName "Status"
-	AuthType Basic
-	Require valid-user
-</Location>
-
-# ServerAdmin
-ServerAdmin ${administratorEmail}
-
-# PHP environment
-php_value short_open_tag off
-
-# Unicode UTF-8
-AddDefaultCharset utf-8
-
-# Disallow /somepage.php/Foo to load somepage.php
-AcceptPathInfo Off
-
-# Logging
-LogLevel warn
-
-# Statistics
-Alias /images/statsicons /websites/configuration/analog/images
-
-# Ensure FCKeditor .xml files have the correct MIME type
-<Location /_fckeditor/>
-	AddType application/xml .xml
-</Location>
-
-# Deny photomap file reading directly
-<Directory /websites/www/content/data/photomap/>
-	deny from all
-</Directory>
-<Directory /websites/www/content/data/photomap2/>
-	deny from all
-</Directory>
-<Directory /websites/www/content/data/photomap3/>
-	deny from all
-</Directory>
-
-# Disallow loading of .svn folder contents
-<DirectoryMatch .*\.svn/.*>
-	Deny From All
-</DirectoryMatch>
-
-# Deny access to areas not intended to be public
-<LocationMatch ^/(archive|configuration|documentation|import|classes|libraries|scripts|routingengine)>
-	order deny,allow
-	deny from all
-</LocationMatch>
-
-# Disallow use of .htaccess file directives by default
-<Directory />
-	# Options FollowSymLinks
-	AllowOverride None
-	<IfModule mod_authz_core.c>
-		Require all granted
-	</IfModule>
-</Directory>
-
-# Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area
-<Directory /websites/www/content/blog/>
-	AllowOverride FileInfo
-	<IfModule mod_authz_core.c>
-		Require all granted
-	</IfModule>
-</Directory>
-
-# Use an authentication dialog for login to the blog as this page is subject to attack
-<FilesMatch "wp-login.php">
-    AuthName "WordPress Admin"
-    AuthType Basic
-    AuthUserFile /etc/apache2/.htpasswd
-    require valid-user
-</FilesMatch>
-
-EOF
+	
+	# Copy in the global Apache config file
+	cp -pr "${ScriptHome}/install-website/zcsglobal.conf" "${globalApacheConfigFile}"
+	
+	# Substitute in the Administrator e-mail
+	sed -i -e "s/%administratorEmail/${administratorEmail}/" "${globalApacheConfigFile}"
 else
-    echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
+	echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
 fi
 
 # Enable the configuration file (only necessary in Apache 2.4)

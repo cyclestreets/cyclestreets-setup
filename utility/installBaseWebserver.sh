@@ -85,8 +85,8 @@ apt-get -y autoremove
 # Ensure locale; see: http://stackoverflow.com/questions/11300633/svn-cannot-set-lc-ctype-locale
 $packageInstall language-pack-en-base
 
-# Install basic software
-$packageInstall wget dnsutils man-db subversion git emacs nano bzip2 screen
+# Install basic utility software
+$packageInstall wget dnsutils man-db subversion git emacs nano bzip2 screen dos2unix
 $packageInstall mlocate
 updatedb
 

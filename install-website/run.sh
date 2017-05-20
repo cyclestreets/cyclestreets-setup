@@ -367,9 +367,6 @@ Alias /images/statsicons /websites/configuration/analog/images
 </FilesMatch>
 
 EOF
-
-    # Add IP bans - quoted to preserve newlines
-    echo "${ipbans}" >> ${globalApacheConfigFile}
 else
     echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
 fi

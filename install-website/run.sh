@@ -91,10 +91,6 @@ apt-get -y install curl libxml-xpath-perl
 apt-get -y install libimage-exiftool-perl
 # This one might not actually be needed
 apt-get -y install libxml-dom-perl
-# Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
-chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
-chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
-chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
@@ -142,6 +138,11 @@ chown -R ${username} ${websitesContentFolder}
 # This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
 echo "#	chmod -R g+w ${websitesContentFolder}"
 chmod -R g+w ${websitesContentFolder}
+
+# Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
+chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
+chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
+chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 
 # Allow the Apache webserver process to write / add to the data/ folder
 echo "#	chown -R www-data ${websitesContentFolder}/data"

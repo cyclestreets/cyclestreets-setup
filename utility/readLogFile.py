@@ -1,15 +1,26 @@
-# A helper script for generating journey planner performance data for munin.
+# A helper script for generating journey planner API performance data for munin.
 #
 # This script fetches the last few lines of an Apache access log that contains
 # server response times in microseconds at the end of each line.
-# It filters for the journey calls and calculates the average response rate in milliseconds.
+# It filters for the journey API calls and calculates several statistics
+# that characterize how long the server has been taking to respond - ie how long
+# the caller must linger for a result.
 #
 # Synopsis
 #	readLogFile.py logFile
 #
 # Result
-#	Average response rate in milisconds of the journey planner access log lines.
-
+#	Serveral results, in milisconds, are generated each on a new line:
+#	* Average response time
+#	* Response time at the 90th percentile when ordered by ascending time
+#	* The slowest response time
+#
+# Example
+# user@veebee:/opt/cyclestreets-setup$
+# python utility/readLogFile.py /websites/www/logs/veebee-access.log
+# journey_linger.value 22
+# journey_top90linger.value 39
+# journey_slowest.value 39
 
 # Dependencies
 import subprocess, re, sys, math
@@ -28,6 +39,7 @@ logfile = sys.argv[1]
 lines = 200
 
 # Minimum number of input data lines
+# If less than this amount of data is available all results are zero.
 minimumDataLines = 10	#int(math.ceil(lines/3.0))
 
 # Api call pattern
@@ -85,25 +97,23 @@ if count >= minimumDataLines:
     ascending = sorted(lingerTimes)
 
     # Consider the first 90%
-    top90startIndex = int(math.floor(0.9 * len(lingerTimes)))
-    top90percent = ascending[:top90startIndex]
-    top90percentLingerMs = round(float(sum(top90percent) / (len(top90percent) * 1000)))
+    top90startIndex = int(math.ceil(0.9 * len(lingerTimes)))
+    top90percentLingerMs = round(float(ascending[top90startIndex]) / 1000)
 
     # Slowest
-    slowestLingerMs = round(float(ascending[-1]) / 1000)
+    slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
 
     # Trace
     #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(top90percentLingerMs) + " ms"
 
 
-# Result
+# Results
 print 'journey_linger.value {:d}'.format(int(averageLingerMs))
 print 'journey_top90linger.value {:d}'.format(int(top90percentLingerMs))
 print 'journey_slowest.value {:d}'.format(int(slowestLingerMs))
 
 # Trace
 #print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
-
 
 
 # End of file

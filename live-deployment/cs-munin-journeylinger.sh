@@ -19,8 +19,8 @@
 # sudo systemctl restart munin-node
 #
 # Example calls
-# sudo munin-run cyclestreets config
-# sudo munin-run cyclestreets
+# sudo munin-run journeylinger config
+# sudo munin-run journeylinger
 #
 # Remove
 # sudo rm /etc/munin/plugins/cyclestreets

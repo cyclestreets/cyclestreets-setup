@@ -66,7 +66,11 @@ fi
 output_config() {
     echo "graph_title CycleStreets Journey Linger"
     echo "graph_category CycleStreets"
+    echo "graph_vlabel Milliseconds"
+    echo "graph_args -l 0"
     echo "journey_linger.label Journey linger in milliseconds"
+    echo "journey_linger.warning 600"
+    echo "journey_linger.critical 700"
 }
 
 # Outputs the statistics

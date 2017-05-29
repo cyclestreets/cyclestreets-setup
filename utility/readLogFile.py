@@ -3,15 +3,26 @@
 # This script fetches the last few lines of an Apache access log that contains
 # server response times in microseconds at the end of each line.
 # It filters for the journey calls and calculates the average response rate in milliseconds.
+#
+# Synopsis
+#	readLogFile.py logFile
+#
+# Result
+#	Average response rate in milisconds of the journey planner access log lines.
+
 
 # Dependencies
-import subprocess, re
+import subprocess, re, sys
 
 # Trace
 # print "#\tStarting"
 
 # Log file
-logfile = "/websites/www/logs/veebee-access.log"
+# logfile = "/websites/www/logs/veebee-access.log"
+
+# Read args supplied to script
+logfile = sys.argv[1]
+
 
 # Number of lines
 lines = 200

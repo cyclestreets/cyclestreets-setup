@@ -15,21 +15,6 @@ else
     ${asCS} svn update --username=${currentActualUser} --password="${repopassword}" --no-auth-cache
 fi
 
-# Assume ownership of all the new files and folders
-echo "#	Starting a series of recursive chown/chmod to set correct file ownership and permissions"
-echo "#	chown -R ${username} ${websitesContentFolder}"
-chown -R ${username} ${websitesContentFolder}
-
-# Add group writability
-# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
-echo "#	chmod -R g+w ${websitesContentFolder}"
-chmod -R g+w ${websitesContentFolder}
-
-# Allow the Apache webserver process to write / add to the data/ folder
-echo "#	chown -R www-data ${websitesContentFolder}/data"
-chown -R www-data ${websitesContentFolder}/data
-
-
 # Ensure there's a custom sudoers file
 if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]; then
 

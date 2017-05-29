@@ -69,9 +69,12 @@ output_config() {
     echo "graph_category CycleStreets"
     echo "graph_vlabel Milliseconds"
     
-    # Use an upper limit of 10 seconds so making it easier to compare with other servers
-    echo "graph_args -l 0 --upper-limit 10000"
+    # Use an upper limit of 3 seconds so making it easier to compare with across servers
+    echo "graph_args -l 0 --upper-limit 3000"
     echo "journey_linger.label Journey linger"
+
+    # Note spelling of this field :-)
+    echo "journey_linger.colour 4488ee" 
     echo "journey_linger.warning 600"
     echo "journey_linger.critical 700"
 }

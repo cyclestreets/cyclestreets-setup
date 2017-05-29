@@ -10,10 +10,13 @@ import subprocess
 print "#\tStarting"
 
 # Log file
-logfile = "/websites/www/logs/api-veebee-access.log"
+logfile = "/websites/www/logs/veebee-access.log"
 
 # Number of lines
 lines = 4
+
+# Api call pattern
+apiCall = 'api/journey.json'
 
 # Get the last few lines of the log file
 p = subprocess.Popen(["tail", "-n" + str(lines), logfile], stdout=subprocess.PIPE)
@@ -21,8 +24,17 @@ p = subprocess.Popen(["tail", "-n" + str(lines), logfile], stdout=subprocess.PIP
 # Read the data
 line = p.stdout.readline()
 
+# Number of matching lines
+count = 0
+
+# Scan
 while line:
     print line
     line = p.stdout.readline()
-    
-print "#\tStopping"
+
+    # Check if the line contains call to the journey api
+    if apiCall in line:
+
+        count += 1
+
+print "#\tStopping, counted: " + str(count)

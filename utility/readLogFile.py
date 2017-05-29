@@ -71,6 +71,7 @@ while line:
 # Time in millisconds
 averageLingerMs = 0
 top90percentLingerMs = 0
+slowestLingerMs = 0
 
 # When there is sufficient input data
 if count >= minimumDataLines:
@@ -88,6 +89,9 @@ if count >= minimumDataLines:
     top90percent = ascending[:top90startIndex]
     top90percentLingerMs = round(float(sum(top90percent) / (len(top90percent) * 1000)))
 
+    # Slowest
+    slowestLingerMs = round(float(ascending[-1]) / 1000)
+
     # Trace
     #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(top90percentLingerMs) + " ms"
 
@@ -95,6 +99,7 @@ if count >= minimumDataLines:
 # Result
 print 'journey_linger.value {:d}'.format(int(averageLingerMs))
 print 'journey_top90linger.value {:d}'.format(int(top90percentLingerMs))
+print 'journey_slowest.value {:d}'.format(int(slowestLingerMs))
 
 # Trace
 #print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."

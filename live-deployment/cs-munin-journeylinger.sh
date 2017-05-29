@@ -78,13 +78,17 @@ output_config() {
     echo "journey_linger.info The time in milliseconds taken to respond to a CycleStreets journey API call according to the apache access log."
     echo "journey_linger.colour ddbbee"
 
-    # Linger of fastst 90%
+    # Linger of fastest 90%
     echo "journey_top90linger.label Top 90% linger ms"
     echo "journey_top90linger.info As linger value but restricted to the fastest 90%."
     echo "journey_top90linger.colour 4488ee"
     echo "journey_top90linger.line 700:DDBB44:700ms threshold"
     echo "journey_top90linger.warning 600"
     echo "journey_top90linger.critical 700"
+
+    # Linger of slowest
+    echo "journey_slowest.label Slowest linger ms"
+    echo "journey_slowest.info The longest time to plan a journey."
 }
 
 # Outputs the statistics

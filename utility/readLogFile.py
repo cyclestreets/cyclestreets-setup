@@ -12,7 +12,7 @@
 
 
 # Dependencies
-import subprocess, re, sys
+import subprocess, re, sys, math
 
 # Trace
 # print "#\tStarting"
@@ -24,8 +24,11 @@ import subprocess, re, sys
 logfile = sys.argv[1]
 
 
-# Number of lines
+# Number of lines of the log file to scan
 lines = 200
+
+# Minimum number of input data lines
+minimumDataLines = 10	#int(math.ceil(lines/3.0))
 
 # Api call pattern
 apiCall = 'api/journey.json'
@@ -42,6 +45,9 @@ count = 0
 # Total time
 microSeconds = 0
 
+# Array of response times
+lingerTimes = []
+
 # Scan
 while line:
 
@@ -51,29 +57,47 @@ while line:
     # Check if the line contains call to the journey api
     if apiCall in line:
 
-        count += 1
-
-        # Find the number at the end of the line
-        match = re.match('.*?([0-9]+)$', line)
+        # Find the number at the end of the line after a solidus
+        match = re.match('.+?/([0-9]+)$', line)
         if match:
+	    count += 1
             microSeconds += int(match.group(1))
+            lingerTimes.append(int(match.group(1)))
 
     # Read next line
     line = p.stdout.readline()
 
 
 # Time in millisconds
-milliSeconds = 0
+averageLingerMs = 0
+top90percentLingerMs = 0
 
-# Calculate the average
-if count > 0:
+# When there is sufficient input data
+if count >= minimumDataLines:
+
+    # Calculate the average
     # float()  ensures the / avoids truncating
-    milliSeconds = round(float(microSeconds) / (count * 1000))
+    averageLingerMs = round(float(microSeconds) / (count * 1000))
+
+    # 90% target
+    # Sort the list ascending times
+    ascending = sorted(lingerTimes)
+
+    # Consider the first 90%
+    top90startIndex = int(math.floor(0.9 * len(lingerTimes)))
+    top90percent = ascending[:top90startIndex]
+    top90percentLingerMs = round(float(sum(top90percent) / (len(top90percent) * 1000)))
+
+    # Trace
+    #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(top90percentLingerMs) + " ms"
+
 
 # Result
-print int(milliSeconds)
+print int(averageLingerMs)
 
 # Trace
-#print "#\tStopping, counted: " + str(count) + " time: " + str(milliSeconds) + "ms, " + str(microSeconds) + " microseconds."
+#print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+
+
 
 # End of file

@@ -27,6 +27,7 @@
 #
 # See also
 # https://dev.cyclestreets.net/wiki/ServerMonitoring
+# http://guide.munin-monitoring.org/en/latest/develop/plugins/howto-write-plugins.html
 
 ### CREDENTIALS ###
 
@@ -67,7 +68,9 @@ output_config() {
     echo "graph_title CycleStreets Journey Linger"
     echo "graph_category CycleStreets"
     echo "graph_vlabel Milliseconds"
-    echo "graph_args -l 0"
+    
+    # Use an upper limit of 10 seconds so making it easier to compare with other servers
+    echo "graph_args -l 0 --upper-limit 10000"
     echo "journey_linger.label Journey linger"
     echo "journey_linger.warning 600"
     echo "journey_linger.critical 700"

@@ -68,13 +68,16 @@ output_config() {
     echo "graph_title CycleStreets Journey Linger"
     echo "graph_category CycleStreets"
     echo "graph_vlabel Milliseconds"
+    echo "graph_info Performance of the CycleStreets journey API according to the apache access log."
     
     # Use an upper limit of 3 seconds so making it easier to compare with across servers
     echo "graph_args -l 0 --upper-limit 3000"
-    echo "journey_linger.label Journey linger"
+    echo "journey_linger.label Journey linger ms"
 
     # Note spelling of this field :-)
-    echo "journey_linger.colour 4488ee" 
+    echo "journey_linger.info The time in milliseconds taken to respond to a CycleStreets journey API call according to the apache access log."
+    echo "journey_linger.colour 4488ee"
+    echo "journey_linger.line 700:DDBB44:700ms threshold"
     echo "journey_linger.warning 600"
     echo "journey_linger.critical 700"
 }

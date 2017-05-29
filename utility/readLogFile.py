@@ -93,7 +93,8 @@ if count >= minimumDataLines:
 
 
 # Result
-print int(averageLingerMs)
+print 'journey_linger.value {:d}'.format(int(averageLingerMs))
+print 'journey_top90linger.value {:d}'.format(int(top90percentLingerMs))
 
 # Trace
 #print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."

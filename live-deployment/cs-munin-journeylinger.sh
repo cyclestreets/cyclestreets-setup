@@ -72,19 +72,26 @@ output_config() {
     
     # Use an upper limit of 3 seconds so making it easier to compare with across servers
     echo "graph_args -l 0 --upper-limit 3000"
-    echo "journey_linger.label Journey linger ms"
 
-    # Note spelling of this field :-)
+    # Average linger
+    echo "journey_linger.label Journey linger ms"
     echo "journey_linger.info The time in milliseconds taken to respond to a CycleStreets journey API call according to the apache access log."
-    echo "journey_linger.colour 4488ee"
-    echo "journey_linger.line 700:DDBB44:700ms threshold"
-    echo "journey_linger.warning 600"
-    echo "journey_linger.critical 700"
+    echo "journey_linger.colour ddbbee"
+
+    # Linger of fastst 90%
+    echo "journey_top90linger.label Top 90% linger ms"
+    echo "journey_top90linger.info As linger value but restricted to the fastest 90%."
+    echo "journey_top90linger.colour 4488ee"
+    echo "journey_top90linger.line 700:DDBB44:700ms threshold"
+    echo "journey_top90linger.warning 600"
+    echo "journey_top90linger.critical 700"
 }
 
 # Outputs the statistics
 output_values() {
-    printf "journey_linger.value %d\n" $(journey_linger)
+    python ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${csHostname}-access.log | while read line ; do
+	echo $line
+    done
 }
 
 # Explain arguments to this script
@@ -92,14 +99,6 @@ output_usage() {
     printf >&2 "%s - CycleStreets graphs\n" ${0##*/}
     printf >&2 "Usage: %s [config]\n" ${0##*/}
 }
-
-## Internal functions that provide the statistics
-
-# Number of itineraries in a five minute period
-journey_linger() {
-    python ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${csHostname}-access.log
-}
-
 
 
 # Run the above functions, according to the arguments given to this script

@@ -5,7 +5,8 @@
 # 	munin-run cyclestreets [config]
 #
 # DESCRIPTION
-# 	If the optional argument config is supplied (as the plain string: config), this script returns a summary of the parameters provided by this munin plugin.
+# 	If the optional argument config is supplied (as the plain string: config), this script
+#	returns a summary of the parameters provided by this munin plugin.
 #	Without that argument the values of those parameters are returned.
 #
 # Configure
@@ -16,7 +17,7 @@
 # sudo ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
 #
 # Then restart munin node
-# sudo /etc/init.d/munin-node restart
+# sudo systemctl restart munin-node
 #
 # Example calls
 # sudo munin-run cyclestreets config

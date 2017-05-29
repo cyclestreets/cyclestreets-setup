@@ -1,19 +1,20 @@
-# This file has to:
-# Open a log file
-# Go to the last line
-# Work back finding 200 occurrences of calls to /api/journey.json
-# Make an average of the last integers at the end of the line
-# Convert to seconds
+# A helper script for generating journey planner performance data for munin.
+#
+# This script fetches the last few lines of an Apache access log that contains
+# server response times in microseconds at the end of each line.
+# It filters for the journey calls and calculates the average response rate in milliseconds.
 
+# Dependencies
 import subprocess, re
 
-print "#\tStarting"
+# Trace
+# print "#\tStarting"
 
 # Log file
 logfile = "/websites/www/logs/veebee-access.log"
 
 # Number of lines
-lines = 4
+lines = 200
 
 # Api call pattern
 apiCall = 'api/journey.json'
@@ -32,8 +33,9 @@ microSeconds = 0
 
 # Scan
 while line:
-    print line
-    line = p.stdout.readline()
+
+    # Trace
+    #print line
 
     # Check if the line contains call to the journey api
     if apiCall in line:
@@ -45,14 +47,22 @@ while line:
         if match:
             microSeconds += int(match.group(1))
 
+    # Read next line
+    line = p.stdout.readline()
+
+
 # Time in millisconds
 milliSeconds = 0
 
 # Calculate the average
 if count > 0:
-    milliSeconds = (microSeconds / (count * 1000))
-    
+    # float()  ensures the / avoids truncating
+    milliSeconds = round(float(microSeconds) / (count * 1000))
 
-print "#\tStopping, counted: " + str(count) + " time: " + str(milliSeconds) + "ms."
+# Result
+print int(milliSeconds)
+
+# Trace
+#print "#\tStopping, counted: " + str(count) + " time: " + str(milliSeconds) + "ms, " + str(microSeconds) + " microseconds."
 
 # End of file

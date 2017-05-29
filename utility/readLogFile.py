@@ -5,7 +5,7 @@
 # Make an average of the last integers at the end of the line
 # Convert to seconds
 
-import subprocess
+import subprocess, re
 
 print "#\tStarting"
 
@@ -27,6 +27,9 @@ line = p.stdout.readline()
 # Number of matching lines
 count = 0
 
+# Total time
+microSeconds = 0
+
 # Scan
 while line:
     print line
@@ -37,4 +40,19 @@ while line:
 
         count += 1
 
-print "#\tStopping, counted: " + str(count)
+        # Find the number at the end of the line
+        match = re.match('.*?([0-9]+)$', line)
+        if match:
+            microSeconds += int(match.group(1))
+
+# Time in millisconds
+milliSeconds = 0
+
+# Calculate the average
+if count > 0:
+    milliSeconds = (microSeconds / (count * 1000))
+    
+
+print "#\tStopping, counted: " + str(count) + " time: " + str(milliSeconds) + "ms."
+
+# End of file

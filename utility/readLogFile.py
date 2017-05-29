@@ -11,9 +11,9 @@
 #
 # Result
 #	Serveral results, in milisconds, are generated each on a new line:
+#	* The slowest response time
 #	* Average response time
 #	* Response time at the 90th percentile when ordered by ascending time
-#	* The slowest response time
 #
 # Example
 # user@veebee:/opt/cyclestreets-setup$
@@ -108,9 +108,9 @@ if count >= minimumDataLines:
 
 
 # Results
+print 'journey_slowest.value {:d}'.format(int(slowestLingerMs))
 print 'journey_linger.value {:d}'.format(int(averageLingerMs))
 print 'journey_top90linger.value {:d}'.format(int(top90percentLingerMs))
-print 'journey_slowest.value {:d}'.format(int(slowestLingerMs))
 
 # Trace
 #print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."

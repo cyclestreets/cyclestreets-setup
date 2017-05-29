@@ -102,6 +102,7 @@ apt-get install -y libdbi-perl libdbd-mysql-perl
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
 ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
 if [ -f /etc/munin/plugins/dnsresponsetime ]; then
 	wget -P /usr/share/munin/plugins/ --user-agent="Foo" http://ccgi.ambrosia.plus.com/debian/dnsresponsetime
 	chmod +x /usr/share/munin/plugins/dnsresponsetime

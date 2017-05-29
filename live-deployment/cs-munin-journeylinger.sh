@@ -76,11 +76,11 @@ output_config() {
     # Average linger
     echo "journey_linger.label Journey linger ms"
     echo "journey_linger.info The time in milliseconds taken to respond to a CycleStreets journey API call according to the apache access log."
-    echo "journey_linger.colour ddbbee"
+    echo "journey_linger.colour CC88EE"
 
-    # Linger of fastest 90%
-    echo "journey_top90linger.label Top 90% linger ms"
-    echo "journey_top90linger.info As linger value but restricted to the fastest 90%."
+    # Linger at 90th percentile
+    echo "journey_top90linger.label Linger at 90th percentile ms"
+    echo "journey_top90linger.info Linger at the 90th percentile when ordered by time ascending."
     echo "journey_top90linger.colour 4488ee"
     echo "journey_top90linger.line 700:DDBB44:700ms threshold"
     echo "journey_top90linger.warning 600"
@@ -89,6 +89,7 @@ output_config() {
     # Linger of slowest
     echo "journey_slowest.label Slowest linger ms"
     echo "journey_slowest.info The longest time to plan a journey."
+    echo "journey_slowest.colour EEBB88"
 }
 
 # Outputs the statistics

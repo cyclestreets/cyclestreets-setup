@@ -74,17 +74,17 @@ output_config() {
     echo "graph_args -l 0 --upper-limit 3000"
 
     # Average linger
-    echo "journey_linger.label Average ms"
+    echo "journey_linger.label Average"
     echo "journey_linger.info The time in milliseconds taken to respond to a CycleStreets journey API call according to the apache access log."
-    echo "journey_linger.colour CC88EE"
+    echo "journey_linger.colour CCAAEE"
 
     # Linger of slowest
-    echo "journey_slowest.label Slowest ms"
+    echo "journey_slowest.label Slowest"
     echo "journey_slowest.info The longest time to plan a journey."
     echo "journey_slowest.colour EECCCC"
     
     # Linger at 90th percentile
-    echo "journey_top90linger.label 90th percentile ms"
+    echo "journey_top90linger.label 90th percentile"
     echo "journey_top90linger.info Linger at the 90th percentile when ordered by time ascending."
     echo "journey_top90linger.colour 3366DD"
     echo "journey_top90linger.line 700:DDBB44:700ms threshold"

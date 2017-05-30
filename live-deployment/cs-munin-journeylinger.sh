@@ -88,8 +88,8 @@ output_config() {
     echo "journey_top90linger.info Linger at the 90th percentile when ordered by time ascending."
     echo "journey_top90linger.colour 3366DD"
     echo "journey_top90linger.line 700:DDBB44:700ms threshold"
-    echo "journey_top90linger.warning 600"
-    echo "journey_top90linger.critical 700"
+    echo "journey_top90linger.warning 0:600"
+    echo "journey_top90linger.critical 0:700"
 }
 
 # Outputs the statistics

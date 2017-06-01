@@ -26,70 +26,101 @@
 import subprocess, re, sys, math
 from datetime import datetime
 
-# Trace
-# print "#\tStarting"
+class readLogFile ():
+    """
+    Functions for reading a log file
+    """
+    
+    def __init__(self, logfile):
 
-# Log file
+        # Trace
+        print "#\tStarting"
+
+        # Log file
+        self.logfile = logfile
+
+        # Number of lines of the log file to scan
+        # !! On veebee a value of 200 was resulting in tail giving the first lines even though there were many more lines than that
+        self.lines = 200
+
+        # Minimum number of input data lines
+        # If less than this amount of data is available all results are zero.
+        self.minimumDataLines = 10	#int(math.ceil(lines/3.0))
+
+        # Api call pattern
+        self.apiCall = 'api/journey.'
+
+        # Current time
+        self.now = datetime.now()
+
+    def checkLastEntryIsRecent (self):
+        """
+        Checks that the last entry in the log has occurred in the last five minutes.
+        """
+        # Get the last few lines of the log file
+        p = subprocess.Popen(["tail", "--lines=1", self.logfile], stdout=subprocess.PIPE)
+
+        # Get the first line
+        line = p.stdout.readline()
+
+        # Close
+        p.kill()
+
+        # Result
+        return self.recentlyLoggedLine(line)
+        
+    # Helper function
+    def recentlyLoggedLine (self, line):
+        """
+        Determines if the line was logged within the last five minutes.
+        """
+        # Extract the date time component
+        loggedTime = re.compile(r".*\[\s?([^\s]+)\s([^\]]+)\]").search(line)
+        if not loggedTime:
+            return False
+
+        # Bind
+        loggedDateTime  = loggedTime.group(1)
+
+        # In future examine the time zone offset
+        if False:
+            loggedUTCoffset = loggedTime.group(2)
+            utcOffset = re.compile(r"([+-])([0-9]{2})([0-9]{2})").search(loggedUTCoffset)
+            utcOffsetSeconds = 1 if utcOffset.group(1) == '+' else -1
+            utcOffsetSeconds = utcOffsetSeconds * (int(utcOffset.group(2)) * 3600) 
+            utcOffsetSeconds += int(utcOffset.group(3)) * 60
+
+        # Parse into an object
+        datetime_object = datetime.strptime(loggedDateTime, '%d/%b/%Y:%H:%M:%S')
+        if not datetime_object:
+            return False
+
+        # Difference
+        age = self.now - datetime_object
+
+        # Trace
+        #print age
+
+        # Result
+        return age.seconds <= 300
+
+
 # logfile = "/websites/www/logs/veebee-access.log"
-
 # Read args supplied to script
-logfile = sys.argv[1]
+rlf = readLogFile(sys.argv[1])
+print rlf.logfile
+print rlf.checkLastEntryIsRecent()
+import sys
+sys.exit()
 
-
-# Number of lines of the log file to scan
-# !! On veebee a value of 200 was resulting in tail giving the first lines even though there were many more lines than that
-lines = 200
-
-# Minimum number of input data lines
-# If less than this amount of data is available all results are zero.
-minimumDataLines = 10	#int(math.ceil(lines/3.0))
-
-# Api call pattern
-apiCall = 'api/journey.'
 
 # Get the last few lines of the log file
 p = subprocess.Popen(["tail", "--lines=" + str(lines), logfile], stdout=subprocess.PIPE)
 
-# Current time
-now = datetime.now()
 
 # Trace
 # print now
 
-# Helper function
-def recentlyLoggedLine (line):
-    """
-    Determines if the line was logged within the last five minutes.
-    """
-    # Extract the date time component
-    loggedTime = re.compile(r".*\[\s?([^\s]+)\s([^\]]+)\]").search(line)
-    if not loggedTime:
-        return False
-
-    # Bind
-    loggedDateTime  = loggedTime.group(1)
-
-    # In future examine the time zone offset
-    if False:
-        loggedUTCoffset = loggedTime.group(2)
-        utcOffset = re.compile(r"([+-])([0-9]{2})([0-9]{2})").search(loggedUTCoffset)
-        utcOffsetSeconds = 1 if utcOffset.group(1) == '+' else -1
-        utcOffsetSeconds = utcOffsetSeconds * (int(utcOffset.group(2)) * 3600) 
-        utcOffsetSeconds += int(utcOffset.group(3)) * 60
-
-    # Parse into an object
-    datetime_object = datetime.strptime(loggedDateTime, '%d/%b/%Y:%H:%M:%S')
-    if not datetime_object:
-        return False
-
-    # Difference
-    age = now - datetime_object
-
-    # Trace
-    #print age
-
-    # Result
-    return age.seconds <= 300
 
 
 # Number of matching lines

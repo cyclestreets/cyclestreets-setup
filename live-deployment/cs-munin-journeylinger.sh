@@ -71,7 +71,7 @@ output_config() {
     echo "graph_info Performance of the CycleStreets journey API according to the apache access log."
     
     # Use an upper limit of 3 seconds so making it easier to compare with across servers
-    echo "graph_args -l 0 --upper-limit 3000"
+    echo "graph_args -l 0 --upper-limit 3000 --rigid"
 
     # Average linger
     echo "journey_linger.label Average"

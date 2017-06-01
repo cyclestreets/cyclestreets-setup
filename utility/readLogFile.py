@@ -34,7 +34,7 @@ class readLogFile ():
     def __init__(self, logfile):
 
         # Trace
-        print "#\tStarting"
+        # print "#\tStarting"
 
         # Initialize these statistics as time in millisconds
         self.averageLingerMs = 0
@@ -104,7 +104,7 @@ class readLogFile ():
         age = self.now - datetime_object
 
         # Trace
-        #print age
+        #print age.seconds
 
         # Result
         return age.seconds <= 300
@@ -139,7 +139,7 @@ class readLogFile ():
         if not self.checkLastEntryIsRecent():
 
             # Trace
-            print "#\tLog file is stale: " + str(self.logfile)
+            # print "#\tLog file is stale: " + str(self.logfile)
 
             # They will all be zero
             self.printResults()
@@ -158,10 +158,16 @@ class readLogFile ():
         """
         Scan the log file.
         """
+        # Trace
+        # print "#\tScanning log file: " + str(self.logfile)
+        
         # Get the last few lines of the log file
         p = subprocess.Popen(["tail", "--lines=" + str(self.numberOfLines), self.logfile], stdout=subprocess.PIPE)
 
-        # Number of matching lines
+        # Get the first line
+        line = p.stdout.readline()
+
+        # Count matching lines
         count = 0
 
         # Total time
@@ -170,20 +176,15 @@ class readLogFile ():
         # Array of response times
         lingerTimes = []
 
-        # Get the first line
-        line = p.stdout.readline()
-
         # Scan
         while line:
 
-            # Trace
-            print line
-            print 'yes' if self.apiCall in line else 'no'
-            print self.recentlyLoggedLine(line)
-
             # Check if the line contains call to the journey api
             if self.considerLine(line):
-                print "#\tConsidering ... " + str(count)
+
+                # Trace
+                # print "#\tConsidering ... " + str(count)
+                
                 # Find the number at the end of the line after a solidus
                 match = re.match('.+?/([0-9]+)$', line)
                 if match:
@@ -194,29 +195,32 @@ class readLogFile ():
             # Read next line
             line = p.stdout.readline()
 
-        # When there is sufficient input data
-        if count >= self.minimumDataLines:
-
-            # Calculate the average
-            # float()  ensures the / avoids truncating
-            self.averageLingerMs = round(float(microSeconds) / (count * 1000))
-
-            # 90% target
-            # Sort the list ascending times
-            ascending = sorted(lingerTimes)
-
-            # Consider the first 90%
-            top90startIndex = int(math.ceil(0.9 * len(lingerTimes)))
-            self.top90percentLingerMs = round(float(ascending[top90startIndex]) / 1000)
-
-            # Slowest
-            self.slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
-
+        # Insufficient input data?
+        if count < self.minimumDataLines:
             # Trace
-            #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms"
+            # print "#\tStopping, counted: " + str(count)
+            return
+
+        # Calculate the average
+        # float()  ensures the / avoids truncating
+        self.averageLingerMs = round(float(microSeconds) / (count * 1000))
+
+        # 90% target
+        # Sort the list ascending times
+        ascending = sorted(lingerTimes)
+
+        # Consider the first 90%
+        top90startIndex = int(math.ceil(0.9 * len(lingerTimes)))
+        self.top90percentLingerMs = math.ceil(float(ascending[top90startIndex]) / 1000)
+
+        # Slowest
+        self.slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
 
         # Trace
-        print "#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+        # print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms"
+
+        # Trace
+        # print "#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
 
 
 # Main
@@ -225,6 +229,8 @@ if __name__ == '__main__':
     # logfile = "/websites/www/logs/veebee-access.log"
     # Read args supplied to script
     rlf = readLogFile(sys.argv[1])
+
+    # Get the stats
     rlf.generateStatistics()
 
 

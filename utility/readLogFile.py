@@ -46,7 +46,7 @@ class readLogFile ():
 
         # Number of lines of the log file to scan
         # !! On veebee a value of 200 was resulting in tail giving the first lines even though there were many more lines than that
-        self.lines = 200
+        self.numberOfLines = 200
 
         # Minimum number of input data lines
         # If less than this amount of data is available all results are zero.
@@ -110,7 +110,7 @@ class readLogFile ():
         return age.seconds <= 300
 
 
-    # Helper function
+    # Helper functions
     def printResults (self):
         """
         Print statistics
@@ -119,7 +119,18 @@ class readLogFile ():
         print 'journey_linger.value {:d}'.format(int(self.averageLingerMs))
         print 'journey_top90linger.value {:d}'.format(int(self.top90percentLingerMs))
 
+    def considerLine (self, line):
+        """
+        Determines whether to include the line in the analysis.
+        It needs to:
+        1. Contain the api call
+        2. Have been logged within the last five minutes
+        """
+        if self.apiCall not in line:
+            return False
+        return self.recentlyLoggedLine(line)
 
+    
     def generateStatistics (self):
         """
         Main procedure for reading the log and getting the stats.
@@ -136,8 +147,77 @@ class readLogFile ():
             # Abandon
             return
 
+        # Scan the file
+        self.scan()
+        
+        # Print results
+        self.printResults()
+
+
+    def scan (self):
+        """
+        Scan the log file.
+        """
+        # Get the last few lines of the log file
+        p = subprocess.Popen(["tail", "--lines=" + str(self.numberOfLines), self.logfile], stdout=subprocess.PIPE)
+
+        # Number of matching lines
+        count = 0
+
+        # Total time
+        microSeconds = 0
+
+        # Array of response times
+        lingerTimes = []
+
+        # Get the first line
+        line = p.stdout.readline()
+
+        # Scan
+        while line:
+
+            # Trace
+            print line
+            print 'yes' if self.apiCall in line else 'no'
+            print self.recentlyLoggedLine(line)
+
+            # Check if the line contains call to the journey api
+            if self.considerLine(line):
+                print "#\tConsidering ... " + str(count)
+                # Find the number at the end of the line after a solidus
+                match = re.match('.+?/([0-9]+)$', line)
+                if match:
+	            count += 1
+                    microSeconds += int(match.group(1))
+                    lingerTimes.append(int(match.group(1)))
+
+            # Read next line
+            line = p.stdout.readline()
+
+        # When there is sufficient input data
+        if count >= self.minimumDataLines:
+
+            # Calculate the average
+            # float()  ensures the / avoids truncating
+            self.averageLingerMs = round(float(microSeconds) / (count * 1000))
+
+            # 90% target
+            # Sort the list ascending times
+            ascending = sorted(lingerTimes)
+
+            # Consider the first 90%
+            top90startIndex = int(math.ceil(0.9 * len(lingerTimes)))
+            self.top90percentLingerMs = round(float(ascending[top90startIndex]) / 1000)
+
+            # Slowest
+            self.slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
+
+            # Trace
+            #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms"
+
         # Trace
-        print self.logfile
+        print "#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+
 
 # Main
 if __name__ == '__main__':
@@ -147,93 +227,8 @@ if __name__ == '__main__':
     rlf = readLogFile(sys.argv[1])
     rlf.generateStatistics()
 
-import sys
-sys.exit()
-
-
-# Get the last few lines of the log file
-p = subprocess.Popen(["tail", "--lines=" + str(lines), logfile], stdout=subprocess.PIPE)
-
-
-# Trace
-# print now
-
-
-
-# Number of matching lines
-count = 0
-
-# Total time
-microSeconds = 0
-
-# Array of response times
-lingerTimes = []
-
-def considerLine (line):
-    """
-    Determines whether to include the line in the analysis.
-    It needs to:
-    1. Contain the api call
-    2. Have been logged within the last five minutes
-    """
-    if apiCall not in line:
-        return False
-    return recentlyLoggedLine(line)
-
-# Get the first line
-line = p.stdout.readline()
-
-# Scan
-while line:
-
-    # Trace
-    print line
-    print 'yes' if apiCall in line else 'no'
-    print recentlyLoggedLine (line)
-
-    # Check if the line contains call to the journey api
-    if considerLine(line):
-        print "#\tConsidering ... " + str(count)
-        # Find the number at the end of the line after a solidus
-        match = re.match('.+?/([0-9]+)$', line)
-        if match:
-	    count += 1
-            microSeconds += int(match.group(1))
-            lingerTimes.append(int(match.group(1)))
-
-    # Read next line
-    line = p.stdout.readline()
-
-
-
-# When there is sufficient input data
-if count >= minimumDataLines:
-
-    # Calculate the average
-    # float()  ensures the / avoids truncating
-    self.averageLingerMs = round(float(microSeconds) / (count * 1000))
-
-    # 90% target
-    # Sort the list ascending times
-    ascending = sorted(lingerTimes)
-
-    # Consider the first 90%
-    top90startIndex = int(math.ceil(0.9 * len(lingerTimes)))
-    self.top90percentLingerMs = round(float(ascending[top90startIndex]) / 1000)
-
-    # Slowest
-    self.slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
-
-    # Trace
-    #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms"
-
-
-
-# Trace
-print "#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
 
 #import sys
 #sys.exit()
-
 
 # End of file

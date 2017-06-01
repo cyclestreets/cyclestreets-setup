@@ -36,6 +36,7 @@ logfile = sys.argv[1]
 
 
 # Number of lines of the log file to scan
+# !! On veebee a value of 200 was resulting in tail giving the first lines even though there were many more lines than that
 lines = 200
 
 # Minimum number of input data lines
@@ -46,10 +47,53 @@ minimumDataLines = 10	#int(math.ceil(lines/3.0))
 apiCall = 'api/journey.json'
 
 # Get the last few lines of the log file
-p = subprocess.Popen(["tail", "-n" + str(lines), logfile], stdout=subprocess.PIPE)
+p = subprocess.Popen(["tail", "--lines=" + str(lines), logfile], stdout=subprocess.PIPE)
 
 # Read the data
 line = p.stdout.readline()
+
+# Check that this line was written to the log within the last five minutes
+from datetime import datetime
+now = datetime.now()
+
+# Trace
+# print now
+
+# [31/May/2017:16:19:10
+# https://stackoverflow.com/questions/17492512/python-reading-a-datetime-from-a-log-file-using-regex
+#print line
+
+def loggedLineAge (line):
+    """
+    Determines how long ago in second since the line was logged.
+    """
+    # Extract the date time component
+    loggedTime = re.compile(r".*\[\s?([^\s]+)\s([^\]]+)\]").search(line)
+
+    # Bind
+    loggedDateTime  = loggedTime.group(1)
+    loggedUTCoffset = loggedTime.group(2)
+
+    utcOffset = re.compile(r"([+-])([0-9]{2})([0-9]{2})").search(loggedUTCoffset)
+    utcOffsetSeconds = 1 if utcOffset.group(1) == '+' else -1
+    utcOffsetSeconds = utcOffsetSeconds * (int(utcOffset.group(2)) * 3600) 
+    utcOffsetSeconds += int(utcOffset.group(3)) * 60
+
+    # Parse into an object
+    datetime_object = datetime.strptime(loggedDateTime, '%d/%b/%Y:%H:%M:%S')
+
+    # Difference
+    age = now - datetime_object
+
+    # Result
+    return age.seconds
+
+# Trace
+# print loggedLineAge (line)
+
+#import sys
+#sys.exit()
+
 
 # Number of matching lines
 count = 0

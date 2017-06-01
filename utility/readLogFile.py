@@ -36,6 +36,11 @@ class readLogFile ():
         # Trace
         print "#\tStarting"
 
+        # Initialize these statistics as time in millisconds
+        self.averageLingerMs = 0
+        self.top90percentLingerMs = 0
+        self.slowestLingerMs = 0
+
         # Log file
         self.logfile = logfile
 
@@ -105,11 +110,22 @@ class readLogFile ():
         return age.seconds <= 300
 
 
+    # Helper function
+    def printResults (self):
+        """
+        Print statistics
+        """
+        print 'journey_slowest.value {:d}'.format(int(self.slowestLingerMs))
+        print 'journey_linger.value {:d}'.format(int(self.averageLingerMs))
+        print 'journey_top90linger.value {:d}'.format(int(self.top90percentLingerMs))
+
 # logfile = "/websites/www/logs/veebee-access.log"
 # Read args supplied to script
 rlf = readLogFile(sys.argv[1])
 print rlf.logfile
 print rlf.checkLastEntryIsRecent()
+
+rlf.printResults()
 import sys
 sys.exit()
 
@@ -168,17 +184,13 @@ while line:
     line = p.stdout.readline()
 
 
-# Time in millisconds
-averageLingerMs = 0
-top90percentLingerMs = 0
-slowestLingerMs = 0
 
 # When there is sufficient input data
 if count >= minimumDataLines:
 
     # Calculate the average
     # float()  ensures the / avoids truncating
-    averageLingerMs = round(float(microSeconds) / (count * 1000))
+    self.averageLingerMs = round(float(microSeconds) / (count * 1000))
 
     # 90% target
     # Sort the list ascending times
@@ -186,22 +198,18 @@ if count >= minimumDataLines:
 
     # Consider the first 90%
     top90startIndex = int(math.ceil(0.9 * len(lingerTimes)))
-    top90percentLingerMs = round(float(ascending[top90startIndex]) / 1000)
+    self.top90percentLingerMs = round(float(ascending[top90startIndex]) / 1000)
 
     # Slowest
-    slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
+    self.slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
 
     # Trace
-    #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(top90percentLingerMs) + " ms"
+    #print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms"
 
 
-# Results
-print 'journey_slowest.value {:d}'.format(int(slowestLingerMs))
-print 'journey_linger.value {:d}'.format(int(averageLingerMs))
-print 'journey_top90linger.value {:d}'.format(int(top90percentLingerMs))
 
 # Trace
-print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+print "#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
 
 #import sys
 #sys.exit()

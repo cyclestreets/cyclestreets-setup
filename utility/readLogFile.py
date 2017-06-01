@@ -119,13 +119,34 @@ class readLogFile ():
         print 'journey_linger.value {:d}'.format(int(self.averageLingerMs))
         print 'journey_top90linger.value {:d}'.format(int(self.top90percentLingerMs))
 
-# logfile = "/websites/www/logs/veebee-access.log"
-# Read args supplied to script
-rlf = readLogFile(sys.argv[1])
-print rlf.logfile
-print rlf.checkLastEntryIsRecent()
 
-rlf.printResults()
+    def generateStatistics (self):
+        """
+        Main procedure for reading the log and getting the stats.
+        """
+        # If the log file hasn't been updated in the last five minutes
+        if not self.checkLastEntryIsRecent():
+
+            # Trace
+            print "#\tLog file is stale: " + str(self.logfile)
+
+            # They will all be zero
+            self.printResults()
+
+            # Abandon
+            return
+
+        # Trace
+        print self.logfile
+
+# Main
+if __name__ == '__main__':
+
+    # logfile = "/websites/www/logs/veebee-access.log"
+    # Read args supplied to script
+    rlf = readLogFile(sys.argv[1])
+    rlf.generateStatistics()
+
 import sys
 sys.exit()
 

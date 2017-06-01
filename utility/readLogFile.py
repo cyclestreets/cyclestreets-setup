@@ -24,6 +24,7 @@
 
 # Dependencies
 import subprocess, re, sys, math
+from datetime import datetime
 
 # Trace
 # print "#\tStarting"
@@ -44,55 +45,51 @@ lines = 200
 minimumDataLines = 10	#int(math.ceil(lines/3.0))
 
 # Api call pattern
-apiCall = 'api/journey.json'
+apiCall = 'api/journey.'
 
 # Get the last few lines of the log file
 p = subprocess.Popen(["tail", "--lines=" + str(lines), logfile], stdout=subprocess.PIPE)
 
-# Read the data
-line = p.stdout.readline()
-
-# Check that this line was written to the log within the last five minutes
-from datetime import datetime
+# Current time
 now = datetime.now()
 
 # Trace
 # print now
 
-# [31/May/2017:16:19:10
-# https://stackoverflow.com/questions/17492512/python-reading-a-datetime-from-a-log-file-using-regex
-#print line
-
-def loggedLineAge (line):
+# Helper function
+def recentlyLoggedLine (line):
     """
-    Determines how long ago in second since the line was logged.
+    Determines if the line was logged within the last five minutes.
     """
     # Extract the date time component
     loggedTime = re.compile(r".*\[\s?([^\s]+)\s([^\]]+)\]").search(line)
+    if not loggedTime:
+        return False
 
     # Bind
     loggedDateTime  = loggedTime.group(1)
-    loggedUTCoffset = loggedTime.group(2)
 
-    utcOffset = re.compile(r"([+-])([0-9]{2})([0-9]{2})").search(loggedUTCoffset)
-    utcOffsetSeconds = 1 if utcOffset.group(1) == '+' else -1
-    utcOffsetSeconds = utcOffsetSeconds * (int(utcOffset.group(2)) * 3600) 
-    utcOffsetSeconds += int(utcOffset.group(3)) * 60
+    # In future examine the time zone offset
+    if False:
+        loggedUTCoffset = loggedTime.group(2)
+        utcOffset = re.compile(r"([+-])([0-9]{2})([0-9]{2})").search(loggedUTCoffset)
+        utcOffsetSeconds = 1 if utcOffset.group(1) == '+' else -1
+        utcOffsetSeconds = utcOffsetSeconds * (int(utcOffset.group(2)) * 3600) 
+        utcOffsetSeconds += int(utcOffset.group(3)) * 60
 
     # Parse into an object
     datetime_object = datetime.strptime(loggedDateTime, '%d/%b/%Y:%H:%M:%S')
+    if not datetime_object:
+        return False
 
     # Difference
     age = now - datetime_object
 
+    # Trace
+    #print age
+
     # Result
-    return age.seconds
-
-# Trace
-# print loggedLineAge (line)
-
-#import sys
-#sys.exit()
+    return age.seconds <= 300
 
 
 # Number of matching lines
@@ -104,15 +101,31 @@ microSeconds = 0
 # Array of response times
 lingerTimes = []
 
+def considerLine (line):
+    """
+    Determines whether to include the line in the analysis.
+    It needs to:
+    1. Contain the api call
+    2. Have been logged within the last five minutes
+    """
+    if apiCall not in line:
+        return False
+    return recentlyLoggedLine(line)
+
+# Get the first line
+line = p.stdout.readline()
+
 # Scan
 while line:
 
     # Trace
-    #print line
+    print line
+    print 'yes' if apiCall in line else 'no'
+    print recentlyLoggedLine (line)
 
     # Check if the line contains call to the journey api
-    if apiCall in line:
-
+    if considerLine(line):
+        print "#\tConsidering ... " + str(count)
         # Find the number at the end of the line after a solidus
         match = re.match('.+?/([0-9]+)$', line)
         if match:
@@ -157,7 +170,10 @@ print 'journey_linger.value {:d}'.format(int(averageLingerMs))
 print 'journey_top90linger.value {:d}'.format(int(top90percentLingerMs))
 
 # Trace
-#print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+print "#\tStopping, counted: " + str(count) + " time: " + str(averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+
+#import sys
+#sys.exit()
 
 
 # End of file

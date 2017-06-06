@@ -45,12 +45,11 @@ class readLogFile ():
         self.logfile = logfile
 
         # Number of lines of the log file to scan
-        # !! On veebee a value of 200 was resulting in tail giving the first lines even though there were many more lines than that
-        self.numberOfLines = 200
+        self.numberOfLines = 1000
 
         # Minimum number of input data lines
         # If less than this amount of data is available all results are zero.
-        self.minimumDataLines = 10	#int(math.ceil(lines/3.0))
+        self.minimumDataLines = 100	#int(math.ceil(lines/3.0))
 
         # Api call pattern
         self.apiCall = 'api/journey.'

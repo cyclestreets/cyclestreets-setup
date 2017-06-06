@@ -82,13 +82,13 @@ output_config() {
     echo "journey_slowest.label Slowest ms"
     echo "journey_slowest.info The longest time to plan a journey."
     echo "journey_slowest.colour EECCCC"
+    echo "journey_slowest.line 3000:CCCCCC:3 second timeout"
     
     # Linger at 90th percentile
     echo "journey_top90linger.label 90th percentile ms"
     echo "journey_top90linger.info Linger at the 90th percentile when ordered by time ascending."
     echo "journey_top90linger.colour 3366DD"
     echo "journey_top90linger.line 700:DDBB44:700ms threshold"
-    echo "journey_top90linger.line 3000:CCCCCC:3 second timeout"
     echo "journey_top90linger.warning 0:600"
     echo "journey_top90linger.critical 0:700"
 }

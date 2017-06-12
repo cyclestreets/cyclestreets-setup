@@ -49,7 +49,7 @@ class readLogFile ():
 
         # Minimum number of input data lines
         # If less than this amount of data is available all results are zero.
-        self.minimumDataLines = 100	#int(math.ceil(lines/3.0))
+        self.minimumDataLines = 10
 
         # Api call pattern
         self.apiCall = 'api/journey.'

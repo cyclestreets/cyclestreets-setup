@@ -9,6 +9,16 @@ Scripts for installing CycleStreets, written for Ubuntu Server 16.04 LTS
 Written for Ubuntu Server 16.04 LTS.
 Earlier versions of scripts tested, March 2015 on a Ubuntu Server 14.04.2 LTS VM with 1 GB RAM, 8GB HD.
 
+## Timezone
+
+```shell
+# Check your machine is in the right timezone
+# user@machine:~$
+cat /etc/timezone
+
+# If not set it using:
+sudo dpkg-reconfigure tzdata
+```
 
 ## Setup
 

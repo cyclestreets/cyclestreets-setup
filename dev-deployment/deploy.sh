@@ -85,6 +85,57 @@ if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 	sudo service exim4 restart
 fi
 
+# # Mailman; see: https://help.ubuntu.com/community/Mailman
+# echo 'mailman mailman/site_languages multiselect en' | debconf-set-selections
+# echo 'mailman mailman/gate_news boolean false' | debconf-set-selections
+# echo 'mailman mailman/default_server_language select en' | debconf-set-selections
+# echo 'mailman mailman/create_site_list note' | debconf-set-selections
+# apt-get -y install mailman
+# /usr/lib/mailman/bin/newlist -q mailman mail@example.com password
+# if [ ! -e /etc/exim4/conf.d/main/04_exim4-config_mailman ]; then
+# 	cat > /etc/exim4/conf.d/main/04_exim4-config_mailman << 'EOF'
+# # See: https://help.ubuntu.com/community/Mailman#Main
+# MM_HOME=/var/lib/mailman
+# MM_UID=list
+# MM_GID=list
+# domainlist mm_domains=lists2.cyclestreets.net
+# MM_WRAP=MM_HOME/mail/mailman
+# MM_LISTCHK=MM_HOME/lists/${lc::$local_part}/config.pck
+# EOF
+# fi
+# if [ ! -e /etc/exim4/conf.d/transport/40_exim4-config_mailman ]; then
+# 	cat > /etc/exim4/conf.d/transport/40_exim4-config_mailman << 'EOF'
+# # See: https://help.ubuntu.com/community/Mailman#Transport
+# mailman_transport:
+#    driver = pipe
+#    command = MM_WRAP \
+#           '${if def:local_part_suffix \
+#                 {${sg{$local_part_suffix}{-(\\w+)(\\+.*)?}{\$1}}} \
+#                 {post}}' \
+#           $local_part
+#    current_directory = MM_HOME
+#    home_directory = MM_HOME
+#    user = MM_UID
+#    group = MM_GID
+# EOF
+# fi
+# if [ ! -e /etc/exim4/conf.d/router/101_exim4-config_mailman ]; then
+# 	cat > /etc/exim4/conf.d/router/101_exim4-config_mailman << 'EOF'
+# # See: https://help.ubuntu.com/community/Mailman#Router
+# mailman_router:
+#    driver = accept
+#    require_files = MM_HOME/lists/$local_part/config.pck
+#    local_part_suffix_optional
+#    local_part_suffix = -bounces : -bounces+* : \
+#                        -confirm+* : -join : -leave : \
+#                        -owner : -request : -admin
+#    domains = +mm_domains
+#    transport = mailman_transport
+# EOF
+# fi
+# /etc/init.d/exim4 restart
+# #a2ensite lists
+
 # Munin Server; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 apt-get install -y apache2-utils
 apt-get install -y libcgi-fast-perl libapache2-mod-fcgid

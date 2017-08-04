@@ -35,9 +35,6 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Narrative
-echo "#	CycleStreets postcode installation $(date)"
-
 # ONS folder
 onsFolder=${websitesContentFolder}/import/ONSdata
 
@@ -80,27 +77,26 @@ sudo ${ScriptHome}/install-postcode/run.sh
 # Remove the data to avoid reinstalling it next time
 rm ${onsFolder}/ONSdata.csv
 ";
-
- # Terminate the script
- exit 1;
+	# Terminate the script
+	exit 1;
 fi
 
-# Check if the data is old.
-# The find looks for files that were modified more than 70 days ago.
-if test `find "ONSdata.csv" -mtime +70`
+# Check if the data is old. It should be updated roughly every 6 months.
+daysOld=180
+# The find looks for files that were modified more than ${daysOld} days ago.
+if test `find "ONSdata.csv" -mtime +${daysOld}`
 then
 
 # Provide dowload instructions
     echo "#
-#	STOPPING: Required data file is too old - maybe it was left over from a previous install.
-#
-# Remove the data, and re-run to get advice on updating:
+#	STOPPING: Required data file is too old (more than ${daysOld} days}.
+#	Perhaps it was left over from a previous install.
+#	Remove the data, and re-run to get advice on updating:
 rm ${onsFolder}/ONSdata.csv
 ";
-    # Terminate the script
- exit 1;
+	# Terminate the script
+	exit 1;
 fi
-
 
 # External database
 externalDb=csExternal
@@ -127,6 +123,9 @@ mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-option
 # NB Mysql equivalent is:
 ## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
 ## SHOW WARNINGS;
+
+# Remove the data file
+rm ${onsFolder}/ONSdata.csv
 
 # Create an eastings northings file, which has to be done in a tmp location first otherwise there are privilege problems
 echo "#	Creating eastings northings file"

@@ -65,17 +65,19 @@ if [ ! -r ONSdata.csv ]; then
 #
 cd ${onsFolder}
 wget http://parlvid.mysociety.org/os/ONSPD_MAY_2017.zip
-unzip ONSPD_MAY_2017.zip
+
+# Extract this one file
+unzip ONSPD_MAY_2017.zip Data/ONSPD_MAY_2017_UK.csv
 rm ONSPD_MAY_2017.zip
+
+# Move it
+mv Data/ONSPD_MAY_2017_UK.csv ./ONSdata.csv
+
+# Clear up (other folders only necessary when everything was unzipped)
 rm -r Data/ Documents/ User\ Guide/
-mv Data/ONSPD_MAY_2017_UK.csv ${onsFolder}/ONSdata.csv
 
 # Re-run this script
 sudo ${ScriptHome}/install-postcode/run.sh
-
-# Tidy-up
-# Remove the data to avoid reinstalling it next time
-rm ${onsFolder}/ONSdata.csv
 ";
 	# Terminate the script
 	exit 1;

@@ -151,7 +151,7 @@ echo "#	Creating new postcode table"
 ${superMysql} ${externalDb} < newPostcodeTable.sql
 
 # Create the partial and district postcodes
-echo "#	Creating partial and postcode table"
+echo "#	Creating partial and district tables"
 ${superMysql} ${externalDb} < PartialPostcode.sql
 
 # Confirm end of script

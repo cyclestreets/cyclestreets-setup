@@ -16,26 +16,28 @@ set -e
 
 ### CREDENTIALS ###
 
-# Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
-DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
+# Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
+# A more advanced technique will be required if this file is called via a symlink.
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
 
 # Name of the credentials file
-configFile=../.config.sh
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ./${configFile} ]; then
+if [ ! -x ${configFile} ]; then
     echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
+. ${configFile}
 
 # Logging
 # Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$SCRIPTDIRECTORY/log.txt
+setupLogFile=$DIR/log.txt
 touch ${setupLogFile}
 echo "#	CycleStreets postcode installation in progress, follow log file with: tail -f ${setupLogFile}"
 echo "#	CycleStreets postcode installation $(date)" >> ${setupLogFile}
@@ -62,10 +64,10 @@ if [ ! -r ONSdata.csv ]; then
 #	This is an alternative source of data:
 #	http://parlvid.mysociety.org/os/
 #
-#	wget http://parlvid.mysociety.org/os/ONSPD_NOV_2016_csv.zip
-#	unzip ONSPD_NOV_2016_csv.zip
-#	rm ONSPD_NOV_2016_csv.zip
-#	mv ONSnov2016/Data/ONSPD_NOV_2016_UK.csv ${onsFolder}/ONSdata.csv
+#	wget http://parlvid.mysociety.org/os/ONSPD_MAY_2017.zip
+#	unzip ONSPD_MAY_2017.zip
+#	rm ONSPD_MAY_2017.zip
+#	mv ONSnov2016/Data/ONSPD_MAY_2017_UK.csv ${onsFolder}/ONSdata.csv
 ";
 
  # Terminate the script

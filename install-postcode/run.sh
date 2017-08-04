@@ -35,12 +35,8 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$DIR/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets postcode installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets postcode installation $(date)" >> ${setupLogFile}
+# Narrative
+echo "#	CycleStreets postcode installation $(date)"
 
 # ONS folder
 onsFolder=${websitesContentFolder}/import/ONSdata
@@ -67,7 +63,7 @@ if [ ! -r ONSdata.csv ]; then
 #	wget http://parlvid.mysociety.org/os/ONSPD_MAY_2017.zip
 #	unzip ONSPD_MAY_2017.zip
 #	rm ONSPD_MAY_2017.zip
-#	mv ONSnov2016/Data/ONSPD_MAY_2017_UK.csv ${onsFolder}/ONSdata.csv
+#	mv Data/ONSPD_MAY_2017_UK.csv ${onsFolder}/ONSdata.csv
 ";
 
  # Terminate the script
@@ -88,7 +84,12 @@ fi
 # Load the table definitions
 ${superMysql} ${externalDb} < tableDefinitions.sql
 
-# Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege. The --local option is needed in some situations.
+
+# Narrative
+echo "#	Loading CSV file"
+
+# Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege.
+# The --local option is needed in some situations.
 mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:

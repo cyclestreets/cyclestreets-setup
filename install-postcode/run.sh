@@ -51,24 +51,56 @@ if [ ! -r ONSdata.csv ]; then
     echo "#
 #	STOPPING: Required data files are not present.
 #
+#	Official
+#	--------
+#	(Source tends to move around see Alternative)
 #	Download the archived csv version of ONSPD data from:
 #	http://www.ons.gov.uk/ons/guide-method/geography/products/postcode-directories/-nspp-/index.html
 #
 #	Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
-#	cd ${onsFolder}
 #
+#	Alternative
+#	-----------
 #	This is an alternative source of data:
 #	http://parlvid.mysociety.org/os/
 #
-#	wget http://parlvid.mysociety.org/os/ONSPD_MAY_2017.zip
-#	unzip ONSPD_MAY_2017.zip
-#	rm ONSPD_MAY_2017.zip
-#	mv Data/ONSPD_MAY_2017_UK.csv ${onsFolder}/ONSdata.csv
+#	The following contains dates that will obviously need updating for next time.
+#
+cd ${onsFolder}
+wget http://parlvid.mysociety.org/os/ONSPD_MAY_2017.zip
+unzip ONSPD_MAY_2017.zip
+rm ONSPD_MAY_2017.zip
+rm -r Data/ Documents/ User\ Guide/
+mv Data/ONSPD_MAY_2017_UK.csv ${onsFolder}/ONSdata.csv
+
+# Re-run this script
+sudo ${ScriptHome}/install-postcode/run.sh
+
+# Tidy-up
+# Remove the data to avoid reinstalling it next time
+rm ${onsFolder}/ONSdata.csv
 ";
 
  # Terminate the script
  exit 1;
 fi
+
+# Check if the data is old.
+# The find looks for files that were modified more than 70 days ago.
+if test `find "ONSdata.csv" -mtime +70`
+then
+
+# Provide dowload instructions
+    echo "#
+#	STOPPING: Required data file is too old - maybe it was left over from a previous install.
+#
+# Remove the data, and re-run to get advice on updating:
+rm ${onsFolder}/ONSdata.csv
+";
+    # Terminate the script
+ exit 1;
+fi
+
 
 # External database
 externalDb=csExternal

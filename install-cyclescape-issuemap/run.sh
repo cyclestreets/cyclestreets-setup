@@ -106,6 +106,8 @@ service apache2 reload
 # Add cronjob to update from Git regularly
 cp -pr $SCRIPTDIRECTORY/cyclescape-issuemap.cron /etc/cron.d/cyclescape-issuemap
 sed -i "s|/var/www/cyclescape-issuemap|${cyclescapeissuemapContentFolder}|g" /etc/cron.d/cyclescape-issuemap
+chown root.root /etc/cron.d/cyclescape-issuemap
+chmod 644 /etc/cron.d/cyclescape-issuemap
 
 # Report completion
 echo "#	Installing Cyclescape issuemap website completed"

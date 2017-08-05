@@ -106,6 +106,8 @@ service apache2 reload
 # Add cronjob to update from Git regularly
 cp -pr $SCRIPTDIRECTORY/bikedata.cron /etc/cron.d/bikedata
 sed -i "s|/var/www/bikedata|${bikedataContentFolder}|g" /etc/cron.d/bikedata
+chown root.root /etc/cron.d/bikedata
+chmod 644 /etc/cron.d/bikedata
 
 # Report completion
 echo "#	Installing Bikedata website completed"

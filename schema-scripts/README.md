@@ -12,7 +12,7 @@ Just try running it and it will give feedback as to what to do. (It prefers to r
 It contains the essential data for building a CycleStreets instance.
 It is created from the latest daily cyclestreets backup copy (itself produced by `../live-deployment/daily-dump.sh`) by stripping all but the essential tables and rows.
 Changes to the live cyclestreets database appear in the cyclestreets backup the next day.
-Only running the script after that will process the changes into: `/documentation/schema/cyclestreetsSample.sql`.
+Only running the script after that will process the changes into: `/documentation/schema/sampleCyclestreets.sql`.
 
 ## externalDb.sh
 

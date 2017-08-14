@@ -350,7 +350,7 @@ if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
+    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.

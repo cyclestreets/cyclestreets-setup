@@ -463,13 +463,13 @@ then
 
     # Load data
     echo "#	Load ${sampleRoutingDb} data"
-    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${superMysql} ${sampleRoutingDb}
+    gunzip < ${websitesContentFolder}/documentation/schema/sampleRouting.sql.gz | ${superMysql} ${sampleRoutingDb}
 fi
 
 # Unless the sample routing data exists:
 if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingDb} ]; then
     echo "#	Unpacking ${sampleRoutingDb} data"
-    tar xf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing
+    tar xf ${websitesContentFolder}/documentation/schema/sampleRoutingData.tar.gz -C ${websitesContentFolder}/data/routing
 fi
 
 

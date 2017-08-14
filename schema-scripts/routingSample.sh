@@ -51,16 +51,16 @@ ${superMysql} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema
 ${superMysql} ${sampleRoutingDb} -e "call cleanSampleRouting(\"${sampleRoutingDb}\");"
 
 #	Write
-mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost --routines --no-create-db --hex-blob ${sampleRoutingDb} | gzip > ${websitesContentFolder}/documentation/schema/routingSample.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost --routines --no-create-db --hex-blob ${sampleRoutingDb} | gzip > ${websitesContentFolder}/documentation/schema/sampleRouting.sql.gz
 
 # Archive the data
-sampleRoutingData=routingSampleData.tar.gz
+sampleRoutingData=sampleRoutingData.tar.gz
 tar czf ${websitesContentFolder}/documentation/schema/${sampleRoutingData} -C ${websitesContentFolder}/data/routing ${sampleRoutingDb}
 
 #	Advise
 echo "#	Actions required next:"
 echo "# See the README.md file which explains how to use this with the csSampleDb.sh script."
-echo "#	Commit the replacement files, routingSample.sql.gz and ${sampleRoutingData} (in /documentation/schema/) to the repo."
+echo "#	Commit the replacement files, sampleRouting.sql.gz and ${sampleRoutingData} (in /documentation/schema/) to the repo."
 
 # Confirm end of script
 echo "#	Script completed $(date)"

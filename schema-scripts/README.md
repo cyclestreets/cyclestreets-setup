@@ -19,12 +19,12 @@ Only running the script after that will process the changes into: `/documentatio
 Creates a dump of the external schema, optionally including data.
 
 
-## routingSample.sh
+## sampleRouting.sh
 
 Produces a sample routing database for shipping with new installations.
 
 The result is saved to:
-/documentation/schema/routingSample.sql.gz
+/documentation/schema/sampleRouting.sql.gz
 
 
 To create sample routing data
@@ -32,5 +32,5 @@ To create sample routing data
     Switch over to the new import via Control
     Run in this order:
     schema-scripts/csSampleDb.sh
-    schema-scripts/routingSample.sh
+    schema-scripts/sampleRouting.sh
     That will bind the latest routing edition into the sample database so that it should get set up with fresh installs.

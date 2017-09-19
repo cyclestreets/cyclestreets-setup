@@ -1,12 +1,13 @@
 #!/bin/bash
-# Script to run an import of fresh CycleStreets data on Ubuntu
-# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
+#
+# SYNOPSIS
+#	import.sh [force]
+#
+# DESCRIPTION
+#	Main script for building new routing edition.
+#	Optional force argument is used to overwrite existing routing edition - which is convenient during development testing.
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
-
-# When in fallback mode uncomment the next two lines:
-#echo "# Skipping in fallback mode"
-#exit 1
 
 # Start an import run
 echo "#	$(date) CycleStreets import"
@@ -91,7 +92,7 @@ likelyEdition=routing$(date +%y%m%d)
 if [ -d ${importMachineEditions}/${likelyEdition} -o -L ${importMachineEditions}/${likelyEdition} ]; then
     echo "#	The edition already exists, check this folder: ${importMachineEditions}/${likelyEdition}"
 
-    # !! An argument could be used to force this to continue
+    # An argument can be used to force this to continue
     if [ "$1" != 'force' ]; then
 	echo "#	Abandoning - use force option to override"
 	exit 1

@@ -97,11 +97,16 @@ fi
 
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
+
+    # Report
     echo "#	Edition ${latestEdition} is already installed - to remove it use:"
     echo "#	rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
     echo "#	... but note that may not be necessary if a new import has just updated that location:"
     echo "#	sudo /bin/systemctl start cycleroutingd"
-    exit 1
+    echo "#	Then switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
+
+    # Clean exit
+    exit 0
 fi
 
 #	Report finding

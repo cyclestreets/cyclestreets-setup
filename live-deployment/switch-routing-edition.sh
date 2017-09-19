@@ -154,7 +154,12 @@ else
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
 	echo "#	Restart it using: sudo /bin/systemctl restart cycleroutingd"
-	exit 1
+	echo "#	Routing restart will be attempted:"
+	sudo /bin/systemctl restart cycleroutingd
+	echo "#	Routing service has restarted"
+
+	# Clean exit
+	exit 0
     fi
 
     # Report edition

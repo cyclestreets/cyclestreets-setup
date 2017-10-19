@@ -56,9 +56,11 @@ sudo adduser `whoami` rollout
 # new rollout group; you may want to replace it by doing:
 exec newgrp rollout
 
-# Login
+# Alternatively logout and then log back in again
 # user@other-machine:~$
 ssh user@machine
+# And check the user is in the rollout group:
+groups
 
 # Set ownership and group
 # user@machine:~$

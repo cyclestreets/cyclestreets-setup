@@ -173,6 +173,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	# Note: ServerName should not use wildcards; use ServerAlias for that.
 	ServerName cyclestreets.net
 	ServerAlias *.cyclestreets.net
+	ServerAlias ${csHostname}
 	
 	# Logging
 	CustomLog /websites/www/logs/cyclestreets.net-access.log combined

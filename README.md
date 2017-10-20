@@ -108,3 +108,32 @@ to see the CycleStreets home page.
 Check apache2 logs in `/websites/www/logs/` or `/var/log/apache2/`.
 
 If you've chosen a *csHostname* other than *localhost* make sure it routes to the server, eg by adding a line to /etc/hosts
+
+### Virtual Box
+
+When the server built inside a virtual machine a mapping needs to be maintained from the host.
+When using virtual box this can be done with *Port forwarding* either through the VB gui or:
+
+{{{
+# Run from the host when the virtual machine is turned off
+# This maps calls from the host's browser port 3080 to port 80 inside the VM.
+# Similar for 3022 and 22 which is for ssh.
+# user@host$
+VBoxManage modifyvm "Ubuntu 16.04.3 LTS" --natpf1 "http,tcp,,3080,,80"
+VBoxManage modifyvm "Ubuntu 16.04.3 LTS" --natpf1 "ssh,tcp,,3022,,22"
+}}}
+
+Within the VM itself the reverse mapping needs to be applied:
+{{{
+# user@virtualmachine$
+sudo iptables -t nat -I OUTPUT -p tcp -o lo --dport 3080 -j REDIRECT --to-ports 80
+
+# To view nat rules use:
+sudo iptables -t nat -L
+}}}
+
+When setup the site can be viewed from the host browser by appending the port :3080 e.g:
+`http://thoday.weecee:3080/journey/`
+
+You'll need to do this for the api too in the .config.php:
+`http://api-thoday.weecee:3080/v2/journey.planplans=balanced&speed=20&waypoints=0.1417,52.19549%7C0.139,52.19935`

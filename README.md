@@ -111,8 +111,9 @@ If you've chosen a *csHostname* other than *localhost* make sure it routes to th
 
 ### Virtual Box
 
-When the server built inside a virtual machine a mapping needs to be maintained from the host.
-When using virtual box this can be done with *Port forwarding* either through the VB gui or:
+When the server is built inside a virtual machine, a mapping needs to be maintained from the host.
+When using virtual box this can be done with *Port forwarding* either through the VB gui or with this
+(where "Ubuntu 16.04.3 LTS" is the name of the Virtual Box virtual machine) :
 
 ```
 # Run from the host when the virtual machine is turned off

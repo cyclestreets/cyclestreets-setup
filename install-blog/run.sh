@@ -106,7 +106,7 @@ if [ ! -f ${vhConf} ]; then
 	
 	# Allow use of RewriteRules (which one of the things allowed by the FileInfo type of override), and Require (e.g. for Akismet's .htaccess)
 	<Directory /websites/${blogMoniker}/content/>
-		AllowOverride FileInfo Options Limit
+		AllowOverride FileInfo Options Limit AuthConfig
 	</Directory>
 	
 	# Use an authentication dialog for login to the blog as this page is subject to attack

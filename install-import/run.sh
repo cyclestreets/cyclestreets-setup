@@ -223,6 +223,16 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 done
 
 
+# !! Need to add
+# NetworkX was installed using:
+# sudo apt install python-pip
+# sudo pip install --upgrade pip
+# sudo -H pip install networkx
+#
+# Compile bridge detection using: import/graph/buildbridge.sh
+echo "#	$(date)	NetworkX and bridge detection compilation have not yet been implemented by this installer."
+
+
 # Confirm end of script
 echo "#	$(date)	All now installed."
 

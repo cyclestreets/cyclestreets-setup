@@ -74,10 +74,6 @@ if [ ! -r ${mysqlConfFile} ]; then
 # Most CycleStreets tables use MyISAM storage
 default-storage-engine = myisam
 default_tmp_storage_engine = myisam
-
-# Query Cache - on demand and best to limit to small efficient size
-query_cache_type        = 2
-query_cache_size        = 20M
 EOF
 
     # Allow the user to edit this file

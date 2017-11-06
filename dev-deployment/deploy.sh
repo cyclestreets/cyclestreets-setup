@@ -118,6 +118,8 @@ if [ ! -f /etc/apache2/sites-available/lists.conf ]; then
 	a2ensite lists
 	service apache2 restart
 fi
+# Start mailman
+service mailman start
 
 # Munin Server; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 apt-get install -y apache2-utils

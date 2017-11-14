@@ -132,7 +132,7 @@ apt-get update
 apt-get install -y mediawiki
 apt-get install -y php5-apcu
 if [ ! -f /etc/apache2/sites-available/wiki.conf ]; then
-	cp -pr ${ScriptHome}/dev-deployment/wiki-apache.conf /etc/apache2/sites-available/wiki.conf
+	# cp -pr ${ScriptHome}/dev-deployment/wiki-apache.conf /etc/apache2/sites-available/wiki.conf
 fi
 a2ensite wiki
 service apache2 restart

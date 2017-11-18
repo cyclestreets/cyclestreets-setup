@@ -484,7 +484,7 @@ if [ ! -x "${routingEngineConfigFile}" ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt-get -y install gcc g++ python-dev
+sudo apt-get -y install gcc g++ python-dev make cmake doxygen graphviz
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/routingengine/"

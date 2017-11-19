@@ -225,7 +225,12 @@ collation-server = utf8mb4_unicode_ci
 character-set-server = utf8mb4
 sql_mode=NO_ENGINE_SUBSTITUTION
 
-# !! The following are not part of utf8 configuration but this a convenient to put them.
+# !! The following are not part of utf8 configuration but this a convenient place to put them.
+
+# Use tables rather than files to log problems
+log_output=table
+slow_query_log = ON
+long_query_time = 1
 
 # Set this variable as empty which allows access to any files in any local directory (needed for reading elevations)
 secure_file_priv =

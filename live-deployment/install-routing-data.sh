@@ -12,12 +12,13 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -m email -q importHostname [edition] [path]
+	$0 -h -s -m email -q importHostname [edition] [path]
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
+	-s Skip the database dump file and suggest an alternative strategy for copying the database
 
 ARGUMENTS
 	importHostname
@@ -59,8 +60,12 @@ quietmode()
 # Default to no notification
 notifyEmail=
 
+# Files
+tsvFile=tsv.tar.gz
+dumpFile=dump.sql.gz
+
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
-while getopts ":hqm:" option ; do
+while getopts ":hqms:" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
@@ -68,6 +73,12 @@ while getopts ":hqm:" option ; do
             shift $((OPTIND-1));
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
+	    ;;
+	s)  # Skip the mysql dump file
+	    # Consume this argument
+            shift $((OPTIND-1));
+	    # Clear
+	    dumpFile=
 	    ;;
 	# Consume this argument, set quiet mode and proceed
         q) shift $((OPTIND-1)); quietmode ;;
@@ -256,9 +267,6 @@ importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$
 md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 md5Dump=`sed -n                       's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 
-tsvFile=tsv.tar.gz
-dumpFile=dump.sql.gz
-
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; then
 	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Dump"
@@ -311,7 +319,9 @@ mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 
 #	Mysql dump file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
+if [ -n "${dumpFile}" ]; then
+    scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
+fi
 
 #	Sieve file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
@@ -324,7 +334,7 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionF
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
+if [ -n "${dumpFile}" -a "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
 	echo "#	Stopping: dump md5 does not match"
 	exit 1
 fi
@@ -342,57 +352,63 @@ rm -f ${tsvFile}
 # Narrate
 echo "#	$(date)	Installing the routing database: ${importEdition}"
 
-#### Alternative strategy
-### Example given for user simon and routing170919 
-### On source machine
-## Shutdown mysql
-## simon@ysource.cyclestreets.net:~$
-# sudo systemctl stop mysql
-#
-## Move the database folder and change owner
-# sudo mv /var/lib/mysql/routing170919 ~/tmp/
-# sudo chown -R simon.simon ~/tmp/routing170919
-#
-## Copy to target (may take many hours)
-# rsync -avz ~/tmp/routing170919 {target}.cyclestreets.net:~/tmp
-#
-## Put the database back
-# sudo chown -R mysql.mysql ~/tmp/routing170919
-# sudo mv ~/tmp/routing170919 /var/lib/mysql/
-# sudo systemctl start mysql
-#
-### On target machine
-## user@target.cyclestreets.net:~$
-## Stop mysql
-# sudo service mysql stop
-# sudo systemctl stop mysql
-#
-## Move copy into datbase
-# sudo chown -R mysql.mysql ~/tmp/routing170919
-# sudo mv ~/tmp/routing170919 /var/lib/mysql/
-# sudo service mysql start
-# sudo systemctl start mysql
-#
+if [ -n "${dumpFile}" ]; then
+
+    #	Create the database (which will be empty for now) and set default collation
+    ${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
+    ${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
+
+    # Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
+    gunzip < ${dumpFile} | nice -n19 ${superMysql} ${importEdition}
+
+    # Remove the zip
+    rm -f ${dumpFile}
+
+else
+
+    cat <<EOF
+### Alternative strategy for transfering database
+
+## On source machine
+# Shutdown mysql
+# simon@ysource.cyclestreets.net:~$
+sudo systemctl stop mysql
+
+# Move the database folder and change owner
+sudo mv /var/lib/mysql/${importEdition} ~/tmp/
+sudo chown -R simon.simon ~/tmp/${importEdition}
+
+# Copy to target (may take many hours)
+rsync -avz ~/tmp/${importEdition} {target}.cyclestreets.net:~/tmp
+
+# Put the database back
+sudo chown -R mysql.mysql ~/tmp/${importEdition}
+sudo mv ~/tmp/${importEdition} /var/lib/mysql/
+sudo systemctl start mysql
+
+## On target machine
+# user@target.cyclestreets.net:~$
+# Stop mysql
+sudo service mysql stop
+sudo systemctl stop mysql
+
+# Move copy into datbase
+sudo chown -R mysql.mysql ~/tmp/${importEdition}
+sudo mv ~/tmp/${importEdition} /var/lib/mysql/
+sudo service mysql start
+sudo systemctl start mysql
+
 ##	Load nearest point stored procedures
-##echo "#	$(date)	Loading nearestPoint technology"
-# smysql routing170919 < /websites/www/content/documentation/schema/nearestPoint.sql
-#
+smysql ${importEdition} < /websites/www/content/documentation/schema/nearestPoint.sql
+
 ## Build the photo index
-##echo "#	$(date)	Building the photosEnRoute tables"
-# smysql routing170919 < /websites/www/content/documentation/schema/photosEnRoute.sql
-# smysql routing170919 -e "call indexPhotos(false,0);"
-#### /Alternative strategy
+smysql ${importEdition} < /websites/www/content/documentation/schema/photosEnRoute.sql
+smysql ${importEdition} -e "call indexPhotos(false,0);"
 
+### /Alternative strategy
 
-#	Create the database (which will be empty for now) and set default collation
-${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
-${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
-
-# Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
-gunzip < ${dumpFile} | nice -n19 ${superMysql} ${importEdition}
-
-# Remove the zip
-rm -f ${dumpFile}
+EOF
+fi
 
 ### Stage 6 - run post-install stored procedures
 

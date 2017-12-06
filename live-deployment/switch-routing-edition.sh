@@ -21,6 +21,7 @@ EOF
 }
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
+# See install-routing-data for best example of using this
 while getopts ":h" option ; do
     case ${option} in
         h) usage; exit ;;

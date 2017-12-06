@@ -12,13 +12,14 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -s -m email -q importHostname [edition] [path]
+	$0 -h -q -s -t -m email importHostname [edition] [path]
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
 	-s Skip the database dump file and suggest an alternative strategy for copying the database
+	-t Does a dry run showing the resolved options
 
 ARGUMENTS
 	importHostname
@@ -51,40 +52,47 @@ EOF
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 # Requires password-less access to the import machine, using a public key.
 
-quietmode()
-{
-    # Turn off verbose messages by setting this variable to the empty string
-    verbose=
-}
-
 # Default to no notification
 notifyEmail=
+testargs=
 
 # Files
 tsvFile=tsv.tar.gz
 dumpFile=dump.sql.gz
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
-while getopts ":hqms:" option ; do
+# An opening colon in the option-string switches to silent error reporting mode.
+# Colons after letters indicate that those options take an argument e.g. m takes an email address.
+while getopts "hm:qst" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
-	    # Consume this argument
-            shift $((OPTIND-1));
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
 	    ;;
-	s)  # Skip the mysql dump file
-	    # Consume this argument
-            shift $((OPTIND-1));
-	    # Clear
-	    dumpFile=
+	# Skip the mysql dump file
+	s) dumpFile=
+	   ;;
+	# Dry run shows results of arg processing
+	t)
+	    testargs=test
+	   ;;
+	# Set quiet mode and proceed
+        q)
+	    # Turn off verbose messages by setting this variable to the empty string
+	    verbose=
 	    ;;
-	# Consume this argument, set quiet mode and proceed
-        q) shift $((OPTIND-1)); quietmode ;;
+	# Missing expected argumnet
+	:)
+	    echo "Option -$OPTARG requires an argument." >&2
+	    exit 1
+	    ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
+
+# After getopts is done, shift all processed options away with
+shift $((OPTIND-1))
 
 # Echo output only if the verbose option has been set
 vecho()
@@ -93,6 +101,8 @@ vecho()
 		echo $1
 	fi
 }
+
+
 
 ### Stage 1 - general setup
 
@@ -139,6 +149,23 @@ then
     # Report and abandon
     echo "#	importMachineEditions is not valid" 1>&2
     exit 1
+fi
+
+
+# Testargs: show argument resuolution
+if [ -n "${testargs}" ]; then
+    echo "#	Argument resolution";
+    echo "#	\$#=${#}";
+    echo "#	\$@=${@}";
+    echo "#	\$0=${0}";
+    echo "#	\$1=${1}";
+    echo "#	\$2=${2}";
+    echo "#	verbose=${verbose}";
+    echo "#	notifyEmail=${notifyEmail}";
+    echo "#	dumpFile=${dumpFile}";
+    echo "#	tsvFile=${tsvFile}";
+    echo "#	importHostname=${importHostname}";
+    exit 0
 fi
 
 # Bomb out if something goes wrong
@@ -321,6 +348,8 @@ scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${ts
 #	Mysql dump file
 if [ -n "${dumpFile}" ]; then
     scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
+else
+    echo "#	Skipping dump file"
 fi
 
 #	Sieve file
@@ -334,13 +363,16 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionF
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ -n "${dumpFile}" -a "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
+if [ -n "${dumpFile}" ]; then
+    if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
 	echo "#	Stopping: dump md5 does not match"
 	exit 1
+    fi
 fi
 
 
 ### Stage 4 - unpack and install the TSV files
+echo "#	$(date)	Unpack and install the TSV files"
 cd ${newEditionFolder}
 tar xf ${tsvFile}
 
@@ -371,23 +403,20 @@ else
 
 ## On source machine
 # Shutdown mysql
-# simon@ysource.cyclestreets.net:~$
+# simon@y${importHostname}:~$
 sudo systemctl stop mysql
 
 # Move the database folder and change owner
 sudo mv /var/lib/mysql/${importEdition} ~/tmp/
 sudo chown -R simon.simon ~/tmp/${importEdition}
 
-# Copy to target (may take many hours)
-rsync -avz ~/tmp/${importEdition} {target}.cyclestreets.net:~/tmp
-
-# Put the database back
-sudo chown -R mysql.mysql ~/tmp/${importEdition}
-sudo mv ~/tmp/${importEdition} /var/lib/mysql/
-sudo systemctl start mysql
 
 ## On target machine
 # user@target.cyclestreets.net:~$
+
+# Copy from source (may take many hours)
+rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
+
 # Stop mysql
 sudo service mysql stop
 sudo systemctl stop mysql
@@ -405,9 +434,21 @@ smysql ${importEdition} < /websites/www/content/documentation/schema/nearestPoin
 smysql ${importEdition} < /websites/www/content/documentation/schema/photosEnRoute.sql
 smysql ${importEdition} -e "call indexPhotos(false,0);"
 
+# Create a file that indicates the end of the script was reached - this can be tested for by the switching script
+touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
+
+## Clean up
+## Back on source machine
+# simon@y${importHostname}:~$
+# Put the database back
+sudo chown -R mysql.mysql ~/tmp/${importEdition}
+sudo mv ~/tmp/${importEdition} /var/lib/mysql/
+sudo systemctl start mysql
+
 ### /Alternative strategy
 
 EOF
+    exit;
 fi
 
 ### Stage 6 - run post-install stored procedures

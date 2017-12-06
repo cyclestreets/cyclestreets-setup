@@ -342,6 +342,48 @@ rm -f ${tsvFile}
 # Narrate
 echo "#	$(date)	Installing the routing database: ${importEdition}"
 
+#### Alternative strategy
+### Example given for user simon and routing170919 
+### On source machine
+## Shutdown mysql
+## simon@ysource.cyclestreets.net:~$
+# sudo systemctl stop mysql
+#
+## Move the database folder and change owner
+# sudo mv /var/lib/mysql/routing170919 ~/tmp/
+# sudo chown -R simon.simon ~/tmp/routing170919
+#
+## Copy to target (may take many hours)
+# rsync -avz ~/tmp/routing170919 {target}.cyclestreets.net:~/tmp
+#
+## Put the database back
+# sudo chown -R mysql.mysql ~/tmp/routing170919
+# sudo mv ~/tmp/routing170919 /var/lib/mysql/
+# sudo systemctl start mysql
+#
+### On target machine
+## user@target.cyclestreets.net:~$
+## Stop mysql
+# sudo service mysql stop
+# sudo systemctl stop mysql
+#
+## Move copy into datbase
+# sudo chown -R mysql.mysql ~/tmp/routing170919
+# sudo mv ~/tmp/routing170919 /var/lib/mysql/
+# sudo service mysql start
+# sudo systemctl start mysql
+#
+##	Load nearest point stored procedures
+##echo "#	$(date)	Loading nearestPoint technology"
+# smysql routing170919 < /websites/www/content/documentation/schema/nearestPoint.sql
+#
+## Build the photo index
+##echo "#	$(date)	Building the photosEnRoute tables"
+# smysql routing170919 < /websites/www/content/documentation/schema/photosEnRoute.sql
+# smysql routing170919 -e "call indexPhotos(false,0);"
+#### /Alternative strategy
+
+
 #	Create the database (which will be empty for now) and set default collation
 ${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
 ${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"

@@ -53,7 +53,7 @@ tempDir=${websitesContentFolder}/data/tempgenerated/
 # ! (which is escaped) negates the next test.
 # -mtime 0 finds files modified within the last 24 hours
 # -type f finds only files
-folders="${tempDir}elevationProfile ${tempDir}maplet ${tempDir}photomaplet
+folders="${tempDir}elevationProfile ${tempDir}maplet ${tempDir}photomaplet"
 for folder in $folders
 do
     find $folder -maxdepth 1 \! -mtime 0 -type f -delete

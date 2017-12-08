@@ -415,17 +415,16 @@ sudo chown -R simon.simon ~/tmp/${importEdition}
 # user@target.cyclestreets.net:~$
 
 # Copy from source (may take many hours)
-rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
-
-# Stop mysql
-sudo service mysql stop
-sudo systemctl stop mysql
+# Use a low priority to allow other stuff to run smoothly
+nice -19 rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
 
 # Move copy into datbase
 sudo chown -R mysql.mysql ~/tmp/${importEdition}
 sudo mv ~/tmp/${importEdition} /var/lib/mysql/
-sudo service mysql start
-sudo systemctl start mysql
+
+# May be necessary to restart mysql
+sudo service mysql restart
+sudo systemctl restart mysql
 
 ##	Load nearest point stored procedures
 smysql ${importEdition} < /websites/www/content/documentation/schema/nearestPoint.sql

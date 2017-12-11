@@ -127,6 +127,10 @@ then
 fi
 
 # Check Osmosis has been installed
+# To force a reinstall delete the current installation:
+# rm -r /usr/local/bin/osmosis
+# rm -r "`readlink -f /usr/local/osmosis/current`"
+# rm -r /usr/local/osmosis/current
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
@@ -148,10 +152,10 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     fi
 
     # Create a folder for the new version
-    mkdir -p /usr/local/osmosis/osmosis-0.43.1
+    mkdir -p /usr/local/osmosis/osmosis-0.46
 
     # Unpack into it
-    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.43.1
+    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.46
 
     # Remove the download archive
     rm -f /usr/local/osmosis/osmosis-latest.tgz
@@ -159,8 +163,8 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     # Repoint current to the new install
     rm -f /usr/local/osmosis/current
 
-    # Whatever the version number is here - replace the 0.43.1
-    ln -s /usr/local/osmosis/osmosis-0.43.1 /usr/local/osmosis/current
+    # Whatever the version number is here - replace the 0.46
+    ln -s /usr/local/osmosis/osmosis-0.46 /usr/local/osmosis/current
 
     # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
     if [ ! -L /usr/local/bin/osmosis ]; then

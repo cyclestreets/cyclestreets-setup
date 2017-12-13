@@ -80,8 +80,10 @@ cd "${bikedataContentFolder}"
 if [ ! -d "${bikedataContentFolder}/.git" ]
 then
 	${asCS} git clone https://github.com/cyclestreets/bikedata.git "${bikedataContentFolder}/"
+	${asCS} git clone https://github.com/cyclestreets/Leaflet.LayerViewer.git "${bikedataContentFolder}/js/lib/Leaflet.LayerViewer/"
 else
-	${asCS} git pull
+	${asCS} git -C "${bikedataContentFolder}" pull
+	${asCS} git -C "${bikedataContentFolder}/js/lib/Leaflet.LayerViewer/" pull
 fi
 
 # Make the repository writable to avoid permissions problems when manually editing

@@ -232,6 +232,10 @@ done
 # sudo apt install python-pip
 # sudo pip install --upgrade pip
 # sudo -H pip install networkx
+# sudo apt-get -y install gcc g++ python-dev make cmake
+# download of https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz to https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz
+# execution of import/graph/buildbridge.sh
+# execution of import/graph/islands_cpp/build.sh
 #
 # Compile bridge detection using: import/graph/buildbridge.sh
 echo "#	$(date)	NetworkX and bridge detection compilation have not yet been implemented by this installer."

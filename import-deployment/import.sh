@@ -127,7 +127,7 @@ cd ${importContentFolder}
 
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 # Use a low priority to allow the server to be useful for serving other tasks such as tiles if necessary.
-nice -n10 php run.php
+nice -n12 php run.php
 
 # Restart mysql - as setup for passwordless sudo by the installer. This resets the MySQL configuration to default values, more suited to serving web pages and routes.
 

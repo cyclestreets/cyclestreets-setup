@@ -416,7 +416,7 @@ sudo chown -R simon.simon ~/tmp/${importEdition}
 
 # Copy from source (may take many hours)
 # Use a low priority to allow other stuff to run smoothly
-nice -19 rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
+nice -n12 rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
 
 # Move copy into datbase
 sudo chown -R mysql.mysql ~/tmp/${importEdition}

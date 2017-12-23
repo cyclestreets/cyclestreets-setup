@@ -26,7 +26,7 @@
 # sudo rm /etc/munin/plugins/cyclestreets
 #
 # See also
-# https://dev.cyclestreets.net/wiki/ServerMonitoring
+# https://wiki.cyclestreets.net/ServerMonitoring
 # http://guide.munin-monitoring.org/en/latest/develop/plugins/howto-write-plugins.html
 
 ### CREDENTIALS ###

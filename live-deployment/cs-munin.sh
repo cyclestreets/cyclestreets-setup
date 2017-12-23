@@ -27,7 +27,7 @@
 # sudo rm /etc/munin/plugins/cyclestreets
 #
 # See also
-# https://dev.cyclestreets.net/wiki/ServerMonitoring
+# https://wiki.cyclestreets.net/ServerMonitoring
 
 ### CREDENTIALS ###
 
@@ -65,12 +65,16 @@ fi
 
 # Outputs the config of this plugin
 output_config() {
-    echo "graph_title CycleStreets usage"
+    echo "graph_title CycleStreets Usage"
     echo "graph_category CycleStreets"
     echo "itineraries.label Itineraries per 5 mins"
     echo "journeys.label Journeys per 5 mins"
     echo "failedJourneys.label Failed journeys per 5 mins"
+    echo "failedJourneys.warning 1"
+    echo "failedJourneys.critical 200"
     echo "errors.label Errors per 5 mins"
+    echo "errors.warning 1"
+    echo "errors.critical 5"
 }
 
 # Outputs the statistics

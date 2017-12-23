@@ -235,6 +235,7 @@ done
 #
 # Compile bridge detection using: import/graph/buildbridge.sh
 echo "#	$(date)	NetworkX and bridge detection compilation have not yet been implemented by this installer."
+echo "#	$(date)	Islands expedition requires link to boost library and compilation phase."
 
 
 # Confirm end of script

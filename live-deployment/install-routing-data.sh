@@ -399,11 +399,11 @@ if [ -n "${dumpFile}" ]; then
 else
 
     cat <<EOF
-### Alternative strategy for transfering database
+### Alternative strategy for transfering database demonstrated for user: simon
 
 ## On source machine
 # Shutdown mysql
-# simon@y${importHostname}:~$
+# simon@${importHostname}:~$
 sudo systemctl stop mysql
 
 # Move the database folder and change owner
@@ -412,7 +412,7 @@ sudo chown -R simon.simon ~/tmp/${importEdition}
 
 
 ## On target machine
-# user@target.cyclestreets.net:~$
+# simon@target.cyclestreets.net:~$
 
 # Copy from source (may take many hours)
 # Use a low priority to allow other stuff to run smoothly
@@ -438,7 +438,7 @@ touch "${websitesContentFolder}/data/routing/${importEdition}/installationComple
 
 ## Clean up
 ## Back on source machine
-# simon@y${importHostname}:~$
+# simon@${importHostname}:~$
 # Put the database back
 sudo chown -R mysql.mysql ~/tmp/${importEdition}
 sudo mv ~/tmp/${importEdition} /var/lib/mysql/

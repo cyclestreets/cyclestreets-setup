@@ -117,10 +117,10 @@ if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
 
     # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
     sudo ${routingDaemonStop}
-fi
 
-# Close the website
-${superMysql} cyclestreets -e "update map_config set status = 'maintenance', journeyPlannerStatus = 'closed', notice = 'Building a new routing edition' where id = 1;";
+    # Close the website
+    ${superMysql} cyclestreets -e "update map_config set status = 'maintenance', journeyPlannerStatus = 'closed', notice = 'Building a new routing edition' where id = 1;";
+fi
 
 # Move to the right place
 cd ${importContentFolder}
@@ -131,14 +131,18 @@ nice -n12 php run.php
 
 # Restart mysql - as setup for passwordless sudo by the installer. This resets the MySQL configuration to default values, more suited to serving web pages and routes.
 
-echo "#	$(date)	Restarting MySQL to restore default configuration."
-sudo service mysql restart
+# Skip for cello testing [:] 23 Sep 2017 12:24:27
+#echo "#	$(date)	Restarting MySQL to restore default configuration."
+#sudo service mysql restart
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`
 
-# Reopen the website
-${superMysql} cyclestreets -e "update map_config set status = 'live', journeyPlannerStatus = 'live', notice = '' where id = 1;";
+
+# Reopen the website if it was closed earlier
+if [ -n "${stopRoutingDuringImport}" ]; then
+    ${superMysql} cyclestreets -e "update map_config set status = 'live', journeyPlannerStatus = 'live', notice = '' where id = 1;";
+fi
 
 # Report completion and next steps
 echo "#	$(date)	CycleStreets import has created a new edition: ${latestEdition}"

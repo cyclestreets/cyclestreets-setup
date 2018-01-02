@@ -227,9 +227,44 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 done
 
 
-# Compile bridge detection using: import/graph/buildbridge.sh
-echo "#	$(date)	Islands expedition requires link to boost library and compilation phase."
+# Boost library used in C++ graph optimization
+echo "#	$(date)	Fetching boost library"
 
+# Boost library
+boostFolder=${websitesWwwFolder}/boost_1_65_1/
+phpConfig=.config.php
+if [ ! -d "${boostFolder}" ]
+then
+    # Change directory
+    cd ${websitesWwwFolder}
+    
+    # Download this boost library
+    wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz
+
+    # Unpack
+    tar xf boost_1_65_1.tar.gz
+fi
+
+# cmake used in C++ graph optimization
+echo "#	$(date)	Adding cmake"
+apt install -y cmake
+
+# Build bridges and islands
+
+# Change directory
+cd ${importContentFolder}/graph
+
+# Build bridge detection algorithm
+./buildbridge.sh
+
+# Change directory
+cd ${importContentFolder}/graph/islands_cpp
+
+# Build bridge detection algorithm
+./build.sh
+
+# Change directory
+cd ${importContentFolder}
 
 # Confirm end of script
 echo "#	$(date)	All now installed."

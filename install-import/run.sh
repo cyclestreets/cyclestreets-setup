@@ -243,6 +243,9 @@ then
 
     # Unpack
     tar xf boost_1_65_1.tar.gz
+
+    # Remove
+    rm boost_1_65_1.tar.gz
 fi
 
 # cmake used in C++ graph optimization

@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+
+	# Available URL(s)
+	ServerName snapshot
+	ServerAlias cyclingenglanddata.cyclestreets.net
+	
+	# Logging
+	CustomLog /var/log/apache2/snapshot-access.log combined
+	ErrorLog /var/log/apache2/snapshot-error.log
+	
+	# Where the files are
+	DocumentRoot /var/www/snapshot/public
+	#RailsEnv development
+	<Directory /var/www/snapshot/public>
+		Options FollowSymLinks
+	</Directory>
+	
+	# Allow access
+	<Directory /var/www/snapshot/public>
+		<IfModule mod_authz_core.c>
+			Require all granted
+		</IfModule>
+	</Directory>
+
+</VirtualHost>

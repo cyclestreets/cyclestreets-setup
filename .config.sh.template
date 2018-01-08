@@ -76,7 +76,6 @@ blogUsername=
 blogPassword=
 
 ## Working directories
-websitesWwwFolder=/websites/www
 websitesContentFolder=/websites/www/content
 websitesBackupsFolder=/websites/www/backups
 websitesLogsFolder=/websites/www/logs

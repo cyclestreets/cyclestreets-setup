@@ -228,48 +228,19 @@ done
 
 
 # Boost library used in C++ graph optimization
-echo "#	$(date)	Fetching boost library"
+echo "#	$(date)	Fetching boost library and dependencies"
+apt install -y libboost-dev cmake
 
-# Boost library
-boostFolder=${websitesWwwFolder}/boost_1_65_1/
-phpConfig=.config.php
-if [ ! -d "${boostFolder}" ]
-then
-    # Change directory
-    cd ${websitesWwwFolder}
-    
-    # Download this boost library
-    wget https://dl.bintray.com/boostorg/release/1.65.1/source/boost_1_65_1.tar.gz
-
-    # Unpack
-    tar xf boost_1_65_1.tar.gz
-
-    # Remove
-    rm boost_1_65_1.tar.gz
-fi
-
-# cmake used in C++ graph optimization
-echo "#	$(date)	Adding cmake"
-apt install -y cmake
-
-# Build bridges and islands
-
-# Change directory
+# Build bridges
 cd ${importContentFolder}/graph
-
-# Build bridge detection algorithm
 ./buildbridge.sh
 
-# Change directory
+# Build islands
 cd ${importContentFolder}/graph/islands_cpp
-
-# Build bridge detection algorithm
 ./build.sh
 
-# Change directory
-cd ${importContentFolder}
-
 # Confirm end of script
+cd ${importContentFolder}
 echo "#	$(date)	All now installed."
 
 # Return true to indicate success

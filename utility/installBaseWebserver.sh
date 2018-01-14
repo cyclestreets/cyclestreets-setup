@@ -243,17 +243,18 @@ fi
 
 # Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 # !! Be wary of this as the settings in here will override those in any supplied defaults-extra-file
-if [ ! -e ${mySuperCredFile} ]; then
-	
-	# Create the file owned by the user
-	mkdir -p $websitesContentFolder
-	${asCS} touch ${mySuperCredFile}
-	
-	# Remove other readability
-	${asCS} chmod o-r ${mySuperCredFile}
-	
-	# Write config
-	${asCS} cat > ${mySuperCredFile} << EOF
+if [ "${mySuperCredFile}" ]; then
+	if [ ! -e ${mySuperCredFile} ]; then
+		
+		# Create the file owned by the user
+		mkdir -p $websitesContentFolder
+		${asCS} touch ${mySuperCredFile}
+		
+		# Remove other readability
+		${asCS} chmod o-r ${mySuperCredFile}
+		
+		# Write config
+		${asCS} cat > ${mySuperCredFile} << EOF
 [client]
 user=root
 password=${mysqlRootPassword}
@@ -264,7 +265,7 @@ password=${mysqlRootPassword}
 # Equiv to -A at startup, stops tabs trying to autocomplete
 no-auto-rehash
 EOF
-	
+	fi
 fi
 
 # Disable AppArmor for MySQL if present and not already disabled.

@@ -36,7 +36,7 @@ notifyEmail=
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hqr" option ; do
+while getopts "hm:qr" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)

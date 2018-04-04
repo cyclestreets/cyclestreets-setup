@@ -28,7 +28,7 @@ EOF
 # Controls echoed output default to on
 verbose=1
 # By default do not remove oldest routing edtion
-removeOldest=0
+removeOldest=
 # Default to no notification
 notifyEmail=
 
@@ -157,7 +157,7 @@ cd "${websitesContentFolder}"
 if [ -n "${notifyEmail}" ]; then
 
     # Send last lines of log and test results
-    { tail import/log.txt; php runtests.php ${csHostname}; } | mail -s "${csHostname} import stopped" "${notifyEmail}"
+    { tail import/log.txt; php runtests.php ${csHostname}; } | mail -s "${csHostname} import finished" "${notifyEmail}"
 
 else
 

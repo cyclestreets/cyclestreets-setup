@@ -1,9 +1,5 @@
 #!/bin/bash
 # Script to do a new CycleStreets import run, install and test it
-# Controls echoed output default to on
-verbose=1
-# By default do not remove oldest routing edtion
-removeOldest=0
 
 # http://ubuntuforums.org/showthread.php?t=1783298
 usage()
@@ -11,10 +7,11 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r
+	$0 -h -q -r -m email
 
 OPTIONS
 	-h Show this message
+	-m Take an email address as an argument - for notifications when the build breaks or completes.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
 
@@ -28,12 +25,24 @@ DESCRIPTION
 EOF
 }
 
+# Controls echoed output default to on
+verbose=1
+# By default do not remove oldest routing edtion
+removeOldest=0
+# Default to no notification
+notifyEmail=
+
+
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
 while getopts "hqr" option ; do
     case ${option} in
         h) usage; exit ;;
+	m)
+	    # Set the notification email address
+	    notifyEmail=$OPTARG
+	    ;;
 	# Remove oldest routing edition
 	r) removeOldest=1
 	   ;;
@@ -89,53 +98,78 @@ fi
 
 ### Main body of script ###
 
+
 # Start
-vecho "#	Starting newbuild.sh"
-cd /opt/cyclestreets-setup/
+vecho "#	Starting $0"
+
 
 # Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then
     live-deployment/remove-routing-edition.sh oldest
 fi
 
+
 # Import (the force overrides the current edition if it is for the same date)
 if import-deployment/import.sh force ;
 then
     vecho "#	$(date)	Import completed just fine."
 else
-    vecho "Import stopped during import script"
+    if [ -n "${notifyEmail}" ]; then
+	echo "During import script" | mail -s "${csHostname} import stopped" "${notifyEmail}"
+    else
+	vecho "Import stopped during import script"
+    fi
     exit 1
 fi
+
 
 # Install
 if live-deployment/installLocalLatestEdition.sh ;
 then
     vecho "#	$(date)	Local install completed just fine." 
 else
-    vecho "Import stopped during install local lastest edition"
+    if [ -n "${notifyEmail}" ]; then
+	echo "During install local lastest edition" | mail -s "${csHostname} import stopped" "${notifyEmail}"
+    else
+	vecho "Import stopped during install local lastest edition"
+    fi
     exit 2
 fi
+
 
 # Switch
 if live-deployment/switch-routing-edition.sh ;
 then
     vecho "#	$(date)	Switch routing edition completed just fine." 
 else
-    vecho "Import stopped during switch routing edition"
+    if [ -n "${notifyEmail}" ]; then
+	echo "During switch routing edition" | mail -s "${csHostname} import stopped" "${notifyEmail}"
+    else
+	vecho "Import stopped during switch routing edition"
+    fi
     exit 3
 fi
+
 
 # Test
 cd "${websitesContentFolder}"
 
-# Last 10 lines of import log
-tail import/log.txt
+if [ -n "${notifyEmail}" ]; then
 
-# Run tests
-php runtests.php "${csHostname}"
+    # Send last lines of log and test results
+    { tail import/log.txt; php runtests.php ${csHostname}; } | mail -s "${csHostname} import stopped" "${notifyEmail}"
+
+else
+
+    # Last 10 lines of import log
+    tail import/log.txt
+
+    # Run tests
+    php runtests.php "${csHostname}"
+fi
 
 # Finish
-vecho "#	Finish newbuild.sh"
+vecho "#	Finished $0"
 
 # Indicates safe exit
 :

@@ -60,6 +60,8 @@ if [ ! -d "${websitesContentFolder}" ]; then
 fi
 
 # GDAL - which provides tools for reading elevation data
+# A backported version (for Ubuntu 16.04 LTS) that provides some json options is available, see:
+# https://stackoverflow.com/a/41613466/225876
 $packageInstall gdal-bin
 
 # For the time being [:] 14 Apr 2015 the import is a symbolic link

@@ -164,8 +164,9 @@ else
     # Last 10 lines of import log
     tail import/log.txt
 
-    # Run tests
-    php runtests.php "${csHostname}"
+    # Run tests relevant to the new build
+    php runtests.php "call=nearestpoint"
+    php runtests.php "call=journey"
 fi
 
 # Finish

@@ -68,7 +68,7 @@ shift $((OPTIND-1))
 vecho()
 {
 	if [ "${verbose}" ]; then
-		echo $1
+		echo -e $1
 	fi
 }
 
@@ -88,7 +88,7 @@ configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable. Copy your own based on the ${configFile}.template file, or create a symlink to the configuration."
+    echo -e "#\tThe config file, ${configFile}, does not exist or is not excutable. Copy your own based on the ${configFile}.template file, or create a symlink to the configuration."
     exit 1
 fi
 
@@ -99,20 +99,20 @@ fi
 ### Main body of script ###
 
 
-# Start
-vecho "#	Starting $0"
+## Start
+vecho "#\tStarting $0"
 
 
-# Optionally remove oldest routing edtion
+## Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then
     live-deployment/remove-routing-edition.sh oldest
 fi
 
 
-# Import (the force overrides the current edition if it is for the same date)
+## Import (the force overrides the current edition if it is for the same date)
 if import-deployment/import.sh force ;
 then
-    vecho "#	$(date)	Import completed just fine."
+    vecho "#\t$(date)\tImport completed just fine."
 else
     if [ -n "${notifyEmail}" ]; then
 	echo "During import script" | mail -s "${csHostname} import stopped" "${notifyEmail}"
@@ -123,10 +123,10 @@ else
 fi
 
 
-# Install
+## Install
 if live-deployment/installLocalLatestEdition.sh ;
 then
-    vecho "#	$(date)	Local install completed just fine." 
+    vecho "#\t$(date)\tLocal install completed just fine."
 else
     if [ -n "${notifyEmail}" ]; then
 	echo "During install local lastest edition" | mail -s "${csHostname} import stopped" "${notifyEmail}"
@@ -137,40 +137,48 @@ else
 fi
 
 
-# Switch
+## Switch
 if live-deployment/switch-routing-edition.sh ;
 then
-    vecho "#	$(date)	Switch routing edition completed just fine." 
+    vecho "#\t$(date)\tSwitch routing edition completed just fine."
 else
     if [ -n "${notifyEmail}" ]; then
 	echo "During switch routing edition" | mail -s "${csHostname} import stopped" "${notifyEmail}"
     else
-	vecho "Import stopped during switch routing edition"
+	vecho "#\t$(date)\tImport stopped during switch routing edition"
     fi
     exit 3
 fi
 
 
-# Test
+## Test the built routing edition
 cd "${websitesContentFolder}"
 
+# Generate Build Summary message
+summaryFile=import/buildSummary.txt
+echo -e "#\tBuild summary" > ${summaryFile}
+
+# Append last few lines of import log
+tail -n3 import/log.txt >> ${summaryFile}
+
+# Run tests relevant to the new build, appending to summary
+php runtests.php "call=nearestpoint" >> ${summaryFile}
+php runtests.php "call=journey" >> ${summaryFile}
+
+# Mail summary
 if [ -n "${notifyEmail}" ]; then
 
     # Send last lines of log and test results
-    { tail import/log.txt; php runtests.php ${csHostname}; } | mail -s "${csHostname} import finished" "${notifyEmail}"
+    cat ${summaryFile} | mail -s "${csHostname} import finished" "${notifyEmail}"
 
 else
 
-    # Last 10 lines of import log
-    tail import/log.txt
-
-    # Run tests relevant to the new build
-    php runtests.php "call=nearestpoint"
-    php runtests.php "call=journey"
+    # Report
+    cat ${summaryFile}
 fi
 
-# Finish
-vecho "#	Finished $0"
+## Finish
+vecho "#\tFinished $0"
 
 # Indicates safe exit
 :

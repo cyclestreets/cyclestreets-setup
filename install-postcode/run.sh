@@ -64,17 +64,18 @@ if [ ! -r ONSdata.csv ]; then
 #	The following contains dates that will obviously need updating for next time.
 #
 cd ${onsFolder}
-wget http://parlvid.mysociety.org/os/ONSPD_MAY_2017.zip
+wget http://parlvid.mysociety.org/os/ONSPD_FEB_2018_UK.zip
 
 # Extract this one file
-unzip ONSPD_MAY_2017.zip Data/ONSPD_MAY_2017_UK.csv
-rm ONSPD_MAY_2017.zip
+# Use the Old Order version as the New Order has different columns - if using that sync with the tabledefinitions.sql
+unzip ONSPD_FEB_2018_UK.zip Data/Old\ Order/ONSPD_FEB_2018_UK.csv
+rm ONSPD_FEB_2018_UK.zip
 
 # Move it
-mv Data/ONSPD_MAY_2017_UK.csv ./ONSdata.csv
+mv Data/Old\ Order/ONSPD_FEB_2018_UK.csv ./ONSdata.csv
 
-# Clear up (other folders only necessary when everything was unzipped)
-rm -r Data/ Documents/ User\ Guide/
+# Clear up (other folders Documents/ User\ Guide/ only necessary when everything was unzipped)
+rm -r Data/
 
 # Re-run this script
 sudo ${ScriptHome}/install-postcode/run.sh

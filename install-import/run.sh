@@ -229,9 +229,9 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 done
 
 
-# Boost library used in C++ graph optimization
-echo "#	$(date)	Fetching boost library and dependencies"
-apt install -y libboost-dev cmake
+# Fetching dependencies
+echo "#	$(date)	Fetching dependencies"
+apt install -y libboost-dev cmake gcc g++ python-dev make doxygen graphviz
 
 # Build bridges
 cd ${importContentFolder}/graph

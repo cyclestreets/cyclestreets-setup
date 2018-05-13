@@ -189,12 +189,10 @@ umask 0002
 # It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
 # (The equivalent for the setuid bit does not work because of security issues and so file owners are set later on in the script.)
 chmod g+ws /websites
+
 # The following folders and files are be created with root as owner, but that is fixed later on in the script.
-
-# Create a folder for Apache to log access / errors:
+# Create a folder for Apache to log access / errors, and backups:
 mkdir -p ${websitesLogsFolder}
-
-# Create a folder for backups
 mkdir -p ${websitesBackupsFolder}
 
 # Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility

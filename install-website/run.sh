@@ -133,11 +133,15 @@ fi
 echo "#	Starting a series of recursive chown/chmod to set correct file ownership and permissions"
 echo "#	chown -R ${username} ${websitesContentFolder}"
 chown -R ${username} ${websitesContentFolder}
+chown -R ${username} ${websitesLogsFolder}
+chown -R ${username} ${websitesBackupsFolder}
 
 # Add group writability
 # This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
 echo "#	chmod -R g+w ${websitesContentFolder}"
 chmod -R g+w ${websitesContentFolder}
+chmod -R g+w ${websitesLogsFolder}
+chmod -R g+w ${websitesBackupsFolder}
 
 # Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
 chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl

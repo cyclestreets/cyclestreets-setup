@@ -137,7 +137,7 @@ chown -R ${username} ${websitesLogsFolder}
 chown -R ${username} ${websitesBackupsFolder}
 
 # Add group writability
-# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
+# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the Git clone/pull under ${asCS}
 echo "#	chmod -R g+w ${websitesContentFolder}"
 chmod -R g+w ${websitesContentFolder}
 chmod -R g+w ${websitesLogsFolder}

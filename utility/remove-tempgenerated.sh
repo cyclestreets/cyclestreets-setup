@@ -49,14 +49,15 @@ tempDir=${websitesContentFolder}/data/tempgenerated/
 # The following find command selects top-level files in the given paths that are older than 24 hours and deletes them.
 # It works as follows:
 # Folders of all the temp folders to clear out are given as paths.
-# -maxdepth option stops find going into the .svn folders relative to the paths.
+# -maxdepth option stops find going into the .git folder relative to the paths.
 # ! (which is escaped) negates the next test.
 # -mtime 0 finds files modified within the last 24 hours
 # -type f finds only files
-folders="${tempDir}elevationProfile ${tempDir}maplet ${tempDir}photomaplet ${tempDir}photomapletSprite"
-for folder in $folders
+# ! -name Skips files matching the given name
+folders="elevationProfile maplet photomaplet"
+for folder in ${folders}
 do
-    find $folder -maxdepth 1 \! -mtime 0 -type f -delete
+    find ${tempDir}${folder} -maxdepth 1 \! -mtime 0 \! -name '.gitignore' -type f -delete
 done
 
 # Thumbnails
@@ -64,8 +65,8 @@ done
 # 1. Delete the thumbnail folders and contents
 #	rm -rf thumbnails
 #	rm -rf thumbnails2
-# 2. Re-create the thumbnails folder, best done by svn update from the tempgenerated folder:
-#	cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ svn update
+# 2. Re-create the thumbnails folder, best done by git pull from the tempgenerated folder:
+#	cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ git pull
 # 3. You may need to update ownership
 #    cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ sudo chown -R www-data thumbnails
 #    cyclestreets@www:${websitesContentFolder}/data/tempgenerated$ sudo chown -R www-data thumbnails2

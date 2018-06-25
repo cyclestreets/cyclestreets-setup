@@ -64,10 +64,11 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Ensure that dependencies are present; GD is needed for thumbnailing
+# Ensure that dependencies are present; GD is needed for thumbnailing; Zip is needed for batch import
 apt-get -y install apache2 php
 apt-get -y install php-gd
 apt-get -y install php-curl
+apt-get -y install php-zip
 
 # Install path to content and go there
 mkdir -p "${telluswhereContentFolder}"

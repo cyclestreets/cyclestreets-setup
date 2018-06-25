@@ -9,7 +9,7 @@ echo "#	$(date)	CycleStreets Import System installation"
 
 # The script should be run using sudo
 if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run using sudo from an account that has access to the CycleStreets svn repo." 1>&2
+    echo "#	This script must be run using sudo from an account that has access to the CycleStreets Git repo." 1>&2
     exit 1
 fi
 
@@ -60,6 +60,8 @@ if [ ! -d "${websitesContentFolder}" ]; then
 fi
 
 # GDAL - which provides tools for reading elevation data
+# A backported version (for Ubuntu 16.04 LTS) that provides some json options is available, see:
+# https://stackoverflow.com/a/41613466/225876
 $packageInstall gdal-bin
 
 # For the time being [:] 14 Apr 2015 the import is a symbolic link
@@ -127,6 +129,10 @@ then
 fi
 
 # Check Osmosis has been installed
+# To force a reinstall delete the current installation:
+# rm -r /usr/local/bin/osmosis
+# rm -r "`readlink -f /usr/local/osmosis/current`"
+# rm -r /usr/local/osmosis/current
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
@@ -137,7 +143,7 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     apt-get update > /dev/null
 
     # Osmosis requires java
-    apt-get -y install openjdk-9-jre
+    apt-get -y install openjdk-11-jre
 
     # Create folder
     mkdir -p /usr/local/osmosis
@@ -148,10 +154,10 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     fi
 
     # Create a folder for the new version
-    mkdir -p /usr/local/osmosis/osmosis-0.43.1
+    mkdir -p /usr/local/osmosis/osmosis-0.46
 
     # Unpack into it
-    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.43.1
+    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.46
 
     # Remove the download archive
     rm -f /usr/local/osmosis/osmosis-latest.tgz
@@ -159,8 +165,8 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     # Repoint current to the new install
     rm -f /usr/local/osmosis/current
 
-    # Whatever the version number is here - replace the 0.43.1
-    ln -s /usr/local/osmosis/osmosis-0.43.1 /usr/local/osmosis/current
+    # Whatever the version number is here - replace the 0.46
+    ln -s /usr/local/osmosis/osmosis-0.46 /usr/local/osmosis/current
 
     # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
     if [ ! -L /usr/local/bin/osmosis ]; then
@@ -223,7 +229,20 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 done
 
 
+# Fetching dependencies
+echo "#	$(date)	Fetching dependencies"
+apt install -y libboost-dev cmake gcc g++ python-dev make doxygen graphviz
+
+# Build bridges
+cd ${importContentFolder}/graph
+./buildbridge.sh
+
+# Build islands
+cd ${importContentFolder}/graph/islands_cpp
+./build.sh
+
 # Confirm end of script
+cd ${importContentFolder}
 echo "#	$(date)	All now installed."
 
 # Return true to indicate success

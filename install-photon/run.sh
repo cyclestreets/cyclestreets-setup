@@ -76,24 +76,23 @@ chown $username /opt/photon/
 cd /opt/photon/
 
 # Get the latest distribution
-VERSION='0.2.7'
+VERSION='0.3-beta3'
 if [ ! -f "/opt/photon/photon-${VERSION}.jar" ]; then
-	$asCS wget "http://photon.komoot.de/data/photon-${VERSION}.jar"
+	$asCs wget "https://github.com/komoot/photon/releases/download/${VERSION}/photon-${VERSION}.jar"
 fi
 
 # Get the latest data
 sudo apt-get -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
-	echo "Downing compiled data file (around 70GB)"
-mv /opt/photon.old/photon-db-latest.tar /opt/photon/
-#	$asCS wget http://download1.graphhopper.com/public/photon-db-latest.tar.bz2
-#	$asCS pbzip2 -d photon-db-latest.tar.bz2
+	echo "Downing compiled data file (around 55GB, unpacks to 99GB)"
+	$asCS wget http://download1.graphhopper.com/public/photon-db-latest.tar.bz2
+	$asCS pbzip2 -d photon-db-latest.tar.bz2
 	$asCS tar vxf photon-db-latest.tar
 fi
 
 # Install init.d service; this essentially runs `java -jar photon-${VERSION}.jar`
 if [ ! -L /etc/init.d/photon ]; then
-	cp -pr "${SCRIPTDIRECTORY}/photon.init.d" /opt/photon/
+	cp -p "${SCRIPTDIRECTORY}/photon.init.d" /opt/photon/
 	sed -i "s/version=.+/version=\"${VERSION}\"/" /opt/photon/photon.init.d
 	ln -s /opt/photon/photon.init.d /etc/init.d/photon
 	chmod +x /opt/photon/photon.init.d

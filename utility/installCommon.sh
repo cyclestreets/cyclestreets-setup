@@ -8,27 +8,12 @@ mkdir -p ${websitesContentFolder}
 cd ${websitesContentFolder}
 
 # Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
-if [ ! -d ${websitesContentFolder}/.svn ]
+if [ ! -d ${websitesContentFolder}/.git ]
 then
-    ${asCS} svn co --username=${currentActualUser} --password="${repopassword}" --no-auth-cache http://svn.cyclestreets.net/cyclestreets ${websitesContentFolder}
+    ${asCS} git clone https://github.com/cyclestreets/cyclestreets.git ${websitesContentFolder}
 else
-    ${asCS} svn update --username=${currentActualUser} --password="${repopassword}" --no-auth-cache
+    ${asCS} git pull
 fi
-
-# Assume ownership of all the new files and folders
-echo "#	Starting a series of recursive chown/chmod to set correct file ownership and permissions"
-echo "#	chown -R ${username} ${websitesContentFolder}"
-chown -R ${username} ${websitesContentFolder}
-
-# Add group writability
-# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
-echo "#	chmod -R g+w ${websitesContentFolder}"
-chmod -R g+w ${websitesContentFolder}
-
-# Allow the Apache webserver process to write / add to the data/ folder
-echo "#	chown -R www-data ${websitesContentFolder}/data"
-chown -R www-data ${websitesContentFolder}/data
-
 
 # Ensure there's a custom sudoers file
 if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]; then
@@ -39,6 +24,12 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]
     # A number of other passwordless options are also included when operating in a variety of roles such as doing imports or running backup / restores.
     cat > ${csSudoers} << EOF
 # Permit cyclestreets user to control the routing service without a password
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cycleroutingd
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cycleroutingd
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cycleroutingd
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cycleroutingd
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cycleroutingd
+# The following version is deprecated in favour of the above
 cyclestreets ALL = (root) NOPASSWD: ${routingDaemonLocation}
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart

@@ -16,29 +16,24 @@ set -e
 
 ### CREDENTIALS ###
 
-# Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
-DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SCRIPTDIRECTORY=$DIR
+# Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
+# A more advanced technique will be required if this file is called via a symlink.
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
 
 # Name of the credentials file
-configFile=../.config.sh
+configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ./${configFile} ]; then
+if [ ! -x ${configFile} ]; then
     echo "#	The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 
 # Load the credentials
-. ./${configFile}
-
-# Logging
-# Use an absolute path for the log file to be tolerant of the changing working directory in this script
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "#	CycleStreets postcode installation in progress, follow log file with: tail -f ${setupLogFile}"
-echo "#	CycleStreets postcode installation $(date)" >> ${setupLogFile}
+. ${configFile}
 
 # ONS folder
 onsFolder=${websitesContentFolder}/import/ONSdata
@@ -53,23 +48,57 @@ if [ ! -r ONSdata.csv ]; then
     echo "#
 #	STOPPING: Required data files are not present.
 #
+#	Official
+#	--------
+#	(Source tends to move around see Alternative)
 #	Download the archived csv version of ONSPD data from:
 #	http://www.ons.gov.uk/ons/guide-method/geography/products/postcode-directories/-nspp-/index.html
 #
 #	Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
-#	cd ${onsFolder}
 #
+#	Alternative
+#	-----------
 #	This is an alternative source of data:
 #	http://parlvid.mysociety.org/os/
 #
-#	wget http://parlvid.mysociety.org/os/ONSPD_NOV_2016_csv.zip
-#	unzip ONSPD_NOV_2016_csv.zip
-#	rm ONSPD_NOV_2016_csv.zip
-#	mv ONSnov2016/Data/ONSPD_NOV_2016_UK.csv ${onsFolder}/ONSdata.csv
-";
+#	The following contains dates that will obviously need updating for next time.
+#
+cd ${onsFolder}
+wget http://parlvid.mysociety.org/os/ONSPD_FEB_2018_UK.zip
 
- # Terminate the script
- exit 1;
+# Extract this one file
+# Use the Old Order version as the New Order has different columns - if using that sync with the tabledefinitions.sql
+unzip ONSPD_FEB_2018_UK.zip Data/Old\ Order/ONSPD_FEB_2018_UK.csv
+rm ONSPD_FEB_2018_UK.zip
+
+# Move it
+mv Data/Old\ Order/ONSPD_FEB_2018_UK.csv ./ONSdata.csv
+
+# Clear up (other folders Documents/ User\ Guide/ only necessary when everything was unzipped)
+rm -r Data/
+
+# Re-run this script
+sudo ${ScriptHome}/install-postcode/run.sh
+";
+	# Terminate the script
+	exit 1;
+fi
+
+# Check if the data is old. It should be updated roughly every 6 months.
+daysOld=180
+# The find looks for files that were modified more than ${daysOld} days ago.
+if test `find "ONSdata.csv" -mtime +${daysOld}`
+then
+
+# Provide dowload instructions
+    echo "#
+#	STOPPING: Required data file is too old (more than ${daysOld} days}.
+#	Perhaps it was left over from a previous install.
+#	Remove the data, and re-run to get advice on updating:
+rm ${onsFolder}/ONSdata.csv
+";
+	# Terminate the script
+	exit 1;
 fi
 
 # External database
@@ -86,12 +115,20 @@ fi
 # Load the table definitions
 ${superMysql} ${externalDb} < tableDefinitions.sql
 
-# Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege. The --local option is needed in some situations.
+
+# Narrative
+echo "#	Loading CSV file"
+
+# Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege.
+# The --local option is needed in some situations.
 mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
 ## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
 ## SHOW WARNINGS;
+
+# Remove the data file
+rm ${onsFolder}/ONSdata.csv
 
 # Create an eastings northings file, which has to be done in a tmp location first otherwise there are privilege problems
 echo "#	Creating eastings northings file"
@@ -115,7 +152,7 @@ echo "#	Creating new postcode table"
 ${superMysql} ${externalDb} < newPostcodeTable.sql
 
 # Create the partial and district postcodes
-echo "#	Creating partial and postcode table"
+echo "#	Creating partial and district tables"
 ${superMysql} ${externalDb} < PartialPostcode.sql
 
 # Confirm end of script

@@ -1,2 +1,3 @@
-# Update site each hour from Git
-0 * * * * cyclestreets cd /var/www/bikedata/ && git pull --quiet
+# Update site regularly from Git
+0,15,30,45 *  * * *  cyclestreets  cd /var/www/bikedata/ && git pull --quiet
+0,15,30,45 *  * * *  cyclestreets  cd /var/www/bikedata/js/lib/Leaflet.LayerViewer/ && git pull --quiet

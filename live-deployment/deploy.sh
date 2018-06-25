@@ -74,10 +74,6 @@ if [ ! -r ${mysqlConfFile} ]; then
 # Most CycleStreets tables use MyISAM storage
 default-storage-engine = myisam
 default_tmp_storage_engine = myisam
-
-# Query Cache - on demand and best to limit to small efficient size
-query_cache_type        = 2
-query_cache_size        = 20M
 EOF
 
     # Allow the user to edit this file
@@ -102,6 +98,7 @@ apt-get install -y libdbi-perl libdbd-mysql-perl
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
 ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
 if [ -f /etc/munin/plugins/dnsresponsetime ]; then
 	wget -P /usr/share/munin/plugins/ --user-agent="Foo" http://ccgi.ambrosia.plus.com/debian/dnsresponsetime
 	chmod +x /usr/share/munin/plugins/dnsresponsetime

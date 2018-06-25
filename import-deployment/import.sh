@@ -1,12 +1,13 @@
 #!/bin/bash
-# Script to run an import of fresh CycleStreets data on Ubuntu
-# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
+#
+# SYNOPSIS
+#	import.sh [force]
+#
+# DESCRIPTION
+#	Main script for building new routing edition.
+#	Optional force argument is used to overwrite existing routing edition - which is convenient during development testing.
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
-
-# When in fallback mode uncomment the next two lines:
-#echo "# Skipping in fallback mode"
-#exit 1
 
 # Start an import run
 echo "#	$(date) CycleStreets import"
@@ -91,7 +92,7 @@ likelyEdition=routing$(date +%y%m%d)
 if [ -d ${importMachineEditions}/${likelyEdition} -o -L ${importMachineEditions}/${likelyEdition} ]; then
     echo "#	The edition already exists, check this folder: ${importMachineEditions}/${likelyEdition}"
 
-    # !! An argument could be used to force this to continue
+    # An argument can be used to force this to continue
     if [ "$1" != 'force' ]; then
 	echo "#	Abandoning - use force option to override"
 	exit 1
@@ -115,7 +116,10 @@ sudo ${ScriptHome}/utility/removeCoverageCSV.sh
 if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
 
     # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-    sudo ${routingDaemonLocation} stop
+    sudo ${routingDaemonStop}
+
+    # Close the website
+    ${superMysql} cyclestreets -e "update map_config set status = 'maintenance', journeyPlannerStatus = 'closed', notice = 'Building a new routing edition' where id = 1;";
 fi
 
 # Move to the right place
@@ -123,14 +127,22 @@ cd ${importContentFolder}
 
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 # Use a low priority to allow the server to be useful for serving other tasks such as tiles if necessary.
-nice -n10 php run.php
+nice -n12 php run.php
 
 # Restart mysql - as setup for passwordless sudo by the installer. This resets the MySQL configuration to default values, more suited to serving web pages and routes.
-echo "#	$(date)	Restarting MySQL to restore default configuration."
-sudo service mysql restart
+
+# Skip for cello testing [:] 23 Sep 2017 12:24:27
+#echo "#	$(date)	Restarting MySQL to restore default configuration."
+#sudo service mysql restart
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`
+
+
+# Reopen the website if it was closed earlier
+if [ -n "${stopRoutingDuringImport}" ]; then
+    ${superMysql} cyclestreets -e "update map_config set status = 'live', journeyPlannerStatus = 'live', notice = '' where id = 1;";
+fi
 
 # Report completion and next steps
 echo "#	$(date)	CycleStreets import has created a new edition: ${latestEdition}"

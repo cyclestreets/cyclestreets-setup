@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:
+# Provides:          Photon
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -12,7 +12,7 @@
 # Based on MIT-licensed template at: https://github.com/fhd/init-script-template/blob/master/template
 
 
-version="0.2.7"
+version="0.3-beta3"
 cmd="java -jar photon-${version}.jar"
 dir="/opt/photon/"
 user="root"

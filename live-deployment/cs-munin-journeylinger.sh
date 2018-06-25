@@ -1,33 +1,33 @@
 #!/bin/bash
-#	Generates CycleStreets data for munin
+#	Generates Journey planner peformance data for munin
 #
 # SYNOPSIS
-# 	munin-run cyclestreets [config]
+# 	munin-run journeylinger [config]
 #
 # DESCRIPTION
 # 	If the optional argument config is supplied (as the plain string: config), this script
 #	returns a summary of the parameters provided by this munin plugin.
 #	Without that argument the values of those parameters are returned.
 #
-# Configure
-# Install this package on the relevant server:
-# apt-get -y install munin-node
+# Dependencies
+#	munin-node
 #
 # Create a link to this script from the munin configuration:
-# sudo ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+# sudo ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
 #
 # Then restart munin node
 # sudo systemctl restart munin-node
 #
 # Example calls
-# sudo munin-run cyclestreets config
-# sudo munin-run cyclestreets
+# sudo munin-run journeylinger config
+# sudo munin-run journeylinger
 #
 # Remove
 # sudo rm /etc/munin/plugins/cyclestreets
 #
 # See also
 # https://wiki.cyclestreets.net/ServerMonitoring
+# http://guide.munin-monitoring.org/en/latest/develop/plugins/howto-write-plugins.html
 
 ### CREDENTIALS ###
 
@@ -65,56 +65,45 @@ fi
 
 # Outputs the config of this plugin
 output_config() {
-    echo "graph_title CycleStreets Usage"
+    echo "graph_title CycleStreets Journey Linger"
     echo "graph_category CycleStreets"
-    echo "itineraries.label Itineraries per 5 mins"
-    echo "journeys.label Journeys per 5 mins"
-    echo "failedJourneys.label Failed journeys per 5 mins"
-    echo "failedJourneys.warning 1"
-    echo "failedJourneys.critical 200"
-    echo "errors.label Errors per 5 mins"
-    echo "errors.warning 1"
-    echo "errors.critical 5"
+    echo "graph_vlabel Milliseconds"
+    echo "graph_info Performance of the CycleStreets journey API according to the apache access log."
+    
+    # Use an upper limit of 4 seconds so making it easier to compare with across servers
+    echo "graph_args -l 0 --upper-limit 4000 --rigid"
+
+    # Average linger
+    echo "journey_linger.label Average ms"
+    echo "journey_linger.info The time in milliseconds taken to respond to a CycleStreets journey API call according to the apache access log."
+    echo "journey_linger.colour CCAAEE"
+
+    # Linger of slowest
+    echo "journey_slowest.label Slowest ms"
+    echo "journey_slowest.info The longest time to plan a journey."
+    echo "journey_slowest.colour EECCCC"
+    echo "journey_slowest.line 3000:CCCCCC:3 second timeout"
+    
+    # Linger at 90th percentile
+    echo "journey_top90linger.label 90th percentile ms"
+    echo "journey_top90linger.info Linger at the 90th percentile when ordered by time ascending."
+    echo "journey_top90linger.colour 3366DD"
+    echo "journey_top90linger.line 700:DDBB44:700ms threshold"
+    echo "journey_top90linger.warning 0:600"
+    echo "journey_top90linger.critical 0:700"
 }
 
 # Outputs the statistics
 output_values() {
-    printf "itineraries.value %d\n" $(number_of_itineraries)
-    printf "journeys.value %d\n" $(number_of_journeys)
-    printf "failedJourneys.value %d\n" $(number_of_failed_journeys)
-    printf "errors.value %d\n" $(number_of_errors)
+    python ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${csHostname}-access.log | while read line ; do
+	echo $line
+    done
 }
 
 # Explain arguments to this script
 output_usage() {
     printf >&2 "%s - CycleStreets graphs\n" ${0##*/}
     printf >&2 "Usage: %s [config]\n" ${0##*/}
-}
-
-## Internal functions that provide the statistics
-
-# Number of itineraries in a five minute period
-number_of_itineraries() {
-    #${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countItinerariesLastFiveMinutes
-}
-
-# Number of journeys in a five minute period
-number_of_journeys() {
-    #${superMysql} cyclestreets -sNe "select countJourneysLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countJourneysLastFiveMinutes
-}
-
-# Number of journeys in a five minute period
-number_of_failed_journeys() {
-    #${superMysql} cyclestreets -sNe "select countFailedJourneysLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countFailedJourneysLastFiveMinutes
-}
-
-# Number of errors in a five minute period
-number_of_errors() {
-    #${superMysql} cyclestreets -sNe "select countErrorsLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countErrorsLastFiveMinutes
 }
 
 

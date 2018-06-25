@@ -82,11 +82,11 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
-# Ensure locale; see: http://stackoverflow.com/questions/11300633/svn-cannot-set-lc-ctype-locale
+# Ensure locale
 $packageInstall language-pack-en-base
 
-# Install basic software
-$packageInstall wget dnsutils man-db subversion git emacs nano bzip2
+# Install basic utility software
+$packageInstall wget dnsutils man-db subversion git emacs nano bzip2 screen dos2unix
 $packageInstall mlocate
 updatedb
 
@@ -189,12 +189,10 @@ umask 0002
 # It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
 # (The equivalent for the setuid bit does not work because of security issues and so file owners are set later on in the script.)
 chmod g+ws /websites
+
 # The following folders and files are be created with root as owner, but that is fixed later on in the script.
-
-# Create a folder for Apache to log access / errors:
+# Create a folder for Apache to log access / errors, and backups:
 mkdir -p ${websitesLogsFolder}
-
-# Create a folder for backups
 mkdir -p ${websitesBackupsFolder}
 
 # Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility
@@ -225,10 +223,12 @@ collation-server = utf8mb4_unicode_ci
 character-set-server = utf8mb4
 sql_mode=NO_ENGINE_SUBSTITUTION
 
-# !! The following are not part of utf8 configuration but this a convenient to put them.
+# !! The following are not part of utf8 configuration but this a convenient place to put them.
 
-# Enable query cache on demand for mysql 5.7
-query_cache_type = 2
+# Use tables rather than files to log problems
+log_output=table
+slow_query_log = ON
+long_query_time = 1
 
 # Set this variable as empty which allows access to any files in any local directory (needed for reading elevations)
 secure_file_priv =
@@ -241,17 +241,18 @@ fi
 
 # Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
 # !! Be wary of this as the settings in here will override those in any supplied defaults-extra-file
-if [ ! -e ${mySuperCredFile} ]; then
-	
-	# Create the file owned by the user
-	mkdir -p $websitesContentFolder
-	${asCS} touch ${mySuperCredFile}
-	
-	# Remove other readability
-	${asCS} chmod o-r ${mySuperCredFile}
-	
-	# Write config
-	${asCS} cat > ${mySuperCredFile} << EOF
+if [ "${mySuperCredFile}" ]; then
+	if [ ! -e ${mySuperCredFile} ]; then
+		
+		# Create the file owned by the user
+		mkdir -p $websitesContentFolder
+		${asCS} touch ${mySuperCredFile}
+		
+		# Remove other readability
+		${asCS} chmod o-r ${mySuperCredFile}
+		
+		# Write config
+		${asCS} cat > ${mySuperCredFile} << EOF
 [client]
 user=root
 password=${mysqlRootPassword}
@@ -262,7 +263,7 @@ password=${mysqlRootPassword}
 # Equiv to -A at startup, stops tabs trying to autocomplete
 no-auto-rehash
 EOF
-	
+	fi
 fi
 
 # Disable AppArmor for MySQL if present and not already disabled.

@@ -8,7 +8,7 @@ echo "#	$(date)	CycleStreets installation"
 
 # Ensure this script is run using sudo
 if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run using sudo from an account that has access to the CycleStreets svn repo."
+    echo "#	This script must be run using sudo from an account that has access to the CycleStreets Git repo."
     exit 1
 fi
 
@@ -55,8 +55,8 @@ echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 # Ensure JSON support
 apt-get -y install php-json
 
-# Ensure Zip support
-apt-get -y install php7.0-zip
+# Ensure Zip support (e.g. for multiple photomap uploads)
+apt-get -y install php7.2-zip
 
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
 apt-get -y install imagemagick php-imagick
@@ -91,10 +91,6 @@ apt-get -y install curl libxml-xpath-perl
 apt-get -y install libimage-exiftool-perl
 # This one might not actually be needed
 apt-get -y install libxml-dom-perl
-# Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
-chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
-chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
-chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
@@ -133,6 +129,29 @@ if [ -n "${datapassword}" -a ! -e ${websitesBackupsFolder}/${potlatchEditorFile}
 	echo "#	$(date)	Completed installation of potlatch editor"
 fi
 
+# Assume ownership of all the new files and folders
+echo "#	Starting a series of recursive chown/chmod to set correct file ownership and permissions"
+echo "#	chown -R ${username} ${websitesContentFolder}"
+chown -R ${username} ${websitesContentFolder}
+chown -R ${username} ${websitesLogsFolder}
+chown -R ${username} ${websitesBackupsFolder}
+
+# Add group writability
+# This is necessary because although the umask is set correctly above (for the root user) the folder structure has been created via the svn co/update under ${asCS}
+echo "#	chmod -R g+w ${websitesContentFolder}"
+chmod -R g+w ${websitesContentFolder}
+chmod -R g+w ${websitesLogsFolder}
+chmod -R g+w ${websitesBackupsFolder}
+
+# Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
+chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
+chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
+chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
+
+# Allow the Apache webserver process to write / add to the data/ folder
+echo "#	chown -R www-data ${websitesContentFolder}/data"
+chown -R www-data ${websitesContentFolder}/data
+
 # Select changelog
 touch ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
 chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectChangeLog.sql
@@ -140,6 +159,9 @@ chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectCh
 # Requested missing cities logging (will disappear when ticket 645 cleared up)
 touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 chown www-data:${rollout} ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
+
+# Tests autogeneration
+chown www-data:${rollout} ${websitesContentFolder}/tests/
 
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
 cslocalconf=cyclestreets.conf
@@ -155,6 +177,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	# Note: ServerName should not use wildcards; use ServerAlias for that.
 	ServerName cyclestreets.net
 	ServerAlias *.cyclestreets.net
+	ServerAlias ${csHostname}
 	
 	# Logging
 	CustomLog /websites/www/logs/cyclestreets.net-access.log combined
@@ -268,107 +291,14 @@ echo "#	Setting global VirtualHost configuration in ${globalApacheConfigFile}"
 
 # Check if the local global apache config file exists already
 if [ ! -r ${globalApacheConfigFile} ]; then
-    # Create the global apache config file
-    cat > ${globalApacheConfigFile} << EOF
-# Provides local configuration that affects all hosted sites.
-
-# This file is loaded from the /etc/apache2/conf.d folder, its name begins with a z so that it is loaded last from that folder.
-# The files in the conf.d folder are all loaded before any VirtualHost files.
-
-# Increase threads
-# Note: 'a2query -M' shows the type (prefork/worker) which is in use
-MaxRequestWorkers 256
-
-# Avoid giving away unnecessary information about the webserver configuration
-ServerSignature Off
-ServerTokens ProductOnly
-php_admin_value expose_php 0
-
-# Enable status page (login version - there will also be /server-status for localhost for Munin access)
-<Location /status>
-	SetHandler server-status
-	AuthUserFile /etc/apache2/.htpasswd
-	AuthName "Status"
-	AuthType Basic
-	Require valid-user
-</Location>
-
-# ServerAdmin
-ServerAdmin ${administratorEmail}
-
-# PHP environment
-php_value short_open_tag off
-
-# Unicode UTF-8
-AddDefaultCharset utf-8
-
-# Disallow /somepage.php/Foo to load somepage.php
-AcceptPathInfo Off
-
-# Logging
-LogLevel warn
-
-# Statistics
-Alias /images/statsicons /websites/configuration/analog/images
-
-# Ensure FCKeditor .xml files have the correct MIME type
-<Location /_fckeditor/>
-	AddType application/xml .xml
-</Location>
-
-# Deny photomap file reading directly
-<Directory /websites/www/content/data/photomap/>
-	deny from all
-</Directory>
-<Directory /websites/www/content/data/photomap2/>
-	deny from all
-</Directory>
-<Directory /websites/www/content/data/photomap3/>
-	deny from all
-</Directory>
-
-# Disallow loading of .svn folder contents
-<DirectoryMatch .*\.svn/.*>
-	Deny From All
-</DirectoryMatch>
-
-# Deny access to areas not intended to be public
-<LocationMatch ^/(archive|configuration|documentation|import|classes|libraries|scripts|routingengine)>
-	order deny,allow
-	deny from all
-</LocationMatch>
-
-# Disallow use of .htaccess file directives by default
-<Directory />
-	# Options FollowSymLinks
-	AllowOverride None
-	<IfModule mod_authz_core.c>
-		Require all granted
-	</IfModule>
-</Directory>
-
-# Allow use of RewriteRules (which one of the things allowed by the "FileInfo" type of override) for the blog area
-<Directory /websites/www/content/blog/>
-	AllowOverride FileInfo
-	<IfModule mod_authz_core.c>
-		Require all granted
-	</IfModule>
-</Directory>
-
-# Use an authentication dialog for login to the blog as this page is subject to attack
-<FilesMatch "wp-login.php">
-    AuthName "WordPress Admin"
-    AuthType Basic
-    AuthUserFile /etc/apache2/.htpasswd
-    require valid-user
-</FilesMatch>
-
-EOF
-
-    # Add IP bans - quoted to preserve newlines
-    echo "${ipbans}" >> ${globalApacheConfigFile}
+	
+	# Copy in the global Apache config file
+	cp -pr "${ScriptHome}/install-website/zcsglobal.conf" "${globalApacheConfigFile}"
+	
+	# Substitute in the Administrator e-mail
+	sed -i -e "s/%administratorEmail/${administratorEmail}/" "${globalApacheConfigFile}"
 else
-    echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
+	echo "#	Global apache configuration file already exists: ${globalApacheConfigFile}"
 fi
 
 # Enable the configuration file (only necessary in Apache 2.4)
@@ -425,7 +355,7 @@ if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/cyclestreetsSample.sql
+    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
@@ -538,13 +468,13 @@ then
 
     # Load data
     echo "#	Load ${sampleRoutingDb} data"
-    gunzip < ${websitesContentFolder}/documentation/schema/routingSample.sql.gz | ${superMysql} ${sampleRoutingDb}
+    gunzip < ${websitesContentFolder}/documentation/schema/sampleRouting.sql.gz | ${superMysql} ${sampleRoutingDb}
 fi
 
 # Unless the sample routing data exists:
 if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingDb} ]; then
     echo "#	Unpacking ${sampleRoutingDb} data"
-    tar xf ${websitesContentFolder}/documentation/schema/routingSampleData.tar.gz -C ${websitesContentFolder}/data/routing
+    tar xf ${websitesContentFolder}/documentation/schema/sampleRoutingData.tar.gz -C ${websitesContentFolder}/data/routing
 fi
 
 
@@ -558,7 +488,7 @@ if [ ! -x "${routingEngineConfigFile}" ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt-get -y install gcc g++ python-dev
+sudo apt-get -y install gcc g++ python-dev make cmake doxygen graphviz
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/routingengine/"
@@ -608,7 +538,7 @@ if $installRoutingAsDaemon ; then
     if [ $? -ne 0 ]
     then
 	# Start the service
-	${routingDaemonLocation} start
+	${routingDaemonStart}
 	echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
     fi
     # Restore abandon-on-error
@@ -628,7 +558,7 @@ else
     if [ -L ${routingDaemonLocation} ]; then
 
 	# Ensure it is stopped
-	${routingDaemonLocation} stop
+	${routingDaemonStop}
 
 	# Remove the symlink
 	rm ${routingDaemonLocation}

@@ -33,15 +33,17 @@ quietmode()
 
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
+# See install-routing-data for best example of using this
 while getopts ":hq" option ; do
     case ${option} in
         h) usage; exit ;;
-	# Consume this argument, set quiet mode and proceed
-        q) shift $((OPTIND-1)); quietmode ;;
+        q) quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
 
+# After getopts is done, shift all processed options away with
+shift $((OPTIND-1))
 
 # Echo output only if the verbose option has been set
 vecho()
@@ -205,7 +207,7 @@ else
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${removeEdition}" == "${currentRoutingEdition}" ]; then
 	vecho "#	The proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
-	vecho "#	Stop it using: sudo service cycleroutingd stop"
+	vecho "#	Stop it using: sudo /bin/systemctl stop cycleroutingd"
 	exit 1
     fi
 fi

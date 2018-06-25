@@ -21,6 +21,7 @@ EOF
 }
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
+# See install-routing-data for best example of using this
 while getopts ":h" option ; do
     case ${option} in
         h) usage; exit ;;
@@ -78,18 +79,6 @@ fi
 
 ## Main body from here
 
-# Check the supplied argument - if exactly one use it, else default to latest routing db
-if [ $# -eq 1 ]
-then
-
-    # Allocate that argument
-    newEdition=$1
-else
-
-    # Determine latest edition (the -s suppresses the tabular output)
-    newEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME desc limit 1;")
-fi
-
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	echo "# User ${username} must exist: please run the main website install script"
@@ -114,20 +103,36 @@ if [ ! -f ${routingDaemonLocation} ]; then
 	exit 1
 fi
 
-# Check a local routing server is configure
+# Check a local routing server is configured
 if [ -z "${localRoutingUrl}" ]; then
 	echo "#	The local routing service is not specified."
 	exit 1
 fi
 
+# Check the supplied argument - if exactly one use it, else default to latest routing db
+if [ $# -eq 1 ]
+then
+
+    # Allocate that argument
+    newEdition=$1
+else
+
+    # Determine latest edition (the -s suppresses the tabular output)
+    newEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME desc limit 1;")
+fi
+
+# Announce edition
+echo "#	Planning to switch to edition: ${newEdition}"
+
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
-# Check the local routing service - but it is no longer a requirement that it is currently serving routes.
-# The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
+# Check the local routing service.
+# The status check produces an error if it is not running, so temporarily
+# turn off abandon-on-error to catch and report the problem.
 set +e
 
-# Note: we must use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
+# Note: use a path to check the daemon, rather than service which is not available to non-root users on debian
 localRoutingStatus=$(${routingDaemonLocation} status)
 if [ $? -ne 0 ]
 then
@@ -135,10 +140,12 @@ then
 else
 
     # Check not already serving this edition
+    echo "#	Checking current edition on: ${localRoutingUrl}"
 
     # POST the request to the server
     currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
+    # Check empty response
     if [ -z "${currentRoutingEdition}" ]; then
 	echo "#	The current edition at ${localRoutingUrl} could not be determined."
 	exit 1
@@ -147,9 +154,17 @@ else
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
-	echo "#	Restart it using: sudo service cycleroutingd restart"
-	exit 1
+	echo "#	Restart it using: sudo /bin/systemctl restart cycleroutingd"
+	echo "#	Routing restart will be attempted:"
+	sudo /bin/systemctl restart cycleroutingd
+	echo "#	Routing service has restarted"
+
+	# Clean exit
+	exit 0
     fi
+
+    # Report edition
+    echo "#	Current edition: ${currentRoutingEdition}"
 fi
 
 # Restore abandon-on-error
@@ -222,7 +237,7 @@ chmod a+x $routingEngineConfigFile
 # This seems to be necessary when there are large amounts of memory being freed by stopping.
 
 # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-sudo ${routingDaemonLocation} stop
+sudo ${routingDaemonStop}
 
 # Check the local routing service has stopped
 localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
@@ -236,7 +251,7 @@ while [[ ! "$localRoutingStatus" =~ stopped ]]; do
 done
 
 # Start
-sudo ${routingDaemonLocation} start
+sudo ${routingDaemonStart}
 
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)

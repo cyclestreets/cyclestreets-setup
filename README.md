@@ -75,8 +75,6 @@ sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;
 
 After the repository has been cloned from Github above, proceed by making your own `.config.sh` file based on the [.config.sh.template](https://github.com/cyclestreets/cyclestreets-setup/blob/master/.config.sh.template) file.
 
-Provide a password for the subversion repository for your username, ie `repopassword` in the config file. By default the script will try the same password as provided for the cyclestreteets user.
-
 The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using `sudo`).
 
     user@machine:/opt/cyclestreets-setup/$ sudo install-website/run.sh

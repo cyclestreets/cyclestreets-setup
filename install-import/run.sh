@@ -9,7 +9,7 @@ echo "#	$(date)	CycleStreets Import System installation"
 
 # The script should be run using sudo
 if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run using sudo from an account that has access to the CycleStreets svn repo." 1>&2
+    echo "#	This script must be run using sudo from an account that has access to the CycleStreets Git repo." 1>&2
     exit 1
 fi
 

@@ -9,7 +9,7 @@ if [ "$(id -u)" = "0" ]; then
 fi
 
 #	Make sure the latest code is present, use quiet option to suppress output
-svn update -q /websites/www/content/
+git pull -q /websites/www/content/
 
 
 #	Delete previously generated routing database, tables and tsv files to conserve space.

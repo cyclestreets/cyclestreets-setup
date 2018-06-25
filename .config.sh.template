@@ -35,9 +35,6 @@ password=
 # Group, the user will be added to this group
 rollout=rollout
 
-# Password for the CycleStreets subversion (svn) repository
-repopassword="${password}"
-
 # Password for cyclestreets@downloads.cyclestreets.net to download extra data
 datapassword=
 

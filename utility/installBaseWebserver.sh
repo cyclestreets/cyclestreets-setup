@@ -82,7 +82,7 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
-# Ensure locale; see: http://stackoverflow.com/questions/11300633/svn-cannot-set-lc-ctype-locale
+# Ensure locale
 $packageInstall language-pack-en-base
 
 # Install basic utility software

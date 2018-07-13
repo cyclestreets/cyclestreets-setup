@@ -77,7 +77,8 @@ After the repository has been cloned from Github above, proceed by making your o
 
 The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using `sudo`).
 
-    user@machine:/opt/cyclestreets-setup/$ sudo install-website/run.sh
+    cd /opt/cyclestreets-setup/
+    sudo install-website/run.sh
 
 
 ## Use

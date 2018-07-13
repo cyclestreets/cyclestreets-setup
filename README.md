@@ -75,6 +75,10 @@ sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;
 
 After the repository has been cloned from Github above, proceed by making your own `.config.sh` file based on the [.config.sh.template](https://github.com/cyclestreets/cyclestreets-setup/blob/master/.config.sh.template) file.
 
+    cd /opt/cyclestreets-setup/
+    cp .config.sh.template .config.sh
+    pico -w .config.sh
+
 The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using `sudo`).
 
     cd /opt/cyclestreets-setup/

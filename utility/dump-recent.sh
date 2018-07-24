@@ -47,7 +47,7 @@ else
     mysqldump ${dumpOptions} csArchive map_itinerary_archive --where="id>=${minItineraryId}" | gzip > ${dump}
 
     # Append the other tables (different where)
-    mysqldump ${dumpOptions} csArchive map_wpt_archive map_street_archive map_jny_poi_archive --where="itineraryId>=${minItineraryId}" | gzip >> ${dump}
+    mysqldump ${dumpOptions} csArchive map_waypoint_archive map_street_archive map_jny_poi_archive --where="itineraryId>=${minItineraryId}" | gzip >> ${dump}
 
     # Append the journey archive table avoiding rows with invalid geometry
     mysqldump ${dumpOptions} csArchive map_journey_archive --where="itineraryId>=${minItineraryId} and st_isvalid(routePoints) = 1" | gzip >> ${dump}

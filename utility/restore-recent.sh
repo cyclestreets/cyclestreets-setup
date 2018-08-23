@@ -34,9 +34,6 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${webs
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${websitesContentFolder}/data
 
-# GeoSynchronization photos
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/synchronization ${websitesContentFolder}/data
-
 # Hosted
 rsync -a --cvs-exclude ${server}:${websitesContentFolder}/hosted ${websitesContentFolder}/
 

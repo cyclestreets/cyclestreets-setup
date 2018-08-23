@@ -8,7 +8,6 @@ websitesContentFolder=$1
 chown -R www-data ${websitesContentFolder}/data/photomap
 chown -R www-data ${websitesContentFolder}/data/photomap2
 chown -R www-data ${websitesContentFolder}/data/photomap3
-chown -R www-data ${websitesContentFolder}/data/synchronization
 
 # This is filled by class settingsAssignment
 chown -R www-data ${websitesContentFolder}/documentation/RequestedMissingCities.tsv

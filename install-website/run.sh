@@ -82,13 +82,6 @@ apt-get -y install ntp
 apt-get -y install curl libxml-xpath-perl
 
 
-# Geolocation by synchronization
-# https://github.com/cyclestreets/cyclestreets/wiki/GPS-Syncronization
-# For gpsPhoto.pl, add dependencies
-apt-get -y install libimage-exiftool-perl
-# This one might not actually be needed
-apt-get -y install libxml-dom-perl
-
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
 # Note: using "apt-get -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
@@ -139,11 +132,6 @@ echo "#	chmod -R g+w ${websitesContentFolder}"
 chmod -R g+w ${websitesContentFolder}
 chmod -R g+w ${websitesLogsFolder}
 chmod -R g+w ${websitesBackupsFolder}
-
-# Ensure the webserver (and group, but not others ideally) have executability on gpsPhoto.pl
-chown www-data ${websitesContentFolder}/libraries/gpsPhoto.pl
-chmod -x ${websitesContentFolder}/libraries/gpsPhoto.pl
-chmod ug+x ${websitesContentFolder}/libraries/gpsPhoto.pl
 
 # Allow the Apache webserver process to write / add to the data/ folder
 echo "#	chown -R www-data ${websitesContentFolder}/data"

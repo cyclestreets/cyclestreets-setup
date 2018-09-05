@@ -146,6 +146,13 @@ fi
 # Ubuntu Server 16.04 LTS does not include add-apt-repository so this adds it:
 $packageInstall software-properties-common
 
+# Let's Encrypt / Certbot; see: https://certbot.eff.org/lets-encrypt/ubuntuxenial-apache
+# Create a certificate using:
+#   sudo certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w <path> --email <email> -d <domain> -d <non-www-domain>
+add-apt-repository -y ppa:certbot/certbot
+apt-get update
+apt-get install -y python-certbot-apache
+
 # PHP
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php
 

@@ -55,6 +55,9 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost --rout
 
 # Archive the data
 sampleRoutingData=sampleRoutingData.tar.gz
+# Remove the compressed versions of the database and tsv files
+rm -f ${websitesContentFolder}/data/routing/${sampleRoutingDb}/dump.sql.gz
+rm -f ${websitesContentFolder}/data/routing/${sampleRoutingDb}/tsv.tar.gz
 tar czf ${websitesContentFolder}/documentation/schema/${sampleRoutingData} -C ${websitesContentFolder}/data/routing ${sampleRoutingDb}
 
 #	Advise

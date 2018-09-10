@@ -75,9 +75,6 @@ apt-get -y install ffmpeg
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets - maybe was needed with ffmpeg?)
 # apt-get -y install libapache2-mod-macro
 
-# Install NTP to keep the clock correct (e.g. to avoid wrong GPS synchronisation timings)
-apt-get -y install ntp
-
 # These are used by deployment scripts to correspond with the routing servers via xml
 apt-get -y install curl libxml-xpath-perl
 

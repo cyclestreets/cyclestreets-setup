@@ -86,7 +86,8 @@ apt-get -y autoremove
 $packageInstall language-pack-en-base
 
 # Install basic utility software
-$packageInstall wget dnsutils man-db subversion git emacs nano bzip2 screen dos2unix
+$packageInstall wget dnsutils man-db git emacs nano bzip2 screen
+# $packageInstall dos2unix ## !! Temporarily commented out as not available in 18.04.1
 $packageInstall mlocate
 updatedb
 

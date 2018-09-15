@@ -2,6 +2,9 @@
 # Script to install CycleStreets Postcodes on Ubuntu
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
+#
+# Run using:
+# sudo /opt/cyclestreets-setup/install-postcode/run.sh
 
 echo "#	CycleStreets Postcode installation $(date)"
 
@@ -64,15 +67,14 @@ if [ ! -r ONSdata.csv ]; then
 #	The following contains dates that will obviously need updating for next time.
 #
 cd ${onsFolder}
-wget http://parlvid.mysociety.org/os/ONSPD_FEB_2018_UK.zip
+wget http://parlvid.mysociety.org/os/ONSPD/2018-08.zip
 
 # Extract this one file
-# Use the Old Order version as the New Order has different columns - if using that sync with the tabledefinitions.sql
-unzip ONSPD_FEB_2018_UK.zip Data/Old\ Order/ONSPD_FEB_2018_UK.csv
-rm ONSPD_FEB_2018_UK.zip
+unzip 2018-08.zip Data/ONSPD_AUG_2018_UK.csv
+rm 2018-08.zip
 
 # Move it
-mv Data/Old\ Order/ONSPD_FEB_2018_UK.csv ./ONSdata.csv
+mv Data/ONSPD_AUG_2018_UK.csv ./ONSdata.csv
 
 # Clear up (other folders Documents/ User\ Guide/ only necessary when everything was unzipped)
 rm -r Data/

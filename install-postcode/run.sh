@@ -123,7 +123,7 @@ echo "#	Loading CSV file"
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege.
 # The --local option is needed in some situations.
-mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --local ${externalDb} ${onsFolder}/ONSdata.csv
+mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --ignore-lines=1 --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
 ## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
@@ -131,23 +131,6 @@ mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-option
 
 # Remove the data file
 rm ${onsFolder}/ONSdata.csv
-
-# Create an eastings northings file, which has to be done in a tmp location first otherwise there are privilege problems
-echo "#	Creating eastings northings file"
-rm -f /tmp/eastingsnorthings.csv
-
-# Exclude the 22,000+ broken postcodes that lie at the origin of the (east|north)ing grid.
-${superMysql} ${externalDb} -e "select PCD,OSEAST1M,OSNRTH1M from ONSdata where OSEAST1M > 0 and OSNRTH1M > 0 INTO OUTFILE '/tmp/eastingsnorthings.csv' FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n';"
-mv /tmp/eastingsnorthings.csv ${onsFolder}
-
-# Convert all (takes a few minutes)
-echo "#	Converting eastings northings to lon/lat"
-php -d memory_limit=1000M  converteastingsnorthings.php
-rm eastingsnorthings.csv
-mv latlons.csv map_postcodes.csv
-# The --local option is needed in some situations.
-mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-terminated-by=',' --lines-terminated-by="\n" --local ${externalDb} ${onsFolder}/map_postcodes.csv
-rm map_postcodes.csv
 
 # Tidy extracted data into postcode table
 echo "#	Creating new postcode table"

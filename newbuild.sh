@@ -164,6 +164,7 @@ tail -n3 import/log.txt >> ${summaryFile}
 # Run tests relevant to the new build, appending to summary
 php runtests.php "call=nearestpoint" >> ${summaryFile}
 php runtests.php "call=journey" >> ${summaryFile}
+php runtests.php "call=elevation.values" >> ${summaryFile}
 
 # Mail summary
 if [ -n "${notifyEmail}" ]; then
@@ -171,11 +172,10 @@ if [ -n "${notifyEmail}" ]; then
     # Send last lines of log and test results
     cat ${summaryFile} | mail -s "${csHostname} import finished" "${notifyEmail}"
 
-else
-
-    # Report
-    cat ${summaryFile}
 fi
+
+# Report
+cat ${summaryFile}
 
 ## Finish
 vecho "#\tFinished $0"

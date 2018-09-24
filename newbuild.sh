@@ -164,7 +164,8 @@ tail -n3 import/log.txt >> ${summaryFile}
 # Run tests relevant to the new build, appending to summary
 php runtests.php "call=nearestpoint" >> ${summaryFile}
 php runtests.php "call=journey" >> ${summaryFile}
-php runtests.php "call=elevation.values" >> ${summaryFile}
+# Compare new coverage with when the elevation.values auto tests were created
+php runtests.php "call=elevation.values&name=Elevation auto generated test:" >> ${summaryFile}
 
 # Mail summary
 if [ -n "${notifyEmail}" ]; then

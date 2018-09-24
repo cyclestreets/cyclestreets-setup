@@ -233,26 +233,7 @@ echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition
 chmod a+x $routingEngineConfigFile
 
 # Restart the routing service
-# Rather than use the restart option to the service, it is stopped then started. This enables the script to verify that the service did stop properly in between.
-# This seems to be necessary when there are large amounts of memory being freed by stopping.
-
-# Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-sudo ${routingDaemonStop}
-
-# Check the local routing service has stopped
-localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
-echo "#	Initial status: ${localRoutingStatus}"
-
-# Wait until it has stopped
-while [[ ! "$localRoutingStatus" =~ stopped ]]; do
-    sleep 10
-    localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
-    echo "#	Status: ${localRoutingStatus}"
-done
-
-# Start
-sudo ${routingDaemonStart}
-
+sudo ${routingDaemonRestart}
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
 localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
@@ -261,7 +242,7 @@ echo "#	Initial status: ${localRoutingStatus}"
 # Wait until it has restarted
 # !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
-    sleep 10
+    sleep 12
     localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
     echo "#	Status: ${localRoutingStatus}"
 done

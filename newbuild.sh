@@ -98,6 +98,8 @@ fi
 
 ### Main body of script ###
 
+# Bomb out if something goes wrong
+set -e
 
 ## Start
 vecho "#\tStarting $0"

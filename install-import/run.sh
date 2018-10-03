@@ -140,10 +140,10 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     echo "#	$(date)	CycleStreets / Osmosis installation"
 
     # Prepare the apt index
-    apt-get update > /dev/null
+    apt update > /dev/null
 
     # Osmosis requires java
-    apt-get -y install openjdk-11-jre
+    apt install default-jre
 
     # Create folder
     mkdir -p /usr/local/osmosis

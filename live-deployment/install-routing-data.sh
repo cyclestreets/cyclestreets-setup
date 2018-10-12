@@ -402,6 +402,28 @@ else
 ### Alternative strategy for transfering database demonstrated for user: simon
 
 ## On source machine
+# In mysql park some tables
+# rmysql
+
+-- Create database to park the tables
+create database routing180000;
+use ${importEdition}
+select database();
+
+-- Park these tables - which are not necessary on the live machine
+-- Map tables
+rename table ${importEdition}.map_cello_endLeg to routing180000.map_cello_endLeg;
+rename table ${importEdition}.map_cello_joint to routing180000.map_cello_joint;
+rename table ${importEdition}.map_cello_leg to routing180000.map_cello_leg;
+rename table ${importEdition}.map_cello_minCosts to routing180000.map_cello_minCosts;
+rename table ${importEdition}.map_cello_routing to routing180000.map_cello_routing;
+rename table ${importEdition}.map_elevation to routing180000.map_elevation;
+-- Dev tables
+rename table ${importEdition}.dev_impassableWay to routing180000.dev_impassableWay;
+rename table ${importEdition}.dev_reunifyCandidate to routing180000.dev_reunifyCandidate;
+rename table ${importEdition}.dev_reunifyCandidate_parked to routing180000.dev_reunifyCandidate_parked;
+rename table ${importEdition}.dev_viaduct to routing180000.dev_viaduct;
+
 # Shutdown mysql
 # simon@${importHostname}:~$
 sudo systemctl stop mysql
@@ -419,7 +441,10 @@ sudo chown -R simon.simon ~/tmp/${importEdition}
 nice -n12 rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
 
 # Move copy into datbase
+# Ownership
 sudo chown -R mysql.mysql ~/tmp/${importEdition}
+
+# Move
 sudo mv ~/tmp/${importEdition} /var/lib/mysql/
 
 # May be necessary to restart mysql
@@ -431,18 +456,45 @@ smysql ${importEdition} < /websites/www/content/documentation/schema/nearestPoin
 
 ## Build the photo index
 smysql ${importEdition} < /websites/www/content/documentation/schema/photosEnRoute.sql
-smysql ${importEdition} -e "call indexPhotos(false,0);"
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
+
+# This takes about an hour
+smysql ${importEdition} -e "call indexPhotos(false,0);"
 
 ## Clean up
 ## Back on source machine
 # simon@${importHostname}:~$
 # Put the database back
+# Ownership
 sudo chown -R mysql.mysql ~/tmp/${importEdition}
+
+# Move
 sudo mv ~/tmp/${importEdition} /var/lib/mysql/
+
+# Start mysql
 sudo systemctl start mysql
+
+# Restore the parked tables
+-- Map tables
+rename table routing180000.map_cello_endLeg to ${importEdition}.map_cello_endLeg;
+rename table routing180000.map_cello_joint to ${importEdition}.map_cello_joint;
+rename table routing180000.map_cello_leg to ${importEdition}.map_cello_leg;
+rename table routing180000.map_cello_minCosts to ${importEdition}.map_cello_minCosts;
+rename table routing180000.map_cello_routing to ${importEdition}.map_cello_routing;
+rename table routing180000.map_elevation to ${importEdition}.map_elevation;
+-- Dev tables
+rename table routing180000.dev_impassableWay to ${importEdition}.dev_impassableWay;
+rename table routing180000.dev_reunifyCandidate to ${importEdition}.dev_reunifyCandidate;
+rename table routing180000.dev_reunifyCandidate_parked to ${importEdition}.dev_reunifyCandidate_parked;
+rename table routing180000.dev_viaduct to ${importEdition}.dev_viaduct;
+
+use routing180000
+show tables;
+
+-- If empty!
+-- drop database routing180000;
 
 ### /Alternative strategy
 

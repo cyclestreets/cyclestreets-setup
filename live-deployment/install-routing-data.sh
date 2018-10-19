@@ -498,6 +498,13 @@ show tables;
 
 ### /Alternative strategy
 
+#	$(date) Installation completed.
+#
+## On target machine
+#	Final step:
+#	To switch routing service use:
+#	${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
+
 EOF
     exit;
 fi

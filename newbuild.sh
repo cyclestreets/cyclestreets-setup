@@ -116,10 +116,22 @@ if import-deployment/import.sh force ;
 then
     vecho "#\t$(date)\tImport completed just fine."
 else
+
+    # Gather a report and send it
     if [ -n "${notifyEmail}" ]; then
-	echo "During import script" | mail -s "${csHostname} import stopped" "${notifyEmail}"
+
+	# Generate a build error report
+	reportFile=import/buildError.txt
+	echo -e "#\tBuild stopped during import script\n" > ${reportFile}
+
+	# Append last lines of import log
+	tail -n80 import/log.txt >> ${reportFile}
+	echo -e "#\n#\tYours,\n#\t\t\t${0##*/}" >> ${reportFile}
+
+	# Send report
+	cat ${reportFile} | mail -s "${csHostname} import stopped" "${notifyEmail}"
     else
-	vecho "Import stopped during import script"
+	vecho "Build stopped during import script"
     fi
     exit 1
 fi
@@ -168,6 +180,9 @@ php runtests.php "call=nearestpoint" >> ${summaryFile}
 php runtests.php "call=journey" >> ${summaryFile}
 # Compare new coverage with when the elevation.values auto tests were created
 php runtests.php "call=elevation.values&name=Elevation auto generated test:" >> ${summaryFile}
+
+# Sign off
+echo -e "#\n#\tYours,\n#\t\t\t${0##*/}" >> ${summaryFile}
 
 # Mail summary
 if [ -n "${notifyEmail}" ]; then

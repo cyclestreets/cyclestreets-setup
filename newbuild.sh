@@ -122,11 +122,11 @@ else
 
 	# Generate a build error report
 	reportFile=import/buildError.txt
-	echo -e "#\tBuild stopped during import script\n" > ${reportFile}
+	echo -e "#\tBuild stopped during import script as follows." > ${reportFile}
+	echo -e "#\n#\n#\tYours,\n#\t\t\t${0##*/}\n\n" >> ${reportFile}
 
 	# Append last lines of import log
-	tail -n80 import/log.txt >> ${reportFile}
-	echo -e "#\n#\tYours,\n#\t\t\t${0##*/}" >> ${reportFile}
+	tail -n50 import/log.txt >> ${reportFile}
 
 	# Send report
 	cat ${reportFile} | mail -s "${csHostname} import stopped" "${notifyEmail}"
@@ -177,12 +177,10 @@ tail -n3 import/log.txt >> ${summaryFile}
 
 # Run tests relevant to the new build, appending to summary
 php runtests.php "call=nearestpoint" >> ${summaryFile}
-php runtests.php "call=journey" >> ${summaryFile}
+php runtests.php "call=journey&apiVersion=1" >> ${summaryFile}
+php runtests.php "call=journey&apiVersion=2" >> ${summaryFile}
 # Compare new coverage with when the elevation.values auto tests were created
 php runtests.php "call=elevation.values&name=Elevation auto generated test:" >> ${summaryFile}
-
-# Sign off
-echo -e "#\n#\tYours,\n#\t\t\t${0##*/}" >> ${summaryFile}
 
 # Mail summary
 if [ -n "${notifyEmail}" ]; then

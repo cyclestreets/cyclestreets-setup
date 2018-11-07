@@ -147,15 +147,18 @@ if [[ ! "$removeEdition" =~ routing([0-9]{6}) ]]; then
   exit 1
 fi
 
+# Extract the date part of the routing database
+editionDate=${BASH_REMATCH[1]}
+
 # Check that this edition has installed data (which avoids deletion of databases being temporarily used to store tables)
 if [ ! -d "${websitesContentFolder}/data/routing/${removeEdition}" ]; then
   echo "#	The editon to remove: ${removeEdition} does not have a routing graph folder."
+  echo "-- Use these to remove the databases:"
+  echo "drop database if exists ${removeEdition};"
+  echo "drop database if exists planetExtractOSM${editionDate};"
   exit 1
 fi
 
-
-# Extract the date part of the routing database
-editionDate=${BASH_REMATCH[1]}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then

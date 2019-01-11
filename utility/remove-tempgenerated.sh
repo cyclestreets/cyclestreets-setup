@@ -54,7 +54,7 @@ tempDir=${websitesContentFolder}/data/tempgenerated/
 # -mtime 0 finds files modified within the last 24 hours
 # -type f finds only files
 # ! -name Skips files matching the given name
-folders="elevationProfile maplet photomaplet"
+folders="elevationProfile maplet photomaplet tile"
 for folder in ${folders}
 do
     find ${tempDir}${folder} -maxdepth 1 \! -mtime 0 \! -name '.gitignore' -type f -delete

@@ -460,7 +460,7 @@ smysql ${importEdition} < /websites/www/content/documentation/schema/photosEnRou
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 
-# This takes about an hour
+# This takes about 75 minutes
 smysql ${importEdition} -e "call indexPhotos(false,0);"
 
 ## Clean up

@@ -121,12 +121,12 @@ else
     if [ -n "${notifyEmail}" ]; then
 
 	# Generate a build error report
-	reportFile=import/buildError.txt
+	reportFile=${ScriptHome}/buildError.txt
 	echo -e "#\tBuild stopped during import script as follows." > ${reportFile}
 	echo -e "#\n#\n#\tYours,\n#\t\t\t${0##*/}\n\n" >> ${reportFile}
 
 	# Append last lines of import log
-	tail -n50 import/log.txt >> ${reportFile}
+	tail -n50 ${importContentFolder}/log.txt >> ${reportFile}
 
 	# Send report
 	cat ${reportFile} | mail -s "${csHostname} import stopped" "${notifyEmail}"

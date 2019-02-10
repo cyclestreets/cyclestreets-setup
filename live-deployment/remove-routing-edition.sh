@@ -20,7 +20,9 @@ OPTIONS
 DESCRIPTION
 	routingEdition
 		Names a routing database of the form routingYYMMDD, eg. routing151205
-		Alternatively the words newest or oldest can be used.
+		Alternatively the words newest or oldest can be used, and in these cases
+		at at least two other routing editions must exist. If not then a warning
+		is given, nothing is removed and the script exits without setting error state.
 EOF
 }
 
@@ -125,8 +127,9 @@ then
     # Check that there are at least three routing editions - to avoid removing the most recent ones
     if [ -z "${numEditions}" -o "${numEditions}" -lt 3 ]
     then
-	vecho "# There are ${numEditions} editions which is too few to use the oldest/newest argument."
-	exit 1
+	vecho "# There are ${numEditions} editions which is too few to use for the oldest/newest argument to have any effect."
+	# Exit cleanly, not setting error status
+	exit 0
     fi
 
     # Select sort order

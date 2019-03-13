@@ -81,6 +81,7 @@ $packageUpdate > /dev/null
 apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
+$packageInstall update-manager-core
 
 # Ensure locale
 $packageInstall language-pack-en-base

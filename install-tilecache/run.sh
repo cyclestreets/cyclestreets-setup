@@ -144,9 +144,15 @@ if ${tilecacheSSL} && [ ! -f ${vhSslConf} ]; then
 	sed -i "s|:80|:443|g" ${vhSslConf}
 	sed -i "s|#SSL|SSL|g" ${vhSslConf}
 	
-	# Certs directory
-	mkdir -p /etc/apache2/sslcerts/
-	chmod 750 /etc/apache2/sslcerts/
+	# Certbot
+	sudo apt-get update
+	sudo apt-get -y install software-properties-common
+	sudo add-apt-repository -y universe
+	sudo add-apt-repository -7 ppa:certbot/certbot
+	sudo apt-get update
+	sudo apt-get install -y certbot python-certbot-apache
+	# Create cert
+	sudo certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w $tilecacheContentFolder/ --email $administratorEmail -d $tilecacheHostname -d a.${tilecacheHostname} -d b.${tilecacheHostname} -d c.${tilecacheHostname}
 fi
 
 # Enable the VirtualHost; this is done manually to ensure the ordering is correct

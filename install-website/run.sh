@@ -165,8 +165,8 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	ServerAlias ${csHostname}
 	
 	# Logging
-	CustomLog /websites/www/logs/cyclestreets.net-access.log combined
-	ErrorLog /websites/www/logs/cyclestreets.net-error.log
+	CustomLog /websites/www/logs/${csHostname}-access.log combined
+	ErrorLog /websites/www/logs/${csHostname}-error.log
 	
 	# Where the files are
 	DocumentRoot /websites/www/content/

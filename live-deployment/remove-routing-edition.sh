@@ -150,16 +150,18 @@ if [[ ! "$removeEdition" =~ routing([0-9]{6}) ]]; then
   exit 1
 fi
 
+# Check it is not a special edition
+if [[ "$removeEdition" = routing180000 ]]; then
+  echo "#	The supplied argument must not be routing180000 which is a special edition temporarily used to park tables."
+  exit 1
+fi
+
 # Extract the date part of the routing database
 editionDate=${BASH_REMATCH[1]}
 
-# Check that this edition has installed data (which avoids deletion of databases being temporarily used to store tables)
+# Note when edition does not have installed data (for instance when the import did not complete)
 if [ ! -d "${websitesContentFolder}/data/routing/${removeEdition}" ]; then
-  echo "#	The editon to remove: ${removeEdition} does not have a routing graph folder."
-  echo "-- Use these to remove the databases:"
-  echo "drop database if exists ${removeEdition};"
-  echo "drop database if exists planetExtractOSM${editionDate};"
-  exit 1
+  echo "#	Note: the editon to remove: ${removeEdition} does not have a routing graph folder."
 fi
 
 

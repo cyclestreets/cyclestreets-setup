@@ -53,10 +53,10 @@ echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 . ${ScriptHome}/utility/installCommon.sh
 
 # Ensure JSON support
-apt-get -y install php-json
+apt -y install php-json
 
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
-apt-get -y install imagemagick php-imagick
+apt -y install imagemagick php-imagick
 
 # Enable mod_deflate for Apache
 sudo a2enmod deflate
@@ -64,24 +64,25 @@ service apache2 restart
 
 # Install Python
 echo "#	Installing python"
-apt-get -y install python php-xmlrpc php-curl
+apt -y install python php-xmlrpc php-curl python3-distutils python3-dev
+
 
 # Utilities
 echo "#	Some utilities"
 
 # ffmpeg; this has been restored in 16.04 as an official package
-apt-get -y install ffmpeg
+apt -y install ffmpeg
 
 # Install Apache mod_macro for convenience (not an actual requirement for CycleStreets - maybe was needed with ffmpeg?)
-# apt-get -y install libapache2-mod-macro
+# apt -y install libapache2-mod-macro
 
 # These are used by deployment scripts to correspond with the routing servers via xml
-apt-get -y install curl libxml-xpath-perl
+apt -y install curl libxml-xpath-perl
 
 
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
-# Note: using "apt-get -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
+# Note: using "apt -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
 # See: http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
 # See: http://xfloyd.net/blog/?p=745
 if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
@@ -473,7 +474,7 @@ if [ ! -x "${routingEngineConfigFile}" ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt-get -y install gcc g++ python-dev make cmake doxygen graphviz
+sudo apt -y install gcc g++ python-dev make cmake doxygen graphviz
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Now building the C++ routing module..."
 	cd "${websitesContentFolder}/routingengine/"
@@ -482,12 +483,12 @@ if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 fi
 
 # Add this python module which is needed by the routing service
-sudo apt-get -y install python-argparse
+sudo apt -y install python-argparse
 
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
 if $configureExim ; then
     # NB The config here is currently Debian/Ubuntu-specific
-    sudo apt-get -y install exim4
+    sudo apt -y install exim4
     if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 	cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
     fi

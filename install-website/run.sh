@@ -500,7 +500,7 @@ if $configureExim ; then
     # NB These two are the same in any CycleStreets installation but different from the default Debian installation:
     sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
     sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
-    sudo service exim4 restart
+    sudo systemctl restart exim4
 fi
 
 # Install the cycle routing daemon (service)

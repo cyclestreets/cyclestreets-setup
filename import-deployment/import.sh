@@ -133,7 +133,7 @@ nice -n12 php run.php
 
 # Skip for cello testing [:] 23 Sep 2017 12:24:27
 #echo "#	$(date)	Restarting MySQL to restore default configuration."
-#sudo service mysql restart
+#sudo systemctl restart mysql
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`

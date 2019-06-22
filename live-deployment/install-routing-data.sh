@@ -448,7 +448,6 @@ sudo chown -R mysql.mysql ~/tmp/${importEdition}
 sudo mv ~/tmp/${importEdition} /var/lib/mysql/
 
 # May be necessary to restart mysql
-sudo service mysql restart
 sudo systemctl restart mysql
 
 ##	Load nearest point stored procedures

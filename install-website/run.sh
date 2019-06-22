@@ -64,7 +64,7 @@ service apache2 restart
 
 # Install Python
 echo "#	Installing python"
-apt -y install python php-xmlrpc php-curl python3-distutils python3-dev
+apt -y install python php-xmlrpc php-curl python3-dev
 
 
 # Utilities

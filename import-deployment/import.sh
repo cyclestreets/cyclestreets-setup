@@ -125,15 +125,14 @@ fi
 # Move to the right place
 cd ${importContentFolder}
 
+# Restart mysql - as setup for passwordless sudo by the installer.
+# This resets the MySQL in particular freeing space that may have been reserved by memory tables in the previous import run.
+echo "#	$(date)	Restarting MySQL to free memory"
+sudo systemctl restart mysql
+
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 # Use a low priority to allow the server to be useful for serving other tasks such as tiles if necessary.
 nice -n12 php run.php
-
-# Restart mysql - as setup for passwordless sudo by the installer. This resets the MySQL configuration to default values, more suited to serving web pages and routes.
-
-# Skip for cello testing [:] 23 Sep 2017 12:24:27
-#echo "#	$(date)	Restarting MySQL to restore default configuration."
-#sudo systemctl restart mysql
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`

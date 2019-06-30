@@ -85,7 +85,7 @@ echo "#	MySQL configured, but consider running the following security step from 
 
 # Restart mysql - as setup for passwordless sudo by the installer.
 echo "#	$(date)	Restarting MySQL"
-service mysql restart
+systemctl restart mysql
 
 # Monitoring tools
 apt-get install -y iotop

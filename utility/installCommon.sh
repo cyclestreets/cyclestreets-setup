@@ -29,10 +29,8 @@ cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cycleroutingd
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cycleroutingd
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cycleroutingd
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cycleroutingd
-# The following version is deprecated in favour of the above
-cyclestreets ALL = (root) NOPASSWD: ${routingDaemonLocation}
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
-cyclestreets ALL = (root) NOPASSWD: /usr/sbin/service mysql restart
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql
 # Passwordless sudo to chown photomap files
 cyclestreets ALL = (root) NOPASSWD: /opt/cyclestreets-setup/utility/chownPhotomapWwwdata.sh
 # Passwordless sudo to remove coverage files at the start of an import run

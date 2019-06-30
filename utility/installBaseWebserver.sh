@@ -243,7 +243,7 @@ secure_file_priv =
 EOF
 
     # Restart mysql
-    service mysql restart
+    systemctl restart mysql
 
 fi
 

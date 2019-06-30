@@ -412,17 +412,23 @@ select database();
 
 -- Park these tables - which are not necessary on the live machine
 -- Map tables
-rename table ${importEdition}.map_cello_endLeg to routing180000.map_cello_endLeg;
 rename table ${importEdition}.map_cello_joint to routing180000.map_cello_joint;
 rename table ${importEdition}.map_cello_leg to routing180000.map_cello_leg;
 rename table ${importEdition}.map_cello_minCosts to routing180000.map_cello_minCosts;
 rename table ${importEdition}.map_cello_routing to routing180000.map_cello_routing;
 rename table ${importEdition}.map_elevation to routing180000.map_elevation;
 -- Dev tables
-rename table ${importEdition}.dev_impassableWay to routing180000.dev_impassableWay;
-rename table ${importEdition}.dev_reunifyCandidate to routing180000.dev_reunifyCandidate;
-rename table ${importEdition}.dev_reunifyCandidate_parked to routing180000.dev_reunifyCandidate_parked;
-rename table ${importEdition}.dev_viaduct to routing180000.dev_viaduct;
+rename table ${importEdition}.dev_cello_triangle to routing180000.dev_cello_triangle;
+rename table ${importEdition}.dev_cello_yinYang to routing180000.dev_cello_yinYang;
+rename table ${importEdition}.dev_chain to routing180000.dev_chain;
+rename table ${importEdition}.dev_joint_a to routing180000.dev_joint_a;
+rename table ${importEdition}.dev_leg_ac to routing180000.dev_leg_ac;
+rename table ${importEdition}.dev_otherWay to routing180000.dev_otherWay;
+rename table ${importEdition}.dev_publicParkingPlace to routing180000.dev_publicParkingPlace;
+rename table ${importEdition}.dev_unNamedWayLeg to routing180000.dev_unNamedWayLeg;
+rename table ${importEdition}.dev_unnamedWay to routing180000.dev_unnamedWay;
+rename table ${importEdition}.dev_way2openSpace to routing180000.dev_way2openSpace;
+
 
 # Shutdown mysql
 # simon@${importHostname}:~$
@@ -477,17 +483,22 @@ sudo systemctl start mysql
 
 # Restore the parked tables
 -- Map tables
-rename table routing180000.map_cello_endLeg to ${importEdition}.map_cello_endLeg;
 rename table routing180000.map_cello_joint to ${importEdition}.map_cello_joint;
 rename table routing180000.map_cello_leg to ${importEdition}.map_cello_leg;
 rename table routing180000.map_cello_minCosts to ${importEdition}.map_cello_minCosts;
 rename table routing180000.map_cello_routing to ${importEdition}.map_cello_routing;
 rename table routing180000.map_elevation to ${importEdition}.map_elevation;
 -- Dev tables
-rename table routing180000.dev_impassableWay to ${importEdition}.dev_impassableWay;
-rename table routing180000.dev_reunifyCandidate to ${importEdition}.dev_reunifyCandidate;
-rename table routing180000.dev_reunifyCandidate_parked to ${importEdition}.dev_reunifyCandidate_parked;
-rename table routing180000.dev_viaduct to ${importEdition}.dev_viaduct;
+rename table routing180000.dev_cello_triangle to ${importEdition}.dev_cello_triangle;
+rename table routing180000.dev_cello_yinYang to ${importEdition}.dev_cello_yinYang;
+rename table routing180000.dev_chain to ${importEdition}.dev_chain;
+rename table routing180000.dev_joint_a to ${importEdition}.dev_joint_a;
+rename table routing180000.dev_leg_ac to ${importEdition}.dev_leg_ac;
+rename table routing180000.dev_otherWay to ${importEdition}.dev_otherWay;
+rename table routing180000.dev_publicParkingPlace to ${importEdition}.dev_publicParkingPlace;
+rename table routing180000.dev_unNamedWayLeg to ${importEdition}.dev_unNamedWayLeg;
+rename table routing180000.dev_unnamedWay to ${importEdition}.dev_unnamedWay;
+rename table routing180000.dev_way2openSpace to ${importEdition}.dev_way2openSpace;
 
 use routing180000
 show tables;

@@ -79,10 +79,13 @@ apt -y install ffmpeg
 # These are used by deployment scripts to correspond with the routing servers via xml
 apt -y install curl libxml-xpath-perl
 
-# Face blurring; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
+# Image recognition
 apt-get -y install python-opencv opencv-data
+# Facial recognition; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
 wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect
 chmod +x /usr/local/bin/facedetect
+# Number plate recognition; see: https://github.com/openalpr/openalpr
+apt-get -y install openalpr
 
 
 # HTML to PDF conversion

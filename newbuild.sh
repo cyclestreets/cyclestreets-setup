@@ -110,8 +110,7 @@ if [ "${removeOldest}" ]; then
     live-deployment/remove-routing-edition.sh oldest
 fi
 
-## Recommend restart mysql to free memory before loading the routing engine
-#  This also resets the MySQL configuration to default values, more suited to serving web pages and routes.
+## Restart mysql to free memory before building the routing engine
 sudo systemctl restart mysql
 
 ## Import (the force overrides the current edition if it is for the same date)
@@ -153,6 +152,10 @@ else
     exit 2
 fi
 
+
+## Restart mysql to free memory before loading the routing engine
+#  This also resets the MySQL configuration to default values, more suited to serving web pages and routes.
+sudo systemctl restart mysql
 
 ## Switch
 if live-deployment/switch-routing-edition.sh ;

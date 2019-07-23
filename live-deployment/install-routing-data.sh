@@ -412,14 +412,14 @@ select database();
 
 -- Park these tables - which are not necessary on the live machine
 -- Map tables
-rename table ${importEdition}.map_cello_joint to routing180000.map_cello_joint;
-rename table ${importEdition}.map_cello_leg to routing180000.map_cello_leg;
-rename table ${importEdition}.map_cello_minCosts to routing180000.map_cello_minCosts;
-rename table ${importEdition}.map_cello_routing to routing180000.map_cello_routing;
-rename table ${importEdition}.map_elevation to routing180000.map_elevation;
+rename table map_cello_joint to routing180000.map_cello_joint;
+rename table map_cello_leg to routing180000.map_cello_leg;
+rename table map_cello_minCosts to routing180000.map_cello_minCosts;
+rename table map_cello_routing to routing180000.map_cello_routing;
+rename table map_elevation to routing180000.map_elevation;
 -- Dev tables
-rename table ${importEdition}.dev_otherWay to routing180000.dev_otherWay;
-rename table ${importEdition}.dev_publicParkingPlace to routing180000.dev_publicParkingPlace;
+rename table dev_otherWay to routing180000.dev_otherWay;
+rename table dev_publicParkingPlace to routing180000.dev_publicParkingPlace;
 
 
 # Shutdown mysql

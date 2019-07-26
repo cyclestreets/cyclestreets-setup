@@ -21,6 +21,13 @@
 # journey_linger.value 22
 # journey_top90linger.value 39
 # journey_slowest.value 39
+#
+#
+# The relevant log file needs to include timings at the end of the line.
+# That can be done in the virtual host CustomLog or by redfining these formats in the general config using the LogFormat directive.
+# Include time (%T) and microtime (%D) in logs; see: http://blog.keul.it/2011/10/debugging-slow-site-using-apache.html
+# LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\" %T/%D" combined
+# LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\" %T/%D" vhost_combined
 
 # Dependencies
 import subprocess, re, sys, math

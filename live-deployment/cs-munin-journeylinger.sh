@@ -23,7 +23,7 @@
 # sudo munin-run journeylinger
 #
 # Remove
-# sudo rm /etc/munin/plugins/cyclestreets
+# sudo rm /etc/munin/plugins/journeylinger
 #
 # See also
 # https://wiki.cyclestreets.net/ServerMonitoring

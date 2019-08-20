@@ -233,8 +233,8 @@ echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition
 chmod a+x $routingEngineConfigFile
 
 # Remove routing data caches
-rm -f "${websitesContentFolder}/data/tempgenerated/${newEdition}.ridingSurfaceCache.php"
-rm -f "${websitesContentFolder}/data/tempgenerated/${newEdition}.routingFactorCache.php"
+rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php
+rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php
 
 # Restart the routing service
 sudo ${routingDaemonRestart}

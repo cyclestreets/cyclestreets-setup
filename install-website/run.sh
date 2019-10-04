@@ -64,8 +64,13 @@ service apache2 restart
 
 # Install Python
 echo "#	Installing python"
-apt -y install python php-xmlrpc php-curl python3-dev
+apt -y install python php-xmlrpc php-curl python3-dev python-argparse python3-pip
 
+# Upgrade pip
+python3 -m pip install --upgrade pip
+
+# Python package for encoding coordinate lists
+python3 -m pip install --user polyline
 
 # Utilities
 echo "#	Some utilities"
@@ -489,9 +494,6 @@ if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	${asCS} ./buildre.sh
 	cd ${websitesContentFolder}
 fi
-
-# Add this python module which is needed by the routing service
-sudo apt -y install python-argparse
 
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
 if $configureExim ; then

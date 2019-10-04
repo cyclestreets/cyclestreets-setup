@@ -232,7 +232,13 @@ done
 
 # Fetching dependencies
 echo "#	$(date)	Fetching dependencies"
-apt install -y libboost-dev cmake gcc g++ python-dev make doxygen graphviz
+apt install -y libboost-dev cmake gcc g++ python-dev python3-pip make doxygen graphviz
+
+# Upgrade pip
+python3 -m pip install --upgrade pip
+
+# Python package for encoding coordinate lists
+python3 -m pip install --user polyline
 
 # Build bridges
 cd ${importContentFolder}/graph

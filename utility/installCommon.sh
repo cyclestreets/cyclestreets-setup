@@ -42,6 +42,6 @@ EOF
 fi
 
 
-
+echo "#	Completed installCommon"
 
 # End of file

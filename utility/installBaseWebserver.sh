@@ -291,5 +291,6 @@ if [ -f /etc/apparmor.d/usr.sbin.mysqld -a ! -f /etc/apparmor.d/disable/usr.sbin
 	set -e
 fi
 
+echo "#	Completed installBaseWebserver"
 
 # End of file

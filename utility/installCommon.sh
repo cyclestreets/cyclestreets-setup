@@ -12,6 +12,8 @@ if [ ! -d ${websitesContentFolder}/.git ]
 then
     ${asCS} git clone https://github.com/cyclestreets/cyclestreets.git ${websitesContentFolder}
 else
+    # Set permissions before the update
+    chown cyclestreets.rollout -R ${websitesContentFolder}/.git
     ${asCS} git pull
 fi
 

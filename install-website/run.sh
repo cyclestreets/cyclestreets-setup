@@ -67,10 +67,10 @@ echo "#	Installing python"
 apt -y install python php-xmlrpc php-curl python3-dev python-argparse python3-pip
 
 # Upgrade pip
-python3 -m pip install --upgrade pip
+${asCS} python3 -m pip install --upgrade pip
 
 # Python package for encoding coordinate lists
-python3 -m pip install --user polyline
+${asCS} python3 -m pip install --user polyline
 
 # Utilities
 echo "#	Some utilities"

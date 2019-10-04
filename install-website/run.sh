@@ -85,24 +85,18 @@ apt -y install ffmpeg
 apt -y install curl libxml-xpath-perl
 
 # Image recognition
-apt-get -y install python-opencv opencv-data
+apt -y install python-opencv opencv-data
 # Facial recognition; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
 wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect
 chmod +x /usr/local/bin/facedetect
 # Number plate recognition; see: https://github.com/openalpr/openalpr
-apt-get -y install openalpr
+apt -y install openalpr
 
 
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
-# Note: using "apt -y install wkhtmltopdf" gives version 0.9.9 which has the "cannot connect to X server" problem; apparently this is fixed in 0.12
-# See: http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
-# See: http://xfloyd.net/blog/?p=745
-if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
-        wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
-        dpkg -i /tmp/wkhtmltox*.deb
-        rm /tmp/wkhtmltox*.deb
-fi
+apt -y install wkhtmltopdf
+
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
 # brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb
 

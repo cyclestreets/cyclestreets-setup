@@ -71,16 +71,16 @@ fi
 asCS="sudo -u ${username}"
 
 # Installer
-[[ $baseOS = "Ubuntu" ]] && packageInstall="apt-get -y install" || packageInstall="brew install"
-[[ $baseOS = "Ubuntu" ]] && packageUpdate="apt-get update" || packageUpdate="brew update"
+[[ $baseOS = "Ubuntu" ]] && packageInstall="apt -y install" || packageInstall="brew install"
+[[ $baseOS = "Ubuntu" ]] && packageUpdate="apt update" || packageUpdate="brew update"
 
 # Prepare the apt index; it may be practically non-existent on a fresh VM
 $packageUpdate > /dev/null
 
 # Bring the machine distribution up to date by updating all existing packages
-apt-get -y upgrade
-apt-get -y dist-upgrade
-apt-get -y autoremove
+apt -y upgrade
+apt -y dist-upgrade
+apt -y autoremove
 $packageInstall update-manager-core
 
 # Ensure locale

@@ -238,7 +238,7 @@ apt install -y libboost-dev cmake gcc g++ python-dev python3-pip make doxygen gr
 python3 -m pip install --upgrade pip
 
 # Python package for encoding coordinate lists
-python3 -m pip install --user polyline
+python3 -m pip install polyline
 
 # Build bridges
 cd ${importContentFolder}/graph

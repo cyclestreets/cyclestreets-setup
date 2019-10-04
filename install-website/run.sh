@@ -95,7 +95,15 @@ apt -y install openalpr
 
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
-apt -y install wkhtmltopdf
+# Note: using "apt -y install wkhtmltopdf" doesn't work for various reasons and so this is required
+# The libpng12-0 is needed, and is not available on Ubuntu 18.04 but can be backported by adding xenial to /etc/apt/sources.list:
+# https://packages.ubuntu.com/xenial/amd64/libpng12-0/download
+# then apt update and then install libpng12-0
+if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
+        wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
+        dpkg -i /tmp/wkhtmltox*.deb
+        rm /tmp/wkhtmltox*.deb
+fi
 
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
 # brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb

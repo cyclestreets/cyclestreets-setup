@@ -418,6 +418,9 @@ rename table map_cello_minCosts to routing180000.map_cello_minCosts;
 rename table map_cello_routing to routing180000.map_cello_routing;
 rename table map_elevation to routing180000.map_elevation;
 -- Dev tables
+rename table dev_areaCandidate to routing180000.dev_areaCandidate;
+rename table dev_cello_bridge_leg to routing180000.dev_cello_bridge_leg;
+rename table dev_elevationGridCell to routing180000.dev_elevationGridCell;
 rename table dev_otherWay to routing180000.dev_otherWay;
 rename table dev_publicParkingPlace to routing180000.dev_publicParkingPlace;
 
@@ -481,7 +484,10 @@ rename table routing180000.map_cello_minCosts to ${importEdition}.map_cello_minC
 rename table routing180000.map_cello_routing to ${importEdition}.map_cello_routing;
 rename table routing180000.map_elevation to ${importEdition}.map_elevation;
 -- Dev tables
+rename table routing180000.dev_areaCandidate to ${importEdition}.dev_areaCandidate;
+rename table routing180000.dev_cello_bridge_leg to ${importEdition}.dev_cello_bridge_leg;
 rename table routing180000.dev_otherWay to ${importEdition}.dev_otherWay;
+rename table routing180000.dev_elevationGridCell to ${importEdition}.dev_elevationGridCell;
 rename table routing180000.dev_publicParkingPlace to ${importEdition}.dev_publicParkingPlace;
 
 -- Check tables

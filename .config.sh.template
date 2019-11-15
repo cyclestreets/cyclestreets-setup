@@ -17,7 +17,7 @@ csHostname=localhost
 administratorEmail=webmaster@example.com
 mainEmail="${administratorEmail}"
 
-# API - subdoman use hyphen rather than dot for compatibiity with wildcard ssl certificates
+# API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates
 apiHostname=api-"${csHostname}"
 
 # Url for status api call for munin

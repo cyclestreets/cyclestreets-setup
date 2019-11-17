@@ -182,6 +182,7 @@ fi
 # https://wiki.openstreetmap.org/wiki/Osmosis/Tuning
 if [ ! -e /home/${username}/.osmosis ]; then
     echo "JAVACMD_OPTIONS=-server" > /home/${username}/.osmosis
+    chown ${username}.${username} /home/${username}/.osmosis
 fi
 
 # Users are created by the grant command if they do not exist, making these idem potent.

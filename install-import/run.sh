@@ -178,6 +178,12 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     echo "#	Completed installation of osmosis"
 fi
 
+# Osmosis config file
+# https://wiki.openstreetmap.org/wiki/Osmosis/Tuning
+if [ ! -e /home/${username}/.osmosis ]; then
+    echo "JAVACMD_OPTIONS=-server" > /home/${username}/.osmosis
+fi
+
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${superMysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"

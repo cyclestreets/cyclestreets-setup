@@ -134,6 +134,8 @@ fi
 # rm -r /usr/local/bin/osmosis
 # rm -r "`readlink -f /usr/local/osmosis/current`"
 # rm -r /usr/local/osmosis/current
+# Note version 0.47 was tried Nov 2019, but had failings on some servers with some geofabrik extracts
+osmosisVersion=0.46
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
@@ -151,23 +153,23 @@ if [ ! -L /usr/local/bin/osmosis ]; then
 
     # wget the latest to here
     if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
-	wget -O /usr/local/osmosis/osmosis-latest.tgz http://dev.openstreetmap.org/~bretth/osmosis-build/osmosis-latest.tgz
+	wget -O /usr/local/osmosis/osmosis-latest.tgz http://dev.openstreetmap.org/~bretth/osmosis-build/osmosis-${osmosisVersion}.tgz
     fi
 
     # Create a folder for the new version
-    mkdir -p /usr/local/osmosis/osmosis-0.47
+    mkdir -p /usr/local/osmosis/osmosis-${osmosisVersion}
 
     # Unpack into it
-    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-0.47
+    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-${osmosisVersion}
 
     # Remove the download archive
     rm -f /usr/local/osmosis/osmosis-latest.tgz
 
-    # Repoint current to the new install
+    # Repoint current to the new version
     rm -f /usr/local/osmosis/current
 
-    # Whatever the version number is here - replace the 0.47
-    ln -s /usr/local/osmosis/osmosis-0.47 /usr/local/osmosis/current
+    # Whatever the version number is here
+    ln -s /usr/local/osmosis/osmosis-${osmosisVersion} /usr/local/osmosis/current
 
     # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
     if [ ! -L /usr/local/bin/osmosis ]; then

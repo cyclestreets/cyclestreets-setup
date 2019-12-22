@@ -110,9 +110,6 @@ if [ "${removeOldest}" ]; then
     live-deployment/remove-routing-edition.sh oldest
 fi
 
-## Restart mysql to free memory before building the routing engine
-sudo systemctl restart mysql
-
 ## Import (the force overrides the current edition if it is for the same date)
 if import-deployment/import.sh force ;
 then

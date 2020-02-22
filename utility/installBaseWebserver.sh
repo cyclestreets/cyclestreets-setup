@@ -87,7 +87,7 @@ $packageInstall update-manager-core
 $packageInstall language-pack-en-base
 
 # Install basic utility software
-$packageInstall wget dnsutils man-db git emacs nano bzip2 screen dos2unix
+$packageInstall wget dnsutils man-db git emacs nano bzip2 screen dos2unix rsync
 $packageInstall mlocate
 updatedb
 

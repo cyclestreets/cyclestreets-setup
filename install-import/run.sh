@@ -146,7 +146,7 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     apt update > /dev/null
 
     # Osmosis requires java
-    apt install default-jre
+    apt -y install default-jre
 
     # Create folder
     mkdir -p /usr/local/osmosis

@@ -100,9 +100,14 @@ apt -y install openalpr
 # https://packages.ubuntu.com/xenial/amd64/libpng12-0/download
 # then apt update and then install libpng12-0
 if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
-        wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
-        dpkg -i /tmp/wkhtmltox*.deb
-        rm /tmp/wkhtmltox*.deb
+    #wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
+
+    # Needs these packages
+    apt -y install xfonts-75dpi xfonts-base xfonts-utils
+    # Download and install wkhtmltopdf
+    wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+    dpkg -i /tmp/wkhtmltox*.deb
+    rm /tmp/wkhtmltox*.deb
 fi
 
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01

@@ -1,6 +1,7 @@
 #!/bin/bash
 # Script to install CycleStreets on Ubuntu
-# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
+# Originally written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
+# but works with 18.04.4 LTS.
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # Announce start
@@ -96,12 +97,7 @@ apt -y install openalpr
 # HTML to PDF conversion
 # http://wkhtmltopdf.org/downloads.html
 # Note: using "apt -y install wkhtmltopdf" doesn't work for various reasons and so this is required
-# The libpng12-0 is needed, and is not available on Ubuntu 18.04 but can be backported by adding xenial to /etc/apt/sources.list:
-# https://packages.ubuntu.com/xenial/amd64/libpng12-0/download
-# then apt update and then install libpng12-0
 if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
-    #wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.xenial_amd64.deb
-
     # Needs these packages
     apt -y install xfonts-75dpi xfonts-base xfonts-utils
     # Download and install wkhtmltopdf
@@ -372,7 +368,7 @@ then
     ${superMysql} cyclestreets -e "update map_gui set server='${csHostname}' where id = 1;"
 
     # Set an internal api key
-    ${superMysql} cyclestreets -e "update map_gui set internalApikey=hex(random_bytes(8)) where id = 1;"
+    ${superMysql} cyclestreets -e "update map_gui set internalApikey=lower(hex(random_bytes(8))) where id = 1;"
     ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type) values (1, 'CycleStreets Service', 'Desktop')"
     ${superMysql} cyclestreets -e "update map_apikeys set approved = 1 where id = 1;"
     ${superMysql} cyclestreets -e "update map_apikeys set apiKey = (select internalApikey from map_gui where id = 1) where id = 1;"

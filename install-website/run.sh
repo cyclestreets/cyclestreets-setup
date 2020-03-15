@@ -371,6 +371,12 @@ then
     # #!# This needs review - on one live machine it is set as localhost and always ignored
     ${superMysql} cyclestreets -e "update map_gui set server='${csHostname}' where id = 1;"
 
+    # Set an internal api key
+    ${superMysql} cyclestreets -e "update map_gui set internalApikey=hex(random_bytes(8)) where id = 1;"
+    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type) values (1, 'CycleStreets Service', 'Desktop')"
+    ${superMysql} cyclestreets -e "update map_apikeys set approved = 1 where id = 1;"
+    ${superMysql} cyclestreets -e "update map_apikeys set apiKey = (select internalApikey from map_gui where id = 1) where id = 1;"
+
     # Create an admin user
     encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`
     ${superMysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());"

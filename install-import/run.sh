@@ -188,6 +188,7 @@ if [ ! -e /home/${username}/.osmosis ]; then
 fi
 
 # Users are created by the grant command if they do not exist, making these idem potent.
+echo "#	Grants"
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${superMysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost' identified by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"
 
@@ -196,6 +197,7 @@ importpermissions="grant select, insert, update, delete, create, drop, index, al
 
 ${superMysql} -e "${importpermissions} \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`routing%\` . * to '${mysqlImportUsername}'@'localhost';"
+${superMysql} -e "${importpermissions} \`${archiveDb}\` . * to '${mysqlImportUsername}'@'localhost';"
 
 # Elevation data - these are often multiple GB in size
 # Tip: These are big files; so can use this to resume a broken copy:

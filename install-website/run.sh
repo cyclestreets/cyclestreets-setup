@@ -384,8 +384,6 @@ then
     ${superMysql} cyclestreets -e "update map_config set pseudoCron = DATE_SUB(CURDATE(), INTERVAL 1 DAY) WHERE id = 1;"
 fi
 
-# Archive db
-archiveDb=csArchive
 # Unless the database already exists:
 if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${archiveDb}'" | grep ${archiveDb} > /dev/null 2>&1
 then

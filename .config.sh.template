@@ -149,6 +149,9 @@ elevationDatasources=(
 	'aster.tar.bz2'
 )
 
+# Archive db
+archiveDb=csArchive
+
 # External database
 externalDb=csExternal
 csExternalDataFile=csExternal.sql.gz

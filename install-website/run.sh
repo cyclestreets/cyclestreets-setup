@@ -369,9 +369,12 @@ then
 
     # Set an internal api key
     ${superMysql} cyclestreets -e "update map_gui set internalApikey=lower(hex(random_bytes(8))) where id = 1;"
-    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type) values (1, 'CycleStreets Service', 'Desktop')"
+    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type) values (1, 'CycleStreets Service', 'Desktop');"
     ${superMysql} cyclestreets -e "update map_apikeys set approved = 1 where id = 1;"
     ${superMysql} cyclestreets -e "update map_apikeys set apiKey = (select internalApikey from map_gui where id = 1) where id = 1;"
+
+    # Tests API key
+    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, apiKey, approved) values (2, 'Sample API calls from /api/ webpage', '${testsApiKey}', 1);"
 
     # Create an admin user
     encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`

@@ -88,8 +88,10 @@ apt -y install curl libxml-xpath-perl
 # Image recognition
 apt -y install python-opencv opencv-data
 # Facial recognition; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
-wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect
-chmod +x /usr/local/bin/facedetect
+if [ ! -e /usr/local/bin/facedetect ] ; then
+    wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect
+    chmod +x /usr/local/bin/facedetect
+fi
 # Number plate recognition; see: https://github.com/openalpr/openalpr
 apt -y install openalpr
 
@@ -316,6 +318,7 @@ ${superMysql} -e "create database if not exists cyclestreets default character s
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
+# !! This method of creating a user won't work in MySQL 8 - rewrite as create user
 ${superMysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost' identified by '${mysqlWebsitePassword}';"
 ${superMysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 

@@ -111,7 +111,7 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 
 # Install MySQL 5.7, which will also start it
 #!# Seems to be a problem as described at "Job for mysql.service failed" in: https://bugs.launchpad.net/ubuntu/+source/mysql-5.7/+bug/1567884/comments/6 - re-running but clearing out /var/lib/mysql helps
-$packageInstall mysql-server-5.7 mysql-client-5.7
+$packageInstall mysql-server mysql-client
 
 # Allow administrative access to this new server from central PhpMyAdmin installation
 if [[ $mysqlRootPassword && ${mysqlRootPassword-x} ]] ; then
@@ -145,6 +145,10 @@ if [ ! -f /etc/apache2/sites-available/catchall.conf ]; then
 	cp -pr ${ScriptHome}/utility/catchall.html /var/www/html/index.html
 fi
 
+# For Ubuntu 19.10 see
+# https://certbot.eff.org/lets-encrypt/ubuntuother-apache
+# instead of this certbot section.
+
 # Ubuntu Server 16.04 LTS does not include add-apt-repository so this adds it:
 $packageInstall software-properties-common
 
@@ -154,6 +158,7 @@ $packageInstall software-properties-common
 add-apt-repository -y ppa:certbot/certbot
 apt-get update
 apt-get install -y python-certbot-apache
+
 
 # PHP
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php

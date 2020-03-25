@@ -143,10 +143,12 @@ installCronJobs=false
 
 # Elevation datasources - add to list (assuming source present on downloads server) or comment-out if not wanted, listed in priority order
 elevationDatasources=(
-	'prague.tar.bz2'
-	'osterrain50.tar.bz2'
-	'srtm.tar.bz2'
-	'aster.tar.bz2'
+#	'alos.tar.bz2'
+#	'prague.tar.bz2'
+#	'osterrain50.tar.bz2'
+	'osterrain50tl.tar.bz2' # Ordnance Survey TL Anglia region
+#	'srtm.tar.bz2'
+#	'aster.tar.bz2'
 )
 
 # Archive db

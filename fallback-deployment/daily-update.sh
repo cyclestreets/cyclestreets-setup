@@ -99,8 +99,8 @@ dumpPrefix=www
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
 #	Discard route batch files that are exactly 7 days old
-find ${folder} -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
-find ${folder} -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
+find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
+find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

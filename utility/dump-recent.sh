@@ -38,7 +38,7 @@ else
     echo "$(date)	Re-opened site to routing." >> ${setupLogFile}
 
     #	Archive the IJS tables
-    dump=${websitesBackupsFolder}/${dumpPrefix}_routes_${minItineraryId}.sql.gz
+    dump=${websitesBackupsFolder}/recentroutes/${dumpPrefix}_routes_${minItineraryId}.sql.gz
     
     #	Skip disable keys because re-enabling them takes a long time on the archive
     dumpOptions="--defaults-extra-file=${mySuperCredFile} -hlocalhost --no-create-db --no-create-info --insert-ignore --skip-triggers --skip-disable-keys --hex-blob"

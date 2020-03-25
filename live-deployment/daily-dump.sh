@@ -77,8 +77,8 @@ fi
 
 #	Discard route batch files that are more than 7 days old
 batchRoutes='www_routes_*.sql.gz'
-find ${websitesBackupsFolder} -name "${batchRoutes}" -type f -mtime +7 -delete
-find ${websitesBackupsFolder} -name "${batchRoutes}.md5" -type f -mtime +7 -delete
+find ${websitesBackupsFolder}/recentroutes -name "${batchRoutes}" -type f -mtime +7 -delete
+find ${websitesBackupsFolder}/recentroutes -name "${batchRoutes}.md5" -type f -mtime +7 -delete
 
 ### Stage 2 - CycleStreets regular tasks for www
 dumpPrefix=www

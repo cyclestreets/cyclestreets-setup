@@ -387,8 +387,7 @@ echo "#	$(date)	Installing the routing database: ${importEdition}"
 if [ -n "${dumpFile}" ]; then
 
     #	Create the database (which will be empty for now) and set default collation
-    ${superMysql} -e "create database ${importEdition} default character set utf8 default collate utf8_unicode_ci;"
-    ${superMysql} -e "ALTER DATABASE ${importEdition} COLLATE utf8_unicode_ci;"
+    ${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
     # Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
     gunzip < ${dumpFile} | nice -n19 ${superMysql} ${importEdition}

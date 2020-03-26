@@ -16,7 +16,7 @@ $download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
 # Replace the cyclestreets database
 echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
 ${superMysql} -e "drop database if exists cyclestreets;";
-${superMysql} -e "create database cyclestreets default character set utf8 collate utf8_unicode_ci;";
+${superMysql} -e "create database cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;";
 gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} cyclestreets
 
 #	Stop duplicated cronning from the backup machine
@@ -71,7 +71,7 @@ done
 #	CycleStreets Blog
 $download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
 ${superMysql} cyclestreets -e "drop database if exists blogcyclestreets;";
-${superMysql} cyclestreets -e "CREATE DATABASE blogcyclestreets DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;";
+${superMysql} cyclestreets -e "create database blogcyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;";
 gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | ${superMysql} blogcyclestreets
 
 #	End of file

@@ -315,7 +315,7 @@ service apache2 reload
 
 # Create cyclestreets database
 echo "# Create cyclestreets database"
-${superMysql} -e "create database if not exists cyclestreets default character set utf8 collate utf8_unicode_ci;"
+${superMysql} -e "create database if not exists cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;"
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
@@ -455,7 +455,7 @@ if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW D
 
     # Create batch database
     echo "#	Create ${batchDb} database"
-    ${superMysql} -e "create database if not exists ${batchDb} default character set utf8 collate utf8_unicode_ci;"
+    ${superMysql} -e "create database if not exists ${batchDb} default character set utf8mb4 collate utf8mb4_unicode_ci;"
 
     # Grants; note that the FILE privilege (which is not database-specific) is required so that table contents can be loaded from a file
     ${superMysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
@@ -477,7 +477,7 @@ if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sample
 then
     # Create sampleRoutingDb database
     echo "#	Create ${sampleRoutingDb} database"
-    ${superMysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8 collate utf8_unicode_ci;"
+    ${superMysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8mb4 collate utf8mb4_unicode_ci;"
 
     # Load data
     echo "#	Load ${sampleRoutingDb} data"

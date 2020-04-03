@@ -56,6 +56,22 @@ fi
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
+# Installer
+[[ $baseOS = "Ubuntu" ]] && packageInstall="apt -y install" || packageInstall="brew install"
+[[ $baseOS = "Ubuntu" ]] && packageUpdate="apt update" || packageUpdate="brew update"
+
+# Prepare the apt index; it may be practically non-existent on a fresh VM
+$packageUpdate > /dev/null
+
+# Bring the machine distribution up to date by updating all existing packages
+apt -y upgrade
+apt -y dist-upgrade
+apt -y autoremove
+$packageInstall update-manager-core
+
+# Ensure locale
+$packageInstall language-pack-en-base
+
 # Announce starting
 echo "# Backup system installation $(date)"
 
@@ -71,8 +87,23 @@ mkdir -p /websites/www/data/
 chown ${username}.${rollout} -R /websites
 
 
-# Setup mail system
-# !! still to do
+# Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
+if $configureExim ; then
+    # NB The config here is currently Debian/Ubuntu-specific
+    $packageInstall exim4
+    if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
+	cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
+    fi
+    # NB These will deliberately overwrite any existing config; it is assumed that once set, the config will only be changed via this setup script (as otherwise it is painful during testing)
+    sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='${dc_eximconfig_configtype}'/" /etc/exim4/update-exim4.conf.conf
+    sed -i "s/dc_local_interfaces=.*/dc_local_interfaces='${dc_local_interfaces}'/" /etc/exim4/update-exim4.conf.conf
+    sed -i "s/dc_readhost=.*/dc_readhost='${dc_readhost}'/" /etc/exim4/update-exim4.conf.conf
+    sed -i "s/dc_smarthost=.*/dc_smarthost='${dc_smarthost}'/" /etc/exim4/update-exim4.conf.conf
+    # NB These two are the same in any CycleStreets installation but different from the default Debian installation:
+    sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
+    sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
+    sudo systemctl restart exim4
+fi
 
 # Report completion
 echo "#	Installing backup system completed"

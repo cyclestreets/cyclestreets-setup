@@ -53,20 +53,26 @@ fi
 # Load the credentials
 . $configFile
 
-# Announce starting
-echo "# Backup system installation $(date)"
-
-
-## Main body
-
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
-# Install base webserver software
-. $ScriptHome/utility/installBaseWebserver.sh
+# Announce starting
+echo "# Backup system installation $(date)"
+
+## Main body
+
+# Setup directory structure:
+mkdir -p /websites/cyclescape/backups/rotation/
+mkdir -p /websites/www/archive/
+mkdir -p /websites/www/backups/rotation/
+mkdir -p /websites/www/data/
+
+# Make them writable
+chown ${username}.${rollout} -R /websites
 
 
-
+# Setup mail system
+# !! still to do
 
 # Report completion
 echo "#	Installing backup system completed"

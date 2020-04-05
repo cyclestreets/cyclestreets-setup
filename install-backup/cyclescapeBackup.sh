@@ -10,10 +10,6 @@
 #	Both files should also have .md5 files containing the md5 strings associated with them.
 #	This script looks at the remote md5 files to determine whether they and the dumps are ready to download.
 
-# When in fallback mode uncomment the next two lines:
-#echo "# Skipping in fallback mode"
-#exit 1
-
 ### Stage 1 - general setup
 
 # Ensure this script is NOT run as root (it should be run as cyclestreets)
@@ -67,15 +63,10 @@ fi
 server=www.cyclescape.org
 folder=/websites/cyclescape/backup
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
-rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Download
 $download $administratorEmail $server $folder cyclescapeDB.sql.gz
 $download $administratorEmail $server $folder cyclescapeShared.tar.bz2
-
-#	Rotate
-$rotateDaily $folder cyclescapeDB.sql.gz
-$rotateDaily $folder cyclescapeShared.tar.bz2
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

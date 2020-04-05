@@ -105,21 +105,33 @@ fi
 
 ## Backup system
 
-### Establish directory structure
-mkdir -p /websites/cyclescape/backups/rotation/
-mkdir -p /websites/www/archive/
-mkdir -p /websites/www/backups/rotation/
-mkdir -p /websites/www/data/
+### Establish a location for backups to go
+mkdir -p /websites
 
 ### Make them writable
+### Can be slow because recursively applies to all subdirectories - which include photomap
+### !! May be bettter to setup a way of new folders inheriting group write permissions - or the like.
 chown ${username}.${rollout} -R /websites
 
 
+## Daily cron
+cronLink=/etc/cron.d/cyclestreets
+cronTarget=/opt/configurations/backup/etc/cron.d/cyclestreets
 
-### Report completion
+### Setup link to cron if doesn't exist
+if [ ! -L ${cronLink} ]; then
+    ln -s ${cronTarget} ${cronLink}
+fi
+
+### Cron jobs require specific ownership and permissions to run
+chown root ${cronTarget}
+chmod go-w ${cronTarget}
+
+
+## Report completion
 echo "#	Installing backup system completed"
 
-## Remove the lock file - ${0##*/} extracts the script's basename
+### Remove the lock file - ${0##*/} extracts the script's basename
 ) 900>$lockdir/${0##*/}
 
 # End of file

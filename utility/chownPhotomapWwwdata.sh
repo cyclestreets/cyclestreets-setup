@@ -9,5 +9,3 @@ chown -R www-data ${websitesContentFolder}/data/photomap
 chown -R www-data ${websitesContentFolder}/data/photomap2
 chown -R www-data ${websitesContentFolder}/data/photomap3
 
-# This is filled by class settingsAssignment
-chown -R www-data ${websitesContentFolder}/documentation/RequestedMissingCities.tsv

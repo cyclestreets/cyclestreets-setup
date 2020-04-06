@@ -1,13 +1,9 @@
 #!/bin/bash
-# Script to update CycleStreets on a daily basis
+# Script to backup CycleStreets on a daily basis
 # Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
 
 # This script is idempotent - it can be safely re-run without destroying existing data.
 # It should be run as cyclestreets user - a check for that occurs below.
-
-# When in fallback mode uncomment the next two lines:
-#echo "# Skipping in fallback mode"
-#exit 1
 
 ### Stage 1 - general setup
 
@@ -26,7 +22,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'CycleStreets daily update is already running' ; exit 1; }
+	flock -n 9 || { echo 'CycleStreets daily backup is already running' ; exit 1; }
 
 ### CREDENTIALS ###
 
@@ -58,13 +54,13 @@ fi
 # Logging
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-#echo "#	CycleStreets daily update in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily update $(id)" >> ${setupLogFile}
+#echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
+echo "$(date)	CycleStreets daily backup $(id)" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineHostname}" ]; then
     # Echoed messages like this will generate emails when run via cron
-    echo "# A live machine must be defined in order to run updates"
+    echo "# A live machine must be defined in order to run backup"
     exit 1
 fi
 
@@ -89,22 +85,13 @@ fi
 
 ### Stage 2 - CycleStreets regular tasks for www
 
-#	Download and restore the CycleStreets database.
-#	This section is simlar to fallback-deployment/fromFallback.sh
+#	Copy the CycleStreets database dump
 #	Folder locations
 server=${liveMachineHostname}
 dumpPrefix=www
 
 # Restore recent data
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
-. ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
-
-# This is filled by class settingsAssignment
-sudo chown www-data ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
-
-#	Discard route batch files that are exactly 7 days old
-find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
-find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

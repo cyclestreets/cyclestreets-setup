@@ -129,7 +129,6 @@ chmod go-w ${cronTarget}
 
 
 ## Munin Node, which should be installed after all other software
-$packageInstall apache2
 $packageInstall munin-node
 
 ### See: http://munin-monitoring.org/wiki/munin-node-configure

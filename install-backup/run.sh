@@ -99,7 +99,7 @@ if $configureExim ; then
     ### NB These two are the same in any CycleStreets installation but different from the default Debian installation:
     sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
     sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
-    sudo systemctl restart exim4
+    systemctl restart exim4
 fi
 
 
@@ -126,6 +126,32 @@ fi
 ### Cron jobs require specific ownership and permissions to run
 chown root ${cronTarget}
 chmod go-w ${cronTarget}
+
+
+## Munin Node, which should be installed after all other software
+$packageInstall apache2
+$packageInstall munin-node
+
+### See: http://munin-monitoring.org/wiki/munin-node-configure
+munin-node-configure --suggest --shell | sh
+
+### Add access to munin data from dev.cyclestreets.net
+muninNodeConf=/etc/munin/munin-node.conf
+### Avoid re-adding
+if ! grep -q "Access from CycleStreets dev machine" ${muninNodeConf}; then
+    cat >> ${muninNodeConf} << EOF
+
+# Added by cyclestreets-setup/install-backup
+# Access from CycleStreets dev machine
+allow ^dev\.cyclestreets\.net$
+allow ^93\.93\.128\.92$
+allow ^46\.235\.226\.213$
+
+EOF
+fi
+
+### Restart munin-node
+systemctl restart munin-node
 
 
 ## Report completion

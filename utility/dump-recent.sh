@@ -91,4 +91,12 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost blogcy
 openssl dgst -md5 ${dump} > ${dump}.md5
 
 
+##	Batch routing db
+#	Only three key tables which contain client data need backing up
+dump=${websitesBackupsFolder}/${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost csBatch map_batch_jobs map_batch_servers map_batch_threads | gzip > ${dump}
+#	Hash
+openssl dgst -md5 ${dump} > ${dump}.md5
+
+
 # End of file

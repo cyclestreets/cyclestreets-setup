@@ -90,7 +90,7 @@ fi
 server=${liveMachineHostname}
 dumpPrefix=www
 
-# Restore recent data
+# Backup recent data
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
 
 # Finish

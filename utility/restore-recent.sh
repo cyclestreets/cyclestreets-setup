@@ -33,4 +33,9 @@ ${superMysql} cyclestreets -e "drop database if exists blogcyclestreets;";
 ${superMysql} cyclestreets -e "create database blogcyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;";
 gunzip < /websites/www/backups/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz | ${superMysql} blogcyclestreets
 
+# Fix the ownership after the photomap rsync using the same fixups as applied by
+# fallback-deployment/install-website.sh - but that requires root user.
+sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
+
+
 #	End of file

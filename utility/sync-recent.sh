@@ -28,9 +28,6 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${web
 # Hosted
 rsync -a --cvs-exclude ${server}:${websitesContentFolder}/hosted ${websitesContentFolder}/
 
-# Fix the ownership after the rsync above using the same fixups as applied by fallback-deployment/install-website.sh - but that requires root user.
-sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
-
 #	Also sync the blog code
 # Note: WordPress checks that files are owned by the webserver user (rather than just checking they are writable) so these fixes may be necessary
 # chown -R www-data:${rollout} /websites/blog/content/
@@ -58,5 +55,8 @@ done
 
 #	CycleStreets Blog
 $download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
+
+#	CycleStreets Batch db key tables
+$download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
 
 #	End of file

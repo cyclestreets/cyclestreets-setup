@@ -7,11 +7,18 @@
 folder=${websitesBackupsFolder}
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 
-#	Download CyclesStreets Schema
+#	Download CyclesStreets Schema (no data)
 $download $administratorEmail $server $folder ${dumpPrefix}_schema_cyclestreets.sql.gz
 
 #	Download CycleStreets database
 $download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
+
+#	CycleStreets Blog (deprecated [:]  7 Apr 2020 10:40:01 - will change to new blog)
+$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
+
+#	CycleStreets Batch db key tables
+$download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
+
 
 #	Sync the photomap
 # Use option -O (omit directories from --times), necessary because apparently only owner (or root) can set a directory's mtime.
@@ -28,18 +35,10 @@ rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${web
 # Hosted
 rsync -a --cvs-exclude ${server}:${websitesContentFolder}/hosted ${websitesContentFolder}/
 
-#	Also sync the blog code
-# Note: WordPress checks that files are owned by the webserver user (rather than just checking they are writable) so these fixes may be necessary
-# chown -R www-data:${rollout} /websites/blog/content/
-# chmod -R g+w /websites/blog/content/
-# !! Hardwired locations
-# Include the l option to copy symlinks as symlinks
-rsync -rtOl --cvs-exclude ${server}:/websites/blog/content /websites/blog
-
 # Resume exit on error
 set -e
 
-#	Latest routes
+#	Journey Planner recent routes
 batchRoutes="${dumpPrefix}_routes_*.sql.gz"
 
 #	Find all route files with the named pattern that have been modified within the last 24 hours.
@@ -52,11 +51,5 @@ do
     #	Get the latest copy of www's current IJS tables.
     $download $administratorEmail $server ${folder}/recentroutes $fileName
 done
-
-#	CycleStreets Blog
-$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
-
-#	CycleStreets Batch db key tables
-$download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
 
 #	End of file

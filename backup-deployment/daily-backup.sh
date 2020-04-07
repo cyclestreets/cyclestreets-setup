@@ -76,12 +76,6 @@ if [ ! "$(id -nu)" = "${username}" ]; then
     exit 1
 fi
 
-# Ensure the main website installation is present
-if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-    echo "$(date) The main website installation must exist: please run the main website install script"
-    exit 1
-fi
-
 
 ### Stage 2 - CycleStreets regular tasks for www
 

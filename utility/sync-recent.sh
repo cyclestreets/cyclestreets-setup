@@ -13,10 +13,10 @@ $download $administratorEmail $server $folder ${dumpPrefix}_schema_cyclestreets.
 #	Download CycleStreets database
 $download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
 
-#	CycleStreets Blog (deprecated [:]  7 Apr 2020 10:40:01 - will change to new blog)
-$download $administratorEmail $server $folder ${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
+#	Download organisationwebsite Blog db
+$download $administratorEmail $server $folder ${dumpPrefix}_organisationwebsite_database.sql.gz
 
-#	CycleStreets Batch db key tables
+#	Doanload Batch db key tables
 $download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
 
 

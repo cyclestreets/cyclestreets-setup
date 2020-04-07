@@ -83,10 +83,10 @@ openssl dgst -md5 ${dump} > ${dump}.md5
 ##	Blogs
 #	The databases do not have any stored routines, so the -R option is not necessary
 
-#	Blog CycleStreets
+#	organisationwebsite Blog db
 #	Database dump
-dump=${websitesBackupsFolder}/${dumpPrefix}_schema_blogcyclestreets_database.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost blogcyclestreets | gzip > ${dump}
+dump=${websitesBackupsFolder}/${dumpPrefix}_organisationwebsite_database.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost organisationwebsite | gzip > ${dump}
 #	Hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 

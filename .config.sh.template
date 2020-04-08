@@ -117,6 +117,9 @@ localRoutingUrl=http://localhost:9000/
 ## Specify the machine that provides backups of live data (only used by fallback-deployment)
 liveMachineHostname=
 
+## Microsites server such as blogs
+micrositesServer=
+
 # Specify the import disk, eg. /dev/sda1 that will be checked for sufficient space (leave blank to skip this check)
 importDisk=
 

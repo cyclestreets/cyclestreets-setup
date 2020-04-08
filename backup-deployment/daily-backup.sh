@@ -87,6 +87,10 @@ dumpPrefix=www
 # Backup recent data
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
 
+#	Download microsites
+$download $administratorEmail ${micrositesServer} ${websitesBackupsFolder} microsites_websites.tar.bz2
+
+
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 

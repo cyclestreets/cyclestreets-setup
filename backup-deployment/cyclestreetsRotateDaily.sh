@@ -56,8 +56,9 @@ rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Rotate
 $rotateDaily $folder www_cyclestreets.sql.gz
-$rotateDaily $folder www_schema_blogcyclestreets_database.sql.gz
+$rotateDaily $folder www_organisationwebsite_database.sql.gz
 $rotateDaily $folder www_csBatch_jobs_servers_threads.sql.gz
+$rotateDaily $folder microsites_websites.tar.bz2
 
 #	Cyclescape Rotate
 folder=/websites/cyclescape/backup

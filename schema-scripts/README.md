@@ -1,12 +1,11 @@
 # schema scripts
 
-Contains some scripts for managing the CycleStreets schema.
+Contains some scripts for building the CycleStreets schema for new installations.
 
-Note: there are problems with mysqldump for tables that contain geometry, but using option --hex-blob should work.
 
 ## csSampleDb.sh
 
-Creates the sample cyclestreets database for shipping with new installations.
+Creates the sample `cyclestreets` database for shipping with new installations.
 Before running it, make sure all stored procedures are up to date, e.g. by loading csStoredRoutines.sql and nearestPoint.sql etc. from documentation/schema/ folder.
 Just try running it and it will give feedback as to what to do. (It prefers to run as cyclestreets user).
 

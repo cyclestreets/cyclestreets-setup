@@ -41,62 +41,18 @@ fi
 ## !! Turned off for testing
 #. ../install-website/run.sh
 
-# SSL for secure logins
-apt-get -y install openssl libssl1.0.0 libssl-dev
-## !! TODO: Copy in SSL certificate files and add to VirtualHost config
-
-# SSL is installed by default, but needs enabling
-a2enmod ssl
-service apache2 restart
-
 # Enable support for proxied sites
 a2enmod proxy_http
-service apache2 restart
+systemctl restart apache2
 
-# MySQL configuration
-mysqlConfFile=/etc/mysql/conf.d/cyclestreets.cnf
-if [ ! -r ${mysqlConfFile} ]; then
-
-    # Create the file (avoid any backquotes in the text as they'll spawn sub-processes)
-    cat > ${mysqlConfFile} <<EOF
-# MySQL Configuration for live server
-# This config should be loaded via a symlink from: /etc/mysql/conf.d/
-# On systems running apparmor the symlinks need to be enabled via /etc/apparmor.d/usr.sbin.mysqld
-
-# Main characteristics
-# * Concurrency
-# * Responsiveness
-
-# On some versions of mysql any *.cnf files that are world-writable are ignored.
-
-[mysqld]
-
-# Most CycleStreets tables use MyISAM storage
-default-storage-engine = myisam
-default_tmp_storage_engine = myisam
-EOF
-
-    # Allow the user to edit this file
-    chown ${username}:${rollout} ${mysqlConfFile}
-fi
-
-# Advise
-echo "#	MySQL configured, but consider running the following security step from the command line: mysql_secure_installation"
-
-# Restart mysql - as setup for passwordless sudo by the installer.
-echo "#	$(date)	Restarting MySQL"
-systemctl restart mysql
-
-# Monitoring tools
-apt-get install -y iotop
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
-apt-get install -y libcache-perl libcache-cache-perl
+apt install -y libcache-perl libcache-cache-perl
 # Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: http://stackoverflow.com/questions/20568836/cant-locate-dbi-pm and https://github.com/munin-monitoring/munin/issues/713
-apt-get install -y libdbi-perl libdbd-mysql-perl
-apt-get install -y munin-node
-apt-get install -y munin-plugins-extra
+apt install -y libdbi-perl libdbd-mysql-perl
+apt install -y munin-node
+apt install -y munin-plugins-extra
 ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
 ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
 if [ -f /etc/munin/plugins/dnsresponsetime ]; then

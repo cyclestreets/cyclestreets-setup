@@ -71,7 +71,7 @@ if [ -f /etc/munin/plugins/packetloss ]; then
 fi
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
-/etc/init.d/munin-node restart
+systemctl restart munin-node
 echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest
 

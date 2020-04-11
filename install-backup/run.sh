@@ -109,10 +109,10 @@ fi
 mkdir -p /websites
 
 ### Make them writable
-### Can be slow because recursively applies to all subdirectories - which include photomap
-### !! May be bettter to setup a way of new folders inheriting group write permissions - or the like.
-chown ${username}.${rollout} -R /websites
+chown ${username}.${rollout} /websites
 
+### setgid so that the group of new files is rollout
+chmod g+s /websites
 
 ## Daily cron
 cronLink=/etc/cron.d/cyclestreets

@@ -54,13 +54,16 @@ fi
 folder=${websitesBackupsFolder}
 rotateWeekly=${SCRIPTDIRECTORY}/../utility/rotateWeekly.sh
 
-#	CycleStreets Rotate
+#	CycleStreets
 $rotateWeekly $folder www_cyclestreets.sql.gz
 $rotateWeekly $folder www_organisationwebsite_database.sql.gz
 $rotateWeekly $folder www_csBatch_jobs_servers_threads.sql.gz
+
+#	Microsites
+folder=/websites/microsites/backup
 $rotateWeekly $folder microsites_websites.tar.bz2
 
-#	Cyclescape Folder locations
+#	Cyclescape
 folder=/websites/cyclescape/backup
 $rotateWeekly $folder cyclescapeDB.sql.gz
 $rotateWeekly $folder cyclescapeShared.tar.bz2

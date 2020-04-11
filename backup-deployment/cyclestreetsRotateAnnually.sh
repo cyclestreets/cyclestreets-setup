@@ -54,13 +54,16 @@ fi
 folder=${websitesBackupsFolder}
 rotateAnnually=${SCRIPTDIRECTORY}/../utility/rotateAnnually.sh
 
-#	CycleStreets Rotate
+#	CycleStreets
 $rotateAnnually $folder www_cyclestreets.sql.gz
 $rotateAnnually $folder www_organisationwebsite_database.sql.gz
 $rotateAnnually $folder www_csBatch_jobs_servers_threads.sql.gz
+
+#	Microsites
+folder=/websites/microsites/backup
 $rotateAnnually $folder microsites_websites.tar.bz2
 
-#	Cyclescape Folder locations
+#	Cyclescape
 folder=/websites/cyclescape/backup
 $rotateAnnually $folder cyclescapeDB.sql.gz
 $rotateAnnually $folder cyclescapeShared.tar.bz2

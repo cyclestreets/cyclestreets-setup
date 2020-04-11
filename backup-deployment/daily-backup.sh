@@ -88,7 +88,8 @@ dumpPrefix=www
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
 
 #	Download microsites
-scp -p ${micrositesServer}:/home/${username}/microsites_websites.tar.bz2 ${websitesBackupsFolder}
+micrositesBackupsFolder=/websites/microsites/backup
+scp -p ${micrositesServer}:/home/${username}/microsites_websites.tar.bz2 ${micrositesBackupsFolder}
 
 
 # Finish

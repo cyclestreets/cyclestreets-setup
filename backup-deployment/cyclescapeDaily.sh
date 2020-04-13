@@ -74,7 +74,7 @@ $download $administratorEmail $server $folder cyclescapeDB.sql.gz
 $download $administratorEmail $server $folder cyclescapeShared.tar.bz2
 
 # Finish
-echo "$(date)	All Cyclescape done" >> ${setupLogFile}
+echo "$(date)	Daily Cyclescape backup done" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

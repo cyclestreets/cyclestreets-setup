@@ -39,17 +39,6 @@ rsync -a --cvs-exclude ${server}:${websitesContentFolder}/hosted ${websitesConte
 set -e
 
 #	Journey Planner recent routes
-batchRoutes="${dumpPrefix}_routes_*.sql.gz"
-
-#	Find all route files with the named pattern that have been modified within the last 24 hours.
-files=$(ssh ${server} "find ${folder}/recentroutes -maxdepth 1 -name '${batchRoutes}' -type f -mtime 0 -print")
-for f in $files
-do
-    #	Get only the name component
-    fileName=$(basename $f)
-
-    #	Get the latest copy of www's current IJS tables.
-    $download $administratorEmail $server ${folder}/recentroutes $fileName
-done
+rsync -a ${server}:${folder}/recentroutes ${folder}
 
 #	End of file

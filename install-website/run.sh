@@ -402,25 +402,25 @@ then
 fi
 
 # File to avoid re-download of the csExternalDataFile
-csExternalDataFileDownloaded=${websitesBackupsFolder}/csExternalDataFileDownloaded.txt
+csExternalDataFileDownloaded=${websitesContentFolder}/data/csExternalDataFileDownloaded.txt
 
 # External db restore
-if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e ${websitesBackupsFolder}/${csExternalDataFile} -a ! -e ${csExternalDataFileDownloaded} ]; then
+if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalDataFile} -a ! -e ${csExternalDataFileDownloaded} ]; then
 
 	# Report
 	echo "#	$(date)	Starting download of external database"
 
 	# Download
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${csExternalDataFile} -O ${websitesBackupsFolder}/${csExternalDataFile}
+	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${csExternalDataFile} -O /tmp/${csExternalDataFile}
 
 	# Report
 	echo "#	$(date)	Starting installation of external database"
 
 	# Unpack into the skeleton db
-	gunzip < ${websitesBackupsFolder}/${csExternalDataFile} | ${superMysql} ${externalDb}
+	gunzip < /tmp/${csExternalDataFile} | ${superMysql} ${externalDb}
 
 	# Remove the archive to save space
-	rm ${websitesBackupsFolder}/${csExternalDataFile}
+	rm /tmp/${csExternalDataFile}
 
 	# Create an empty file to avoid re-download
 	cat > ${csExternalDataFileDownloaded} <<EOF

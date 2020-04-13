@@ -56,6 +56,11 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
+# Logging
+setupLogFile=$SCRIPTDIRECTORY/log.txt
+touch ${setupLogFile}
+echo "$(date)	Cyclescape daily backup" >> ${setupLogFile}
+
 
 # Main body
 
@@ -67,6 +72,9 @@ download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 #	Download
 $download $administratorEmail $server $folder cyclescapeDB.sql.gz
 $download $administratorEmail $server $folder cyclescapeShared.tar.bz2
+
+# Finish
+echo "$(date)	All Cyclescape done" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -54,8 +54,7 @@ fi
 # Logging
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-#echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily backup $(id)" >> ${setupLogFile}
+echo "$(date)	CycleStreets daily backup" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineHostname}" ]; then
@@ -93,7 +92,7 @@ scp -p ${micrositesServer}:/home/${username}/microsites_websites.tar.bz2 ${micro
 
 
 # Finish
-echo "$(date)	All done" >> ${setupLogFile}
+echo "$(date)	Daily CycleStreets backup done" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

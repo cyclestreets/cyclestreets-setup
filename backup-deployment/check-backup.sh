@@ -56,11 +56,28 @@ setupLogFile=$SCRIPTDIRECTORY/log.txt
 
 # Called by the cron
 # Check the daily backup log wrote a success message having today's date.
-if ! grep -q "$(date +%a\ %b\ %_d) [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} [A-Z]\{3\} $(date +%Y)\sAll done" "${setupLogFile}"; then
-    message="The daily backup did not complete today.\n\nhttps://github.com/cyclestreets/cyclestreets-setup/backup-deployment/blob/master/README.md\n\n\tYours,\n\t\tbackup cron"
+todayDatePattern="$(date +%a\ %b\ %_d) [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} [A-Z]\{3\} $(date +%Y)"
+didnotComplete=
+
+#	Check CycleStreets
+completedMsg="Daily CycleStreets backup done"
+if ! grep -q "${todayDatePattern}\s${completedMsg}" "${setupLogFile}"; then
+	didnotComplete=CycleStreets
+fi
+
+#	Check Cyclescape
+completedMsg="Daily Cyclescape backup done"
+if ! grep -q "${todayDatePattern}\s${completedMsg}" "${setupLogFile}"; then
+	didnotComplete="${didnotComplete} Cyclescape"
+fi
+
+# Report
+if [ -n "${didnotComplete}" ]; then
+    message="The daily backup did not complete today.\n\nThe module(s) that did not complete were:${didnotComplete}\n\nhttps://github.com/cyclestreets/cyclestreets-setup/blob/master/backup-deployment/README.md#daily-backup-did-not-complete\n\n\tYours,\n\t\tbackup cron"
     # Send mail
     recipientMail="${administratorEmail/webmaster/info}"
     echo -e ${message} | mail -s "Backup cron did not complete today" ${recipientMail}
+
     # Report (so that will appear in cron email)
     echo -e ${message}
 fi

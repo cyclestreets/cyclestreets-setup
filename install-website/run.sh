@@ -111,31 +111,15 @@ fi
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
 # brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb
 
-# Install Potlatch editor
-#!# This currently assumes the existence of the .tgz file; need to make this part of a repo at some point
+# Install Potlatch editor, if not already present
 #!# Ideally we would:
 #    1) Pull down the latest dev code from https://github.com/openstreetmap/potlatch2
 #    2) Compile using Flex as detailed in the README, using the Flex install instructions at http://thomas.deuling.org/2011/05/install-flex-sdk-under-ubuntu-linux/
 #    3) Add in the local config, which are believed to be map_features.xml (position of transport block moved) and vectors.xml (which defines the external sources); possibly there are other files - needs to be checked
-potlatchEditorFile=potlatchEditor.tgz
-
-# Check if there is a password for the data store and that the file has not already been obtained
-if [ -n "${datapassword}" -a ! -e ${websitesBackupsFolder}/${potlatchEditorFile} ]; then
-
-	# Report
-	echo "#	$(date)	Starting download of potlatch editor"
-
-	# Download
-	wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${potlatchEditorFile} -O ${websitesBackupsFolder}/${potlatchEditorFile}
-
-	# Report
-	echo "#	$(date)	Starting installation of potlatch editor"
-
-	# Unpack
-	tar xf ${websitesBackupsFolder}/potlatchEditor.tgz -C ${websitesContentFolder}/edit
-
-	# Report
-	echo "#	$(date)	Completed installation of potlatch editor"
+if [ ! -f "${websitesContentFolder}/edit/editor/vectors.xml" ]; then
+	echo "#	$(date)	Unpacking Potlatch2 editor"
+	tar xf ${websitesContentFolder}/edit/potlatchEditor.tgz -C ${websitesContentFolder}/edit/
+	echo "#	$(date)	Completed installation of Potlatch2 editor"
 fi
 
 # Assume ownership of all the new files and folders

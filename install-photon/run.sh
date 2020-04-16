@@ -86,9 +86,9 @@ if [ ! -f "/opt/photon/photon-${VERSION}.jar" ]; then
 fi
 
 # Get the latest data
-sudo apt-get -y install pbzip2
+apt -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
-	echo "Downloading compiled data file (around 55GB, unpacks to 99GB)"
+	echo "Downloading compiled data file (at April 2020 this is 61GB and unpacks to 122GB)"
 	$asCS wget http://download1.graphhopper.com/public/photon-db-latest.tar.bz2
 	$asCS pbzip2 -d photon-db-latest.tar.bz2
 	$asCS tar vxf photon-db-latest.tar
@@ -97,7 +97,7 @@ fi
 # Install init.d service; this essentially runs `java -jar photon-${VERSION}.jar`
 if [ ! -L /etc/init.d/photon ]; then
 	cp -p "${SCRIPTDIRECTORY}/photon.init.d" /opt/photon/
-	sed -i "s/version=.+/version=\"${VERSION}\"/" /opt/photon/photon.init.d
+	sed -i "s/version=DOWNLOADED_VERSION_HERE/version=\"${VERSION}\"/" /opt/photon/photon.init.d
 	ln -s /opt/photon/photon.init.d /etc/init.d/photon
 	chmod +x /opt/photon/photon.init.d
 fi

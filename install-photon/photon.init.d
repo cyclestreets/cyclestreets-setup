@@ -12,7 +12,7 @@
 # Based on MIT-licensed template at: https://github.com/fhd/init-script-template/blob/master/template
 
 
-version="0.3-beta3"
+version=DOWNLOADED_VERSION_HERE
 cmd="java -jar photon-${version}.jar"
 dir="/opt/photon/"
 user="root"

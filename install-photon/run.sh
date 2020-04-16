@@ -50,11 +50,15 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
-# # Update sources and packages
-# apt-get -y update
-# apt-get -y upgrade
-# apt-get -y dist-upgrade
-# apt-get -y autoremove
+# Update sources and packages
+apt -y update
+apt -y upgrade
+apt -y dist-upgrade
+apt -y autoremove
+
+# Photon requires Java
+apt -y install default-jre
+
 
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"

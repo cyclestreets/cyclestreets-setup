@@ -44,13 +44,9 @@ function logAndEmail {
     echo $1 | mail -s "$subject" "$email"
 }
 
-# Trace for testing
-# logAndEmail "$dump has size $size"
-# exit
-
 # The dump file may be in the process of being generated when this script is called.
 # So we should wait for up to this many minutes until the md5 file is ready before starting the download.
-minutesWait=50
+minutesWait=10
 
 #	Use this to determine whether to download.
 download=0
@@ -68,6 +64,9 @@ then
     size=$(stat -c%s $dump)
     # 80% of the size
     size80=$((($size - ($size/5))))
+
+    # Log
+    echo "$(date)	Size of existing ${dump} is ${size}" >> $log
 fi
 
 #	Keep trying while there's still time
@@ -129,11 +128,16 @@ fi
 #	Download the md5, preserving timing data
 #	The -p tries to set the mode of the file, which will require the right permissions
 scp -p ${server}:${md5} ${folder}
+#	Log
+echo "$(date)	Fetched ${md5}" >> $log
+
 
 #	Download the main file
 # scp -p ${server}:${dump} ${folder}
 #	Use rsync instead...
 rsync -t ${server}:${dump} ${folder}
+#	Log
+echo "$(date)	Fetched ${dump}" >> $log
 
 #	The dump must be readable
 if [ ! -r ${dump} ]
@@ -157,9 +161,12 @@ then
 fi
 
 #	Warn if the dump has shrunk
-if [ $(stat -c%s $dump) -lt $size80 ]
+newSize=$(stat -c%s $dump)
+#	Log
+echo "$(date)	Size of new ${dump} is ${newSize}" >> $log
+if [ $newSize -lt $size80 ]
 then
-    logAndEmail "${dump} has shrunk by more than 20% from ${size} to $(stat -c%s ${dump})"
+    logAndEmail "${dump} has shrunk by more than 20% from ${size} to ${newSize}"
 fi
 
 # Successful completion: return true

@@ -52,28 +52,31 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Logging
-setupLogFile=$SCRIPTDIRECTORY/log.txt
+logFile=$SCRIPTDIRECTORY/log.txt
 
-# Called by the cron
+# This script is called by cron.
 # Check the daily backup log wrote a success message having today's date.
 todayDatePattern="$(date +%a\ %b\ %_d) [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} [A-Z]\{3\} $(date +%Y)"
-didnotComplete=
+inComplete=
 
-#	Check CycleStreets
-completedMsg="Daily CycleStreets backup done"
-if ! grep -q "${todayDatePattern}\s${completedMsg}" "${setupLogFile}"; then
-	didnotComplete=CycleStreets
-fi
+# Check the log for confirmation that the item give as first argument has completed
+checkItemDone()
+{
+    if ! grep -q "${todayDatePattern}\s$1 done" "${logFile}"; then
+	# Set or append to the list of incomplete items
+	[[ -z "${inComplete}" ]] && inComplete=$1 || inComplete="${inComplete}, $1"
+    fi
+}
 
-#	Check Cyclescape
-completedMsg="Daily Cyclescape backup done"
-if ! grep -q "${todayDatePattern}\s${completedMsg}" "${setupLogFile}"; then
-	didnotComplete="${didnotComplete} Cyclescape"
-fi
+# Do the checks
+checkItemDone "CycleStreets daily backup"
+checkItemDone "CycleStreets daily rotation"
+checkItemDone "Cyclescape daily backup"
+checkItemDone "Cyclescape daily rotation"
 
 # Report
-if [ -n "${didnotComplete}" ]; then
-    message="The daily backup did not complete today.\n\nThe module(s) that did not complete were:${didnotComplete}\n\nhttps://github.com/cyclestreets/cyclestreets-setup/blob/master/backup-deployment/README.md#daily-backup-did-not-complete\n\n\tYours,\n\t\tbackup cron"
+if [ -n "${inComplete}" ]; then
+    message="The daily backup did not complete today.\n\nThe following items did not complete: ${inComplete}\n\nhttps://github.com/cyclestreets/cyclestreets-setup/blob/master/backup-deployment/README.md#daily-backup-did-not-complete\n\n\tYours,\n\n\t\tbackup cron"
     # Send mail
     recipientMail="${administratorEmail/webmaster/info}"
     echo -e ${message} | mail -s "Backup cron did not complete today" ${recipientMail}
@@ -83,7 +86,7 @@ if [ -n "${didnotComplete}" ]; then
 fi
 
 # Finish
-echo "$(date)	Checked" >> ${setupLogFile}
+echo "$(date)	Checked" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -52,9 +52,9 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Logging
-setupLogFile=$SCRIPTDIRECTORY/log.txt
-touch ${setupLogFile}
-echo "$(date)	CycleStreets daily backup" >> ${setupLogFile}
+logFile=$SCRIPTDIRECTORY/log.txt
+touch ${logFile}
+echo "$(date)	CycleStreets daily backup" >> ${logFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineHostname}" ]; then
@@ -92,7 +92,7 @@ scp -p ${micrositesServer}:/home/${username}/microsites_websites.tar.bz2 ${micro
 
 
 # Finish
-echo "$(date)	Daily CycleStreets backup done" >> ${setupLogFile}
+echo "$(date)	CycleStreets daily backup done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

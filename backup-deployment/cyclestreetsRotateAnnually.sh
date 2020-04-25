@@ -47,6 +47,10 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
+# Logging
+logFile=$SCRIPTDIRECTORY/log.txt
+touch ${logFile}
+echo "$(date)	CycleStreets annual rotation" >> ${logFile}
 
 # Main body
 
@@ -68,6 +72,7 @@ folder=/websites/cyclescape/backup
 $rotateAnnually $folder cyclescapeDB.sql.gz
 $rotateAnnually $folder cyclescapeShared.tar.bz2
 
+echo "$(date)	CycleStreets annual rotation done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

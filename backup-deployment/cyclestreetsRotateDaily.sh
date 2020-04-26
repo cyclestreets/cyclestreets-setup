@@ -67,12 +67,14 @@ $rotateDaily $folder www_csBatch_jobs_servers_threads.sql.gz
 folder=/websites/microsites/backup
 $rotateDaily $folder microsites_websites.tar.bz2
 
+echo "$(date)	CycleStreets daily rotation done" >> ${logFile}
+
 #	Cyclescape
 folder=/websites/cyclescape/backup
 $rotateDaily $folder cyclescapeDB.sql.gz
 $rotateDaily $folder cyclescapeShared.tar.bz2
 
-echo "$(date)	CycleStreets daily rotation done" >> ${logFile}
+echo "$(date)	Cyclescape daily rotation done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

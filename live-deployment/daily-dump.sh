@@ -86,6 +86,12 @@ dumpPrefix=www
 # Dump recent data
 . ${SCRIPTDIRECTORY}/../utility/dump-recent.sh
 
+# Flush photomap
+# Clears out empty folders that sometimes result from failed uploads
+find ${websitesContentFolder}/data/photomap -type d -name "original." -exec rmdir {} +
+find ${websitesContentFolder}/data/photomap2 -type d -name "original." -exec rmdir {} +
+find ${websitesContentFolder}/data/photomap3 -type d -name "original." -exec rmdir {} +
+
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}
 

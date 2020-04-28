@@ -31,7 +31,7 @@ done
 
 # This file is only geared towards updating the locally served routes to a new edition.
 # Pre-requisites:
-# If a fallbackRoutingServer is specified, it must already be serving routes for the new edition.
+# If a fallbackRoutingUrl is specified, it must already be serving routes for the new edition.
 
 ### Stage 1 - general setup
 
@@ -204,11 +204,11 @@ fi
 # Clear this cache - (whose rows relate to a specific routing edition)
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
-# If a fallbackRoutingServer is supplied, check it is running and using the proposed edition
-if [ -n "${fallbackRoutingServer}" ]; then
+# If a fallbackRoutingUrl is supplied, check it is running and using the proposed edition
+if [ -n "${fallbackRoutingUrl}" ]; then
 
     # POST the request to the server
-    fallbackRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${fallbackRoutingServer} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    fallbackRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${fallbackRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" != "${fallbackRoutingEdition}" ]; then
@@ -217,7 +217,7 @@ if [ -n "${fallbackRoutingServer}" ]; then
     fi
 
     # Use the fallback server during switch over
-    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingServer}' WHERE id = 1;";
+    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' WHERE id = 1;";
     echo "#	Now using fallback routing service"
 else
 

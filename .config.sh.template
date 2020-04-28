@@ -123,7 +123,7 @@ micrositesServer=
 importDisk=
 
 # An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
-fallbackRoutingServer=
+fallbackRoutingUrl=
 
 # Fallback server
 fallbackServer=

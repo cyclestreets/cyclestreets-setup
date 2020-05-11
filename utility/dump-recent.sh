@@ -80,17 +80,6 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost -R --n
 openssl dgst -md5 ${dump} > ${dump}.md5
 
 
-##	Blogs
-#	The databases do not have any stored routines, so the -R option is not necessary
-
-#	organisationwebsite Blog db
-#	Database dump
-dump=${websitesBackupsFolder}/${dumpPrefix}_organisationwebsite_database.sql.gz
-mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost organisationwebsite | gzip > ${dump}
-#	Hash
-openssl dgst -md5 ${dump} > ${dump}.md5
-
-
 ##	Batch routing db
 #	Only three key tables which contain client data need backing up
 dump=${websitesBackupsFolder}/${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz

@@ -89,6 +89,7 @@ dumpPrefix=www
 #	Download microsites
 micrositesBackupsFolder=/websites/microsites/backup
 scp -p ${micrositesServer}:/home/${username}/microsites_websites.tar.bz2 ${micrositesBackupsFolder}
+scp -p ${micrositesServer}:/home/${username}/micrositesAllDatabases.sql.gz ${micrositesBackupsFolder}
 
 
 # Finish

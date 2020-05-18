@@ -95,7 +95,11 @@ output_config() {
 
 # Outputs the statistics
 output_values() {
-    python ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${csHostname}-access.log | while read line ; do
+    # If not provided use file based on hostname
+    if [ -z "${journeysLog}" ]; then
+	journeysLog="${csHostname}-access.log"
+    fi
+    python ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${journeysLog} | while read line ; do
 	echo $line
     done
 }

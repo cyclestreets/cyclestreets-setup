@@ -173,6 +173,16 @@ fi
 # Restart Apache
 service apache2 restart
 
+# Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
+apt-get install -y munin-node
+apt-get install -y munin-plugins-extra
+apt-get install -y libwww-perl
+# See: http://munin-monitoring.org/wiki/munin-node-configure
+munin-node-configure --suggest --shell | sh
+/etc/init.d/munin-node restart
+echo "Munin plugins enabled as follows:"
+munin-node-configure --suggest
+
 # Report completion
 echo "#	Installing tilecache completed"
 

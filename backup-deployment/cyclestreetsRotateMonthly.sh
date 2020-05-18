@@ -60,7 +60,6 @@ rotateMonthly=${SCRIPTDIRECTORY}/../utility/rotateMonthly.sh
 
 #	CycleStreets
 $rotateMonthly $folder www_cyclestreets.sql.gz
-$rotateMonthly $folder www_organisationwebsite_database.sql.gz
 $rotateMonthly $folder www_csBatch_jobs_servers_threads.sql.gz
 
 #	Microsites

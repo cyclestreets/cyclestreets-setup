@@ -60,7 +60,6 @@ rotateAnnually=${SCRIPTDIRECTORY}/../utility/rotateAnnually.sh
 
 #	CycleStreets
 $rotateAnnually $folder www_cyclestreets.sql.gz
-$rotateAnnually $folder www_organisationwebsite_database.sql.gz
 $rotateAnnually $folder www_csBatch_jobs_servers_threads.sql.gz
 
 #	Microsites

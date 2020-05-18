@@ -13,9 +13,6 @@ $download $administratorEmail $server $folder ${dumpPrefix}_schema_cyclestreets.
 #	Download CycleStreets database
 $download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
 
-#	Download organisationwebsite Blog db
-$download $administratorEmail $server $folder ${dumpPrefix}_organisationwebsite_database.sql.gz
-
 #	Doanload Batch db key tables
 $download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
 

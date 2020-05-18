@@ -80,7 +80,7 @@ do
 
     # The test checks that:
     # 1. The md5 exists (readable)
-    # 2. The dump is readable
+    # 2. The dump is readable and is fresh
     # 3. The md5's size > 0
     # 4. The md5's modification time was fresh enough
     # 5. The md5 is 'not older than' the dump (it can be created in the same second)
@@ -88,7 +88,7 @@ do
     # The test is split into two parts as the $(date...) test fails and messes up if the $md5 does not exist.
 
     # Check first part
-    ssh ${server} "test -r ${md5} -a -r ${dump}"
+    ssh ${server} "test -r ${md5} -a -r ${dump} -a \$(date -r ${dump} +%s) -ge ${fullDayAgo}"
 
     # If the test succeeds, then check the second part
     if [ $? = 0 ]

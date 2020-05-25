@@ -113,10 +113,10 @@ if [ "$restoreRecentRoutes" = true ]; then
 fi
 
 #	Restore current routing edition and apiV2Url
-${superMysql} cyclestreets -e "update map_config set routingDb := '${currentEdition}', apiV2Url := '${currentApiV2Url}';";
+${superMysql} cyclestreets -e "update map_config set routingDb = '${currentEdition}', apiV2Url = '${currentApiV2Url}';";
 
 #	Prohibit new photomap uploads while in fallback mode
-${superMysql} cyclestreets -e "update map_config set photomapStatus := 'closed';";
+${superMysql} cyclestreets -e "update map_config set photomapStatus = 'closed';";
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

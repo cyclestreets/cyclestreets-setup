@@ -59,7 +59,7 @@ fi
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
 #echo "#	CycleStreets daily update in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily update $(id)" >> ${setupLogFile}
+echo "$(date)	CycleStreets daily update" >> ${setupLogFile}
 
 # Ensure live machine has been defined
 if [ -z "${liveMachineHostname}" ]; then

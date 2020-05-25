@@ -36,6 +36,8 @@ rsync -a --cvs-exclude ${server}:${websitesContentFolder}/hosted ${websitesConte
 set -e
 
 #	Journey Planner recent routes
-rsync -a ${server}:${folder}/recentroutes ${folder}
+if [ "$restoreRecentRoutes" = true ]; then
+   rsync -a ${server}:${folder}/recentroutes ${folder}
+fi
 
 #	End of file

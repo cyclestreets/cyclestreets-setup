@@ -85,7 +85,7 @@ $packageInstall language-pack-en-base
 ## Email / exim
 
 ### Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
-if $configureExim ; then
+if [ "$configureExim" = true ]; then
     ### NB The config here is currently Debian/Ubuntu-specific
     $packageInstall exim4
     if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then

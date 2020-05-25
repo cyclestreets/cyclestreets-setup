@@ -116,8 +116,11 @@ stopRoutingDuringImport=yes
 ## Local routing server
 localRoutingUrl=http://localhost:9000/
 
-## Specify the machine that provides backups of live data (only used by fallback-deployment)
+## Specify the machine that provides backups of live data (used by backup and fallback-deployment)
 liveMachineHostname=
+
+## Controls syncing and restoration of recent route zips: true|false or empty
+restoreRecentRoutes=
 
 ## Microsites server such as blogs
 micrositesServer=

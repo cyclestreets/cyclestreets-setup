@@ -37,17 +37,16 @@ fi
 
 # Main body of script
 
-# Install the website
-# !! Turned off for testing
-# !! Backup machine may also need different config options for the server - needs checking
-#. ../install-website/run.sh
+# Fallback runs on a smaller server than the main one, with these main features:
+# - Website appearing as normal to users and API keyholders
+# - Routing working
+# - Routing area limited to core areas (UK + Ireland and custom areas)
+# - Photomap present
+# - No archived routes
+# - Batch routing, infrastructure data, collisions, etc., can be omitted
+# - Custom routing differences tolerable for a short period.
 
-# Cyclescape prepare location
-cyclescapeFolder=/websites/cyclescape
-cyclescapeBackup=${cyclescapeBackup}/backup
-mkdir -p ${cyclescapeBackup}
-chown ${username}.${rollout} -R ${cyclescapeFolder}
-chmod g+w -R ${cyclescapeFolder}
+echo "#	Fallback deployment is not handled by a script."
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

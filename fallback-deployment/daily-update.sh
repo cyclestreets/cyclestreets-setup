@@ -95,13 +95,25 @@ fi
 server=${liveMachineHostname}
 dumpPrefix=www
 
+echo "$(date) ${superMysql}"
+
+#	The fallback server is running a custom routing service while this update happens
+#	Record current routing edition and apiV2Url
+currentEdition=$(${superMysql} -NB cyclestreets -e "select routingDb from map_config where id = 1;")
+currentApiV2Url=$(${superMysql} -NB cyclestreets -e "select apiV2Url from map_config where id = 1;")
+
 # Restore recent data
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
 #	Discard route batch files that are exactly 7 days old
-find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
-find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
+if [ "$restoreRecentRoutes" = true ]; then
+    find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
+    find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
+fi
+
+#	Restore current routing edition and apiV2Url
+${superMysql} cyclestreets -e "update map_config set routingDb := '${currentEdition}', apiV2Url := '${currentApiV2Url}';";
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

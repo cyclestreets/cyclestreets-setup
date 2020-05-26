@@ -95,8 +95,6 @@ fi
 server=${liveMachineHostname}
 dumpPrefix=www
 
-echo "$(date) ${superMysql}"
-
 #	The fallback server is running a custom routing service while this update happens
 #	Record current routing edition and apiV2Url
 currentEdition=$(${superMysql} -NB cyclestreets -e "select routingDb from map_config where id = 1;")
@@ -115,8 +113,11 @@ fi
 #	Restore current routing edition and apiV2Url
 ${superMysql} cyclestreets -e "update map_config set routingDb = '${currentEdition}', apiV2Url = '${currentApiV2Url}';";
 
-#	Prohibit new photomap uploads while in fallback mode
+#	Prohibit new photomap uploads while in fallback mode (they would be lost when returning to normality)
 ${superMysql} cyclestreets -e "update map_config set photomapStatus = 'closed';";
+
+#	Enforce sign-in to avoid this fallback server being spidered while in normal mode
+${superMysql} cyclestreets -e "update map_config set enforceSignin = 'yes';";
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

@@ -109,9 +109,9 @@ if [ ! -L /etc/apache2/sites-enabled/600-telluswhere.conf ]; then
     ln -s ${vhConf} /etc/apache2/sites-enabled/600-telluswhere.conf
 fi
 
-# Add support for SQLite, and add client program
-apt-get -y install php-sqlite3
-apt-get -y install sqlite3
+# Add database
+apt-get -y install mysql
+#!# The database user creation and setup are not yet automated; the application will create the structure on first run; see createDatabaseStructure
 
 # Reload apache
 service apache2 reload

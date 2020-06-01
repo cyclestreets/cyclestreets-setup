@@ -12,9 +12,14 @@ sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFold
 
 # Replace the cyclestreets database
 echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
+# Close the site during this time
+touch ${websitesContentFolder}/maintenance
 ${superMysql} -e "drop database if exists cyclestreets;";
 ${superMysql} -e "create database cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;";
 gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} cyclestreets
+
+# Re-open the site after the cyclestreets db has been restored
+rm ${websitesContentFolder}/maintenance
 
 #	Stop duplicated cronning from the backup machine
 ${superMysql} cyclestreets -e "update map_config set pseudoCron = null;";

@@ -11,6 +11,10 @@ class doCheck
 	private $enableSms = true;
 	private $serverUrlMain = 'http://www.cyclestreets.net';
 	private $apiV2UrlMain = 'https://api.cyclestreets.net/v2';
+	private $apiVersions = array (
+		'http://%s.cyclestreets.net',
+		'https://%s.cyclestreets.net/v2'
+	);
 
 	# Constructor
 	public function __construct ()
@@ -32,6 +36,7 @@ class doCheck
 		if (!isSet ($smsProviderApiKey))	{$this->email ('Setup', '$smsProviderApiKey is not defined');}
 		if (!isSet ($smsNumbers))		{$this->email ('Setup', '$smsNumbers is not defined');}
 		if (!isSet ($testApiKeys))	{$this->email ('Setup', '$testApiKeys is not defined');}
+		if (!isSet ($servers))	{$this->email ('Setup', '$servers is not defined');}
 		
 		# Set settings as properties
 		$this->timeoutSeconds	= $timeoutSeconds;
@@ -231,7 +236,7 @@ class doCheck
 	
 	
 	# Route-retrieval test
-	private function test_journey_existing (&$errorMessage = false, &$result = false)
+	private function xxxtedddst_journey_existing (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
 		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&plan=fastest&itinerary=345529";

@@ -68,6 +68,12 @@ if [ -z "${liveMachineHostname}" ]; then
     exit 1
 fi
 
+# Ensure a fallback database name is set
+if [ -z "${csFallbackDb}" ]; then
+    echo "$(date) Set a fallback database name to restore."
+    exit 1
+fi
+
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
     echo "$(date) User ${username} must exist: please run the main website install script"
@@ -85,7 +91,6 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
     echo "$(date) The main website installation must exist: please run the main website install script"
     exit 1
 fi
-
 
 ### Stage 2 - CycleStreets regular tasks for www
 
@@ -111,13 +116,13 @@ if [ "$restoreRecentRoutes" = true ]; then
 fi
 
 #	Restore current routing edition and apiV2Url
-${superMysql} cyclestreets -e "update map_config set routingDb = '${currentEdition}', apiV2Url = '${currentApiV2Url}';";
+${superMysql} ${csFallbackDb} -e "update map_config set routingDb = '${currentEdition}', apiV2Url = '${currentApiV2Url}';";
 
 #	Prohibit new photomap uploads while in fallback mode (they would be lost when returning to normality)
-${superMysql} cyclestreets -e "update map_config set photomapStatus = 'closed';";
+${superMysql} ${csFallbackDb} -e "update map_config set photomapStatus = 'closed';";
 
 #	Enforce sign-in to avoid this fallback server being spidered while in normal mode
-${superMysql} cyclestreets -e "update map_config set enforceSignin = 'yes';";
+${superMysql} ${csFallbackDb} -e "update map_config set enforceSignin = 'yes';";
 
 # Finish
 echo "$(date)	All done" >> ${setupLogFile}

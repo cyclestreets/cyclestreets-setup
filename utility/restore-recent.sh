@@ -10,19 +10,14 @@ folder=${websitesBackupsFolder}
 echo "$(date)	Photomap ownership" >> ${setupLogFile}
 sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
 
-# Replace the cyclestreets database
-echo "$(date)	Replacing CycleStreets db" >> ${setupLogFile}
-# Close the site during this time
-touch ${websitesContentFolder}/maintenance
-${superMysql} -e "drop database if exists cyclestreets;";
-${superMysql} -e "create database cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;";
-gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} cyclestreets
-
-# Re-open the site after the cyclestreets db has been restored
-rm ${websitesContentFolder}/maintenance
+# Replace the database
+echo "$(date)	Replacing ${csFallbackDb} db" >> ${setupLogFile}
+${superMysql} -e "drop database if exists ${csFallbackDb};";
+${superMysql} -e "create database ${csFallbackDb} default character set utf8mb4 collate utf8mb4_unicode_ci;";
+gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} ${csFallbackDb}
 
 #	Stop duplicated cronning from the backup machine
-${superMysql} cyclestreets -e "update map_config set pseudoCron = null;";
+${superMysql} ${csFallbackDb} -e "update map_config set pseudoCron = null;";
 
 
 #	Recent routes

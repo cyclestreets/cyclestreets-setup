@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 
 
+# This script takes about 5-10 minutes to run.
+
+
 # To compare CSV headers, use e.g.
 # diff <(head -n1 Veh.csv | tr "|" "\n") <( head -n1 V.csv | tr "|" "\n")
+
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# START SCRIPT
+# ------------------------------------------------------------------------------------------------------------------------
 
 
 # End if any error
@@ -15,12 +24,50 @@ rm -f collisions.zip
 
 
 
+
+# ------------------------------------------------------------------------------------------------------------------------
+# DOWNLOAD DATA FRESHLY
+# ------------------------------------------------------------------------------------------------------------------------
+
+
+# Create a fresh downloads directory, to deal with any updates
+today=`date +%Y-%m-%d`
+dataDirectory=rawdata-asof-$today
+mkdir -p $dataDirectory
+
+
+# 2005-14
+wget -P $dataDirectory http://data.dft.gov.uk.s3.amazonaws.com/road-accidents-safety-data/Stats19_Data_2005-2014.zip
+# 2015
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/RoadSafetyData_2015.zip
+# 2016
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Casualties_2016.zip
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Vehicles_2016.zip
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafety_Accidents_2016.zip
+# 2017
+wget -P $dataDirectory http://data.dft.gov.uk.s3.amazonaws.com/road-accidents-safety-data/dftRoadSafetyData_Vehicles_2017.zip
+wget -P $dataDirectory http://data.dft.gov.uk.s3.amazonaws.com/road-accidents-safety-data/dftRoadSafetyData_Casualties_2017.zip
+wget -P $dataDirectory http://data.dft.gov.uk.s3.amazonaws.com/road-accidents-safety-data/dftRoadSafetyData_Accidents_2017.zip
+# 2018 (released 26/Sep/2019)
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Accidents_2018.csv
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Casualties_2018.csv
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Vehicles_2018.csv
+
+
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# PROCESS EACH YEAR
 # Unzip each year, and fix up any specific problems for that year's data
+# ------------------------------------------------------------------------------------------------------------------------
 
 
+
+# ------------------------------------------------------------------------------------------------------------------------
 # 2005 - 2014
-#
-unzip rawdata/Stats19_Data_2005-2014.zip
+# ------------------------------------------------------------------------------------------------------------------------
+
+unzip $dataDirectory/Stats19_Data_2005-2014.zip
 
 mv Accidents0514.csv Accidents_2005-2014.csv
 mv Casualties0514.csv Casualties_2005-2014.csv
@@ -54,9 +101,11 @@ mv Casualties_2005-2014_extracolumn.csv Casualties_2005-2014.csv
 perl -pi -e 's/Casualty_Home_Area_Type,/Casualty_Home_Area_Type,Casualty_IMD_Decile/g' Casualties_2005-2014.csv
 
 
+# ------------------------------------------------------------------------------------------------------------------------
 # 2015
-#
-unzip rawdata/RoadSafetyData_2015.zip
+# ------------------------------------------------------------------------------------------------------------------------
+
+unzip $dataDirectory/RoadSafetyData_2015.zip
 mv Accidents_2015.csv Acc2015.csv
 mv Casualties_2015.csv Cas2015.csv
 mv Vehicles_2015.csv Veh2015.csv
@@ -68,14 +117,17 @@ awk 'FNR > 1' Veh2015.csv > Vehicles_2015.csv
 rm Acc2015.csv Cas2015.csv Veh2015.csv
 
 
+
+# ------------------------------------------------------------------------------------------------------------------------
 # 2016
-#
+# ------------------------------------------------------------------------------------------------------------------------
+
 year=2016
-unzip rawdata/dftRoadSafety_Accidents_2016.zip
+unzip $dataDirectory/dftRoadSafety_Accidents_2016.zip
 mv dftRoadSafety_Accidents_2016.csv Acc2016.csv
-unzip rawdata/dftRoadSafetyData_Casualties_2016.zip
+unzip $dataDirectory/dftRoadSafetyData_Casualties_2016.zip
 mv Cas.csv Cas2016.csv
-unzip rawdata/dftRoadSafetyData_Vehicles_2016.zip
+unzip $dataDirectory/dftRoadSafetyData_Vehicles_2016.zip
 mv Veh.csv Veh2016.csv
 
 # The 2016 accident file has 42 entries with incorrect IDs: `less A.csv  | grep 000000, | wc -l`
@@ -88,14 +140,16 @@ awk 'FNR > 1' "Veh2016.csv" > Vehicles_2016.csv
 rm Acc2016.csv Cas2016.csv Veh2016.csv
 
 
+# ------------------------------------------------------------------------------------------------------------------------
 # 2017
-#
+# ------------------------------------------------------------------------------------------------------------------------
+
 year=2017
-unzip rawdata/dftRoadSafetyData_Accidents_2017.zip
+unzip $dataDirectory/dftRoadSafetyData_Accidents_2017.zip
 mv Acc.csv Acc2017.csv
-unzip rawdata/dftRoadSafetyData_Casualties_2017.zip
+unzip $dataDirectory/dftRoadSafetyData_Casualties_2017.zip
 mv Cas.csv Cas2017.csv
-unzip rawdata/dftRoadSafetyData_Vehicles_2017.zip
+unzip $dataDirectory/dftRoadSafetyData_Vehicles_2017.zip
 mv Veh.csv Veh2017.csv
 
 # Fix missing NULLs that cause "ERROR 1138 (22004) at line 1249: Invalid use of NULL value"
@@ -111,7 +165,6 @@ sed -i.bak 's/20171349E0197,439803,434169,NULL,NULL/20171349E0197,439803,434169,
 sed -i.bak 's/20171349E0262,417781,426597,NULL,NULL/20171349E0262,417781,426597,-1.731932,53.735462/' Acc2017.csv
 rm Acc2017.csv.bak
 
-
 # Remove the headers
 awk 'FNR > 1' "Acc2017.csv" > Accidents_2017.csv
 awk 'FNR > 1' "Cas2017.csv" > Casualties_2017.csv
@@ -119,6 +172,27 @@ awk 'FNR > 1' "Veh2017.csv" > Vehicles_2017.csv
 rm Acc2017.csv Cas2017.csv Veh2017.csv
 
 
+# ------------------------------------------------------------------------------------------------------------------------
+# 2018
+# ------------------------------------------------------------------------------------------------------------------------
+
+year=2018
+cp -pr $dataDirectory/dftRoadSafetyData_Accidents_2018.csv Acc2018.csv
+cp -pr $dataDirectory/dftRoadSafetyData_Casualties_2018.csv Cas2018.csv
+cp -pr $dataDirectory/dftRoadSafetyData_Vehicles_2018.csv Veh2018.csv
+
+# Remove the headers
+awk 'FNR > 1' "Acc2018.csv" > Accidents_2018.csv
+awk 'FNR > 1' "Cas2018.csv" > Casualties_2018.csv
+awk 'FNR > 1' "Veh2018.csv" > Vehicles_2018.csv
+rm Acc2018.csv Cas2018.csv Veh2018.csv
+
+
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# FIX TECHNICAL FORMAT ISSUES
+# ------------------------------------------------------------------------------------------------------------------------
 
 # Remove BOM files
 perl -e 's/^\xef\xbb\xbf//;' *.csv
@@ -127,6 +201,10 @@ perl -e 's/^\xef\xbb\xbf//;' *.csv
 dos2unix *.csv
 
 
+
+# ------------------------------------------------------------------------------------------------------------------------
+# COMBINE FILES and SHOW COUNTS
+# ------------------------------------------------------------------------------------------------------------------------
 
 # Combine files, which assumes the ordering of *_20**.csv is in order.
 cat Accidents_*.csv > accidents.csv
@@ -144,10 +222,22 @@ wc -l Vehicles*
 wc -l vehicles.csv
 echo -e "\n"
 
-# Zip files
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# ZIP AS SINGLE DISTRIBUTION
+# ------------------------------------------------------------------------------------------------------------------------
+
+# Zip files into a single distribution
 zip collisions-to$year.zip accidents.csv casualties.csv vehicles.csv
 
-# Clean up
+echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions-to$year.zip temporarily, then use that URL in the import UI."
+
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+# CLEAN UP
+# ------------------------------------------------------------------------------------------------------------------------
+
 rm *.csv
 
-echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions-to$year.zip then use that URL in the import UI."

@@ -7,7 +7,7 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -m email
+	$0 -h -q -r -m email config
 
 OPTIONS
 	-h Show this message
@@ -16,8 +16,8 @@ OPTIONS
 	-r Removes the oldest routing edition
 
 ARGUMENTS
-	None
-		Template used to describe argument.
+	config
+		Configuration file
 
 DESCRIPTION
  	Starts a new build, including install and testing.
@@ -62,6 +62,14 @@ done
 
 # After getopts is done, shift all processed options away with
 shift $((OPTIND-1))
+
+# Check required arguemnt
+if [ -z "$1" ]; then
+    echo "#	$0 No config argument" 1>&2
+    exit 1
+fi
+importConfig=$1
+
 
 # Helper function
 # Echo output only if the verbose option has been set
@@ -111,7 +119,8 @@ if [ "${removeOldest}" ]; then
 fi
 
 ## Import (the force overrides the current edition if it is for the same date)
-if import-deployment/import.sh force ;
+## !! Add configFile as an argument here
+if import-deployment/import.sh -f $importConfig;
 then
     vecho "#\t$(date)\tImport completed just fine."
 else

@@ -1,13 +1,48 @@
 #!/bin/bash
-#
-# SYNOPSIS
-#	import.sh [force]
-#
-# DESCRIPTION
-#	Main script for building new routing edition.
-#	Optional force argument is used to overwrite existing routing edition - which is convenient during development testing.
-#
+# Script to do a new CycleStreets import run
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
+
+# http://ubuntuforums.org/showthread.php?t=1783298
+usage()
+{
+    cat << EOF
+
+SYNOPSIS
+	$0 import.sh -h -f config
+
+OPTIONS
+	-h Show this message
+
+ARGUMENTS
+	config
+		Configuration file
+
+DESCRIPTION
+	Script for building new routing edition - but see also newbuild.sh which is a wrapper for this script.
+	Optional force argument is used to overwrite existing routing edition - which is convenient during development testing.
+
+EOF
+}
+
+# Setting to force overwrite of current data
+force=0
+
+# http://wiki.bash-hackers.org/howto/getopts_tutorial
+# An opening colon in the option-string switches to silent error reporting mode.
+# Colons after letters indicate that those options take an argument e.g. m takes an email address.
+while getopts "hf" option ; do
+    case ${option} in
+        h) usage; exit ;;
+	f)
+	    # Set the notification email address
+	    force=1
+	    ;;
+	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
+    esac
+done
+
+# After getopts is done, shift all processed options away with
+shift $((OPTIND-1))
 
 # Start an import run
 echo "#	$(date) CycleStreets import"
@@ -17,6 +52,13 @@ if [ "$(id -u)" = "0" ]; then
     echo "#	This script must not be be run as root." 1>&2
     exit 1
 fi
+
+# Check required arguemnt
+if [ -z "$1" ]; then
+    echo "#	$0 No config argument" 1>&2
+    exit 1
+fi
+importConfig=$1
 
 # Bomb out if something goes wrong
 set -e
@@ -93,7 +135,7 @@ if [ -d ${importMachineEditions}/${likelyEdition} -o -L ${importMachineEditions}
     echo "#	The edition already exists, check this folder: ${importMachineEditions}/${likelyEdition}"
 
     # An argument can be used to force this to continue
-    if [ "$1" != 'force' ]; then
+    if [ "$force" != "1" ]; then
 	echo "#	Abandoning - use force option to override"
 	exit 1
     else
@@ -132,7 +174,7 @@ sudo systemctl restart mysql
 
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 # Use a low priority to allow the server to be useful for serving other tasks such as tiles if necessary.
-nice -n12 php run.php
+php run.php $importConfig
 
 # Read the folder of routing editions, one per line, newest first, getting first one
 latestEdition=`ls -1t ${importMachineEditions} | head -n1`

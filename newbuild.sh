@@ -118,8 +118,7 @@ if [ "${removeOldest}" ]; then
     live-deployment/remove-routing-edition.sh oldest
 fi
 
-## Import (the force overrides the current edition if it is for the same date)
-## !! Add configFile as an argument here
+## Import (the -f overrides the current edition if it is for the same date)
 if import-deployment/import.sh -f $importConfig;
 then
     vecho "#\t$(date)\tImport completed just fine."

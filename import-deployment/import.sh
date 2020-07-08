@@ -173,7 +173,6 @@ echo "#	$(date)	Restarting MySQL to free memory"
 sudo systemctl restart mysql
 
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
-# Use a low priority to allow the server to be useful for serving other tasks such as tiles if necessary.
 php run.php $importConfig
 
 # Read the folder of routing editions, one per line, newest first, getting first one

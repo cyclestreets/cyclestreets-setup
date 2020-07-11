@@ -56,6 +56,9 @@ echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 # Ensure JSON support
 apt -y install php-json
 
+# Add YAML support
+apt -y install php-yaml
+
 # Ensure Zip support, needed by collision data import
 apt-get -y install php-zip
 

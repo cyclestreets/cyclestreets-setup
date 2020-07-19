@@ -342,6 +342,9 @@ mkdir -p ${newEditionFolder}
 # Move the temporary definition to correct place and name
 mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 
+#	Sieve file (do first as it is the smallest)
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
+
 #	Transfer the TSV file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 
@@ -351,9 +354,6 @@ if [ -n "${dumpFile}" ]; then
 else
     echo "#	Skipping dump file"
 fi
-
-#	Sieve file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
 #	Note that all files are downloaded
 echo "#	$(date)	File transfer stage complete"

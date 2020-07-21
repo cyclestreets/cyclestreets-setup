@@ -161,7 +161,7 @@ apt-get install -y python-certbot-apache
 
 
 # PHP
-$packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php
+$packageInstall php php-xml php-yaml php-gd php-cli php-mysql libapache2-mod-php
 
 # This package has given some trouble as it has been part of php7 but no longer.
 # If it doesn't work to install php-mbstring here try it post-installation.

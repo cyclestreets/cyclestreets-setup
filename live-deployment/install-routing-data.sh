@@ -399,6 +399,7 @@ else
 
     cat <<EOF
 ### Alternative strategy for transfering database demonstrated for user: simon
+### (Deprecated August 2020)
 
 ## On source machine
 # In mysql park some tables
@@ -457,7 +458,7 @@ smysql ${importEdition} < /websites/www/content/documentation/schema/photosEnRou
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 
 # This takes about 75 minutes
-smysql ${importEdition} -e "call indexPhotos(false,0);"
+smysql ${importEdition} -e "call indexPhotos(0);"
 
 ## Clean up
 ## Back on source machine

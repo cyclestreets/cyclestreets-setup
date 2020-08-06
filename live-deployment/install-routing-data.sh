@@ -511,7 +511,7 @@ ${superMysql} ${importEdition} < ${websitesContentFolder}/documentation/schema/n
 # Build the photo index
 echo "#	$(date)	Building the photosEnRoute tables"
 ${superMysql} ${importEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-${superMysql} ${importEdition} -e "call indexPhotos(false,0);"
+${superMysql} ${importEdition} -e "call indexPhotos(0);"
 
 ### Stage 7 - Finish
 

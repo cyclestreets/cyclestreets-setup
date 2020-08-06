@@ -94,6 +94,11 @@ if [ ! -e ${importMachineEditions}/${latestEdition}/legDetail.tsv ]; then
     exit 1
 fi
 
+# Build a limited photo index
+echo "#	$(date)	Building a limited photosEnRoute index"
+${superMysql} ${latestEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+${superMysql} ${latestEdition} -e "call indexPhotos(100);"
+
 
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
@@ -124,6 +129,8 @@ then
     echo "#	There was a problem adding the new edition: ${latestEdition}. The import has not completed."
     exit 1
 fi
+
+
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${latestEdition}/installationCompleted.txt"
 

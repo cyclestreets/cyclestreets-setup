@@ -32,20 +32,19 @@ class doCheck
 		$this->emailAddress = $emailAddress;
 		
 		# Ensure that the settings have been defined
-		if (!isSet ($timeoutSeconds))	{$this->email ('Setup', '$timeoutSeconds is not defined');}
+		if (!isSet ($timeoutSeconds))		{$this->email ('Setup', '$timeoutSeconds is not defined');}
 		if (!isSet ($smsProviderApiKey))	{$this->email ('Setup', '$smsProviderApiKey is not defined');}
 		if (!isSet ($smsNumbers))		{$this->email ('Setup', '$smsNumbers is not defined');}
-		if (!isSet ($testApiKeys))	{$this->email ('Setup', '$testApiKeys is not defined');}
-		if (!isSet ($servers))	{$this->email ('Setup', '$servers is not defined');}
+		if (!isSet ($testApiKeys))		{$this->email ('Setup', '$testApiKeys is not defined');}
 		
 		# Set settings as properties
-		$this->timeoutSeconds	= $timeoutSeconds;
+		$this->timeoutSeconds		= $timeoutSeconds;
 		$this->smsProviderApiKey	= $smsProviderApiKey;
 		if (is_string ($smsNumbers)) {$smsNumbers = array ($smsNumbers);}
 		foreach ($smsNumbers as $index => $smsNumber) {
 			$smsNumbers[$index] = str_replace (array (' ', '+'), '', $smsNumber);
 		}
-		$this->smsNumbers			= $smsNumbers;
+		$this->smsNumbers		= $smsNumbers;
 		
 		# Set the timeout for URL requests
 		ini_set ('default_socket_timeout', $this->timeoutSeconds);
@@ -86,8 +85,8 @@ class doCheck
 			
 			# If a key-specific API URL has been defined for this key, use that URL (for both V1 and V2)
 			if (isSet ($keySpecificApiUrls[$testApiKey])) {
-				$this->serverUrl = $keySpecificApiUrls[$testApiKey];
-				$this->apiV2Url = $keySpecificApiUrls[$testApiKey];
+				$this->serverUrl	= $keySpecificApiUrls[$testApiKey];
+				$this->apiV2Url		= $keySpecificApiUrls[$testApiKey];
 			}
 			
 			# Run each test; if it fails, wait a short while then try again before reporting a problem

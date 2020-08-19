@@ -6,6 +6,9 @@ $emailAddress = '';
 # Timeout
 $timeoutSeconds = 15;
 
+# When a test fails wait this long before retrying, or false to skip retries
+#$retryInterval = 20;
+
 # API key for the SMS provider
 $smsProviderApiKey = '';
 

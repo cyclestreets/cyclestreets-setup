@@ -15,6 +15,7 @@ class doCheck
 		'http://%s.cyclestreets.net',
 		'https://%s.cyclestreets.net/v2'
 	);
+	private $retryInterval = 20;	// Time to wait before retrying a test
 
 	# Constructor
 	public function __construct ()
@@ -45,7 +46,8 @@ class doCheck
 			$smsNumbers[$index] = str_replace (array (' ', '+'), '', $smsNumber);
 		}
 		$this->smsNumbers		= $smsNumbers;
-		
+		if (isSet ($retryInterval)) {$this->retryInterval = $retryInterval;}
+
 		# Set the timeout for URL requests
 		ini_set ('default_socket_timeout', $this->timeoutSeconds);
 		
@@ -101,14 +103,18 @@ class doCheck
 				// Run the test
 				if ($this->{$test} ($errorMessage, $result)) {continue;}
 
-				// Test failed: wait before retrying
-				sleep (20);
+				// Optional retry
+				if ($this->retryInterval) {
 
-				// Reset the test result
-				$result = false;
+					// Test failed: wait before retrying
+					sleep ($this->retryInterval);
 
-				// Retry
-				if ($this->{$test} ($errorMessage, $result)) {continue;}
+					// Reset the test result
+					$result = false;
+
+					// Retry
+					if ($this->{$test} ($errorMessage, $result)) {continue;}
+				}
 
 				// Report
 				$this->reportProblem ($test, $errorMessage, $result);

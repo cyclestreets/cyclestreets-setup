@@ -99,24 +99,22 @@ class doCheck
 				$result = false;
 
 				// Run the test
-				if (!$this->{$test} ($errorMessage, $result)) {
+				if ($this->{$test} ($errorMessage, $result)) {continue;}
 
-					// Wait
-					sleep (20);
+				// Test failed: wait before retrying
+				sleep (20);
 
-					// Reset the test result
-					$result = false;
+				// Reset the test result
+				$result = false;
 
-					// Retry
-					if (!$this->{$test} ($errorMessage, $result)) {
+				// Retry
+				if ($this->{$test} ($errorMessage, $result)) {continue;}
 
-						// Report
-						$this->reportProblem ($test, $errorMessage, $result);
+				// Report
+				$this->reportProblem ($test, $errorMessage, $result);
 
-						// Abandon
-						return false;
-					}
-				}
+				// Abandon
+				return;
 			}
 		}
 
@@ -151,6 +149,13 @@ class doCheck
 		$message = $errorMessage;
 		if ($result) {
 			$message .= "\n\nThe HTTP response body was:\n" . print_r ($result, true);
+		}
+
+		# Echo when email not available
+		if (!$this->emailAddress) {
+			echo "*** CycleStreets problem with {$test} ***\n";
+			echo $message . "\n";
+			return;
 		}
 		
 		# Send e-mail
@@ -189,7 +194,7 @@ class doCheck
 	private function test_journey_new (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&plan=quietest&itinerarypoints=-0.140085,51.502022,Buckingham+Palace|-0.129204,51.504353,Horse+Guards+Parade|-0.129394,51.499496,Westminster+Abbey";
+		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&plan=quietest&itinerarypoints=-0.14009,51.50202,Buckingham+Palace|-0.12920,51.50435,Horse+Guards+Parade|-0.12939,51.49950,Westminster+Abbey";
 		if (!$json = @file_get_contents ($apiUrl)) {
 			$errorMessage = "The /api/journey call (new journey) did not respond within {$this->timeoutSeconds} seconds. URL: {$apiUrl}";
 			return false;

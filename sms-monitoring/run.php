@@ -73,6 +73,7 @@ class doCheck
 
 		// Apply the test to each of the apiKeys
 		// $testSpec is false to skip all tests, true to apply all test, or an array of only those tests to apply
+		// !! Note the tests abandon at the first failure so later tests are not tried - risking masking of other problems.
 		foreach ($testApiKeys as $testApiKey => $testSpec) {
 
 			// Skip tests for this apiKey if required
@@ -82,49 +83,71 @@ class doCheck
 			$this->testApiKey = $testApiKey;
 
 			# Use the standard API URLs by default for this key
-			$this->serverUrl = $this->serverUrlMain;
-			$this->apiV2Url = $this->apiV2UrlMain;
+			$this->serverUrl	= $this->serverUrlMain;
+			$this->apiV2Url		= $this->apiV2UrlMain;
 			
-			# If a key-specific API URL has been defined for this key, use that URL (for both V1 and V2)
+			# When key-specific API URLs are defined for this key
 			if (isSet ($keySpecificApiUrls[$testApiKey])) {
-				$this->serverUrl	= $keySpecificApiUrls[$testApiKey];
-				$this->apiV2Url		= $keySpecificApiUrls[$testApiKey];
-			}
-			
-			# Run each test; if it fails, wait a short while then try again before reporting a problem
-			foreach ($tests as $test) {
 
-				// Skip tests not specified for this api key
-				if (is_array ($testSpec) && !in_array ($test, $testSpec)) {continue;}
+				// Test with each URL (for both V1 and V2)
+				foreach ($keySpecificApiUrls[$testApiKey] as $url) {
+
+					$this->serverUrl	= $url;
+					$this->apiV2Url		= $url;
+
+					// Run the tests
+					if (!$this->runtests ($tests, $testSpec)) {return;}
+				}
+				// Done
+				return;
+			}
+
+			// Run the tests
+			if (!$this->runtests ($tests, $testSpec)) {return;}
+		}
+
+		// No return value
+	}
+
+	/**
+	 * Run each test; if it fails, wait a short while then try again before reporting a problem
+	 * @return bool
+	 */
+	private function runtests ($tests, $testSpec)
+	{
+		foreach ($tests as $test) {
+
+			// Skip tests not specified for this api key
+			if (is_array ($testSpec) && !in_array ($test, $testSpec)) {continue;}
+
+			// Reset the test result
+			$result = false;
+
+			// Run the test
+			if ($this->{$test} ($errorMessage, $result)) {continue;}
+
+			// Retry
+			if ($this->retryInterval) {
+
+				// Test failed: wait before retrying
+				sleep ($this->retryInterval);
 
 				// Reset the test result
 				$result = false;
 
-				// Run the test
+				// Retry
 				if ($this->{$test} ($errorMessage, $result)) {continue;}
-
-				// Optional retry
-				if ($this->retryInterval) {
-
-					// Test failed: wait before retrying
-					sleep ($this->retryInterval);
-
-					// Reset the test result
-					$result = false;
-
-					// Retry
-					if ($this->{$test} ($errorMessage, $result)) {continue;}
-				}
-
-				// Report
-				$this->reportProblem ($test, $errorMessage, $result);
-
-				// Abandon
-				return;
 			}
+
+			// Report
+			$this->reportProblem ($test, $errorMessage, $result);
+
+			// Abandon
+			return false;
 		}
 
-		// No return value
+		// All passed
+		return true;
 	}
 	
 	

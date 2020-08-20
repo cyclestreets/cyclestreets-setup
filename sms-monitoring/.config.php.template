@@ -20,7 +20,7 @@ $smsNumbers = '+44 ';
 $testApiKeys = array ();
 
 # Key-specific API URLs
-# An array of apiKey => url, for keys which have specific endpoints
+# An array of apiKey => array (url1, url2, ...), for keys which have specific endpoints
 $keySpecificApiUrls = array ();
 
 # Times not to run checks, e.g. 0415 (4.15am) or 2345 (11.45pm)

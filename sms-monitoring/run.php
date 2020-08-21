@@ -52,7 +52,7 @@ class doCheck
 		ini_set ('default_socket_timeout', $this->timeoutSeconds);
 		
 		# Set the user-agent string
-		ini_set ('user_agent', 'API monitor');
+		ini_set ('user_agent', 'CycleStreets API monitor');
 		
 		# Ignore times if required
 		if ($ignoreTimes) {
@@ -98,8 +98,8 @@ class doCheck
 					// Run the tests
 					if (!$this->runtests ($tests, $testSpec)) {return;}
 				}
-				// Done
-				return;
+				// Done this apiKey
+				continue;
 			}
 
 			// Run the tests

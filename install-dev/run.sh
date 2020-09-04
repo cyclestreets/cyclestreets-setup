@@ -63,6 +63,11 @@ asCS="sudo -u ${username}"
 apt-get -y install apache2 php
 
 
+# Install mailman
+cd mailman
+./install-mailman.sh cyclestreets.net
+cd ../
+
 
 # Report completion
 echo "#	Installing dev server completed"

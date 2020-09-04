@@ -30,10 +30,10 @@ domain=$1
 # Confirm domain
 echo "Creating a Mailman installation for lists.${domain}"
 
-# 1. Install base mailman software itself
+# 1. Install base Mailman software itself
 apt-get -y install mailman
 
-# 2. Apache:
+# 2. Apache
 a2enmod cgid
 apt-get -y install apache2
 # Copy in list config (if a customised version does not already exist)
@@ -54,7 +54,7 @@ cp -pr 40_exim4-config_mailman /etc/exim4/conf.d/transport/
 cp -pr 101_exim4-config_mailman /etc/exim4/conf.d/router/
 # Set dc_use_split_config to true, and ensure dc_other_hostnames has the new listserver domain (lists.<domain>)
 sed -i -r "s/dc_use_split_config.+/dc_use_split_config='true'/" /etc/exim4/update-exim4.conf.conf
-# Add lists.example.com to conf
+# Add lists.example.com to dc_other_hostnames
 if [ $(cat /etc/exim4/update-exim4.conf.conf | grep -c "lists.${domain}") -eq 0 ]; then
         sed -i -E "s/dc_other_hostnames='([^']+)'/dc_other_hostnames='\1:lists.${domain}'/" /etc/exim4/update-exim4.conf.conf
 fi
@@ -62,11 +62,21 @@ update-exim4.conf
 service exim4 restart
 exim -bP '+local_domains'	# Verify config - should show the new listserver domain (lists.<domain>)
 
-# 4. Set up mailman; see: https://www.exim.org/howto/mailman21.html#basic
+# 4. Set up Mailman; see: https://www.exim.org/howto/mailman21.html#basic
 cp -pr mm_cfg.py /etc/mailman/
 sed -i "s/example.com/${domain}/g" /etc/mailman/mm_cfg.py
 newlist mailman
 /usr/lib/mailman/bin/mailmanctl restart
+
+# 5. Report how to import data from an old server
+echo ""
+echo "If you have an existing server, copy in the data as per the instructions at:"
+echo "https://debian-administration.org/article/567/Migrating_mailman_lists"
+echo "i.e."
+echo "rsync -avz /usr/local/mailman/lists    root@new-server:/var/lib/mailman/"
+echo "rsync -avz /usr/local/mailman/data     root@new-server:/var/lib/mailman/"
+echo "rsync -avz /usr/local/mailman/archives root@new-server:/var/lib/mailman/"
+echo ""
 
 
 # Report completion

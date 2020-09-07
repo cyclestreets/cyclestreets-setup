@@ -34,7 +34,6 @@ echo "Creating a Mailman installation for lists.${domain}"
 apt-get -y install mailman
 
 # 2. Apache
-a2enmod cgid
 apt-get -y install apache2
 # Copy in list config (if a customised version does not already exist)
 if [ ! -f /etc/apache2/sites-available/lists.conf ]; then
@@ -42,6 +41,7 @@ if [ ! -f /etc/apache2/sites-available/lists.conf ]; then
 	sed -i "s/example.com/${domain}/g" /etc/apache2/sites-available/lists.conf
 fi
 a2ensite lists
+a2enmod cgid
 service apache2 restart
 
 # 3. Exim4; see: https://help.ubuntu.com/community/Mailman#Exim4_Configuration

@@ -21,19 +21,15 @@ fi
 set -e
 
 
-# 0. Obtain domain, e.g. lists.example.org should have argument example.org
+# 0. Obtain domain and confirm, e.g. lists.example.org should have argument example.org
 if [ "$1" = "" ]; then
 	echo "Usage: $0 example.org"
 	exit
 fi
 domain=$1
-# Confirm domain
 echo "Creating a Mailman installation for lists.${domain}"
 
-# 1. Install base Mailman software itself
-apt-get -y install mailman
-
-# 2. Apache
+# 1. Apache
 apt-get -y install apache2
 # Copy in list config (if a customised version does not already exist)
 if [ ! -f /etc/apache2/sites-available/lists.conf ]; then
@@ -44,7 +40,7 @@ a2ensite lists
 a2enmod cgid
 service apache2 restart
 
-# 3. Exim4; see: https://help.ubuntu.com/community/Mailman#Exim4_Configuration
+# 2. Exim4; see: https://help.ubuntu.com/community/Mailman#Exim4_Configuration
 # NB this uses split configuration
 apt-get -y install exim4
 # Copy in Mailman files for Exim4
@@ -62,13 +58,14 @@ update-exim4.conf
 service exim4 restart
 exim -bP '+local_domains'	# Verify config - should show the new listserver domain (lists.<domain>)
 
-# 4. Set up Mailman; see: https://www.exim.org/howto/mailman21.html#basic
+# 3. Mailman; see: https://www.exim.org/howto/mailman21.html#basic
+apt-get -y install mailman
 cp -pr mm_cfg.py /etc/mailman/
 sed -i "s/example.com/${domain}/g" /etc/mailman/mm_cfg.py
 newlist mailman
 /usr/lib/mailman/bin/mailmanctl restart
 
-# 5. Report how to import data from an old server
+# 4. Report how to import data from an old server
 echo ""
 echo "If you have an existing server, copy in the data as per the instructions at:"
 echo "https://debian-administration.org/article/567/Migrating_mailman_lists"

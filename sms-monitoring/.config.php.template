@@ -23,5 +23,9 @@ $testApiKeys = array ();
 # An array of apiKey => array (url1, url2, ...), for keys which have specific endpoints
 $keySpecificApiUrls = array ();
 
+# Key-specific additional parameters for API URLs
+# An array of apiKey => 'key=value' to append extra data for the journey planner test call
+$keySpecificAdditonalParameter = array ();
+
 # Times not to run checks, e.g. 0415 (4.15am) or 2345 (11.45pm)
 $ignoreTimes = array ();

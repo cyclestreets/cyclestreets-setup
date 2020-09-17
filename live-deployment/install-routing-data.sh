@@ -516,6 +516,13 @@ ${superMysql} ${importEdition} -e "call indexPhotos(0);"
 
 ### Stage 7 - Finish
 
+# Add the new row to the map_edition table
+if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${importEdition}')" cyclestreets
+then
+    echo "#	There was a problem adding the new edition: ${importEdition}. The import install did not complete."
+    exit 1
+fi
+
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 

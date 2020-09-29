@@ -134,7 +134,7 @@ set +e
 
 # Note: use a path to check the daemon, rather than service which is not available to non-root users on debian
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
-if [ $? -ne 0 ]
+if [ ! "$localRoutingStatus" =~ serving ]
 then
   echo "#	Note: there is no current routing service. Switchover will proceed."
 else
@@ -156,7 +156,7 @@ else
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
 	echo "#	Restart it using: sudo /bin/systemctl restart cyclestreets"
 	echo "#	Routing restart will be attempted:"
-	sudo /bin/systemctl restart cyclestreets
+	sudo ${routingDaemonRestart}
 	echo "#	Routing service has restarted"
 
 	# Clean exit

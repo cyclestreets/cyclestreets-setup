@@ -203,8 +203,8 @@ xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>ge
 set +e
 
 # Note: use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
-localRoutingStatus=$(${routingDaemonLocation} status)
-if [ $? -ne 0 ]
+localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
+if [[ ! "$localRoutingStatus" =~ serving ]]
 then
   vecho "#	Note: there is no current routing service. Routing edition ${removeEdition} removal will proceed."
 else

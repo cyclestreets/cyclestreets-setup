@@ -134,7 +134,7 @@ set +e
 
 # Note: use a path to check the daemon, rather than service which is not available to non-root users on debian
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
-if [ ! "$localRoutingStatus" =~ serving ]
+if [[ ! "$localRoutingStatus" =~ serving ]]
 then
   echo "#	Note: there is no current routing service. Switchover will proceed."
 else

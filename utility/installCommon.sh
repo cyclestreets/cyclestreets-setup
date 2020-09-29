@@ -26,11 +26,11 @@ if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]
     # A number of other passwordless options are also included when operating in a variety of roles such as doing imports or running backup / restores.
     cat > ${csSudoers} << EOF
 # Permit cyclestreets user to control the routing service without a password
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cycleroutingd
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cycleroutingd
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cycleroutingd
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cycleroutingd
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cycleroutingd
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql
 # Passwordless sudo to chown photomap files

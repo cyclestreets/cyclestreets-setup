@@ -390,7 +390,7 @@ if [ -n "${dumpFile}" ]; then
     ${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
     # Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
-    gunzip < ${dumpFile} | nice -n19 ${superMysql} ${importEdition}
+    gunzip < ${dumpFile} | ${superMysql} ${importEdition}
 
     # Remove the zip
     rm -f ${dumpFile}

@@ -520,20 +520,19 @@ fi
 # Install the cycle routing daemon (service)
 if $installRoutingAsDaemon ; then
 
-    # Setup a symlink from the etc init demons folder, if it doesn't already exist
+    # Setup a symlink from the systemd folder, if it doesn't already exist
     if [ ! -L ${routingDaemonLocation} ]; then
-	ln -s ${websitesContentFolder}/routingengine/cyclerouting.init.d ${routingDaemonLocation}
+	ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingDaemonLocation}
     fi
 
     # Ensure the relevant files are executable
-    chmod ug+x ${websitesContentFolder}/routingengine/cyclerouting.init.d
-    chmod ug+x ${websitesContentFolder}/routingengine/server.py
+    chmod ug+x ${websitesContentFolder}/routingengine/cyclestreets.py
 
     # Check the local routing service
     # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
     set +e
     # Get the status
-    localRoutingStatus=$(${routingDaemonLocation} status)
+    localRoutingStatus=$(systemctl status cyclestreets)
     # If it is not running an error value (ie not zero) is returned
     if [ $? -ne 0 ]
     then
@@ -546,13 +545,13 @@ if $installRoutingAsDaemon ; then
 
 
     # Add the daemon to the system initialization, so that it will start on reboot
-    update-rc.d cycleroutingd defaults
+    sudo systemctl enable cyclestreets
 
 else
 
     echo "#	Routing service - (not installed as a daemon)"
     echo "#	Can be manually started from the command line using:"
-    echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/server.py"
+    echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/cyclestreets.py"
 
     # If it was previously setup as a daemon, remove it
     if [ -L ${routingDaemonLocation} ]; then
@@ -564,7 +563,7 @@ else
 	rm ${routingDaemonLocation}
 
 	# Remove the daemon from the system initialization
-	update-rc.d cycleroutingd remove
+	sudo systemctl disable cyclestreets
     fi
 
 fi

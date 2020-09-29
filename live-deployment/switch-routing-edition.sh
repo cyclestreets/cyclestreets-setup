@@ -133,7 +133,7 @@ xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>ge
 set +e
 
 # Note: use a path to check the daemon, rather than service which is not available to non-root users on debian
-localRoutingStatus=$(${routingDaemonLocation} status)
+localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
 if [ $? -ne 0 ]
 then
   echo "#	Note: there is no current routing service. Switchover will proceed."
@@ -154,9 +154,9 @@ else
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
-	echo "#	Restart it using: sudo /bin/systemctl restart cycleroutingd"
+	echo "#	Restart it using: sudo /bin/systemctl restart cyclestreets"
 	echo "#	Routing restart will be attempted:"
-	sudo /bin/systemctl restart cycleroutingd
+	sudo /bin/systemctl restart cyclestreets
 	echo "#	Routing service has restarted"
 
 	# Clean exit
@@ -240,14 +240,15 @@ rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php
 sudo ${routingDaemonRestart}
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
+localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
+
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has restarted
 # !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
     sleep 12
-    localRoutingStatus=$(${routingDaemonLocation} status | grep "State:")
+    localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
     echo "#	Status: ${localRoutingStatus}"
 done
 

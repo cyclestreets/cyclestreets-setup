@@ -222,7 +222,7 @@ else
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${removeEdition}" == "${currentRoutingEdition}" ]; then
 	vecho "#	The proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
-	vecho "#	Stop it using: sudo /bin/systemctl stop cycleroutingd"
+	vecho "#	Stop it using: sudo /bin/systemctl stop cyclestreets"
 	exit 1
     fi
 fi

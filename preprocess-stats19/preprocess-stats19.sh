@@ -52,6 +52,10 @@ wget -P $dataDirectory http://data.dft.gov.uk.s3.amazonaws.com/road-accidents-sa
 wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Accidents_2018.csv
 wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Casualties_2018.csv
 wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/dftRoadSafetyData_Vehicles_2018.csv
+# 2019 (released 30/Sep/2019)
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/DfTRoadSafety_Accidents_2019.zip
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/DfTRoadSafety_Casualties_2019.zip
+wget -P $dataDirectory http://data.dft.gov.uk/road-accidents-safety-data/DfTRoadSafety_Vehicles_2019.zip
 
 
 
@@ -187,6 +191,24 @@ awk 'FNR > 1' "Cas2018.csv" > Casualties_2018.csv
 awk 'FNR > 1' "Veh2018.csv" > Vehicles_2018.csv
 rm Acc2018.csv Cas2018.csv Veh2018.csv
 
+# ------------------------------------------------------------------------------------------------------------------------
+# 2019
+# ------------------------------------------------------------------------------------------------------------------------
+
+year=2019
+unzip $dataDirectory/DfTRoadSafety_Accidents_2019.zip
+mv "Road Safety Data - Accidents 2019.csv" Acc2019.csv
+unzip $dataDirectory/DfTRoadSafety_Casualties_2019.zip
+mv "Road Safety Data - Casualties 2019.csv" Cas2019.csv
+unzip $dataDirectory/DfTRoadSafety_Vehicles_2019.zip
+mv "Road Safety Data- Vehicles 2019.csv" Veh2019.csv
+
+# Remove the headers
+awk 'FNR > 1' "Acc2019.csv" > Accidents_2019.csv
+awk 'FNR > 1' "Cas2019.csv" > Casualties_2019.csv
+awk 'FNR > 1' "Veh2019.csv" > Vehicles_2019.csv
+rm Acc2019.csv Cas2019.csv Veh2019.csv
+
 
 
 
@@ -231,7 +253,7 @@ echo -e "\n"
 # Zip files into a single distribution
 zip collisions-to$year.zip accidents.csv casualties.csv vehicles.csv
 
-echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions-to$year.zip temporarily, then use that URL in the import UI."
+echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions-to$year.zip temporarily, then use that URL in the import UI. That takes around 30-40 minutes to run."
 
 
 

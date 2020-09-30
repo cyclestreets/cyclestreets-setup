@@ -7,13 +7,14 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -m email config
+	$0 -h -q -r -s -m email config
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - for notifications when the build breaks or completes.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
+	-s Builds a secondary routing edition skips switchover requiring manual completion.
 
 ARGUMENTS
 	config
@@ -31,12 +32,14 @@ verbose=1
 removeOldest=
 # Default to no notification
 notifyEmail=
+# Secondary edition
+secondaryEdition=
 
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qr" option ; do
+while getopts "hm:qrs" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
@@ -45,6 +48,9 @@ while getopts "hm:qr" option ; do
 	    ;;
 	# Remove oldest routing edition
 	r) removeOldest=1
+	   ;;
+	# Secondary edtion
+	s) secondaryEdition=1
 	   ;;
 	# Set quiet mode and proceed
         q)
@@ -157,6 +163,11 @@ else
     exit 2
 fi
 
+## Secondary editions require manual completion
+if [ "${secondaryEdition}" ]; then
+    echo "$0 Secondary edition: Complete the installation from the command line"
+    exit 0
+fi
 
 ## Restart mysql to free memory before loading the routing engine
 #  This also resets the MySQL configuration to default values, more suited to serving web pages and routes.

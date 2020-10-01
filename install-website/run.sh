@@ -393,10 +393,12 @@ then
 fi
 
 # External db
-# This creates only a skeleton and sets up grant permissions. The full installation is done by a script in install-import folder.
-# Unless the database already exists:
-if [ -n "${externalDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1
-then
+
+# Does the database already exist?
+xdbPreExists=$(${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'")
+
+# This creates only a skeleton and sets up grant permissions.
+if [ -n "${externalDb}" -a -z "${xdbPreExists}" ]; then
 
     # Create external database
     echo "#	Create ${externalDb} database"
@@ -407,11 +409,8 @@ then
     ${superMysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 fi
 
-# File to avoid re-download of the csExternalDataFile
-csExternalDataFileDownloaded=${websitesContentFolder}/data/csExternalDataFileDownloaded.txt
-
-# External db restore
-if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalDataFile} -a ! -e ${csExternalDataFileDownloaded} ]; then
+# External db restore - if it doesn't pre-exist
+if [ -n "${externalDb}" -a -z "${xdbPreExists}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalDataFile} ]; then
 
 	# Report
 	echo "#	$(date)	Starting download of external database"
@@ -427,12 +426,6 @@ if [ -n "${externalDb}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalD
 
 	# Remove the archive to save space
 	rm /tmp/${csExternalDataFile}
-
-	# Create an empty file to avoid re-download
-	cat > ${csExternalDataFileDownloaded} <<EOF
-Created by cyclestreets-setup/install-website/run.sh
-This file exists to avoid a re-download of the csExternalDataFile.
-EOF
 
 	# Report
 	echo "#	$(date)	Completed installation of external database"

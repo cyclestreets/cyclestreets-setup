@@ -31,6 +31,14 @@ cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets
+
+# Secondary versions of the above
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets2
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets2
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets2
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets2
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets2
+
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql
 # Passwordless sudo to chown photomap files

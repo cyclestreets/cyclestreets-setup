@@ -166,6 +166,7 @@ fi
 ## Secondary editions require manual completion
 if [ "${secondaryEdition}" ]; then
     echo "$0 Secondary edition: Complete the installation from the command line"
+    live-deployment/switch-secondary-edition.sh
     exit 0
 fi
 

@@ -2,21 +2,18 @@
 # Script to change CycleStreets secondary routing edition.
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
-
-# http://ubuntuforums.org/showthread.php?t=1783298
 usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h [newSecondaryEdition]
+	$0 -h
 
 OPTIONS
 	-h Show this message
 
 DESCRIPTION
-	newSecondaryEdition
-		Names a routing database of the form routingYYMMDD, eg. routing151205
-		Defaults to the latest version avaialble.
+	Switches the secondary routing edition to the latest edition, and removes the old one.
+	Secondary editions are assumed to be served from port 9001.
 EOF
 }
 
@@ -249,6 +246,9 @@ ${superMysql} cyclestreets -e "update map_config set multipleEditions = 'yes' wh
 
 # Photos en route index
 ${superMysql} ${newSecondaryEdition} -e "call indexPhotos(0);";
+
+# Remove the now previous secondary edition
+live-deployment/remove-routing-edition.sh ${currentSecondaryEdition}
 
 ### Finishing
 

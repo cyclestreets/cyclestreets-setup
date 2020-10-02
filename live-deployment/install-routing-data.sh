@@ -6,7 +6,6 @@
 # Controls echoed output default to on
 verbose=1
 
-# http://ubuntuforums.org/showthread.php?t=1783298
 usage()
 {
     cat << EOF

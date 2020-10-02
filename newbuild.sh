@@ -1,7 +1,5 @@
 #!/bin/bash
 # Script to do a new CycleStreets import run, install and test it
-
-# http://ubuntuforums.org/showthread.php?t=1783298
 usage()
 {
     cat << EOF
@@ -14,7 +12,7 @@ OPTIONS
 	-m Take an email address as an argument - for notifications when the build breaks or completes.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
-	-s Builds a secondary routing edition skips switchover requiring manual completion.
+	-s Builds and switches secondary routing edition, removing previous one.
 
 ARGUMENTS
 	config

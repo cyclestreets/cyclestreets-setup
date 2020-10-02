@@ -2,8 +2,6 @@
 # Script to change CycleStreets served routes
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
-
-# http://ubuntuforums.org/showthread.php?t=1783298
 usage()
 {
     cat << EOF

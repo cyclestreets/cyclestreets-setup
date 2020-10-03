@@ -53,17 +53,13 @@ echo "#	Installing CycleStreets website for base OS: ${baseOS}"
 # Load common install script
 . ${ScriptHome}/utility/installCommon.sh
 
-# Ensure JSON support
-apt -y install php-json
+# Switch to content folder
+cd ${websitesContentFolder}
 
-# Add YAML support
-apt -y install php-yaml
-
+# PHP packages
 # Ensure Zip support, needed by collision data import
-apt-get -y install php-zip
-
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
-apt -y install imagemagick php-imagick
+apt -y install php-json php-yaml php-zip imagemagick php-imagick
 
 # Enable mod_deflate for Apache
 sudo a2enmod deflate
@@ -83,16 +79,11 @@ python3 -m pip install polyline
 echo "#	Some utilities"
 
 # ffmpeg; this has been restored in 16.04 as an official package
-apt -y install ffmpeg
-
-# Install Apache mod_macro for convenience (not an actual requirement for CycleStreets - maybe was needed with ffmpeg?)
-# apt -y install libapache2-mod-macro
-
 # These are used by deployment scripts to correspond with the routing servers via xml
-apt -y install curl libxml-xpath-perl
+apt -y install ffmpeg curl libxml-xpath-perl
 
 # Image recognition
-apt -y install python-opencv opencv-data
+apt -y install python3-opencv opencv-data
 # Facial recognition; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
 if [ ! -e /usr/local/bin/facedetect ] ; then
     wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect

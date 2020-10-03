@@ -125,9 +125,6 @@ restoreRecentRoutes=
 ## Microsites server such as blogs
 micrositesServer=
 
-# Specify the import disk, eg. /dev/sda1 that will be checked for sufficient space (leave blank to skip this check)
-importDisk=
-
 # An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
 fallbackRoutingUrl=
 
@@ -145,9 +142,6 @@ tilecacheSSL=true
 # Main mailserver
 dc_other_hostnames=
 
-
-# Cron jobs boolean: true|false
-installCronJobs=false
 
 # Import installation
 # Options for installing the import - leave blank to skip these steps, or add string true to enable

@@ -391,24 +391,25 @@ then
 fi
 
 # External db
+if [ -n "${externalDb}" ]; then
 
-# Does the database already exist?
-xdbPreExists=$(${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'")
+    # Does the database already exist?
+    xdbPreExists=$(${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'")
 
-# This creates only a skeleton and sets up grant permissions.
-if [ -n "${externalDb}" -a -z "${xdbPreExists}" ]; then
+    # This creates only a skeleton and sets up grant permissions.
+    if [ -z "${xdbPreExists}" ]; then
 
-    # Create external database
-    echo "#	Create ${externalDb} database"
-    echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
-    ${superMysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql
+	# Create external database
+	echo "#	Create ${externalDb} database"
+	echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
+	${superMysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql
 
-    # Allow website read only access
-    ${superMysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
-fi
+	# Allow website read only access
+	${superMysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+    fi
 
-# External db restore - if it doesn't pre-exist
-if [ -n "${externalDb}" -a -z "${xdbPreExists}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalDataFile} ]; then
+    # External db restore - if it doesn't pre-exist
+    if [ -z "${xdbPreExists}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalDataFile} ]; then
 
 	# Report
 	echo "#	$(date)	Starting download of external database"
@@ -427,6 +428,7 @@ if [ -n "${externalDb}" -a -z "${xdbPreExists}" -a -n "${csExternalDataFile}" -a
 
 	# Report
 	echo "#	$(date)	Completed installation of external database"
+    fi
 fi
 
 # Batch db
@@ -444,9 +446,6 @@ if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW D
 
     echo "#	Note: this contains table definitions only and contains no data."
     ${superMysql} < ${websitesContentFolder}/documentation/schema/csBatch.sql
-    
-else
-    echo "#	Skipping batch database"
 fi
 
 # Identify the sample database (the -s suppresses the tabular output)

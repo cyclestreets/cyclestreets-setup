@@ -159,11 +159,11 @@ elevationDatasources=(
 # Archive db
 archiveDb=csArchive
 
-# External database
+# External database (leave empty if not wanted)
 externalDb=csExternal
 csExternalDataFile=csExternal.sql.gz
 
-# Batch database: csBatch
+# Batch database: csBatch (leave empty if not wanted)
 batchDb=
 
 ## Optional component modules (leave empty if they are not wanted)

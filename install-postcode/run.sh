@@ -103,8 +103,15 @@ rm ${onsFolder}/ONSdata.csv
 	exit 1;
 fi
 
-# External database
-externalDb=csExternal
+# Check external database
+if [ -z "${externalDb}" ]; then
+
+    echo "#	STOPPING: The required external db is not configured to be setup on this server.";
+
+    # Terminate the script
+    exit 1;
+fi
+
 
 # Check the database already exists
 if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${externalDb}'" | grep ${externalDb} > /dev/null 2>&1

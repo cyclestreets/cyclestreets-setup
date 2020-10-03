@@ -166,5 +166,15 @@ csExternalDataFile=csExternal.sql.gz
 # Batch database: csBatch
 batchDb=
 
+## Optional component modules (leave empty if they are not wanted)
+
+# Face recognition and number plate recognition
+imageRecognitionComponent=1
+
+# Html to PDF
+htmlToPdfComponent=1
+
+# Potlatch
+potlatchComponent=1
 
 # End of file

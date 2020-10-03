@@ -67,7 +67,8 @@ service apache2 restart
 
 # Install Python
 echo "#	Installing python"
-apt -y install python php-xmlrpc php-curl python3-dev python-argparse python3-pip
+# These are used by deployment scripts to correspond with the routing servers via xml
+apt -y install python php-xmlrpc php-curl python3-dev python-argparse python3-pip curl libxml-xpath-perl
 
 # Upgrade pip
 python3 -m pip install --upgrade pip
@@ -78,45 +79,51 @@ python3 -m pip install polyline
 # Utilities
 echo "#	Some utilities"
 
-# ffmpeg; this has been restored in 16.04 as an official package
-# These are used by deployment scripts to correspond with the routing servers via xml
-apt -y install ffmpeg curl libxml-xpath-perl
-
 # Image recognition
-apt -y install python3-opencv opencv-data
-# Facial recognition; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
-if [ ! -e /usr/local/bin/facedetect ] ; then
-    wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect
-    chmod +x /usr/local/bin/facedetect
-fi
-# Number plate recognition; see: https://github.com/openalpr/openalpr
-apt -y install openalpr
+if [ -n "${imageRecognitionComponent}" ]; then
 
+    # ffmpeg; this has been restored in 16.04 as an official package
+    apt -y install ffmpeg python3-opencv opencv-data
+
+    # Facial recognition; see: https://gitlab.com/wavexx/facedetect and https://www.thregr.org/~wavexx/software/facedetect/
+    if [ ! -e /usr/local/bin/facedetect ] ; then
+	wget -P /usr/local/bin https://gitlab.com/wavexx/facedetect/raw/master/facedetect
+	chmod +x /usr/local/bin/facedetect
+    fi
+    # Number plate recognition; see: https://github.com/openalpr/openalpr
+    apt -y install openalpr
+fi
 
 # HTML to PDF conversion
-# http://wkhtmltopdf.org/downloads.html
-# Note: using "apt -y install wkhtmltopdf" doesn't work for various reasons and so this is required
-if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
-    # Needs these packages
-    apt -y install xfonts-75dpi xfonts-base xfonts-utils
-    # Download and install wkhtmltopdf
-    wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
-    dpkg -i /tmp/wkhtmltox*.deb
-    rm /tmp/wkhtmltox*.deb
+if [ -n "${htmlToPdfComponent}" ]; then
+    # http://wkhtmltopdf.org/downloads.html
+    # Note: using "apt -y install wkhtmltopdf" doesn't work for various reasons and so this is required
+    # (The package install looks like it might work for Ubuntu 20.04)
+    if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
+	# Needs these packages
+	apt -y install xfonts-75dpi xfonts-base xfonts-utils
+	# Download and install wkhtmltopdf
+	wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+	dpkg -i /tmp/wkhtmltox*.deb
+	rm /tmp/wkhtmltox*.deb
+    fi
 fi
 
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01
 # brew install https://gist.githubusercontent.com/semanticart/389944e2bcdba5424e01/raw/9ed120477b57daf10d7de6d585d49b2017cd6955/wkhtmltopdf.rb
 
 # Install Potlatch editor, if not already present
-#!# Ideally we would:
-#    1) Pull down the latest dev code from https://github.com/openstreetmap/potlatch2
-#    2) Compile using Flex as detailed in the README, using the Flex install instructions at http://thomas.deuling.org/2011/05/install-flex-sdk-under-ubuntu-linux/
-#    3) Add in the local config, which are believed to be map_features.xml (position of transport block moved) and vectors.xml (which defines the external sources); possibly there are other files - needs to be checked
-if [ ! -f "${websitesContentFolder}/edit/editor/vectors.xml" ]; then
+if [ -n "${potlatchComponent}" ]; then
+
+    #!# Ideally we would:
+    #    1) Pull down the latest dev code from https://github.com/openstreetmap/potlatch2
+    #    2) Compile using Flex as detailed in the README, using the Flex install instructions at http://thomas.deuling.org/2011/05/install-flex-sdk-under-ubuntu-linux/
+    #    3) Add in the local config, which are believed to be map_features.xml (position of transport block moved) and vectors.xml (which defines the external sources); possibly there are other files - needs to be checked
+    if [ ! -f "${websitesContentFolder}/edit/editor/vectors.xml" ]; then
 	echo "#	$(date)	Unpacking Potlatch2 editor"
 	tar xf ${websitesContentFolder}/edit/potlatchEditor.tgz -C ${websitesContentFolder}/edit/
 	echo "#	$(date)	Completed installation of Potlatch2 editor"
+    fi
 fi
 
 # Assume ownership of all the new files and folders

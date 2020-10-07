@@ -134,9 +134,8 @@ fi
 # rm -r /usr/local/bin/osmosis
 # rm -r "`readlink -f /usr/local/osmosis/current`"
 # rm -r /usr/local/osmosis/current
-# Note version 0.47 was tried Nov 2019, but had failings on some servers with some geofabrik extracts
-# March 2020:  0.47 is needed for Ubuntu 19.10 / MySQL 8 which uses updated connector/J that avoids the removed query_cache_size.
-osmosisVersion=0.46
+# October 2020: 0.48.3 is needed for Ubuntu 20.04 / MySQL 8 which uses updated connector/J that avoids the removed query_cache_size.
+osmosisVersion=0.48.3
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
@@ -154,7 +153,7 @@ if [ ! -L /usr/local/bin/osmosis ]; then
 
     # wget the latest to here
     if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
-	wget -O /usr/local/osmosis/osmosis-latest.tgz http://dev.openstreetmap.org/~bretth/osmosis-build/osmosis-${osmosisVersion}.tgz
+	wget -O /usr/local/osmosis/osmosis-latest.tgz https://github.com/openstreetmap/osmosis/releases/download/${osmosisVersion}/osmosis-${osmosisVersion}.tgz
     fi
 
     # Create a folder for the new version

@@ -51,7 +51,7 @@ ${superMysql} ${sampleRoutingDb} < ${websitesContentFolder}/documentation/schema
 ${superMysql} ${sampleRoutingDb} -e "call cleanSampleRouting(\"${sampleRoutingDb}\");"
 
 #	Write
-mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost --routines --no-create-db --hex-blob ${sampleRoutingDb} | gzip > ${websitesContentFolder}/documentation/schema/sampleRouting.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost --routines --no-create-db --hex-blob --ignore-table=${sampleRoutingDb}.view_batch_jobs ${sampleRoutingDb} | gzip > ${websitesContentFolder}/documentation/schema/sampleRouting.sql.gz
 
 # Archive the data
 sampleRoutingData=sampleRoutingData.tar.gz

@@ -16,6 +16,17 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+
+### DEFAULTS ###
+
+# MySQL settings for when the server is running an import or serving routes
+# Values can be written as eg: 1*1024*1024*1024
+# E.g London should work with 2G, but whole of UK needs 10G.
+import_key_buffer_size=2*1024*1024*1024
+import_max_heap_table_size=2*1024*1024*1024
+import_tmp_table_size=2*1024*1024*1024
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

@@ -16,6 +16,17 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+### DEFAULTS ###
+
+# Tool for editing OpenStreetMap
+potlatchComponent=
+
+# Face recognition and number plate recognition
+imageRecognitionComponent=
+
+# Used by import for caching data between routing editions, and for building large library of planned routes
+archiveDb=
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

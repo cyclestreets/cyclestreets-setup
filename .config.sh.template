@@ -151,13 +151,12 @@ elevationDatasources=(
 #	'alos.tar.bz2'
 #	'prague.tar.bz2'
 #	'osterrain50.tar.bz2'
-	'osterrain50tl.tar.bz2' # Ordnance Survey TL Anglia region
 #	'srtm.tar.bz2'
 #	'aster.tar.bz2'
 )
 
 # Archive db
-archiveDb=csArchive
+archiveDb=
 
 # External database (leave empty if not wanted)
 externalDb=csExternal
@@ -169,12 +168,12 @@ batchDb=
 ## Optional component modules (leave empty if they are not wanted)
 
 # Face recognition and number plate recognition
-imageRecognitionComponent=1
+imageRecognitionComponent=
 
 # Html to PDF
 htmlToPdfComponent=1
 
 # Potlatch
-potlatchComponent=1
+potlatchComponent=
 
 # End of file

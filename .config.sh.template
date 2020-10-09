@@ -2,6 +2,9 @@
 # Contains credentials
 # This is a template file, save as simply .config.sh and set your own values below. Make it executable.
 
+# Settings that rarely need to be set are prefixed with two hashes, and the default is as shown. E.g.:
+## christmasDay=25Dec
+
 # Installing on Ubuntu or Mac
 baseOS=Ubuntu
 # !! Mac install is in an unfinished state and needs much more work
@@ -81,7 +84,7 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 
-## Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
+### Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
 
 # Master setting that can turn off any configuration of exim
 configureExim=false
@@ -94,7 +97,7 @@ dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
 dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
 
-## Routing daemon
+# Routing daemon
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 routingDaemonLocation=/etc/init.d/cycleroutingd
 routingDaemonRestart="/bin/systemctl restart cycleroutingd"
@@ -105,16 +108,16 @@ installRoutingAsDaemon=true
 # Don't stop routing service during import by leaving this variable empty:
 stopRoutingDuringImport=yes
 
-## Local routing server
+# Local routing server
 localRoutingUrl=http://localhost:9000/
 
-## Specify the machine that provides backups of live data (used by backup and fallback-deployment)
+# Specify the machine that provides backups of live data (used by backup and fallback-deployment)
 liveMachineHostname=
 
-## Controls syncing and restoration of recent route zips: true|false or empty
+# Controls syncing and restoration of recent route zips: true|false or empty
 restoreRecentRoutes=
 
-## Microsites server such as blogs
+# Microsites server such as blogs
 micrositesServer=
 
 # An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
@@ -157,7 +160,7 @@ csExternalDataFile=csExternal.sql.gz
 # Batch database: csBatch (leave empty if not wanted)
 batchDb=
 
-## Optional component modules (leave empty if they are not wanted)
+### Optional component modules (leave empty if they are not wanted)
 
 # Face recognition and number plate recognition
 imageRecognitionComponent=

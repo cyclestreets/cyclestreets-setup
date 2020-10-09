@@ -8,6 +8,9 @@ mkdir -p ${websitesContentFolder}
 cd ${websitesContentFolder}
 
 # Create/update the CycleStreets repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
+
+# !! This prompts for git username / password.
+
 if [ ! -d ${websitesContentFolder}/.git ]
 then
     ${asCS} git clone https://github.com/cyclestreets/cyclestreets.git ${websitesContentFolder}

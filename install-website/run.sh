@@ -1,7 +1,7 @@
 #!/bin/bash
-# Script to install CycleStreets on Ubuntu
-# Originally written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
-# but works with 18.04.4 LTS.
+# Script to install CycleStreets on Ubuntu 20.04.1 LTS
+#
+# (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 # Announce start

@@ -19,9 +19,6 @@ administratorEmail=webmaster@example.com
 # API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates
 apiHostname=api-"${csHostname}"
 
-# Url for status api call for munin
-muninUrlStub=http://${apiHostname}
-
 # Tests api key
 testsApiKey=
 

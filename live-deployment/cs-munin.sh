@@ -96,25 +96,25 @@ output_usage() {
 # Number of itineraries in a five minute period
 number_of_itineraries() {
     #${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countItinerariesLastFiveMinutes
+    python ${ScriptHome}/utility/readjson.py http://${apiHostname} ${testsApiKey} countItinerariesLastFiveMinutes
 }
 
 # Number of journeys in a five minute period
 number_of_journeys() {
     #${superMysql} cyclestreets -sNe "select countJourneysLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countJourneysLastFiveMinutes
+    python ${ScriptHome}/utility/readjson.py http://${apiHostname} ${testsApiKey} countJourneysLastFiveMinutes
 }
 
 # Number of journeys in a five minute period
 number_of_failed_journeys() {
     #${superMysql} cyclestreets -sNe "select countFailedJourneysLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countFailedJourneysLastFiveMinutes
+    python ${ScriptHome}/utility/readjson.py http://${apiHostname} ${testsApiKey} countFailedJourneysLastFiveMinutes
 }
 
 # Number of errors in a five minute period
 number_of_errors() {
     #${superMysql} cyclestreets -sNe "select countErrorsLastFiveMinutes()";
-    python ${ScriptHome}/utility/readjson.py ${muninUrlStub} ${testsApiKey} countErrorsLastFiveMinutes
+    python ${ScriptHome}/utility/readjson.py http://${apiHostname} ${testsApiKey} countErrorsLastFiveMinutes
 }
 
 

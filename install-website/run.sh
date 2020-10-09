@@ -334,7 +334,7 @@ then
 -e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
--e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
+-e "s/YOUR_EMAIL_HERE/${administratorEmail}/" \
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
 -e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 -e "s/YOUR_APISERVERNAME/${apiHostname}/g" \

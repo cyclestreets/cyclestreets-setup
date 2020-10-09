@@ -96,17 +96,7 @@ fi
 
 # HTML to PDF conversion
 if [ -n "${htmlToPdfComponent}" ]; then
-    # http://wkhtmltopdf.org/downloads.html
-    # Note: using "apt -y install wkhtmltopdf" doesn't work for various reasons and so this is required
-    # (The package install looks like it might work for Ubuntu 20.04)
-    if [ ! -e /usr/local/bin/wkhtmltopdf ] ; then
-	# Needs these packages
-	apt -y install xfonts-75dpi xfonts-base xfonts-utils
-	# Download and install wkhtmltopdf
-	wget -P /tmp/ https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
-	dpkg -i /tmp/wkhtmltox*.deb
-	rm /tmp/wkhtmltox*.deb
-    fi
+    apt -y install wkhtmltopdf
 fi
 
 # On Mac OSX, use the following as documented at http://stackoverflow.com/a/14043085/180733 and https://gist.github.com/semanticart/389944e2bcdba5424e01

@@ -3,7 +3,7 @@
 # This is a template file, save as simply .config.sh and set your own values below. Make it executable.
 
 # Settings that rarely need to be set are prefixed with two hashes, and the default is as shown. E.g.:
-## christmasDay=25Dec
+##christmasDay=25Dec
 
 # Installing on Ubuntu or Mac
 baseOS=Ubuntu
@@ -43,6 +43,10 @@ mysqlRootPassword=
 
 # Central PhpMyAdmin installation
 phpmyadminMachine=
+
+# Credentials for the website user
+##mysqlWebsiteUsername=website
+##mysqlWebsitePassword="${password}"
 
 # Credentials for the import user
 mysqlImportUsername=import

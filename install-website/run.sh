@@ -16,16 +16,13 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+
 ### DEFAULTS ###
 
-# Tool for editing OpenStreetMap
-potlatchComponent=
+# Credentials for the website user
+mysqlWebsiteUsername=website
+mysqlWebsitePassword="${password}"
 
-# Face recognition and number plate recognition
-imageRecognitionComponent=
-
-# Used by import for caching data between routing editions, and for building large library of planned routes
-archiveDb=
 
 ### CREDENTIALS ###
 

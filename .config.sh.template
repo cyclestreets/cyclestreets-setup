@@ -41,10 +41,6 @@ mysqlRootPassword=
 # Central PhpMyAdmin installation
 phpmyadminMachine=
 
-# Credentials for the website user
-mysqlWebsiteUsername=website
-mysqlWebsitePassword="${password}"
-
 # Credentials for the import user
 mysqlImportUsername=import
 # Avoid using a % in this password because that won't survive being passed to version 0.43.1 of osmosis (this problem has been flagged with them)

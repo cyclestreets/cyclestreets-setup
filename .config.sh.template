@@ -63,12 +63,6 @@ mysqlImportPassword=
 # Legacy: a string used to encrypt user passwords
 ##signinSalt=
 
-# Credentials for the blog user (leave empty if not setting up a blog)
-blogMoniker=
-blogDatabasename=
-blogUsername=
-blogPassword=
-
 ## Working directories
 websitesContentFolder=/websites/www/content
 websitesBackupsFolder=/websites/www/backups
@@ -172,5 +166,14 @@ htmlToPdfComponent=1
 
 # Potlatch
 potlatchComponent=
+
+
+### Blog
+
+# Credentials for the blog user (leave empty if not setting up a blog)
+##blogMoniker=
+##blogDatabasename=
+##blogUsername=
+##blogPassword=
 
 # End of file

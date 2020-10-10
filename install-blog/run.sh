@@ -14,6 +14,15 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+### DEFAULTS ###
+
+# Credentials for the blog user (leave empty if not setting up a blog)
+blogMoniker=
+blogDatabasename=
+blogUsername=
+blogPassword=
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

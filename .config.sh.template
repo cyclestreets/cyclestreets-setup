@@ -123,9 +123,6 @@ tilecacheHostname=tile.cyclestreets.net
 tilecacheContentFolder=/websites/tile/content
 tilecacheSSL=true
 
-# Main mailserver
-dc_other_hostnames=
-
 
 # Import installation
 # Options for installing the import - leave blank to skip these steps, or add string true to enable

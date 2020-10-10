@@ -23,6 +23,9 @@ set -e
 mysqlWebsiteUsername=website
 mysqlWebsitePassword="${password}"
 
+# Legacy: a string used to encrypt user passwords
+signinSalt=
+
 
 ### CREDENTIALS ###
 

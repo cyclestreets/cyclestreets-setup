@@ -38,6 +38,10 @@ echo "#	CycleStreets schema script starting"
 
 # Main Body
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # The current database name will be the sample database
 sampleRoutingDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 # Use the date part of that (from character 7) as the basis for getting the planet db.

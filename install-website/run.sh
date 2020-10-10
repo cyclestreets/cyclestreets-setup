@@ -302,6 +302,10 @@ fi
 # Reload apache
 service apache2 reload
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Create cyclestreets database
 echo "# Create cyclestreets database"
 ${superMysql} -e "create database if not exists cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;"

@@ -306,6 +306,10 @@ if [ "$importEdition" != "$desiredEdition" ]; then
 fi
 
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Check to see if this routing database already exists
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
 # but in fact that is the condition desired.

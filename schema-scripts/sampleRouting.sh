@@ -38,6 +38,10 @@ fi
 # Report
 echo "#	CycleStreets schema script starting"
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # The current database name will be the sample database
 sampleRoutingDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 echo "# Creating sample routing database for data built with the db named: ${sampleRoutingDb}"

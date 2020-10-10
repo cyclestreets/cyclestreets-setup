@@ -46,6 +46,10 @@ if [ ! -r ${csBackup} ]; then
     exit
 fi
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 #	Create the new database
 ${superMysql} -e "drop database if exists ${sampleDb};"
 ${superMysql} -e "create database ${sampleDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"

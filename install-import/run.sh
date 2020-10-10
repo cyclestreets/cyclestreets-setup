@@ -200,6 +200,11 @@ fi
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 echo "#	Grants"
+
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${superMysql} -e "create user if not exists '${mysqlImportUsername}'@'localhost' identified with mysql_native_password by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"
 ${superMysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost';"

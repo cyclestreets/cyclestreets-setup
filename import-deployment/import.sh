@@ -132,6 +132,10 @@ mkdir -p $lockdir
 # Removes coverage files - requires passwordless sudo
 sudo ${ScriptHome}/utility/removeCoverageCSV.sh
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Stop the routing service - if it is installed
 if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
 

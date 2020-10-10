@@ -107,6 +107,10 @@ if [ -z "${localRoutingUrl}" ]; then
 	exit 1
 fi
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Check the supplied argument - if exactly one use it, else default to latest routing db
 if [ $# -eq 1 ]
 then

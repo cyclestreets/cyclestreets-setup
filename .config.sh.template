@@ -75,10 +75,6 @@ journeysLog="${csHostname}-access.log"
 # Names a mysql configuration file which gets setup to allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password; or empty to prevent its creation
 mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 
-# Useful binding
-# The defaults-extra-file is a positional argument which must come first.
-superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-
 
 ### Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
 

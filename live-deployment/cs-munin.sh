@@ -93,6 +93,10 @@ output_usage() {
 
 ## Internal functions that provide the statistics
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Number of itineraries in a five minute period
 number_of_itineraries() {
     #${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";

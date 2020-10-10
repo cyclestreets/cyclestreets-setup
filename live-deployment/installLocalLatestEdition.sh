@@ -80,6 +80,10 @@ if [ -z "${importContentFolder}" ]; then
     exit 1
 fi
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Check that the import finished correctly
 if ! ${superMysql} --batch --skip-column-names -e "call importStatus()" cyclestreets | grep "valid\|cellOptimised" > /dev/null 2>&1
 then

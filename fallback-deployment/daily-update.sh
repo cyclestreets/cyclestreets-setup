@@ -100,6 +100,10 @@ fi
 server=${liveMachineHostname}
 dumpPrefix=www
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 #	The fallback server is running a custom routing service while this update happens
 #	Record current routing edition and apiV2Url
 currentEdition=$(${superMysql} -NB cyclestreets -e "select routingDb from map_config where id = 1;")

@@ -115,7 +115,11 @@ then
     echo "#	The only permitted argument is the edition to remove."
     exit 1
 fi
-    
+
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Check the supplied argument
 if [ "$1" = 'oldest' -o "$1" = 'newest' ]
 then

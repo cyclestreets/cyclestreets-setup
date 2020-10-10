@@ -10,6 +10,10 @@ folder=${websitesBackupsFolder}
 echo "$(date)	Photomap ownership" >> ${setupLogFile}
 sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Replace the database
 echo "$(date)	Replacing ${csFallbackDb} db" >> ${setupLogFile}
 ${superMysql} -e "drop database if exists ${csFallbackDb};";

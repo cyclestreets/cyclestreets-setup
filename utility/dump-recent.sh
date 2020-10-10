@@ -7,6 +7,10 @@
 #	dumpPrefix (string)
 #	Eg. "www" is used to indicate which server created the dump. Used as a prefix for all the dump file names.
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # The minimum itinerary id can be used as the handle for a batch of routes.
 # Mysql options: N skips column names, s avoids the ascii-art, e introduces the query.
 minItineraryId=$(${superMysql} cyclestreets -Nse "select min(id) from map_itinerary")

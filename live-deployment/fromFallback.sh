@@ -77,6 +77,10 @@ dumpPrefix=fallback
 # Restore recent data
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Restart the pseudoCron at today's date
 ${superMysql} cyclestreets -e "update map_config set pseudoCron = curdate();";
 

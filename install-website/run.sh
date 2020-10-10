@@ -503,22 +503,21 @@ if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 fi
 
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
-if [ "$configureExim" = true ]; then
-    # NB The config here is currently Debian/Ubuntu-specific
-    sudo apt -y install exim4
-    if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
-	cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
-    fi
-    # NB These will deliberately overwrite any existing config; it is assumed that once set, the config will only be changed via this setup script (as otherwise it is painful during testing)
-    sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='${dc_eximconfig_configtype}'/" /etc/exim4/update-exim4.conf.conf
-    sed -i "s/dc_local_interfaces=.*/dc_local_interfaces='${dc_local_interfaces}'/" /etc/exim4/update-exim4.conf.conf
-    sed -i "s/dc_readhost=.*/dc_readhost='${dc_readhost}'/" /etc/exim4/update-exim4.conf.conf
-    sed -i "s/dc_smarthost=.*/dc_smarthost='${dc_smarthost}'/" /etc/exim4/update-exim4.conf.conf
-    # NB These two are the same in any CycleStreets installation but different from the default Debian installation:
-    sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
-    sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
-    sudo systemctl restart exim4
+# NB The config here is currently Debian/Ubuntu-specific
+sudo apt -y install exim4
+if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
+    cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
 fi
+# NB These will deliberately overwrite any existing config; it is assumed that once set, the config will only be changed via this setup script (as otherwise it is painful during testing)
+sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='${dc_eximconfig_configtype}'/" /etc/exim4/update-exim4.conf.conf
+sed -i "s/dc_local_interfaces=.*/dc_local_interfaces='${dc_local_interfaces}'/" /etc/exim4/update-exim4.conf.conf
+sed -i "s/dc_readhost=.*/dc_readhost='${dc_readhost}'/" /etc/exim4/update-exim4.conf.conf
+sed -i "s/dc_smarthost=.*/dc_smarthost='${dc_smarthost}'/" /etc/exim4/update-exim4.conf.conf
+# NB These two are the same in any CycleStreets installation but different from the default Debian installation:
+sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
+sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
+sudo systemctl restart exim4
+
 
 # Install the cycle routing daemon (service)
 if $installRoutingAsDaemon ; then

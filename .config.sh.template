@@ -78,9 +78,6 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 
 ### Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
 
-# Master setting that can turn off any configuration of exim
-configureExim=false
-
 # Basically, use the 'internet' (direct delivery) mode here for a developer setup
 #!# Simplify this block to be a single setting like profile='developer'/'deployment' and write out settings (based on those below) accordingly
 ##dc_eximconfig_configtype='internet'  # Use 'internet' for direct delivery, or 'satellite' if mail is delivered by your ISP

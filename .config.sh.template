@@ -60,9 +60,6 @@ mysqlImportPassword=
 ##import_max_heap_table_size=2*1024*1024*1024
 ##import_tmp_table_size=2*1024*1024*1024
 
-# Custom sudoers file
-csSudoers=/etc/sudoers.d/cyclestreets
-
 # A string used to encrypt user passwords
 signinSalt=
 

@@ -14,6 +14,17 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+### DEFAULTS ###
+
+# Exim email
+# Basically, use the 'internet' (direct delivery) mode here for a developer setup
+#!# Simplify this block to be a single setting like profile='developer'/'deployment' and write out settings (based on those below) accordingly
+dc_eximconfig_configtype='internet'  # Use 'internet' for direct delivery, or 'satellite' if mail is delivered by your ISP
+dc_local_interfaces=''               # Use '' if using 'internet' or '127.0.0.1' if using 'satellite' above
+dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
+dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

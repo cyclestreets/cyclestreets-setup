@@ -34,6 +34,9 @@ dc_local_interfaces=''               # Use '' if using 'internet' or '127.0.0.1'
 dc_readhost='cyclestreets.net'       # Set to 'cyclestreets.net'
 dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
+# Archive db
+archiveDb=
+
 
 ### CREDENTIALS ###
 

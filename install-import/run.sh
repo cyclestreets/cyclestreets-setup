@@ -35,6 +35,9 @@ elevationDatasources=(
 #	'aster.tar.bz2'
 )
 
+# Archive db
+archiveDb=
+
 
 ### CREDENTIALS ###
 

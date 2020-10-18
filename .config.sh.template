@@ -114,7 +114,7 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##)
 
 # Archive db
-archiveDb=
+##archiveDb=
 
 # External database (leave empty if not wanted)
 externalDb=csExternal

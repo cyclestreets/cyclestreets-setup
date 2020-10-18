@@ -143,8 +143,8 @@ sudo ${ScriptHome}/utility/removeCoverageCSV.sh
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
-# Stop the routing service - if it is installed
-if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
+# Stop the routing service - if required
+if [ -n "${stopRoutingDuringImport}" ]; then
 
     # Stop the routing service (using command that matches pattern setup in passwordless sudo)
     sudo /bin/systemctl stop cyclestreets

@@ -90,12 +90,6 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 	exit 1
 fi
 
-# Ensure the routing daemon 2 (service) is installed
-if [ ! -f ${routingDaemon2Location} ]; then
-	echo "#	The routing daemon 2 (service) is not installed"
-	exit 1
-fi
-
 # Check a local routing server 2 is configured
 if [ -z "${localRouting2Url}" ]; then
 	echo "#	The local routing service 2 is not specified."

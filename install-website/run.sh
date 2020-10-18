@@ -522,6 +522,7 @@ sudo systemctl restart exim4
 # Install the cycle routing service
 
 # Setup a symlink from the systemd folder, if it doesn't already exist
+routingDaemonLocation=/etc/systemd/system/cyclestreets.service
 if [ ! -L ${routingDaemonLocation} ]; then
     ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingDaemonLocation}
 fi

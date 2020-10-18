@@ -22,7 +22,7 @@ fi
 
 # Ensure there's a custom sudoers file
 csSudoers=/etc/sudoers.d/cyclestreets
-if [ -n "${csSudoers}" -a ! -e "${csSudoers}" -a -n "${routingDaemonLocation}" ]; then
+if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
 
     # !! Potentially add more checks to the variables used in these sudoers expressions, such as ensuring the variables are full paths to the commands.
 

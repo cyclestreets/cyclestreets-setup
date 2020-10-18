@@ -89,8 +89,6 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 # Routing daemon
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 
-routingDaemonLocation=/etc/init.d/cycleroutingd
-
 # Local routing server
 localRoutingUrl=http://localhost:9000/
 

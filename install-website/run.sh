@@ -43,6 +43,15 @@ externalDb=
 # Batch database: csBatch (leave empty if not wanted)
 batchDb=
 
+# Face recognition and number plate recognition
+imageRecognitionComponent=
+
+# Html to PDF
+htmlToPdfComponent=
+
+# Potlatch
+potlatchComponent=
+
 
 ### CREDENTIALS ###
 

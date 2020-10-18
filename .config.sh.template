@@ -125,13 +125,13 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ### Optional component modules (leave empty if they are not wanted)
 
 # Face recognition and number plate recognition
-imageRecognitionComponent=
+##imageRecognitionComponent=
 
 # Html to PDF
-htmlToPdfComponent=1
+##htmlToPdfComponent=
 
 # Potlatch
-potlatchComponent=
+##potlatchComponent=
 
 
 ### Blog

@@ -93,7 +93,7 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##micrositesServer=
 
 # An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
-fallbackRoutingUrl=
+##fallbackRoutingUrl=
 
 # Fallback server
 fallbackServer=

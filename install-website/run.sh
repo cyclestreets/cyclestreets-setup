@@ -40,6 +40,9 @@ archiveDb=
 # External database (leave empty if not wanted)
 externalDb=
 
+# Batch database: csBatch (leave empty if not wanted)
+batchDb=
+
 
 ### CREDENTIALS ###
 

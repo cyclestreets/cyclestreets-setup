@@ -120,7 +120,7 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##externalDb=
 
 # Batch database: csBatch (leave empty if not wanted)
-batchDb=
+##batchDb=
 
 ### Optional component modules (leave empty if they are not wanted)
 

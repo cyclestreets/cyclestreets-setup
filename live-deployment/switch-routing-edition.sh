@@ -129,6 +129,9 @@ echo "#	Planning to switch to edition: ${newEdition}"
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
+# Cycle routing restart command (should match passwordless sudo entry)
+routingServiceRestart="/bin/systemctl restart cyclestreets"
+
 # Check the local routing service.
 # The status check produces an error if it is not running, so temporarily
 # turn off abandon-on-error to catch and report the problem.
@@ -158,7 +161,7 @@ else
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
 	echo "#	Restart it using: sudo /bin/systemctl restart cyclestreets"
 	echo "#	Routing restart will be attempted:"
-	sudo ${routingDaemonRestart}
+	sudo ${routingServiceRestart}
 	echo "#	Routing service has restarted"
 
 	# Clean exit
@@ -239,7 +242,7 @@ rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php
 rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php
 
 # Restart the routing service
-sudo ${routingDaemonRestart}
+sudo ${routingServiceRestart}
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)

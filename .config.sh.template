@@ -90,7 +90,6 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 
 routingDaemonLocation=/etc/init.d/cycleroutingd
-routingDaemonRestart="/bin/systemctl restart cycleroutingd"
 routingDaemonStart="/bin/systemctl start cycleroutingd"
 routingDaemonStop="/bin/systemctl stop cycleroutingd"
 

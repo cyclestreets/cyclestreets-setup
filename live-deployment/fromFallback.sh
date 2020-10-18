@@ -16,6 +16,13 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+
+### DEFAULTS ###
+
+# Fallback server
+fallbackServer=
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

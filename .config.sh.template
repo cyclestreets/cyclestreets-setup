@@ -93,7 +93,7 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##micrositesServer=
 
 # Fallback server
-fallbackServer=
+##fallbackServer=
 
 # Fallback deployment restores the cyclestreets database to one having this name
 csFallbackDb=cyclestreets

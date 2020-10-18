@@ -86,8 +86,8 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
 
-# Controls syncing and restoration of recent route zips: true|false or empty
-restoreRecentRoutes=
+# Controls syncing and restoration of recent route zips: true or empty
+##restoreRecentRoutes=
 
 # Microsites server such as blogs
 micrositesServer=

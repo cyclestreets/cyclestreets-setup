@@ -39,6 +39,9 @@ if [ "$restoreRecentRoutes" = true ]; then
 	#   Load them directly into the archive
 	gunzip < ${websitesBackupsFolder}/recentroutes/$fileName | ${superMysql} csArchive
 	echo "$(date)	Restored to archive: $fileName" >> ${setupLogFile}
+
+	# !! Consider deleting the file now that it has been used
+	#    but review how that would work with the rsync in sync-recent.sh
     done
 fi
 #	End of file

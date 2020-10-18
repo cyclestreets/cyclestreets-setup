@@ -45,6 +45,7 @@ echo "#	CycleStreets creating a dump of the external schema only (no data)"
 mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost csExternal --databases --no-data --skip-add-drop-table | sed 's/CREATE TABLE/CREATE TABLE IF NOT EXISTS/g' > ${websitesContentFolder}/documentation/schema/csExternal.sql
 
 # Create the version with data
+csExternalDataFile=csExternal.sql.gz
 if [ ! -z "${csExternalDataFile}" ]; then
 
     # Report

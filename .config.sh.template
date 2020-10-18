@@ -118,7 +118,6 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 
 # External database (leave empty if not wanted)
 externalDb=csExternal
-csExternalDataFile=csExternal.sql.gz
 
 # Batch database: csBatch (leave empty if not wanted)
 batchDb=

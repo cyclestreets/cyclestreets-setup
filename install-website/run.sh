@@ -424,6 +424,9 @@ if [ -n "${externalDb}" ]; then
 	${superMysql} -e "grant select on \`${externalDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
     fi
 
+    # Useful binding
+    csExternalDataFile=csExternal.sql.gz
+
     # External db restore - if it doesn't pre-exist
     if [ -z "${xdbPreExists}" -a -n "${csExternalDataFile}" -a ! -e /tmp/${csExternalDataFile} ]; then
 

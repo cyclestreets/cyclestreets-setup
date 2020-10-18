@@ -23,6 +23,15 @@ mkdir -p $lockdir
 	flock -n 9 || { echo '#	An installation is already running' ; exit 1; }
 
 
+
+### DEFAULTS ###
+
+# Tilecache
+tilecacheHostname=tile.cyclestreets.net
+tilecacheContentFolder=/websites/tile/content
+tilecacheSSL=true
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

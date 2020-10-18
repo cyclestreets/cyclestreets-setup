@@ -99,9 +99,9 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##csFallbackDb=cyclestreets
 
 # Tilecache
-tilecacheHostname=tile.cyclestreets.net
-tilecacheContentFolder=/websites/tile/content
-tilecacheSSL=true
+##tilecacheHostname=tile.cyclestreets.net
+##tilecacheContentFolder=/websites/tile/content
+##tilecacheSSL=true
 
 
 # Import installation

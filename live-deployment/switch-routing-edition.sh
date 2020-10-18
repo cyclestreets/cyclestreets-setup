@@ -53,6 +53,13 @@ mkdir -p $lockdir
 (
 	flock -n 9 || { echo '#	A switchover is already running' ; exit 1; }
 
+
+### DEFAULTS ###
+
+# An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
+fallbackRoutingUrl=
+
+
 ### CREDENTIALS ###
 
 # Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733

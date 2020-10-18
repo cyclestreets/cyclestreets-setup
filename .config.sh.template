@@ -95,9 +95,6 @@ routingDaemonStatus="/bin/systemctl --no-pager status cycleroutingd"
 routingDaemonStart="/bin/systemctl start cycleroutingd"
 routingDaemonStop="/bin/systemctl stop cycleroutingd"
 
-# Don't stop routing service during import by leaving this variable empty:
-stopRoutingDuringImport=yes
-
 # Local routing server
 localRoutingUrl=http://localhost:9000/
 

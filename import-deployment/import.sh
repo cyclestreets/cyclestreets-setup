@@ -62,6 +62,13 @@ importConfig=$1
 # Bomb out if something goes wrong
 set -e
 
+
+### DEFAULTS ###
+
+# Stop the routing service during import unless this setting is empty.
+stopRoutingDuringImport=yes
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

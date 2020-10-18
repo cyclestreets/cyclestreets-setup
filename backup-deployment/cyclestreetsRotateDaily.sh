@@ -65,6 +65,7 @@ $rotateDaily $folder www_csBatch_jobs_servers_threads.sql.gz
 #	Microsites
 folder=/websites/microsites/backup
 $rotateDaily $folder microsites_websites.tar.bz2
+$rotateDaily $folder microsites_allDatabases.sql.gz
 
 echo "$(date)	CycleStreets daily rotation done" >> ${logFile}
 

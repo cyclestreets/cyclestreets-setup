@@ -80,15 +80,17 @@ dumpPrefix=www
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
 
 #	Download microsites websites backup and databases dump
-folder=${websitesBackupsFolder}
-download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
-$download $administratorEmail $micrositesServer $folder microsites_websites.tar.bz2
-$download $administratorEmail $micrositesServer $folder microsites_allDatabases.sql.gz
+if [ -n "${micrositesServer}" ]; then
+    folder=${websitesBackupsFolder}
+    download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
+    $download $administratorEmail $micrositesServer $folder microsites_websites.tar.bz2
+    $download $administratorEmail $micrositesServer $folder microsites_allDatabases.sql.gz
 
-# Move them
-micrositesBackupsFolder=/websites/microsites/backup
-mv ${folder}/microsites_websites.tar.bz2* $micrositesBackupsFolder
-mv ${folder}/microsites_allDatabases.sql.gz* $micrositesBackupsFolder
+    # Move them
+    micrositesBackupsFolder=/websites/microsites/backup
+    mv ${folder}/microsites_websites.tar.bz2* $micrositesBackupsFolder
+    mv ${folder}/microsites_allDatabases.sql.gz* $micrositesBackupsFolder
+fi
 
 # Finish
 echo "$(date)	CycleStreets daily backup done" >> ${logFile}

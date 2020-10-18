@@ -519,57 +519,33 @@ sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.
 sudo systemctl restart exim4
 
 
-# Install the cycle routing daemon (service)
-if $installRoutingAsDaemon ; then
+# Install the cycle routing service
 
-    # Setup a symlink from the systemd folder, if it doesn't already exist
-    if [ ! -L ${routingDaemonLocation} ]; then
-	ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingDaemonLocation}
-    fi
-
-    # Ensure the relevant files are executable
-    chmod ug+x ${websitesContentFolder}/routingengine/cyclestreets.py
-
-    # Check the local routing service
-    # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
-    set +e
-    # Get the status
-    localRoutingStatus=$(systemctl status cyclestreets)
-    # If it is not running an error value (ie not zero) is returned
-    if [ $? -ne 0 ]
-    then
-	# Start the service
-	${routingDaemonStart}
-	echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
-    fi
-    # Restore abandon-on-error
-    set -e
-
-
-    # Add the daemon to the system initialization, so that it will start on reboot
-    sudo systemctl enable cyclestreets
-
-else
-
-    echo "#	Routing service - (not installed as a daemon)"
-    echo "#	Can be manually started from the command line using:"
-    echo "#	sudo -u cyclestreets ${websitesContentFolder}/routingengine/cyclestreets.py"
-
-    # If it was previously setup as a daemon, remove it
-    if [ -L ${routingDaemonLocation} ]; then
-
-	# Ensure it is stopped
-	${routingDaemonStop}
-
-	# Remove the symlink
-	rm ${routingDaemonLocation}
-
-	# Remove the daemon from the system initialization
-	sudo systemctl disable cyclestreets
-    fi
-
+# Setup a symlink from the systemd folder, if it doesn't already exist
+if [ ! -L ${routingDaemonLocation} ]; then
+    ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingDaemonLocation}
 fi
 
+# Ensure the relevant files are executable
+chmod ug+x ${websitesContentFolder}/routingengine/cyclestreets.py
+
+# Check the local routing service
+# The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
+set +e
+
+# Get the status
+localRoutingStatus=$(systemctl status cyclestreets)
+# If it is not running an error value (ie not zero) is returned
+if [ $? -ne 0 ]; then
+    # Start the service
+    ${routingDaemonStart}
+    echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
+fi
+# Restore abandon-on-error
+set -e
+
+# Add the daemon to the system initialization, so that it will start on reboot
+sudo systemctl enable cyclestreets
 
 
 # Advise setting up

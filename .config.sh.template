@@ -88,12 +88,13 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 
 # Routing daemon
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
+
 routingDaemonLocation=/etc/init.d/cycleroutingd
 routingDaemonRestart="/bin/systemctl restart cycleroutingd"
 routingDaemonStatus="/bin/systemctl --no-pager status cycleroutingd"
 routingDaemonStart="/bin/systemctl start cycleroutingd"
 routingDaemonStop="/bin/systemctl stop cycleroutingd"
-installRoutingAsDaemon=true
+
 # Don't stop routing service during import by leaving this variable empty:
 stopRoutingDuringImport=yes
 

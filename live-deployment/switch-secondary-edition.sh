@@ -205,6 +205,7 @@ ${superMysql} cyclestreets -e "update map_edition set active = 'no' where name =
 echo "#	Multiple editions are deactivated for the duration of the switch over."
 
 # Configure the routing engine to use the new edition
+routingEngine2ConfigFile=${websitesContentFolder}/routingengine/.config2.sh
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newSecondaryEdition}" > $routingEngine2ConfigFile
 
 # Ensure it is executable

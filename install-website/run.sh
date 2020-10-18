@@ -37,6 +37,9 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 # Archive db
 archiveDb=
 
+# External database (leave empty if not wanted)
+externalDb=
+
 
 ### CREDENTIALS ###
 

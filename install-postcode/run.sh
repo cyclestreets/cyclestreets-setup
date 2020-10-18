@@ -17,6 +17,13 @@ fi
 # Bomb out if something goes wrong
 set -e
 
+
+### DEFAULTS ###
+
+# External database (leave empty if not wanted)
+externalDb=
+
+
 ### CREDENTIALS ###
 
 # Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733

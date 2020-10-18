@@ -91,7 +91,6 @@ routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 
 routingDaemonLocation=/etc/init.d/cycleroutingd
 routingDaemonRestart="/bin/systemctl restart cycleroutingd"
-routingDaemonStatus="/bin/systemctl --no-pager status cycleroutingd"
 routingDaemonStart="/bin/systemctl start cycleroutingd"
 routingDaemonStop="/bin/systemctl stop cycleroutingd"
 

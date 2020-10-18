@@ -124,7 +124,7 @@ echo "#	Planning to switch to secondary edition: ${newSecondaryEdition}"
 # XML for the calls to get the routing edition
 xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
-# Cycle routing2 restart command (should match passwordless sudo entry)
+# Cycle routing2 restart command (using command that matches pattern setup in passwordless sudo)
 routingService2Restart="/bin/systemctl restart cyclestreets2"
 
 # Check the local routing service.

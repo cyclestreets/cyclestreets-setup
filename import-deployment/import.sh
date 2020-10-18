@@ -146,8 +146,8 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # Stop the routing service - if it is installed
 if [ -e ${routingDaemonLocation} -a -n "${stopRoutingDuringImport}" ]; then
 
-    # Stop the routing service (the cyclestreets user should have passwordless sudo access to this command)
-    sudo ${routingDaemonStop}
+    # Stop the routing service (using command that matches pattern setup in passwordless sudo)
+    sudo /bin/systemctl stop cyclestreets
 
     # Close the website
     ${superMysql} cyclestreets -e "update map_config set status = 'maintenance', journeyPlannerStatus = 'closed', notice = 'Building a new routing edition' where id = 1;";

@@ -24,6 +24,13 @@ mkdir -p $lockdir
 (
 	flock -n 9 || { echo 'CycleStreets daily backup is already running' ; exit 1; }
 
+
+### DEFAULTS ###
+
+# Microsites server such as blogs
+micrositesServer=
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

@@ -484,6 +484,9 @@ if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingDb} ]; then
 fi
 
 
+# Routing service configuration
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
+
 # Create a config if not already present
 if [ ! -x "${routingEngineConfigFile}" ]; then
 	# Create the config for the basic routing db, as cyclestreets user

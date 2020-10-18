@@ -225,6 +225,9 @@ else
     echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
+# Routing service configuration
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
+
 # Configure the routing engine to use the new edition
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
 

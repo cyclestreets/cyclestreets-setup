@@ -86,9 +86,6 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
 
-# Routing service
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
-
 # Local routing server
 localRoutingUrl=http://localhost:9000/
 

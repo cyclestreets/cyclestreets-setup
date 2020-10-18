@@ -199,7 +199,7 @@ xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>ge
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
 set +e
 
-# Note: use /etc/init.d path to the demon, rather than service which is not available to non-root users on debian
+# Note: use a path to check the status, rather than service which needs sudo
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
 if [[ ! "$localRoutingStatus" =~ serving ]]
 then

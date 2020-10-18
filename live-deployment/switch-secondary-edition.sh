@@ -126,7 +126,7 @@ routingService2Restart="/bin/systemctl restart cyclestreets2"
 # turn off abandon-on-error to catch and report the problem.
 set +e
 
-# Note: use a path to check the daemon, rather than service which is not available to non-root users on debian
+# Note: use a path to check the status, rather than service which needs sudo
 statusLog2=${websitesLogsFolder}/pythonAstarPort9001_status.log
 localRouting2Status=$(cat ${statusLog2})
 if [[ ! "$localRouting2Status" =~ serving ]]

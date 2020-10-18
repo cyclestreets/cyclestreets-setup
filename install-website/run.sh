@@ -522,9 +522,9 @@ sudo systemctl restart exim4
 # Install the cycle routing service
 
 # Setup a symlink from the systemd folder, if it doesn't already exist
-routingDaemonLocation=/etc/systemd/system/cyclestreets.service
-if [ ! -L ${routingDaemonLocation} ]; then
-    ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingDaemonLocation}
+routingServiceLocation=/etc/systemd/system/cyclestreets.service
+if [ ! -L ${routingServiceLocation} ]; then
+    ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingServiceLocation}
 fi
 
 # Ensure the relevant files are executable
@@ -545,7 +545,7 @@ fi
 # Restore abandon-on-error
 set -e
 
-# Add the daemon to the system initialization, so that it will start on reboot
+# Add the service to the system initialization, so that it will start on reboot
 sudo systemctl enable cyclestreets
 
 

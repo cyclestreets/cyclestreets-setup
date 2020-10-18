@@ -86,7 +86,7 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 ##dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourispmailhost.com' if using 'satellite' above
 
 
-# Routing daemon
+# Routing service
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 
 # Local routing server

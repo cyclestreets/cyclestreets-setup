@@ -537,8 +537,8 @@ set +e
 localRoutingStatus=$(systemctl status cyclestreets)
 # If it is not running an error value (ie not zero) is returned
 if [ $? -ne 0 ]; then
-    # Start the service
-    ${routingDaemonStart}
+    # Start the service (using command that matches pattern setup in passwordless sudo)
+    sudo /bin/systemctl start cyclestreets
     echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 fi
 # Restore abandon-on-error

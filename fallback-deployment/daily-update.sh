@@ -28,6 +28,13 @@ mkdir -p $lockdir
 (
 	flock -n 9 || { echo 'CycleStreets daily update is already running' ; exit 1; }
 
+
+### DEFAULTS ###
+
+# Controls syncing and restoration of recent route zips: true or empty
+restoreRecentRoutes=
+
+
 ### CREDENTIALS ###
 
 # Get the script directory see: http://stackoverflow.com/a/246128/180733

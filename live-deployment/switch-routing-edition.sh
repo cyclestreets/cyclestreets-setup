@@ -95,6 +95,9 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 	exit 1
 fi
 
+# Local routing server
+localRoutingUrl=http://localhost:9000/
+
 # Check a local routing server is configured
 if [ -z "${localRoutingUrl}" ]; then
 	echo "#	The local routing service is not specified."

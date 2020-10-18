@@ -61,13 +61,6 @@ touch ${setupLogFile}
 #echo "#	CycleStreets daily update in progress, follow log file with: tail -f ${setupLogFile}"
 echo "$(date)	CycleStreets daily update" >> ${setupLogFile}
 
-# Ensure live machine has been defined
-if [ -z "${liveMachineHostname}" ]; then
-    # Echoed messages like this will generate emails when run via cron
-    echo "# A live machine must be defined in order to run updates"
-    exit 1
-fi
-
 # Ensure a fallback database name is set
 if [ -z "${csFallbackDb}" ]; then
     echo "$(date) Set a fallback database name to restore."
@@ -97,7 +90,7 @@ fi
 #	Download and restore the CycleStreets database.
 #	This section is simlar to fallback-deployment/fromFallback.sh
 #	Folder locations
-server=${liveMachineHostname}
+server=www.cyclestreets.net
 dumpPrefix=www
 
 # Useful binding

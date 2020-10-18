@@ -56,13 +56,6 @@ logFile=$SCRIPTDIRECTORY/log.txt
 touch ${logFile}
 echo "$(date)	CycleStreets daily backup" >> ${logFile}
 
-# Ensure live machine has been defined
-if [ -z "${liveMachineHostname}" ]; then
-    # Echoed messages like this will generate emails when run via cron
-    echo "# A live machine must be defined in order to run backup"
-    exit 1
-fi
-
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
     echo "$(date) User ${username} must exist: please run the main website install script"
@@ -80,7 +73,7 @@ fi
 
 #	Copy the CycleStreets database dump
 #	Folder locations
-server=${liveMachineHostname}
+server=www.cyclestreets.net
 dumpPrefix=www
 
 # Backup recent data

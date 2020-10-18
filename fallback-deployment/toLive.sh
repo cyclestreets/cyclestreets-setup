@@ -51,12 +51,6 @@ touch ${setupLogFile}
 echo "#	CycleStreets toLive in progress"
 echo "#	$(date)	CycleStreets toLive $(id)" >> ${setupLogFile}
 
-# Ensure live machine has been defined
-if [ -z "${liveMachineHostname}" ]; then
-    echo "# A live machine must be defined in order to run updates"
-    exit 1
-fi
-
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
 	echo "$(date) User ${username} must exist: please run the main website install script"

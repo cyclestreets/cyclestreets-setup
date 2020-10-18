@@ -37,6 +37,9 @@ dc_smarthost=''                      # Use '' if using 'internet' or 'mx.yourisp
 # Archive db
 archiveDb=
 
+# Password for cyclestreets@downloads.cyclestreets.net to download external data
+datapassword=
+
 # External database (leave empty if not wanted)
 externalDb=
 

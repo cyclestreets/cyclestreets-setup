@@ -26,6 +26,9 @@ import_key_buffer_size=2*1024*1024*1024
 import_max_heap_table_size=2*1024*1024*1024
 import_tmp_table_size=2*1024*1024*1024
 
+# Password for cyclestreets@downloads.cyclestreets.net to download extra data such as elevations
+datapassword=
+
 # Elevation datasources - add to list (source must be present on downloads server) or comment out if not wanted
 elevationDatasources=(
 #	'alos.tar.bz2'

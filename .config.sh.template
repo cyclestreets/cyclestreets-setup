@@ -35,7 +35,7 @@ password=
 rollout=rollout
 
 # Password for cyclestreets@downloads.cyclestreets.net to download extra data
-datapassword=
+##datapassword=
 
 ## MySQL
 # The mysql root password - to avoid being prompted during installation.

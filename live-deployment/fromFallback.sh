@@ -22,6 +22,9 @@ set -e
 # Fallback server
 fallbackServer=
 
+# Fallback deployment restores the cyclestreets database to one having this name
+csFallbackDb=cyclestreets
+
 
 ### CREDENTIALS ###
 

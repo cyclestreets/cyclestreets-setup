@@ -65,9 +65,6 @@ mysqlImportPassword=
 ##import_max_heap_table_size=2*1024*1024*1024
 ##import_tmp_table_size=2*1024*1024*1024
 
-# Legacy: a string used to encrypt user passwords
-##signinSalt=
-
 ## Working directories
 websitesContentFolder=/websites/www/content
 websitesBackupsFolder=/websites/www/backups

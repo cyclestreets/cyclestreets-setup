@@ -23,6 +23,9 @@ set -e
 mysqlWebsiteUsername=website
 mysqlWebsitePassword="${password}"
 
+# Central PhpMyAdmin installation
+phpmyadminMachine=
+
 # Legacy: a string used to encrypt user passwords
 signinSalt=
 

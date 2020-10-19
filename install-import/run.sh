@@ -19,6 +19,9 @@ set -e
 
 ### DEFAULTS ###
 
+# Central PhpMyAdmin installation
+phpmyadminMachine=
+
 # MySQL settings for when the server is running an import or serving routes
 # Values can be written as eg: 1*1024*1024*1024
 # E.g London should work with 2G, but whole of UK needs 10G.

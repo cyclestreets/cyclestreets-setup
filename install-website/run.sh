@@ -360,14 +360,15 @@ then
     cp -p .config.php.template ${phpConfig}
 fi
 
+# Include colon with internal port if set
+internalPortwithColon=
+if [ -n "${internalPort}" ]; then
+    internalPortwithColon=:$internalPort
+fi
+
 # Setup the configuration
 if grep CONFIGURED_BY_HERE ${phpConfig} >/dev/null 2>&1;
 then
-
-    # Include colon with internal port if set
-    if [ -n "${internalPort}" ]; then
-	internalPortwithColon=:$internalPort
-    fi
 
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
@@ -397,7 +398,7 @@ then
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
-    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csHostname}:9000/', apiV2Url='http://${apiHostname}/v2/' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csHostname}:9000/', apiV2Url='http://${apiHostname}${internalPortwithColon}/v2/' where id = 1;"
 
     # Set the gui server
     # #!# This needs review - on one live machine it is set as localhost and always ignored
@@ -593,7 +594,7 @@ if [ "${csHostname}" != "localhost" ]; then
 fi
 
 # Announce end of script
-echo "#	CycleStreets installed $(date), visit http://${csHostname}/"
+echo "#	CycleStreets installed $(date), visit http://${csHostname}${internalPortwithColon}/"
 
 # Return true to indicate success
 :

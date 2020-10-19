@@ -19,6 +19,10 @@ set -e
 
 ### DEFAULTS ###
 
+# Internal port setting
+# Used when setting up a virtual server inside a developer machine and port forwarding is used to connect, has a value like: 3080
+internalPort=
+
 # Credentials for the website user
 mysqlWebsiteUsername=website
 mysqlWebsitePassword="${password}"
@@ -363,10 +367,15 @@ fi
 if grep CONFIGURED_BY_HERE ${phpConfig} >/dev/null 2>&1;
 then
 
+    # Include colon with internal port if set
+    if [ -n "${internalPort}" ]; then
+	internalPortwithColon=:$internalPort
+    fi
+
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
--e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup for csHostname: ${csHostname}${sourceConfig}|" \
+-e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup $(date) for csHostname: ${csHostname}${sourceConfig}|" \
 -e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
 -e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
 -e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
@@ -374,7 +383,9 @@ then
 -e "s/YOUR_SALT_HERE/${signinSalt}/" \
 -e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 -e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
+-e "s/YOUR_INTERNALPORT/${internalPortwithColon}/g" \
 	${phpConfig}
+
 fi
 
 

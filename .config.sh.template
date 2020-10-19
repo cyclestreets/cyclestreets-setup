@@ -22,6 +22,10 @@ administratorEmail=webmaster@example.com
 # API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates
 apiHostname=api-"${csHostname}"
 
+# Port forwarding
+# Used when setting up a virtual server inside a developer machine, has a number value like: 3080
+##internalPort=
+
 # Tests api key
 testsApiKey=
 

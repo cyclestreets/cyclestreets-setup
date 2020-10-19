@@ -252,9 +252,10 @@ then
 	fi
     fi
 
-    # Append
-    echo "# Added by CycleStreets installation" >> /etc/hosts
-    echo "127.0.1.1	${aliases}" >> /etc/hosts
+    # Add aliases to the line that is often used for the FQDN of the machine
+    sed -i \
+	-e "s/^127.0.1.1.*$/\0 ${aliases} # Alias added by CycleStreets installation/" \
+	/etc/hosts
 fi
 
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files

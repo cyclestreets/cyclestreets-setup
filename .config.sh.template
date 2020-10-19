@@ -35,6 +35,7 @@ password=
 rollout=rollout
 
 # Password for cyclestreets@downloads.cyclestreets.net to download extra data
+# Required if e.g. using settings: elevationDatasources externalDb
 ##datapassword=
 
 ## MySQL
@@ -42,7 +43,7 @@ rollout=rollout
 mysqlRootPassword=
 
 # Central PhpMyAdmin installation
-phpmyadminMachine=
+##phpmyadminMachine=
 
 # Credentials for the website user
 ##mysqlWebsiteUsername=website

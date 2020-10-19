@@ -87,8 +87,7 @@ $packageInstall update-manager-core
 $packageInstall language-pack-en-base
 
 # Install basic utility software
-$packageInstall wget dnsutils man-db git emacs nano bzip2 screen dos2unix rsync
-$packageInstall mlocate
+$packageInstall wget dnsutils man-db git nano bzip2 screen dos2unix rsync mlocate
 updatedb
 
 # Install Apache, PHP
@@ -105,7 +104,7 @@ if [ -z "${mysqlRootPassword}" ] && ! is_installed mysql-server ; then
 	echo "# Abandoning the installation."
 	exit 1
 fi
-apt-get install debconf-i18n
+$packageInstall debconf-i18n
 echo mysql-server mysql-server/root_password password ${mysqlRootPassword} | debconf-set-selections
 echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword} | debconf-set-selections
 
@@ -113,11 +112,14 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 $packageInstall mysql-server mysql-client
 
 # Allow administrative access to this new server from central PhpMyAdmin installation
-if [[ $mysqlRootPassword && ${mysqlRootPassword-x} ]] ; then
-	mysql -u root -p${mysqlRootPassword} -e "DROP USER IF EXISTS 'root'@'${phpmyadminMachine}';"
-	mysql -u root -p${mysqlRootPassword} -e "CREATE USER 'root'@'${phpmyadminMachine}' IDENTIFIED BY '${mysqlRootPassword}';"
-	mysql -u root -p${mysqlRootPassword} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'${phpmyadminMachine}' WITH GRANT OPTION;"
-	mysql -u root -p${mysqlRootPassword} -e "FLUSH PRIVILEGES;"
+if [ -n "${phpmyadminMachine}" && -n "{$mysqlRootPassword}" ] ; then
+    # Note: it is also necessary to comment out the line: bind-address = 127.0.0.1
+    # on the target machine at /etc/mysql/mysql.conf.d/mysqld.cnf
+
+    mysql -u root -p${mysqlRootPassword} -e "DROP USER IF EXISTS 'root'@'${phpmyadminMachine}';"
+    mysql -u root -p${mysqlRootPassword} -e "CREATE USER 'root'@'${phpmyadminMachine}' IDENTIFIED BY '${mysqlRootPassword}';"
+    mysql -u root -p${mysqlRootPassword} -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'${phpmyadminMachine}' WITH GRANT OPTION;"
+    mysql -u root -p${mysqlRootPassword} -e "FLUSH PRIVILEGES;"
 fi
 
 # Disable MySQL password expiry system; see: http://stackoverflow.com/a/41552022

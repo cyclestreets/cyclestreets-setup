@@ -30,6 +30,9 @@ mysqlWebsitePassword="${password}"
 # Central PhpMyAdmin installation
 phpmyadminMachine=
 
+# Legacy: a string used to encrypt user passwords
+signinSalt=
+
 # Exim email
 # Basically, use the 'internet' (direct delivery) mode here for a developer setup
 #!# Simplify this block to be a single setting like profile='developer'/'deployment' and write out settings (based on those below) accordingly
@@ -374,14 +377,15 @@ then
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
--e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup $(date) for csHostname: ${csHostname}${sourceConfig}|" \
--e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
--e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
--e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
--e "s/YOUR_EMAIL_HERE/${administratorEmail}/" \
--e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
--e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
--e "s/YOUR_INTERNALPORT/${internalPortwithColon}/g" \
+	-e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup $(date) for csHostname: ${csHostname}${sourceConfig}|" \
+	-e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
+	-e "s/WEBSITE_PASSWORD_HERE/${mysqlWebsitePassword}/" \
+	-e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
+	-e "s/YOUR_EMAIL_HERE/${administratorEmail}/" \
+	-e "s/YOUR_SALT_HERE/${signinSalt}/" \
+	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
+	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
+	-e "s/YOUR_INTERNALPORT/${internalPortwithColon}/g" \
 	${phpConfig}
 
 fi

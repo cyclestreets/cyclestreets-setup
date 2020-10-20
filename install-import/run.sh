@@ -275,6 +275,21 @@ for elevationDatasourceFile in "${elevationDatasources[@]}"; do
 	fi
 done
 
+# Bearing Turn Pattern table download
+# The import system can generate this table, but it is quicker to obtain it as a download.
+# Skip if the table already exists
+if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'lib_bearingPatternTurnId'" csArchive | grep lib_bearingPatternTurnId  > /dev/null 2>&1
+then
+    # Obtain the file
+    bearingTableFile=bearingPatternTurnId.sql.bz2
+    echo "# Starting download of ${bearingTableFile} bearing data file to ${websitesBackupsFolder}"
+    wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${bearingTableFile} -O ${websitesBackupsFolder}/${bearingTableFile}
+
+    # Unpack and remove file
+    echo "# Unpacking bearing pattern turn data file into archive db"
+    bunzip2 < ${websitesBackupsFolder}/${bearingTableFile} | ${superMysql} csArchive
+    rm ${websitesBackupsFolder}/${bearingTableFile}
+fi
 
 # Fetching dependencies
 echo "#	$(date)	Fetching dependencies"

@@ -19,6 +19,9 @@ baseOS=Ubuntu
 csHostname=localhost
 administratorEmail=webmaster@example.com
 
+# Defaults to administratorEmail
+##mainEmail=
+
 # API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates
 apiHostname=api-"${csHostname}"
 

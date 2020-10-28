@@ -152,7 +152,6 @@ if ! grep -q "Access from CycleStreets dev machine" ${muninNodeConf}; then
 # Added by cyclestreets-setup/install-backup
 # Access from CycleStreets dev machine
 allow ^dev\.cyclestreets\.net$
-allow ^93\.93\.128\.92$
 allow ^46\.235\.226\.213$
 
 EOF

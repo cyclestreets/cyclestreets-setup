@@ -19,9 +19,6 @@ set -e
 
 ### DEFAULTS ###
 
-# Default to admin email
-mainEmail=$administratorEmail
-
 # Internal port setting
 # Used when setting up a virtual server inside a developer machine and port forwarding is used to connect, has a value like: 3080
 internalPort=

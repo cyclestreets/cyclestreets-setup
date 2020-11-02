@@ -87,6 +87,11 @@ fi
 # Load the credentials
 . ${configFile}
 
+# Default main email if it has not been set
+if [ -z "${mainEmail}" ]; then
+    mainEmail=$administratorEmail
+fi
+
 # Check a base OS has been defined
 if [ -z "${baseOS}" ]; then
     echo "#	Please define a value for baseOS in the config file."

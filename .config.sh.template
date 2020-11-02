@@ -18,7 +18,7 @@ baseOS=Ubuntu
 # CycleStreets
 csHostname=localhost
 administratorEmail=webmaster@example.com
-mainEmail=$administratorEmail
+##mainEmail=$administratorEmail
 
 
 # API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates

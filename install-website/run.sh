@@ -23,10 +23,6 @@ set -e
 # Used when setting up a virtual server inside a developer machine and port forwarding is used to connect, has a value like: 3080
 internalPort=
 
-# Credentials for the website user
-mysqlWebsiteUsername=website
-mysqlWebsitePassword="${password}"
-
 # Central PhpMyAdmin installation
 phpmyadminMachine=
 
@@ -351,6 +347,10 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # Create cyclestreets database
 echo "# Create cyclestreets database"
 ${superMysql} -e "create database if not exists cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;"
+
+# Credentials for the website to access the database
+mysqlWebsiteUsername=website
+mysqlWebsitePassword=${password}
 
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.

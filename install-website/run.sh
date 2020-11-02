@@ -19,9 +19,9 @@ set -e
 
 ### DEFAULTS ###
 
-# Internal port setting
+# Host port setting
 # Used when setting up a virtual server inside a developer machine and port forwarding is used to connect, has a value like: 3080
-internalPort=
+hostPort=
 
 # Central PhpMyAdmin installation
 phpmyadminMachine=
@@ -370,9 +370,12 @@ then
 fi
 
 # Include colon with internal port if set
-internalPortwithColon=
-if [ -n "${internalPort}" ]; then
-    internalPortwithColon=:$internalPort
+hostPortwithColon=
+if [ -n "${hostPort}" ]; then
+    hostPortwithColon=:$hostPort
+
+    # Accommodate port forwarding, redirecting http from hostport to guest port
+    sudo iptables -t nat -I OUTPUT -p tcp -o lo --dport $hostPort -j REDIRECT --to-ports 80
 fi
 
 # Setup the configuration
@@ -390,7 +393,7 @@ then
 	-e "s/YOUR_SALT_HERE/${signinSalt}/" \
 	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
-	-e "s/YOUR_INTERNALPORT/${internalPortwithColon}/g" \
+	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \
 	${phpConfig}
 
 fi
@@ -408,7 +411,7 @@ then
 
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
-    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csHostname}:9000/', apiV2Url='http://${apiHostname}${internalPortwithColon}/v2/' where id = 1;"
+    ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csHostname}:9000/', apiV2Url='http://${apiHostname}${hostPortwithColon}/v2/' where id = 1;"
 
     # Set the gui server
     # #!# This needs review - on one live machine it is set as localhost and always ignored
@@ -604,7 +607,7 @@ if [ "${csHostname}" != "localhost" ]; then
 fi
 
 # Announce end of script
-echo "#	CycleStreets installed $(date), visit http://${csHostname}${internalPortwithColon}/"
+echo "#	CycleStreets installed $(date), visit http://${csHostname}${hostPortwithColon}/"
 
 # Return true to indicate success
 :

@@ -7,15 +7,20 @@ mkdir -p ${websitesContentFolder}
 # Switch to content folder
 cd ${websitesContentFolder}
 
-# Create/update the CycleStreets repository
-# !! This prompts for git username / password.
+
+# SUDO_USER is the name of the user that invoked the script using sudo
+# !! This technique which is a bit like doing an 'unsudo' is messy.
+chown ${SUDO_USER} ${websitesContentFolder}
+
+# Create/update the CycleStreets repository from the sudo-invoking user's account
+# !! This may prompt for git username / password.
 if [ ! -d ${websitesContentFolder}/.git ]
 then
-    git clone https://github.com/cyclestreets/cyclestreets.git ${websitesContentFolder}
+    su - ${SUDO_USER} -c "git clone https://github.com/cyclestreets/cyclestreets.git ${websitesContentFolder}"
 else
     # Set permissions before the update
     chgrp -R rollout ${websitesContentFolder}/.git
-    git pull
+    su - ${SUDO_USER} -c "git pull"
 fi
 
 # Ensure there's a custom sudoers file

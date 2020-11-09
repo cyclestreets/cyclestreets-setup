@@ -234,20 +234,19 @@ EOF
 
 fi
 
-# Setup a ~/.my.cnf file which will allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password
-# !! Be wary of this as the settings in here will override those in any supplied defaults-extra-file
-if [ "${mySuperCredFile}" ]; then
-	if [ ! -e ${mySuperCredFile} ]; then
+# Setup a ~/.my*.cnf file to allow the CycleStreets user to run mysql commands as the superuser without supplying a password.
+# !! This is really for developer convenience - and so should move to their personal setup.
+if [ -n "${mySuperCredFile}" -a ! -e ${mySuperCredFile} ]; then
 		
-		# Create the file owned by the user
-		mkdir -p $websitesContentFolder
-		${asCS} touch ${mySuperCredFile}
+    # Create the file in the cyclestreets user home folder
+    ${asCS} touch ${mySuperCredFile}
 		
-		# Remove other readability
-		${asCS} chmod o-r ${mySuperCredFile}
+    # Remove other readability
+    ${asCS} chmod o-r ${mySuperCredFile}
 		
-		# Write config
-		${asCS} cat > ${mySuperCredFile} << EOF
+    # Write config
+    # Settings in here will override those in any supplied defaults-extra-file
+    ${asCS} cat > ${mySuperCredFile} << EOF
 [client]
 user=root
 password=${mysqlRootPassword}
@@ -258,7 +257,6 @@ password=${mysqlRootPassword}
 # Equiv to -A at startup, stops tabs trying to autocomplete
 no-auto-rehash
 EOF
-	fi
 fi
 
 # Disable AppArmor for MySQL if present and not already disabled.
@@ -272,7 +270,7 @@ if [ -f /etc/apparmor.d/usr.sbin.mysqld -a ! -f /etc/apparmor.d/disable/usr.sbin
 	# Symlinking here stops this block from being repeated if the script is re-run
 	ln -s /etc/apparmor.d/usr.sbin.mysqld /etc/apparmor.d/disable/
 	
-	# This may fail, so set -e is disabled temporarily
+	# This may fail, so abandon-on-fail is temporarily turned off
 	set +e
 	apparmor_parser -R /etc/apparmor.d/usr.sbin.mysqld
 	set -e

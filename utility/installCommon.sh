@@ -20,7 +20,7 @@ then
 else
     # Set permissions before the update
     chgrp -R rollout ${websitesContentFolder}/.git
-    su - ${SUDO_USER} -c "git pull"
+    su - ${SUDO_USER} -c "cd ${websitesContentFolder} && git pull"
 fi
 
 # Ensure there's a custom sudoers file

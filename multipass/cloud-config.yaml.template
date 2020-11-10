@@ -1,0 +1,36 @@
+#cloud-config
+# https://cloudinit.readthedocs.io/en/latest/topics/examples.html
+# https://sysadmins.co.za/getting-started-with-multipass-vms/
+
+# CONFIGURED_BY_HERE
+
+# Add groups to the system
+groups:
+  - rollout
+
+# Add users to the system. Users are added after groups are added.
+users:
+  - default
+  - name: YOUR_LOGIN_NAME
+    gecos: YOUR_LOGIN_GECOS
+    groups: users, rollout, sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - YOUR_PUBLIC_KEY
+    sudo:
+      - ALL=(ALL) NOPASSWD:ALL
+
+  - name: CYCLESTREETS_LOGIN_NAME
+    gecos: CYCLESTREETS_LOGIN_GECOS
+    groups: users, rollout
+    shell: /bin/bash
+    # Created via
+    # mkpasswd --method=SHA-512 --rounds=4096 <password> zRqviLoCc5p
+    passwd: CYCLESTREETS_LOGIN_PASSWD
+
+# final_message
+# default: cloud-init boot finished at $TIMESTAMP. Up $UPTIME seconds
+# this message is written by cloud-final when the system is finished
+# its first boot
+final_message: "At last, the system is finally up, after $UPTIME seconds."
+

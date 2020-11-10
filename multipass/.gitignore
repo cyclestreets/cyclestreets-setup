@@ -1,0 +1,4 @@
+# Ignore the instantiated copy of the config template
+.config.sh
+# Ignore the instantiated copy of the cloud config template
+cloud-config.yaml

@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Multipass config
+# Entries prefixed with a double-hash ## are optional
+
+# Name of the Multipass instance (appears to be limited to alphanumeric and hyphen, no dots)
+vm_name=cs-multipass
+vm_cpus=4
+vm_mem=8g
+vm_disk=20g
+vm_cloud_init=cloud-config.yaml
+
+# User
+##your_login_name=$USER
+##your_login_gecos=$(id -F)
+
+# The public key of above user@host, read from path if supplied. Provide one or the other.
+##your_public_key_path=
+##your_public_key=
+
+# cycleStreets-setup configuration file
+cyclestreetsSetupConfig=
+
+# CycleStreets user
+# !! It may be possible to remove these, as they are really associated with the cyclestreets installation.
+cyclestreets_login_name=
+cyclestreets_login_gecos=
+# Created via
+# mkpasswd --method=SHA-512 --rounds=4096 <password> zRqviLoCc5p
+cyclestreets_login_passwd=

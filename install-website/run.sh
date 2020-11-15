@@ -207,6 +207,7 @@ localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 # and that PHP is running in a production mode.
 # Therefore if a development mode is required this setting has to be changed to 0 or 1 in the php.ini system.
 # The model used here is to set it to 0 in the php.ini via a cyclestreets.ini module, and then set it to 1 in the virtualhosts.
+# Session lifetime settings are also included at this level as it has never worked having them in the Apache configuration.
 if [ -n "${runtimePhpAssertions}" ]; then
 
     # Get php version as e.g. 7.4
@@ -227,6 +228,11 @@ if [ -n "${runtimePhpAssertions}" ]; then
 [Assertion]
 ; Set to zero to permit runtime control of php assertions
 zend.assertions = 0
+
+[Session]
+; Php session - allow users to stay logged in to the website for up to 24 hours
+session.gc_maxlifetime = 86400
+session.cookie_lifetime = 86400
 EOF
 	# Note: Apache should be reloaded after this, but that happens later anyway
 	phpenmod ${phpModule}
@@ -275,10 +281,6 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	# This is necessary to enable cookies to work on the domain http://localhost/
 	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
 	php_admin_value session.cookie_domain none
-	
-	# Php session cookies - allows users to stay logged in to the website for up to 24 hours
-	php_admin_value session.gc_maxlifetime  86400
-	php_admin_value session.cookie_lifetime 86400
 ${phpAssertions}
 </VirtualHost>
 EOF

@@ -197,6 +197,58 @@ chown www-data:${rollout} ${websitesContentFolder}/tests/
 cslocalconf=cyclestreets.conf
 localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 
+# Controlling Assertions in PHP
+# These comments relate to the setting of zend.assertions, mentioned in:
+# https://www.php.net/manual/en/ini.core.php
+# By default the value of this setting is 1 according to the manual, but in practice
+# it comes up as -1 in fresh installations on Ubuntu 18.x and 20.x.
+# This is an unusal setting in that if it is -1 or 1 it cannot be changed at runtime or by Apache configuration.
+# The de facto default of -1 means that php code inside assert() code is not compiled, i.e. that assertions are ignored,
+# and that PHP is running in a production mode.
+# Therefore if a development mode is required this setting has to be changed to 0 or 1 in the php.ini system.
+# The model used here is to set it to 0 in the php.ini via a cyclestreets.ini module, and then set it to 1 in the virtualhosts.
+if [ -n "${runtimePhpAssertions}" ]; then
+
+    # Get php version as e.g. 7.4
+    phpMajorMinorVersion=$(php -v | grep -Po '(?<=PHP )([0-9].[0-9])')
+    if [ -z "${phpMajorMinorVersion}" ]; then
+	echo "# PHP assertion configuration: Cannot determine the PHP version, abandoning the installation."
+	exit 1
+    fi
+
+    # Configure php with a .ini module that controls the assertions
+    phpModule=cyclestreets
+
+    # Write and activate the module
+    phpModulesPath=/etc/php/${phpMajorMinorVersion}/mods-available
+    if [ -d $phpModulesPath ]; then
+	phpConfigFile=${phpModulesPath}/${phpModule}.ini
+	cat > ${phpConfigFile} <<EOF
+[Assertion]
+; Set to zero to permit runtime control of php assertions
+zend.assertions = 0
+EOF
+	# Note: Apache should be reloaded after this, but that happens later anyway
+	phpenmod ${phpModule}
+	echo "#	Enabled php module: ${phpModule}"
+
+    fi
+
+    # Bind multi-line string for use in both main and api virtualhost configurations.
+    # IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
+    IFS='' read -r -d '' phpAssertions <<"EOF"
+
+	# Assertions - turn on for development mode
+	# Changing the first setting will only work when it has been initialized to 0 by the php.ini system.
+	php_admin_value zend.assertions  1
+	php_admin_value assert.exception 0
+EOF
+
+else
+    # Leave empty to skip configuring the php.ini system
+    phpAssertions=
+fi
+
 # Check if the local VirtualHost exists already
 if [ ! -r ${localVirtualHostFile} ]; then
     # Create the local VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
@@ -224,6 +276,10 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
 	php_admin_value session.cookie_domain none
 	
+	# Php session cookies - allows users to stay logged in to the website for up to 24 hours
+	php_admin_value session.gc_maxlifetime  86400
+	php_admin_value session.cookie_lifetime 86400
+${phpAssertions}
 </VirtualHost>
 EOF
 
@@ -287,7 +343,7 @@ if [ ! -r ${apiLocalVirtualHostFile} ]; then
 	
 	# Development environment
 	# Use MacroDevelopmentEnvironment '/'
-
+${phpAssertions}
 </VirtualHost>
 EOF
 

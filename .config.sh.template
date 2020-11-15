@@ -82,6 +82,11 @@ journeysLog="${csHostname}-access.log"
 # Names a mysql configuration file which gets setup to allow the CycleStreets user to run mysql commands (as the superuser) without supplying command line password; or empty to prevent its creation
 mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 
+# PHP
+# By default (when this setting is left commented out or empty) PHP will
+# be setup to ignore the contents of assert() statements as in a production mode.
+# Set this to 1 to create a development mode where assertions are tested.
+##runtimePhpAssertions=
 
 ### Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
 

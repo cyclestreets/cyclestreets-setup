@@ -243,15 +243,21 @@ if [ -n "${runtimePhpAssertions}" -o -n "${longerPhpSessions}" ]; then
 zend.assertions = 0
 EOF
 
-    # Bind multi-line string for use in both main and api virtualhost configurations.
-    # IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
-    IFS='' read -r -d '' phpAssertions <<"EOF"
+	# The read can return non zero even though it has not errored so tempoarily turn off stop on error
+	set +e
+
+	# Bind multi-line string for use in both main and api virtualhost configurations.
+	# IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
+	IFS='' read -r -d '' phpAssertions <<"EOF"
 
 	# Assertions - turn on for development mode
 	# Changing the first setting will only work when it has been initialized to 0 by the php.ini system.
 	php_admin_value zend.assertions  1
 	php_admin_value assert.exception 0
 EOF
+	# Resume stop on error
+	set -e
+
     fi
 
     # Append sessions settings

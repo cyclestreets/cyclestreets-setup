@@ -85,8 +85,12 @@ mySuperCredFile=${websitesContentFolder}/.mySuperUserCredentials.cnf
 # PHP
 # By default (when this setting is left commented out or empty) PHP will
 # be setup to ignore the contents of assert() statements as in a production mode.
-# Set this to 1 to create a development mode where assertions are tested. Also sets login sessions to last 24 hours.
+# Set this to a non-empty string (such as 1 or yes) to create a development mode where assertions are tested.
 ##runtimePhpAssertions=
+
+# By default php sessions last for 24 minutes, requiring users to re-login to the site after that period of inactivity.
+# Set this to a non-empty string (such as 1 or yes) to extend that to 24 hours.
+##longerPhpSessions=
 
 ### Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
 

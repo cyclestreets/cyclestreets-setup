@@ -197,6 +197,9 @@ chown www-data:${rollout} ${websitesContentFolder}/tests/
 cslocalconf=cyclestreets.conf
 localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 
+# Used to tune assertions directives in the virtualhosts if needed, initialize as empty.
+phpAssertions=
+
 # Controlling Assertions in PHP
 # These comments relate to the setting of zend.assertions, mentioned in:
 # https://www.php.net/manual/en/ini.core.php
@@ -208,37 +211,37 @@ localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
 # Therefore if a development mode is required this setting has to be changed to 0 or 1 in the php.ini system.
 # The model used here is to set it to 0 in the php.ini via a cyclestreets.ini module, and then set it to 1 in the virtualhosts.
 # Session lifetime settings are also included at this level as it has never worked having them in the Apache configuration.
-if [ -n "${runtimePhpAssertions}" ]; then
+if [ -n "${runtimePhpAssertions}" -o -n "${longerPhpSessions}" ]; then
+
+    # Configure php with a .ini module having this name
+    phpModule=cyclestreets
 
     # Get php version as e.g. 7.4
     phpMajorMinorVersion=$(php -v | grep -Po '(?<=PHP )([0-9].[0-9])')
     if [ -z "${phpMajorMinorVersion}" ]; then
-	echo "# PHP assertion configuration: Cannot determine the PHP version, abandoning the installation."
+	echo "# PHP configuration: Cannot determine the PHP version, abandoning the installation."
 	exit 1
     fi
 
-    # Configure php with a .ini module that controls the assertions
-    phpModule=cyclestreets
-
-    # Write and activate the module
+    # Write / replace the module file
     phpModulesPath=/etc/php/${phpMajorMinorVersion}/mods-available
-    if [ -d $phpModulesPath ]; then
-	phpConfigFile=${phpModulesPath}/${phpModule}.ini
-	cat > ${phpConfigFile} <<EOF
+    if [ ! -d $phpModulesPath ]; then
+	echo "# PHP configuration: Cannot locate the modules directory expected at ${phpModulesPath}, abandoning the installation."
+	exit 1
+    fi
+    phpConfigFile=${phpModulesPath}/${phpModule}.ini
+    if [ -e  ${phpConfigFile} ]; then
+	rm ${phpConfigFile}
+    fi
+    touch ${phpConfigFile}
+
+    # Append assertions settings
+    if [ -n "${runtimePhpAssertions}" ]; then
+	cat >> ${phpConfigFile} <<EOF
 [Assertion]
 ; Set to zero to permit runtime control of php assertions
 zend.assertions = 0
-
-[Session]
-; Php session - allow users to stay logged in to the website for up to 24 hours
-session.gc_maxlifetime = 86400
-session.cookie_lifetime = 86400
 EOF
-	# Note: Apache should be reloaded after this, but that happens later anyway
-	phpenmod ${phpModule}
-	echo "#	Enabled php module: ${phpModule}"
-
-    fi
 
     # Bind multi-line string for use in both main and api virtualhost configurations.
     # IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
@@ -249,10 +252,23 @@ EOF
 	php_admin_value zend.assertions  1
 	php_admin_value assert.exception 0
 EOF
+    fi
 
-else
-    # Leave empty to skip configuring the php.ini system
-    phpAssertions=
+    # Append sessions settings
+    if [ -n "${longerPhpSessions}" ]; then
+	cat >> ${phpConfigFile} <<EOF
+[Session]
+; Php session - allow users to stay logged in to the website for up to 24 hours
+session.gc_maxlifetime = 86400
+session.cookie_lifetime = 86400
+EOF
+    fi
+
+    # Activate the module
+    # Note: Apache should be reloaded after this, but that happens later anyway
+    phpenmod ${phpModule}
+    echo "#	Enabled php module: ${phpModule}"
+
 fi
 
 # Check if the local VirtualHost exists already

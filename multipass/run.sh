@@ -58,6 +58,10 @@ fi
 
 ### Main body ###
 
+# Remove any entry in the known hosts for this VM.
+# This is likely during development when new VMs are constantly being built and tested.
+ssh-keygen -R ${vm_name}
+
 # Make a copy from the config template (overwriting any existing one)
 cp -p ${vm_cloud_init}.template ${vm_cloud_init}
 

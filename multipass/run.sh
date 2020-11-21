@@ -104,21 +104,21 @@ echo -e "#\tClearup:\n#\t\tmultipass stop ${vm_name} && multipass delete ${vm_na
 ## Configure the instance to install a CycleStreets website
 
 # Create folder
-mulitpassFolder=/home/${USER}/multipass
-multipass exec ${vm_name} -- sudo su - ${USER} -c "mkdir -p ${mulitpassFolder}"
+multipassFolder=/home/${USER}/multipass
+multipass exec ${vm_name} -- sudo su - ${USER} -c "mkdir -p ${multipassFolder}"
 
-# Copy user's git configuration - which should include a token that allows passwordless access
+# Copy user's github credentials - which should include a token that allows passwordless access
 scp -o "StrictHostKeyChecking no" ~/.gitconfig ${vm_name}:~
 
 # Copy the creation script (should not require a password)
-scp -o "StrictHostKeyChecking no" /opt/cyclestreets-setup/multipass/.config.sh ${vm_name}:${mulitpassFolder}
-scp -o "StrictHostKeyChecking no" /opt/cyclestreets-setup/multipass/multipass-cs-website.sh ${vm_name}:${mulitpassFolder}
+scp -o "StrictHostKeyChecking no" /opt/cyclestreets-setup/multipass/.config.sh ${vm_name}:${multipassFolder}
+scp -o "StrictHostKeyChecking no" /opt/cyclestreets-setup/multipass/multipass-cs-website.sh ${vm_name}:${multipassFolder}
 
 # Copy cyclestreets-setup configuration to temporary location
-scp -o "StrictHostKeyChecking no" ${cyclestreetsSetupConfig} ${vm_name}:${mulitpassFolder}/cyclestreets-setup.config.sh
+scp -o "StrictHostKeyChecking no" ${cyclestreetsSetupConfig} ${vm_name}:${multipassFolder}/cyclestreets-setup.config.sh
 
 # Run the installation as the login user
-multipass exec ${vm_name} -- sudo su - ${USER} -c "${mulitpassFolder}/multipass-cs-website.sh"
+multipass exec ${vm_name} -- sudo su - ${USER} -c "${multipassFolder}/multipass-cs-website.sh"
 
 
 # Add as alias in hosts file

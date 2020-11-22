@@ -28,6 +28,49 @@ users:
     # mkpasswd --method=SHA-512 --rounds=4096 <password> zRqviLoCc5p
     passwd: CYCLESTREETS_LOGIN_PASSWD
 
+# This is the configuration syntax that the write_files module
+# will know how to understand. encoding can be given b64 or gzip or (gz+b64).
+# The content will be decoded accordingly and then written to the path that is
+# provided.
+#
+# Note: Content strings here are truncated for example purposes.
+write_files:
+  - path: /home/YOUR_LOGIN_NAME/.gitconfig
+    content: |
+      [user]
+      	name = YOUR_GIT_USERNAME
+      	email = YOUR_GIT_USEREMAIL
+      [push]
+      	default = simple
+      [credential]
+      	helper = cache --timeout=86400
+      [url "https://api:YOUR_GIT_PERSONAL_ACCESS_TOKEN@github.com/"]
+      	insteadOf = https://github.com/
+      [pull]
+      	ff = only
+  - path: /home/YOUR_LOGIN_NAME/cyclestreets-setup.config.sh
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # Contains credentials
+      
+      # CycleStreets
+      csHostname=cs-multipass
+      ...
+      
+runcmd:
+  # Clone the cyclestreets-setup repo
+ - [ mkdir, -p, /run/mydir/cyclestreets-setup ]
+ - [ chown, YOUR_LOGIN_NAME.rollout, /run/mydir/cyclestreets-setup ]
+ - [ chmod, g+s, /run/mydir/cyclestreets-setup ]
+ - [ git, clone, "https://github.com/cyclestreets/cyclestreets-setup.git", /run/mydir/cyclestreets-setup ]
+ - [ git, config, -f, /run/mydir/cyclestreets-setup/.git/config, core.sharedRepository, group ]
+ - [ mv, /run/mydir/cyclestreets-setup, /opt/cyclestreets-setup ]
+ # Move configuration script
+ - [ mv, /home/YOUR_LOGIN_NAME/cyclestreets-setup.config.sh, /opt/cyclestreets-setup/.config.sh ]
+ # Install the website
+ - [ su, -, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/install-website/run.sh" ]
+
 # final_message
 # default: cloud-init boot finished at $TIMESTAMP. Up $UPTIME seconds
 # this message is written by cloud-final when the system is finished

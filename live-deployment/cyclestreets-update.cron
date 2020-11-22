@@ -1,0 +1,2 @@
+# Update site regularly from Git
+0,15,30,45 *  * * *  cyclestreets  cd /websites/www/content/ && git pull --quiet

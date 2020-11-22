@@ -45,6 +45,10 @@ fi
 a2enmod proxy_http
 systemctl restart apache2
 
+# Add cron job for automatic updating of the site
+cp -pr /opt/cyclestreets-setup/live-deployment/cyclestreets-update.cron /etc/cron.d/cyclestreets-update
+chown root.root /etc/cron.d/cyclestreets-update
+chmod 0600 /etc/cron.d/cyclestreets-update
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html

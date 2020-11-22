@@ -56,7 +56,6 @@ require_once ('/websites/www/content/.config.php');
 # Connect to the database
 try {
 	$databaseConnection = new PDO (
-//		"mysql:host={$config['hostname']};charset=utf8mb4",		// Database is selected as a query below
 		"mysql:host={$config['hostname']};charset=utf8mb4",		// Database is selected as a query below
 		$config['username'],
 		$config['password'],
@@ -71,22 +70,6 @@ try {
 	unlink ($lockFile);
 	exit (1);		// Linux return value
 }
-
-/*
-# Define a query function
-function runQuery ($databaseConnection, $query)
-{
-	try {
-		$databaseConnection->exec ($query);
-	} catch (PDOException $e) {
-		echo 'Error!: ' . $e->getMessage () . "\n";
-		return false;
-	}
-	
-	# Return success
-	return true;
-}
-*/
 
 # Define a queries function; see: https://stackoverflow.com/a/23258691
 function runQueries ($databaseConnection, $sql)

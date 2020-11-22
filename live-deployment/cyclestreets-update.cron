@@ -1,2 +1,3 @@
-# Update site regularly from Git
+# Update site regularly from Git, and run any database migrations
 0,15,30,45 *  * * *  cyclestreets  cd /websites/www/content/ && git pull --quiet
+0,15,30,45 *  * * *  cyclestreets  php /opt/cyclestreets-setup/live-deployment/cyclestreets-update-db.php

@@ -40,23 +40,50 @@ write_files:
       	insteadOf = https://github.com/
       [pull]
       	ff = only
+  - path: /home/YOUR_LOGIN_NAME/cyclestreets-setup-config.sh
+    # Based on: /opt/cyclestreets-setup/.config.sh.template
+    permissions: '0755'
+    content: |
+      #!/bin/bash
+      # Contains credentials
+      
+      # CycleStreets
+      csHostname=cs-multipass
+      # ...
       
 runcmd:
-  # Clone the cyclestreets-setup repo
- - [ mkdir, -p, /run/mydir/cyclestreets-setup ]
- - [ chown, YOUR_LOGIN_NAME.rollout, /run/mydir/cyclestreets-setup ]
- - [ chmod, g+s, /run/mydir/cyclestreets-setup ]
- - [ git, clone, "https://github.com/cyclestreets/cyclestreets-setup.git", /run/mydir/cyclestreets-setup ]
- - [ git, config, -f, /run/mydir/cyclestreets-setup/.git/config, core.sharedRepository, group ]
- - [ mv, /run/mydir/cyclestreets-setup, /opt/cyclestreets-setup ]
- # Move configuration script
- - [ mv, /home/YOUR_LOGIN_NAME/cyclestreets-setup.config.sh, /opt/cyclestreets-setup/.config.sh ]
- # Install the website
- - [ su, -, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/install-website/run.sh" ]
+ # Own your home folder
+ - [ chown, YOUR_LOGIN_NAME.YOUR_LOGIN_NAME, /home/YOUR_LOGIN_NAME ]
+ - [ chmod, g+ws, /home/YOUR_LOGIN_NAME ]
+
+ # Create temporary containing folder
+ # Advice from https://cloudinit.readthedocs.io/en/latest/topics/examples.html#run-commands-on-first-boot suggests:
+ # Note: Don't write files to /tmp from cloud-init use /run/somedir instead.
+ # Early boot environments can race systemd-tmpfiles-clean LP: #1707222.
+ - [ mkdir, -p, /run/mydir ]
+ - [ chown, YOUR_LOGIN_NAME.rollout, /run/mydir ]
+ - [ chmod, g+ws, /run/mydir ]
+
+ # Clone the cyclestreets-setup repo
+ - [ su, --login, YOUR_LOGIN_NAME, -c, "git clone \"https://github.com/cyclestreets/cyclestreets-setup.git\" /run/mydir/cyclestreets-setup" ]
+ - [ su, --login, YOUR_LOGIN_NAME, -c, "git config -f /run/mydir/cyclestreets-setup/.git/config core.sharedRepository group" ]
+ - [ mv, /run/mydir/cyclestreets-setup, /opt ]
+
+ # Link configuration script
+ - [ su, --login, YOUR_LOGIN_NAME, -c, "ln -s /home/YOUR_LOGIN_NAME/cyclestreets-setup-config.sh /opt/cyclestreets-setup/.config.sh" ]
+
+ # Install CycleStreets website
+ - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/install-website/run.sh" ]
+
+ # Optionally install the import system
+# - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/install-import/run.sh" ]
+
+ # Build a new routing edition
+# - [ su, --login, cyclestreets, -c, "/opt/cyclestreets-setup/newbuild.sh /websites/www/content/import/.config.php" ]
+
 
 # final_message
 # default: cloud-init boot finished at $TIMESTAMP. Up $UPTIME seconds
 # this message is written by cloud-final when the system is finished
 # its first boot
 final_message: "At last, the system is finally up, after $UPTIME seconds."
-

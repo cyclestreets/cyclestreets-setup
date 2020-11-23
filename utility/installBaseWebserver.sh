@@ -79,6 +79,24 @@ then
 	usermod -a -G ${rollout} ${username}
 fi
 
+# Own the folder and set the group to be rollout:
+chown ${username}:${rollout} /websites
+
+# Allow sharing of private groups (i.e. new files are created group writeable)
+# !! This won't work for any sections run using ${asCS} because in those cases the umask will be inherited from the cyclestreets user's login profile.
+umask 0002
+
+# This is the clever bit which adds the setgid bit, it relies on the value of umask.
+# It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
+# (The equivalent for the setuid bit does not work because of security issues and so file owners are set later on in the script.)
+chmod g+ws /websites
+
+# The following folders and files are be created with root as owner, but that is fixed later on in the script.
+# Create a folder for Apache to log access / errors, and backups:
+mkdir -p ${websitesLogsFolder}
+mkdir -p ${websitesBackupsFolder}
+
+
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
@@ -93,13 +111,9 @@ $packageUpdate > /dev/null
 apt -y upgrade
 apt -y dist-upgrade
 apt -y autoremove
-$packageInstall update-manager-core
-
-# Ensure locale
-$packageInstall language-pack-en-base
 
 # Install basic utility software
-$packageInstall wget dnsutils man-db git nano bzip2 screen dos2unix rsync mlocate
+$packageInstall update-manager-core language-pack-en-base wget dnsutils man-db git nano bzip2 screen dos2unix rsync mlocate
 updatedb
 
 # Install Apache, PHP
@@ -163,23 +177,6 @@ $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php php-mbst
 
 # Working directory
 mkdir -p /websites
-
-# Own the folder and set the group to be rollout:
-chown ${username}:${rollout} /websites
-
-# Allow sharing of private groups (i.e. new files are created group writeable)
-# !! This won't work for any sections run using ${asCS} because in those cases the umask will be inherited from the cyclestreets user's login profile.
-umask 0002
-
-# This is the clever bit which adds the setgid bit, it relies on the value of umask.
-# It means that all files and folders that are descendants of this folder recursively inherit its group, ie. rollout.
-# (The equivalent for the setuid bit does not work because of security issues and so file owners are set later on in the script.)
-chmod g+ws /websites
-
-# The following folders and files are be created with root as owner, but that is fixed later on in the script.
-# Create a folder for Apache to log access / errors, and backups:
-mkdir -p ${websitesLogsFolder}
-mkdir -p ${websitesBackupsFolder}
 
 # Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility
 mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf

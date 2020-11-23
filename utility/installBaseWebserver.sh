@@ -67,6 +67,28 @@ then
     adduser ${username} sudo
 fi
 
+# Create the rollout group, if it does not already exist
+if ! grep -i "^${rollout}\b" /etc/group > /dev/null 2>&1
+then
+    addgroup ${rollout}
+fi
+
+# Add the user to the rollout group, if not already there
+if ! groups ${username} | grep "\b${rollout}\b" > /dev/null 2>&1
+then
+	usermod -a -G ${rollout} ${username}
+fi
+
+# Determine the current actual user
+currentActualUser=`whoami`
+echo "#	Checking currentActualUser: ${currentActualUser}"
+
+# Add the person installing the software to the rollout group, for convenience, if not already there
+if ! groups ${currentActualUser} | grep "\b${rollout}\b" > /dev/null 2>&1
+then
+	usermod -a -G ${rollout} ${currentActualUser}
+fi
+
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 
@@ -148,27 +170,6 @@ fi
 
 # PHP
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php php-mbstring
-
-# Determine the current actual user
-currentActualUser=`who am i | awk '{print $1}'`
-
-# Create the rollout group, if it does not already exist
-if ! grep -i "^${rollout}\b" /etc/group > /dev/null 2>&1
-then
-    addgroup ${rollout}
-fi
-
-# Add the user to the rollout group, if not already there
-if ! groups ${username} | grep "\b${rollout}\b" > /dev/null 2>&1
-then
-	usermod -a -G ${rollout} ${username}
-fi
-
-# Add the person installing the software to the rollout group, for convenience, if not already there
-if ! groups ${currentActualUser} | grep "\b${rollout}\b" > /dev/null 2>&1
-then
-	usermod -a -G ${rollout} ${currentActualUser}
-fi
 
 # Working directory
 mkdir -p /websites

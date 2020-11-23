@@ -227,14 +227,15 @@ fi
 if [ -n "${mySuperCredFile}" -a ! -e ${mySuperCredFile} ]; then
 		
     # Create the file in the cyclestreets user home folder
-    ${asCS} touch ${mySuperCredFile}
-		
+    touch ${mySuperCredFile}
+
     # Remove other readability
-    ${asCS} chmod o-r ${mySuperCredFile}
+    chown ${username}.${username} ${mySuperCredFile}
+    chmod o-r ${mySuperCredFile}
 		
     # Write config
     # Settings in here will override those in any supplied defaults-extra-file
-    ${asCS} cat > ${mySuperCredFile} << EOF
+    cat > ${mySuperCredFile} << EOF
 [client]
 user=root
 password=${mysqlRootPassword}

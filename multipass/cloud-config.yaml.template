@@ -20,14 +20,6 @@ users:
     sudo:
       - ALL=(ALL) NOPASSWD:ALL
 
-  - name: CYCLESTREETS_LOGIN_NAME
-    gecos: CYCLESTREETS_LOGIN_GECOS
-    groups: users, rollout
-    shell: /bin/bash
-    # Created via
-    # mkpasswd --method=SHA-512 --rounds=4096 <password> zRqviLoCc5p
-    passwd: CYCLESTREETS_LOGIN_PASSWD
-
 # This is the configuration syntax that the write_files module
 # will know how to understand. encoding can be given b64 or gzip or (gz+b64).
 # The content will be decoded accordingly and then written to the path that is
@@ -48,15 +40,6 @@ write_files:
       	insteadOf = https://github.com/
       [pull]
       	ff = only
-  - path: /home/YOUR_LOGIN_NAME/cyclestreets-setup.config.sh
-    permissions: '0755'
-    content: |
-      #!/bin/bash
-      # Contains credentials
-      
-      # CycleStreets
-      csHostname=cs-multipass
-      ...
       
 runcmd:
   # Clone the cyclestreets-setup repo

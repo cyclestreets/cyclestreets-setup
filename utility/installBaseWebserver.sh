@@ -124,7 +124,7 @@ echo mysql-server mysql-server/root_password_again password ${mysqlRootPassword}
 $packageInstall mysql-server mysql-client
 
 # Allow administrative access to this new server from central PhpMyAdmin installation
-if [ -n "${phpmyadminMachine}" && -n "{$mysqlRootPassword}" ] ; then
+if [ -n "${phpmyadminMachine}" -a -n "{$mysqlRootPassword}" ] ; then
     # Note: it is also necessary to comment out the line: bind-address = 127.0.0.1
     # on the target machine at /etc/mysql/mysql.conf.d/mysqld.cnf
 

@@ -79,16 +79,6 @@ then
 	usermod -a -G ${rollout} ${username}
 fi
 
-# Determine the current actual user
-currentActualUser=`whoami`
-echo "#	Checking currentActualUser: ${currentActualUser}"
-
-# Add the person installing the software to the rollout group, for convenience, if not already there
-if ! groups ${currentActualUser} | grep "\b${rollout}\b" > /dev/null 2>&1
-then
-	usermod -a -G ${rollout} ${currentActualUser}
-fi
-
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
 

@@ -79,6 +79,9 @@ then
 	usermod -a -G ${rollout} ${username}
 fi
 
+# Working directory
+mkdir -p /websites
+
 # Own the folder and set the group to be rollout:
 chown ${username}:${rollout} /websites
 
@@ -174,9 +177,6 @@ fi
 
 # PHP
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php php-mbstring
-
-# Working directory
-mkdir -p /websites
 
 # Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility
 mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf

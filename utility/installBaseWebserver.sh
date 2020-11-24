@@ -59,6 +59,11 @@ else
     # Assign the password - this technique hides it from process listings
     echo "${username}:${password}" | /usr/sbin/chpasswd
     echo "#	CycleStreets user ${username} created"
+
+    # Rebind this file because if it contains a tilde ~ that may not have been correctly
+    # expanded before the user's home directory was created
+    mySuperCredFile=`eval echo ${mySuperCredFile}`
+
 fi
 
 # Add the user to the sudo group, if they are not already present

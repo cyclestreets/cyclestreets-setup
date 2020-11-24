@@ -81,6 +81,9 @@ runcmd:
  # Build a new routing edition
 # - [ su, --login, cyclestreets, -c, "/opt/cyclestreets-setup/newbuild.sh /websites/www/content/import/.config.php" ]
 
+ # Tidy up
+ - [ rmdir, /run/mydir ]
+
 
 # final_message
 # default: cloud-init boot finished at $TIMESTAMP. Up $UPTIME seconds

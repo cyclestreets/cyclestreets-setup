@@ -4,31 +4,18 @@ Create a CycleStreets website running in an ubuntu virtual server on your host m
 
 Download the [Multipass](https://multipass.run/) app for your OS to set up a mini-cloud on a laptop or desktop PC.
 
-Update the cyclestreets-setup repo and proceed as follows:
-
-```shell
-# Git config
-# Your local git configuration should be setup with your git login name, email and personal access token.
-# The installation will copy your ~/.gitconfig to the virtual machine so that it
-# can fetch the repositories using your git identity without passwords.
-# If you haven't already, provide the following:
-# git config --global user.name "${git_user_name}"
-# git config --global user.email "${git_user_email}"
-#
-# https://github.com/settings/tokens/
-# git config --global url."https://api:${git_personal_access_token}@github.com/".insteadOf "https://github.com/"
+Update the `cyclestreets-setup` repo and proceed as follows:
 
 
-# Start in the setup folder on the host machine (i.e. your laptop/desktop pc):
-cd /opt/cyclestreets-setup/multipass/
+Making a custom copy of `cloud-config.yaml` file based on the [cloud-config.yaml.template](https://github.com/cyclestreets/cyclestreets-setup/blob/master/multipass/cloud-config.yaml.template) file.
 
-# Either
-# Provide the credentials based on the template:
-# cp .config.sh.template .config.sh
-# Or
-# Alternatively symlink to a prepared version:
-# ln -s <your configuration directory>.config.sh /opt/cyclestreets-setup/multipass/.config.sh
+    cd /opt/cyclestreets-setup/multipass
+    cp cloud-config.yaml.template cloud-config.yaml
+    pico -w cloud-config.yaml
 
-# Instantiate the virtual machine and setup the website
-./run.sh
-```
+Instantiate the virtual machine and setup the website:
+
+	cd /opt/cyclestreets-setup/multipass
+    ./run.sh
+
+The run file explains how to monitor progress and connect.

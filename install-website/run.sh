@@ -195,6 +195,10 @@ chown www-data:${rollout} ${websitesContentFolder}/documentation/schema/selectCh
 touch ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 chown www-data:${rollout} ${websitesContentFolder}/documentation/RequestedMissingCities.tsv
 
+# Untemplatised pages logging
+touch ${websitesContentFolder}/untemplatisedpages.txt
+chown www-data:${rollout} ${websitesContentFolder}/untemplatisedpages.txt
+
 # Tests autogeneration
 chown www-data:${rollout} ${websitesContentFolder}/tests/
 

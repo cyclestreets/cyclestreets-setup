@@ -16,7 +16,7 @@ chown ${SUDO_USER} ${websitesContentFolder}
 # !! This may prompt for git username / password.
 if [ ! -d ${websitesContentFolder}/.git ]
 then
-    su - ${SUDO_USER} -c "git clone https://github.com/cyclestreets/cyclestreets.git ${websitesContentFolder}"
+    su - ${SUDO_USER} -c "git clone ${repoOrigin}cyclestreets/cyclestreets.git ${websitesContentFolder}"
 else
     # Set permissions before the update
     chgrp -R rollout ${websitesContentFolder}/.git

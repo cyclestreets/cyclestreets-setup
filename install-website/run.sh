@@ -83,17 +83,22 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Default main email if it has not been set
-if [ -z "${mainEmail}" ]; then
-    mainEmail=$administratorEmail
-fi
-
 # Check a base OS has been defined
 if [ -z "${baseOS}" ]; then
     echo "#	Please define a value for baseOS in the config file."
     exit 1
 fi
 echo "#	Installing CycleStreets website for base OS: ${baseOS}"
+
+# Default main email if it has not been set
+if [ -z "${mainEmail}" ]; then
+    mainEmail=$administratorEmail
+fi
+
+# Default repository origin if it has not been set
+if [ -z "${repoOrigin}" ]; then
+    repoOrigin=https://github.com/
+fi
 
 # Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory
 . ${ScriptHome}/utility/installBaseWebserver.sh

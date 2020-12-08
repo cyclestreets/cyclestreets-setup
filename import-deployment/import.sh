@@ -156,11 +156,6 @@ fi
 # Move to the right place
 cd ${importContentFolder}
 
-# Restart mysql - as setup for passwordless sudo by the installer.
-# This resets the MySQL in particular freeing space that may have been reserved by memory tables in the previous import run.
-echo "#	$(date)	Restarting MySQL to free memory"
-sudo systemctl restart mysql
-
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php run.php $importConfig
 

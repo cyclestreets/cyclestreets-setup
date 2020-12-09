@@ -196,7 +196,7 @@ if [ -z "${localRoutingUrl}" ]; then
 fi
 
 # XML for the calls to get the routing edition
-xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
 # Check the local routing service to make sure that it won't be deleted - but it is not a requirement that it is currently serving routes.
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
@@ -212,7 +212,7 @@ else
     # Check not already serving this edition
 
     # POST the request to the server
-    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    currentRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     if [ -z "${currentRoutingEdition}" ]; then
 	vecho "#	The current edition at ${localRoutingUrl} could not be determined."

@@ -119,7 +119,7 @@ fi
 echo "#	Planning to switch to secondary edition: ${newSecondaryEdition}"
 
 # XML for the calls to get the routing edition
-xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
 # Cycle routing2 restart command (using command that matches pattern setup in passwordless sudo)
 routingService2Restart="/bin/systemctl restart cyclestreets2"
@@ -141,7 +141,7 @@ else
     echo "#	Checking current edition on: ${localRouting2Url}"
 
     # POST the request to the server
-    currentSecondaryEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRouting2Url} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    currentSecondaryEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRouting2Url} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     # Check empty response
     if [ -z "${currentSecondaryEdition}" ]; then
@@ -235,7 +235,7 @@ while [[ ! "$localRouting2Status" =~ serving ]]; do
 done
 
 # Get the locally running service
-locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRouting2Url} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+locallyRunningEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRouting2Url} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
 # Check the local service is as requested
 if [ "${locallyRunningEdition}" != "${newSecondaryEdition}" ]; then

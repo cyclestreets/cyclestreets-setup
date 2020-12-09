@@ -131,7 +131,7 @@ fi
 echo "#	Planning to switch to edition: ${newEdition}"
 
 # XML for the calls to get the routing edition
-xmlrpccall="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
 # Cycle routing restart command (should match passwordless sudo entry)
 routingServiceRestart="/bin/systemctl restart cyclestreets"
@@ -152,7 +152,7 @@ else
     echo "#	Checking current edition on: ${localRoutingUrl}"
 
     # POST the request to the server
-    currentRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    currentRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     # Check empty response
     if [ -z "${currentRoutingEdition}" ]; then
@@ -217,7 +217,7 @@ ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 if [ -n "${fallbackRoutingUrl}" ]; then
 
     # POST the request to the server
-    fallbackRoutingEdition=$(curl -s -X POST -d "${xmlrpccall}" ${fallbackRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    fallbackRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${fallbackRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${newEdition}" != "${fallbackRoutingEdition}" ]; then
@@ -265,7 +265,7 @@ while [[ ! "$localRoutingStatus" =~ serving ]]; do
 done
 
 # Get the locally running service
-locallyRunningEdition=$(curl -s -X POST -d "${xmlrpccall}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+locallyRunningEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
 # Check the local service is as requested
 if [ "${locallyRunningEdition}" != "${newEdition}" ]; then

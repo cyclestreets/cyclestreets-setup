@@ -71,13 +71,13 @@ if [ -f /etc/munin/plugins/packetloss ]; then
 	echo '[packetloss_*]' >> /etc/munin/plugin-conf.d/munin-node
 	echo 'timeout 60'     >> /etc/munin/plugin-conf.d/munin-node
 	echo 'user root'      >> /etc/munin/plugin-conf.d/munin-node
-
 fi
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
 systemctl restart munin-node
 echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest
+# If this doesn't seem to result in output, check this log file: `tail -f /var/log/munin/munin-node.log`
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

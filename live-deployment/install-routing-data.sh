@@ -313,6 +313,7 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # Check to see if this routing database already exists
 # !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
 # but in fact that is the condition desired.
+echo "# If an error 'Unknown database ...' occurs on the following line, it can be ignored:"
 if ${superMysql} -e "use ${importEdition}"; then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	Stopping because the routing database ${importEdition} already exists."

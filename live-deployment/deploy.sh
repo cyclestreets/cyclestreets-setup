@@ -57,8 +57,11 @@ apt install -y libcache-perl libcache-cache-perl
 apt install -y libdbi-perl libdbd-mysql-perl
 apt install -y munin-node
 apt install -y munin-plugins-extra
-ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
-ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
+
+# Symlink the cyclestreets charts
+# The force option -f replaces target if they already exist
+ln -sf /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+ln -sf /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
 if [ -f /etc/munin/plugins/dnsresponsetime ]; then
 	wget -P /usr/share/munin/plugins/ --user-agent="Foo" http://ccgi.ambrosia.plus.com/debian/dnsresponsetime
 	chmod +x /usr/share/munin/plugins/dnsresponsetime
@@ -76,6 +79,7 @@ fi
 munin-node-configure --suggest --shell | sh
 systemctl restart munin-node
 echo "Munin plugins enabled as follows:"
+set +e
 munin-node-configure --suggest
 # If this doesn't seem to result in output, check this log file: `tail -f /var/log/munin/munin-node.log`
 

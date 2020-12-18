@@ -71,9 +71,17 @@ fi
 
 # Check a base OS has been defined
 if [ -z "${baseOS}" ]; then
-    echo "#	Please define a value for baseOS in the config file."
+    echo "#	Please set a value for baseOS in the config file."
     exit 1
 fi
+
+# Check the importContentFolder has been defined
+if [ -z "${importContentFolder}" ]; then
+    echo "#	Please set a value for importContentFolder in the config file."
+    exit 1
+fi
+
+
 echo "#	Installing CycleStreets import for base OS: ${baseOS}"
 
 # Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory

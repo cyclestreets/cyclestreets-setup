@@ -82,6 +82,13 @@ if [ -z "${importContentFolder}" ]; then
 fi
 
 
+# Check the mysqlImportUsername has been defined
+if [ -z "${mysqlImportUsername}" ]; then
+    echo "#	Please set a value for mysqlImportUsername in the config file."
+    exit 1
+fi
+
+
 echo "#	Installing CycleStreets import for base OS: ${baseOS}"
 
 # Install a base webserver machine with webserver software (Apache, PHP, MySQL), relevant users and main directory

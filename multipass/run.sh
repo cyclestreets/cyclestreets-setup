@@ -15,17 +15,8 @@ vm_mem=4g
 vm_disk=20g
 vm_cloud_init=cloud-config.yaml
 
-# Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The second single line solution from that page is probably good enough as it is unlikely that this script itself will be symlinked.
-DIR="$( cd -P "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-# Use this to remove the ../
-#ScriptHome=$(readlink -f "${DIR}/..")
-# Above doesn't work on Mac so skip
-ScriptHome=${DIR}
-
-# Change to the script's folder
-cd ${ScriptHome}
+# List available images using: multipass find
+ubuntuImage=18.04
 
 ### Main body ###
 
@@ -34,14 +25,16 @@ cd ${ScriptHome}
 ssh-keygen -R ${vm_name}
 
 # Launch the virtual machine
-multipass launch \
+multipass launch --verbose \
 	  --name ${vm_name} \
 	  --cpus ${vm_cpus} \
 	  --mem ${vm_mem} \
 	  --disk ${vm_disk} \
-	  --cloud-init ${vm_cloud_init}
+	  --cloud-init ${vm_cloud_init} {$ubuntuImage}
 
-# Note: the clout-init run scripts may take longer than five minutes to run in which case the above announces that:
+echo -e "#\tLaunch completed."
+
+# Note: the cloud-init run scripts may take longer than five minutes to run in which case the above announces that:
 #   launch failed: The following errors occurred:
 #   timed out waiting for initialization to complete
 # But in fact those scripts are still running. This is a known problem with multipass:
@@ -49,7 +42,8 @@ multipass launch \
 
 # Because of the timeout the following messages may not be displayed:
 
-# What ssh port was opened?
+# Determine the ip address of the instantiated virtual machine
+# https://multipass.run/docs/troubleshooting-networking-on-macos
 multipass_vm_ip=$(multipass info ${vm_name} | grep 'IPv4' | awk '{print $2}')
 
 # Advise

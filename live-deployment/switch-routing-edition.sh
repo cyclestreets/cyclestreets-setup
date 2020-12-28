@@ -230,8 +230,8 @@ if [ -n "${fallbackRoutingUrl}" ]; then
     echo "#	Now using fallback routing service"
 else
 
-    # Set the journeyPlannerStatus to closed for the duration
-    ${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'closed' WHERE id = 1;";
+    # Close the journey planner
+    ${superMysql} cyclestreets -e "call closeJourneyPlanner();";
     echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
@@ -276,8 +276,8 @@ fi
 # Switch the website to the local server and ensure the routingDb is also set
 ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' WHERE id = 1;";
 
-# Restore the journeyPlannerStatus
-${superMysql} cyclestreets -e "UPDATE map_config SET journeyPlannerStatus = 'live' WHERE id = 1;";
+# Re-open the journey planner
+${superMysql} cyclestreets -e "call openJourneyPlanner();";
 
 
 ### Finishing

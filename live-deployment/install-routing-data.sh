@@ -546,7 +546,10 @@ fi
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "#	$(date) Installation completed, to switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
+echo "#	$(date) Installation completed, switching to the routing service using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
+
+# Switch to the new edition
+${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

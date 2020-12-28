@@ -114,6 +114,9 @@ mySuperCredFile=
 # Microsites server such as blogs
 ##micrositesServer=
 
+# Keep serving routes during an installation of a new routing edition
+##keepRoutingDuringUpdate=
+
 # Fallback server
 ##fallbackServer=
 

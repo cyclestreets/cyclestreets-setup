@@ -374,6 +374,21 @@ if [ -n "${dumpFile}" ]; then
     fi
 fi
 
+### Pre stage 4: Close system to routing and stop the existing routing service
+if [ -z "${keepRoutingDuringUpdate}" ]; then
+
+    # Narrate
+    echo "#	$(date)	Closing system to routing and stopping the existing routing service"
+
+    # Close the journey planner
+    ${superMysql} cyclestreets -e "call closeJourneyPlanner();";
+
+    # Cycle routing stop command (should match passwordless sudo entry)
+    routingServiceStop="/bin/systemctl stop cyclestreets"
+
+    # Stop the routing service
+    sudo ${routingServiceStop}
+fi
 
 ### Stage 4 - unpack and install the TSV files
 echo "#	$(date)	Unpack and install the TSV files"

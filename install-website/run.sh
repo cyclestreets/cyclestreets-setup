@@ -501,6 +501,11 @@ then
     echo "#	Load cyclestreets data"
     ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql
 
+    # Set the database migration revison based on the creation data of the sample database file
+    date -r ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql +%Y%m%d%H%M%S > ${websitesContentFolder}/data/dbmigrate.txt
+    chown ${username}:${rollout} ${websitesContentFolder}/data/dbmigrate.txt
+
+
     # Set the API server
     # Uses http rather than https as that will help get it working, then user can change later via the control panel.
     ${superMysql} cyclestreets -e "update map_config set routeServerUrl='http://${csHostname}:9000/', apiV2Url='http://${apiHostname}${hostPortwithColon}/v2/' where id = 1;"

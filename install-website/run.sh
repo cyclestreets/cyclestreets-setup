@@ -345,12 +345,12 @@ then
 	fi
     fi
 
+
     # Beware that the on the multipass setup the hostname appears twice on the 127.0.1.1 line for some unknown reason.
     # That is not caused by these scripts and does not seem to be harfmul.
-
-    # Add aliases to the line that is often used for the FQDN of the machine
+    echo "#	Adding aliases for localhost: ${aliases}"
     sed -i \
-	-e "s/^127.0.1.1.*$/\0 ${aliases} # Alias added by CycleStreets installation/" \
+	-e "s/^127.0.0.1.*$/\0 ${aliases} # Alias added by CycleStreets installation/" \
 	/etc/hosts
 fi
 

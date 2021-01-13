@@ -6,13 +6,19 @@ Contains some scripts for building the CycleStreets schema for new installations
 ## csSampleDb.sh
 
 Creates the sample `cyclestreets` database for shipping with new installations.
-Before running it, make sure all stored procedures are up to date, e.g. by loading csStoredRoutines.sql and nearestPoint.sql etc. from documentation/schema/ folder.
-Just try running it and it will give feedback as to what to do. (It prefers to run as cyclestreets user).
+Just try running it as cyclestreets user for instructions.
 
 It contains the essential data for building a CycleStreets instance.
 It is created from the latest daily cyclestreets backup copy (itself produced by `../live-deployment/daily-dump.sh`) by stripping all but the essential tables and rows.
-Changes to the live cyclestreets database appear in the cyclestreets backup the next day.
-Only running the script after that will process the changes into: `/documentation/schema/sampleCyclestreets.sql`.
+
+The main www service is assumed to be up to date, but to be sure run these steps before the daily dump is made:
+
+```shell
+mysql cyclestreets < documentation/schema/csStoredRoutines.sql
+mysql cyclestreets < documentation/schema/trigger.sql
+```
+
+Result is written to: `/documentation/schema/sampleCyclestreets.sql`.
 
 
 ## externalDb.sh

@@ -56,6 +56,9 @@ mysqlRootPassword=
 # Central PhpMyAdmin installation
 ##phpmyadminMachine=
 
+# Access from munin monitoring server
+##allowMunin="allow ^10\\.0\\.0\\.1\$\nallow ^10::1$"
+
 # Credentials for the website user
 ##mysqlWebsiteUsername=website
 ##mysqlWebsitePassword="${password}"

@@ -77,6 +77,12 @@ if [ -f /etc/munin/plugins/packetloss ]; then
 fi
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
+
+# Grant access to munin
+if [ -n "${allowMunin}" ]; then
+    echo -e "\n# Grant access from munin monitoring server\n${allowMunin}\n" >> /etc/munin/munin-node.conf
+fi
+
 systemctl restart munin-node
 echo "Munin plugins enabled as follows:"
 set +e

@@ -215,7 +215,7 @@ fi
 vecho "#	$(date)	CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
-if [ ! id -u ${username} >/dev/null 2>&1 ]; then
+if [ ! id -u ${username} > /dev/null 2>&1 ]; then
 	echo "# User ${username} must exist: please run the main website install script"
 	exit 1
 fi
@@ -275,7 +275,7 @@ vecho "#	Found edition: ${desiredEdition}"
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
 
 #	Copy definition file
-scp ${username}@${importHostname}:${importMachineEditions}/${desiredEdition}/importdefinition.ini $newImportDefinition >/dev/null 2>&1
+scp ${username}@${importHostname}:${importMachineEditions}/${desiredEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	The import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
@@ -309,12 +309,11 @@ fi
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Check to see if this routing database already exists
-# !! Note: This line will appear to give an error such as: ERROR 1049 (42000) at line 1: Unknown database 'routing130701'
-# but in fact that is the condition desired.
-echo "# If an error 'Unknown database ...' occurs on the following line, it can be ignored:"
-if ${superMysql} -e "use ${importEdition}"; then
+if ${smysqlshow} | grep "\b${desiredEdition}\b" > /dev/null 2>&1
+then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	Stopping because the routing database ${importEdition} already exists."
 	# Clean exit - because this is not an error, it is just that there is no new data available

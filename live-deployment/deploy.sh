@@ -38,8 +38,7 @@ fi
 # Main body of script
 
 # Install the website
-## !! Turned off for testing
-#. ../install-website/run.sh
+../install-website/run.sh
 
 # Enable support for proxied sites
 a2enmod proxy_http
@@ -88,6 +87,21 @@ echo "Munin plugins enabled as follows:"
 set +e
 munin-node-configure --suggest
 # If this doesn't seem to result in output, check this log file: `tail -f /var/log/munin/munin-node.log`
+
+
+# PhpMyAdmin
+# Note: as of 8.0.13 this can become a csv of addresses such as: 127.0.0.1,::1,dev.cyclestreets.net
+# Unless already setup
+mysqldcnfFile=/etc/mysql/mysql.conf.d/mysqld.cnf
+if [ -r $mysqldcnfFile ] && ! cat $mysqldcnfFile | grep "^#bind-address" > /dev/null 2>&1
+then
+    # Comment out to allow access from anywhere and restart mysql
+    sed -i '/^bind-address/s/^/#/' $mysqldcnfFile
+    systemctl restart mysql
+
+    # Allow specific access from the dev machine
+    # !! To be added
+fi
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

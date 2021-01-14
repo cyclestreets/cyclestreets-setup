@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Configuration for running a multipass instance
+
+# Sets up	CycleStreets website
+# running in a	Multipass instance
+# hypervisor	hyperkit 
+# on the	MacOS
+
+
+### DEFAULTS ###
+
+# Name of the Multipass instance (appears to be limited to alphanumeric and hyphen, no dots)
+# The website will be available from the host on: http://${vm_name}/
+vm_name=multipass-cyclestreets
+vm_cloud_init=cloud-config.yaml
+
+
+# A build for Cambridge City uses 7.5G disk and about 600MB RAM
+vm_mem=6g
+vm_disk=20g
+vm_cpus=2
+
+# List available images using: multipass find
+#ubuntuImage=18.04
+ubuntuImage=20.10
+

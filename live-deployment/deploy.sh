@@ -38,7 +38,7 @@ fi
 # Main body of script
 
 # Install the website
-../install-website/run.sh
+${ScriptHome}/install-website/run.sh
 
 # Enable support for proxied sites
 a2enmod proxy_http

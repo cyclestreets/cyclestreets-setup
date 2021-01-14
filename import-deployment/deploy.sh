@@ -44,10 +44,10 @@ fi
 # Main body of script
 
 # Install the website
-../install-website/run.sh
+${ScriptHome}/install-website/run.sh
 
 # Install the import
-../install-import/run.sh
+${ScriptHome}/install-import/run.sh
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

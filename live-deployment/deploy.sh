@@ -106,9 +106,6 @@ then
     # Comment out to allow access from anywhere and restart mysql
     sed -i '/^bind-address/s/^/#/' $mysqldcnfFile
     systemctl restart mysql
-
-    # Allow specific access from the dev machine
-    # !! To be added
 fi
 
 # Allow specific access from the dev machine
@@ -121,8 +118,11 @@ if [ -n "${devHostname}" ]; then
     # If connections failed clear the cache by using: mysqladmin flush-hosts
     # https://dev.mysql.com/doc/refman/8.0/en/problems-connecting.html
     if [ -n "${devIPv6}" ]; then
-	echo -e "\n# The dev machine's IPv6 address via NAT64, added by cloud-init\n${devIPv6} ${devHostname}\n" | /etc/hosts
+	echo -e "\n# The dev machine's IPv6 address via NAT64, added by cloud-init\n${devIPv6} ${devHostname}\n" >> /etc/hosts
     fi
+    # Useful binding
+    # The defaults-extra-file is a positional argument which must come first.
+    superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
     ${superMysql} -e "drop user if exists 'root'@'${devHostname}';create user 'root'@'${devHostname}' identified with mysql_native_password by '${mysqlRootPassword}';grant all privileges on *.* to 'root'@'${devHostname}' with grant option;flush privileges;"
 fi
 

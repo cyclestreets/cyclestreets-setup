@@ -250,7 +250,7 @@ set +e
 # Determine which edition to fetch
 if [ ${desiredEdition} == "latest" ]; then
     # Read the folder of routing editions, one per line, newest first, getting first one
-    desiredEdition=`ssh ${username}@${importHostname} ls -1t ${importMachineEditions} | head -n1`
+    desiredEdition=`ssh ${username}@${importHostname} ls -1t ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | head -n1`
 fi
 
 

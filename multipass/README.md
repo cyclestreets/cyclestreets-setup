@@ -12,6 +12,7 @@ Making a custom copy of `cloud-config.yaml` file based on the [cloud-config.yaml
 
 	cd /opt/cyclestreets-setup/multipass
 	cp .config.sh.template .config.sh
+	pico -w .config.sh
 	cp cloud-config.yaml.template cloud-config.yaml
 	pico -w cloud-config.yaml
 

@@ -73,10 +73,10 @@ runcmd:
  - [ su, --login, YOUR_LOGIN_NAME, -c, "ln -s /home/YOUR_LOGIN_NAME/cyclestreets-setup-config.sh /opt/cyclestreets-setup/.config.sh" ]
 
  # Install CycleStreets website
- - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/install-website/run.sh" ]
+# - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/live-deployment/deploy.sh" ]
 
- # Optionally install the import system
-# - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/install-import/run.sh" ]
+ # Alternately install the import system
+# - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/import-deployment/deploy.sh" ]
 
  # Build a new routing edition
 # - [ su, --login, cyclestreets, -c, "/opt/cyclestreets-setup/newbuild.sh /websites/www/content/import/.config.php" ]

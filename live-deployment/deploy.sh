@@ -97,7 +97,7 @@ munin-node-configure --suggest
 # If this doesn't seem to result in output, check this log file: `tail -f /var/log/munin/munin-node.log`
 
 
-# PhpMyAdmin
+## PhpMyAdmin
 # Note: as of 8.0.13 this can become a csv of addresses such as: 127.0.0.1,::1,dev.cyclestreets.net
 # Unless already setup
 mysqldcnfFile=/etc/mysql/mysql.conf.d/mysqld.cnf
@@ -109,6 +109,21 @@ then
 
     # Allow specific access from the dev machine
     # !! To be added
+fi
+
+# Allow specific access from the dev machine
+if [ -n "${devHostname}" ]; then
+    # The dev machine is currently an IPv4 only host.
+    # When accessing using IPv6 then reverse DNS needs setup to verify the dev hostname.
+    # Check with:
+    # getent hosts ${devHostname}
+    #
+    # If connections failed clear the cache by using: mysqladmin flush-hosts
+    # https://dev.mysql.com/doc/refman/8.0/en/problems-connecting.html
+    if [ -n "${devIPv6}" ]; then
+	echo -e "\n# The dev machine's IPv6 address via NAT64, added by cloud-init\n${devIPv6} ${devHostname}\n" | /etc/hosts
+    fi
+    ${superMysql} -e "drop user if exists 'root'@'${devHostname}';create user 'root'@'${devHostname}' identified with mysql_native_password by '${mysqlRootPassword}';grant all privileges on *.* to 'root'@'${devHostname}' with grant option;flush privileges;"
 fi
 
 # Confirm end of script

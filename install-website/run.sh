@@ -286,8 +286,21 @@ EOF
 
 fi
 
+# This variable is set if the api uses the main hostname
+apiSameHost=
+if [ "${csHostname}" = "${apiHostname}" ]; then
+    apiSameHost=1
+fi
+
 # Check if the local VirtualHost exists already
 if [ ! -r ${localVirtualHostFile} ]; then
+
+    # When the api is the same as the hostname then include /v2/ redirects
+    htaccessApi=
+    if [ -n "${apiSameHost}" ]; then
+	htaccessApi="Include /websites/www/content/.htaccess-api"
+    fi
+
     # Create the local VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
     cat > ${localVirtualHostFile} << EOF
 <VirtualHost *:80>
@@ -308,6 +321,7 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit rescans
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
+	${htaccessApi}
 	
 	# This is necessary to enable cookies to work on the domain http://localhost/
 	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
@@ -331,7 +345,12 @@ if ! cat /etc/hosts | grep "\b${apiHostname}\b" > /dev/null 2>&1
 then
 
     # Start a list of aliases to add
-    aliases=${apiHostname}
+    aliases=
+
+    # Add api if distinct from main hostname
+    if [ -z "${apiSameHost}" ]; then
+	aliases=${apiHostname}
+    fi
 
     # Unless localhost is being used, check cs server name
     if [ "${csHostname}" != "localhost" ]; then
@@ -348,18 +367,21 @@ then
 
     # Beware that the on the multipass setup the hostname appears twice on the 127.0.1.1 line for some unknown reason.
     # That is not caused by these scripts and does not seem to be harfmul.
-    echo "#	Adding aliases for localhost: ${aliases}"
-    sed -i \
-	-e "s/^127.0.0.1.*$/\0 ${aliases} # Alias added by CycleStreets installation/" \
-	/etc/hosts
+    if [ -n "${aliases}" ]; then
+	echo "#	Adding aliases for localhost: ${aliases}"
+	sed -i \
+	    -e "s/^127.0.0.1.*$/\0 ${aliases} # Alias added by CycleStreets installation/" \
+	    /etc/hosts
+    fi
 fi
 
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
 apilocalconf=api.cyclestreets.conf
 apiLocalVirtualHostFile=/etc/apache2/sites-available/${apilocalconf}
 
-# Check if the local VirtualHost exists already
-if [ ! -r ${apiLocalVirtualHostFile} ]; then
+# Setup api virtualhost if distinct from main virtual host
+# Also check if the api VirtualHost exists already
+if [ -z "${apiSameHost}" -a ! -r ${apiLocalVirtualHostFile} ]; then
     # Create the local VirtualHost (avoid any backquotes in the text as they'll spawn sub-processes)
     cat > ${apiLocalVirtualHostFile} << EOF
 <VirtualHost *:80>

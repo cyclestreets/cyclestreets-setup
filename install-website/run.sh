@@ -333,12 +333,12 @@ EOF
     # Allow the user to edit this file
     chown ${username}:${rollout} ${localVirtualHostFile}
 
+    # Enable this VirtualHost
+    a2ensite ${cslocalconf}
+
 else
     echo "#	VirtualHost already exists: ${localVirtualHostFile}"
 fi
-
-# Enable this VirtualHost
-a2ensite ${cslocalconf}
 
 # Add the api address to /etc/hosts if it is not already present
 if ! cat /etc/hosts | grep "\b${apiHostname}\b" > /dev/null 2>&1
@@ -408,13 +408,12 @@ EOF
     # Allow the user to edit this file
     chown ${username}:${rollout} ${apiLocalVirtualHostFile}
 
+    # Enable this VirtualHost
+    a2ensite ${apilocalconf}
+
 else
-    echo "#	VirtualHost already exists: ${apiLocalVirtualHostFile}"
+    echo "#	VirtualHost is not needed or already exists: ${apiLocalVirtualHostFile}"
 fi
-
-# Enable this VirtualHost
-a2ensite ${apilocalconf}
-
 
 
 # Global conf file

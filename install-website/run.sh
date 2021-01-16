@@ -495,6 +495,13 @@ fi
 # Setup the configuration
 if grep CONFIGURED_BY_HERE ${phpConfig} >/dev/null 2>&1;
 then
+    # Pre substitution
+    # skip the dev site rewrite when the api is the same as main host
+    devSiteRewrite=
+    # Else setup local devsite rewrite so that api calls can find the right gui
+    if [ -z "${apiSameHost}" ]; then
+	devSiteRewrite="'YOUR_APISERVERNAME'				=> 'api.YOUR_CSSERVERNAME',"
+    fi
 
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
@@ -505,6 +512,7 @@ then
 	-e "s/ADMIN_EMAIL_HERE/${administratorEmail}/" \
 	-e "s/YOUR_EMAIL_HERE/${mainEmail}/" \
 	-e "s/YOUR_SALT_HERE/${signinSalt}/" \
+	-e "s/DEVSITEREWRITE/${devSiteRewrite}/" \
 	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \

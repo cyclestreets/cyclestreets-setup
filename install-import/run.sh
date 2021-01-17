@@ -331,8 +331,7 @@ if [ -n "$tagsLanguages" ]; then
     $packageInstall exuberant-ctags
 
     # Parse the tags
-    cd ${websitesContentFolder}
-    su - ${SUDO_USER} -c "etags -R --languages=$tagsLanguages"
+    su - ${SUDO_USER} -c "cd ${websitesContentFolder} && etags -R --languages=$tagsLanguages"
 fi
 
 # Confirm end of script

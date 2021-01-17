@@ -187,10 +187,10 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     echo "#	$(date)	CycleStreets / Osmosis installation"
 
     # Prepare the apt index
-    apt update > /dev/null
+    $packageUpdate > /dev/null
 
     # Osmosis requires java
-    apt -y install default-jre
+    $packageInstall default-jre
 
     # Create folder
     mkdir -p /usr/local/osmosis
@@ -308,7 +308,7 @@ fi
 
 # Fetching dependencies
 echo "#	$(date)	Fetching dependencies"
-apt install -y libboost-dev cmake gcc g++ python-dev python3-pip make doxygen graphviz
+$packageInstall libboost-dev cmake gcc g++ python-dev python3-pip make doxygen graphviz
 
 # Upgrade pip
 python3 -m pip install --upgrade pip
@@ -323,6 +323,17 @@ cd ${importContentFolder}/graph
 # Build islands
 cd ${importContentFolder}/graph/islands_cpp
 ./build.sh
+
+# Developer feature for finding definitions in code
+if [ -n "$tagsLanguages" ]; then
+
+    # Install the tags generator
+    $packageInstall exuberant-ctags
+
+    # Parse the tags
+    cd ${websitesContentFolder}
+    su - ${SUDO_USER} -c "etags -R --languages=$tagsLanguages"
+fi
 
 # Confirm end of script
 cd ${importContentFolder}

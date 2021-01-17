@@ -168,6 +168,8 @@ mySuperCredFile=
 # Potlatch
 ##potlatchComponent=
 
+# Tags tables - development tool for finding definitions in the code, value is e.g: php,python,c,sql
+##tagsLanguages=
 
 ### Blog
 

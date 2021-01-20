@@ -40,7 +40,7 @@ configFile=../.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x $SCRIPTDIRECTORY/${configFile} ]; then
-    echo "# The config file, ${configFile}, does not exist or is not excutable - copy your own based on the ${configFile}.template file." 1>&2
+    echo "# The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file." 1>&2
     exit 1
 fi
 

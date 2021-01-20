@@ -62,7 +62,7 @@ configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not excutable. Copy your own based on the ${configFile}.template file, or create a symlink to the configuration."
+    echo "#	The config file, ${configFile}, does not exist or is not executable. Copy your own based on the ${configFile}.template file, or create a symlink to the configuration."
     exit 1
 fi
 

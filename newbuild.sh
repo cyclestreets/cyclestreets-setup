@@ -5,21 +5,22 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -s -m email config
+	$0 -a alias -h -q -r -s -m email config
 
 OPTIONS
 	-h Show this message
-	-m Take an email address as an argument - for notifications when the build breaks or completes.
+	-a Argument is a name to use as an alias to symlink to the routing edtion
+	-m Take an email address as an argument - for notifications when the build breaks or completes
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
-	-s Builds and switches secondary routing edition, removing previous one.
+	-s Builds and switches secondary routing edition, removing previous one
 
 ARGUMENTS
 	config
 		Configuration file
 
 DESCRIPTION
- 	Starts a new build, including install and testing.
+	Builds a new routing edition, installs on the local server, and runs tests, optionally emailing results.
 
 EOF
 }
@@ -32,7 +33,8 @@ removeOldest=
 notifyEmail=
 # Secondary edition
 secondaryEdition=
-
+# Routing edition alias: a folder name which is used as a symlink e.g. centralLondon or custom32
+editionAlias=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
@@ -40,6 +42,10 @@ secondaryEdition=
 while getopts "hm:qrs" option ; do
     case ${option} in
         h) usage; exit ;;
+	a)
+	    # Set routing edition alias
+	    editionAlias=$OPTARG
+	    ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
@@ -147,6 +153,13 @@ else
     exit 1
 fi
 
+# Optionally create an alias for the routing edtion
+if [ -n "${editionAlias}" ]; then
+
+    # Create or update symlink to the new edition
+    # this allows remote machines to install the edition using the alias
+    ln -sf ${importMachineEditions}/${latestEdition} ${importMachineEditions}/${editionAlias}
+fi
 
 ## Install
 if live-deployment/installLocalLatestEdition.sh ;

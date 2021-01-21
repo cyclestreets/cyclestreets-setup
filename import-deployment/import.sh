@@ -10,6 +10,7 @@ SYNOPSIS
 	$0 import.sh -h -f config
 
 OPTIONS
+	-f Force overwite existing edition
 	-h Show this message
 
 ARGUMENTS

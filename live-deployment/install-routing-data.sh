@@ -25,11 +25,13 @@ ARGUMENTS
 		A hostname eg machinename.cyclestreets.net
 
 	edition
-		The optional second argument identifies the routing edition e.g. routing161012.
-		If not specified, or given the value 'latest', the latest edition on the host will be found and used.
-	path
+		The optional second argument identifies a dated routing edition of the form routingYYMMDD e.g. routing161012.
+		If not specified, or given the value 'latest', the edition on the host having the most recent date will be selected.
+		It can also name an alias that symlinks to a dated routing edition.
+	path (deprecated)
 		The optional third argument (a non slash terminated directory path) says where on the host the routing edition can be found.
 		Defaults to the hardwired location: /websites/www/import/output
+		This argument is deprecated in favour of using aliases for the edition argument.
 
 DESCRIPTION
  	Checks whether there's is a new edition of routing data on the importHostname.
@@ -247,35 +249,66 @@ fi
 # Tolerate errors
 set +e
 
-# Determine which edition to fetch
-if [ ${desiredEdition} == "latest" ]; then
-    # Read the folder of routing editions, one per line, newest first, getting first one
-    desiredEdition=`ssh ${username}@${importHostname} ls -1t ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | head -n1`
-fi
+# importMachineEditions
+# This is a folder of routing editions which have names of the form routingYYMMDD.
+# Each edition is also a folder that contains all the data necessary to setup routing on another machine.
+#
+# The folder may also contain aliases that symlink to the dated edtions.
+# The aliases are a way of naming routing editions that allows them to referred to generically.
+#
+# The script arguement desiredEdition is converted into an explicitly dated edition of the form routingYYMMDD, as follows:
+# 1. If desiredEdition matches routingYYMMDD then use it directly.
+# 2. If desiredEdition = "latest" then read the folder of editions and select the one with the newest date.
+# 3. Otherwise treat it as an alias which can be dereferenced.
 
+# Examine the desiredEdition argument
+if [[ "${desiredEdition}" =~ routing([0-9]{6}) ]]; then
+
+    # It matches routingYYMMDD so use it directly
+    resolvedEdition=${desiredEdition}
+else
+    # Cases when the format is not routingYYMMDD
+    if [ ${desiredEdition} == "latest" ]; then
+
+	# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
+	resolvedEdition=`ssh ${username}@${importHostname} ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
+
+    else
+	# Treat it as an alias and dereference to find the target edition
+	resolvedEdition=$(ssh ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
+	resolvedEdition=$(basename ${resolvedEdition})
+    fi
+fi
 
 # Abandon if not found
-if [ -z "${desiredEdition}" ]; then
-	vecho "# No routing editions found on ${importHostname}"
-	exit 1
+if [ -z "${resolvedEdition}" ]; then
+    vecho "#	The desired edition: ${desiredEdition} matched no routing editions on ${importHostname}"
+    exit 1
 fi
 
+# Double-check the format is routingYYMMDD
+if [[ ! "${resolvedEdition}" =~ routing([0-9]{6}) ]]; then
+    vecho "#	The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
+    exit 1
+fi
+
+
 # Check this edition is not already installed
-if [ -d ${websitesContentFolder}/data/routing/${desiredEdition} ]; then
+if [ -d ${websitesContentFolder}/data/routing/${resolvedEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#	Edition ${desiredEdition} is already installed."
+	vecho "#	Edition ${resolvedEdition} is already installed."
 	exit 1
 fi
 
 #	Report finding
 # Avoid echo if possible as this generates cron emails
-vecho "#	Found edition: ${desiredEdition}"
+vecho "#	Resolved edition: ${resolvedEdition}"
 
 # Useful binding
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
 
 #	Copy definition file
-scp ${username}@${importHostname}:${importMachineEditions}/${desiredEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
+scp ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	The import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
@@ -288,10 +321,10 @@ set -e
 # Get the required variables from the routing definition file; this is not directly executed for security
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
 # NB the timestamp parameter is not really used yet in the script below
-timestamp=`sed -n                       's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'       $newImportDefinition`
+timestamp=`sed -n                   's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'           $newImportDefinition`
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
-md5Tsv=`sed -n                             's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
-md5Dump=`sed -n                       's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
+md5Tsv=`sed -n                      's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'           $newImportDefinition`
+md5Dump=`sed -n                     's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'          $newImportDefinition`
 
 # Ensure the key variables are specified
 if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; then
@@ -300,8 +333,8 @@ if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; 
 fi
 
 #	Ensure these variables match
-if [ "$importEdition" != "$desiredEdition" ]; then
-	echo "# The import edition: $importEdition does not match the desired edition: $desiredEdition"
+if [ "$importEdition" != "$resolvedEdition" ]; then
+	echo "# The import edition: $importEdition does not match the desired edition: $resolvedEdition"
 	exit 1
 fi
 
@@ -312,7 +345,7 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Check to see if this routing database already exists
-if ${smysqlshow} | grep "\b${desiredEdition}\b" > /dev/null 2>&1
+if ${smysqlshow} | grep "\b${resolvedEdition}\b" > /dev/null 2>&1
 then
 	# Avoid echo if possible as this generates cron emails
 	vecho "#	Stopping because the routing database ${importEdition} already exists."

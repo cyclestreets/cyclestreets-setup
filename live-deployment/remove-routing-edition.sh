@@ -59,7 +59,7 @@ vecho()
 ### Stage 1 - general setup
 
 # Announce start
-vecho "#	$(date)	CycleStreets routing edition removal"
+vecho "#\t$(date) CycleStreets routing edition removal"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
@@ -130,7 +130,7 @@ then
     # Check that there are at least three routing editions - to avoid removing the most recent ones
     if [ -z "${numEditions}" -o "${numEditions}" -lt 3 ]
     then
-	vecho "# There are ${numEditions} editions which is too few to use for the oldest/newest argument to have any effect."
+	vecho "#\tThere are ${numEditions} editions which is too few to use for the oldest/newest argument to have any effect."
 	# Exit cleanly, not setting error status
 	exit 0
     fi
@@ -206,7 +206,7 @@ set +e
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
 if [[ ! "$localRoutingStatus" =~ serving ]]
 then
-  vecho "#	Note: there is no current routing service. Routing edition ${removeEdition} removal will proceed."
+  vecho "#\tNote: there is no current routing service. Routing edition ${removeEdition} removal will proceed."
 else
 
     # Check not already serving this edition
@@ -215,14 +215,14 @@ else
     currentRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
 
     if [ -z "${currentRoutingEdition}" ]; then
-	vecho "#	The current edition at ${localRoutingUrl} could not be determined."
+	vecho "#\tThe current edition at ${localRoutingUrl} could not be determined."
 	exit 1
     fi
 
     # Check the fallback routing edition is the same as the proposed edition
     if [ "${removeEdition}" == "${currentRoutingEdition}" ]; then
-	vecho "#	The proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
-	vecho "#	Stop it using: sudo /bin/systemctl stop cyclestreets"
+	vecho "#\tThe proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
+	vecho "#\tStop it using: sudo /bin/systemctl stop cyclestreets"
 	exit 1
     fi
 fi
@@ -253,7 +253,7 @@ fi
 
 
 # Report
-vecho "#	$(date)	Removed: ${removeEdition}"
+vecho "#\t$(date) Removed: ${removeEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

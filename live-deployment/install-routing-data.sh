@@ -178,7 +178,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { vecho '#	An installation is already running' ; exit 1; }
+	flock -n 9 || { vecho '#\tAn installation is already running' ; exit 1; }
 
 
 ### CREDENTIALS ###
@@ -214,7 +214,7 @@ fi
 ## Main body of script
 
 # Avoid echo if possible as this generates cron emails
-vecho "#	$(date)	CycleStreets routing data installation"
+vecho "#\t$(date) CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} > /dev/null 2>&1 ]; then
@@ -241,7 +241,7 @@ fi
 if [ -z "${importHostname}" -o -z "${importMachineEditions}" ]; then
 
 	# Avoid echoing as these are called by a cron job
-	vecho "# An import machine with an editions folder must be defined in order to run an import"
+	vecho "#\tAn import machine with an editions folder must be defined in order to run an import"
 	exit 1
 fi
 
@@ -282,13 +282,13 @@ fi
 
 # Abandon if not found
 if [ -z "${resolvedEdition}" ]; then
-    vecho "#	The desired edition: ${desiredEdition} matched no routing editions on ${importHostname}"
+    vecho "#\tThe desired edition: ${desiredEdition} matched no routing editions on ${importHostname}"
     exit 1
 fi
 
 # Double-check the format is routingYYMMDD
 if [[ ! "${resolvedEdition}" =~ routing([0-9]{6}) ]]; then
-    vecho "#	The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
+    vecho "#\tThe desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
     exit 1
 fi
 
@@ -296,13 +296,13 @@ fi
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${resolvedEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#	Edition ${resolvedEdition} is already installed."
+	vecho "#\tEdition ${resolvedEdition} is already installed."
 	exit 1
 fi
 
 #	Report finding
 # Avoid echo if possible as this generates cron emails
-vecho "#	Resolved edition: ${resolvedEdition}"
+vecho "#\tResolved edition: ${resolvedEdition}"
 
 # Useful binding
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
@@ -311,7 +311,7 @@ newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition
 scp ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#	The import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
+	vecho "#\tThe import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
 	exit 1
 fi
 
@@ -348,7 +348,7 @@ smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 if ${smysqlshow} | grep "\b${resolvedEdition}\b" > /dev/null 2>&1
 then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#	Stopping because the routing database ${importEdition} already exists."
+	vecho "#\tStopping because the routing database ${importEdition} already exists."
 	# Clean exit - because this is not an error, it is just that there is no new data available
 	exit 0
 fi
@@ -356,7 +356,7 @@ fi
 # Check to see if a routing data file for this routing edition already exists
 newEditionFolder=${websitesContentFolder}/data/routing/${importEdition}
 if [ -d ${newEditionFolder} ]; then
-	vecho "#	Stopping because the routing data folder ${importEdition} already exists."
+	vecho "#\tStopping because the routing data folder ${importEdition} already exists."
 	exit 1
 fi
 

@@ -148,7 +148,7 @@ else
 	# Send report
 	cat ${reportFile} | mail -s "${csHostname} import stopped" "${notifyEmail}"
     else
-	vecho "Build stopped during import script"
+	vecho "#\tBuild stopped during import script"
     fi
     exit 1
 fi
@@ -181,7 +181,7 @@ else
     if [ -n "${notifyEmail}" ]; then
 	echo "During install local lastest edition" | mail -s "${csHostname} import stopped" "${notifyEmail}"
     else
-	vecho "Import stopped during install local lastest edition"
+	vecho "#\tImport stopped during install local lastest edition"
     fi
     exit 2
 fi

@@ -39,7 +39,7 @@ editionAlias=
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qrs" option ; do
+while getopts "a:hm:qrs" option ; do
     case ${option} in
         h) usage; exit ;;
 	a)
@@ -153,12 +153,24 @@ else
     exit 1
 fi
 
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
+# Determine latest edition (the -s suppresses the tabular output)
+newEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME desc limit 1;")
+vecho "#\tNew edition: ${newEdition}"
+
 # Optionally create an alias for the routing edtion
 if [ -n "${editionAlias}" ]; then
 
+    # The new routing edition will be written to this location
+    importMachineEditions=${importContentFolder}/output
+
     # Create or update symlink to the new edition
     # this allows remote machines to install the edition using the alias
-    ln -sf ${importMachineEditions}/${latestEdition} ${importMachineEditions}/${editionAlias}
+    ln -sf ${importMachineEditions}/${newEdition} ${importMachineEditions}/${editionAlias}
+    vecho "#\tAlias: ${editionAlias}"
 fi
 
 ## Install

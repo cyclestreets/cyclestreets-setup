@@ -160,8 +160,8 @@ cd ${importContentFolder}
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php run.php $importConfig
 
-# Read the folder of routing editions, one per line, newest first, getting first one
-latestEdition=`ls -1t ${importMachineEditions} | head -n1`
+# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
+latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
 
 
 # Reopen the website if it was closed earlier

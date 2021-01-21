@@ -100,8 +100,8 @@ fi
 # New routing editions should be found at this location
 importMachineEditions=${importContentFolder}/output
 
-# Read the folder of routing editions, one per line, newest first, getting first one
-latestEdition=`ls -1t ${importMachineEditions} | head -n1`
+# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
+latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then

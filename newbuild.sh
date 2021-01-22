@@ -167,9 +167,11 @@ if [ -n "${editionAlias}" ]; then
     # The new routing edition will be written to this location
     importMachineEditions=${importContentFolder}/output
 
-    # Create or update symlink to the new edition
-    # this allows remote machines to install the edition using the alias
-    ln -sf ${importMachineEditions}/${newEdition} ${importMachineEditions}/${editionAlias}
+    # Remove any existing link
+    rm -f ${importMachineEditions}/${editionAlias}
+
+    # Create a symlink to the new edition - this allows remote machines to install the edition using the alias
+    ln -s ${importMachineEditions}/${newEdition} ${importMachineEditions}/${editionAlias}
     vecho "#\tAlias: ${editionAlias}"
 fi
 

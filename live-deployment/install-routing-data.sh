@@ -99,7 +99,7 @@ shift $((OPTIND-1))
 vecho()
 {
 	if [ "${verbose}" ]; then
-		echo $1
+		echo -e $1
 	fi
 }
 

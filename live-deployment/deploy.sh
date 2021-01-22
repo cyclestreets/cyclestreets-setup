@@ -73,10 +73,13 @@ apt install -y libdbi-perl libdbd-mysql-perl
 apt install -y munin-node
 apt install -y munin-plugins-extra
 
-# Symlink the cyclestreets charts
-# The force option -f replaces target if they already exist
-ln -sf /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
-ln -sf /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
+# Symlink the cyclestreets charts, clearing away any old ones first
+rm -f /etc/munin/plugins/cyclestreets
+ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
+rm -f /etc/munin/plugins/journeylinger
+ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
+
+# Some specific Plugins
 if [ -f /etc/munin/plugins/dnsresponsetime ]; then
 	wget -P /usr/share/munin/plugins/ --user-agent="Foo" http://ccgi.ambrosia.plus.com/debian/dnsresponsetime
 	chmod +x /usr/share/munin/plugins/dnsresponsetime

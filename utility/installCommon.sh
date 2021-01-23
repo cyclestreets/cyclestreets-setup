@@ -17,6 +17,12 @@ chown ${SUDO_USER} ${websitesContentFolder}
 if [ ! -d ${websitesContentFolder}/.git ]
 then
     su - ${SUDO_USER} -c "git clone ${repoOrigin}cyclestreets/cyclestreets.git ${websitesContentFolder}"
+
+    # Add cronned update of the repo
+    cp /opt/cyclestreets-setup/live-deployment/cyclestreets-update.cron /etc/cron.d/cyclestreets-update
+    chown root.root /etc/cron.d/cyclestreets-update
+    chmod 0600 /etc/cron.d/cyclestreets-update
+
 else
     # Set permissions before the update
     chgrp -R rollout ${websitesContentFolder}/.git

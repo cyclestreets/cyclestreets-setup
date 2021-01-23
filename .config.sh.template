@@ -105,9 +105,6 @@ mySuperCredFile=
 ##devHostname=
 ##devIPv6=
 
-# Repos for auto updating
-#repoUpdateCronPaths=(/opt/cyclestreets-setup/live-deployment/cyclestreets-setup-update.cron)
-
 ### Exim4 (mailsending) configuration - see: http://newbiedoc.sourceforge.net/networking/exim.html#VERYSIMPLE
 
 # Basically, use the 'internet' (direct delivery) mode here for a developer setup

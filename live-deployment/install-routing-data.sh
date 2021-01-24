@@ -25,8 +25,9 @@ ARGUMENTS
 		A hostname eg machinename.cyclestreets.net, as provided else read from config.
 
 	edition
-		The optional second argument identifies a dated routing edition of the form routingYYMMDD e.g. routing161012.
-		If not specified, or given the value 'latest', the edition on the host having the most recent date will be selected.
+		The optional second argument can also be read from the config.
+		It identifies either a dated routing edition of the form routingYYMMDD e.g. routing161012, or an alias.
+		If not specified, it defaults to 'latest', the edition on the host having the most recent date.
 		It can also name an alias that symlinks to a dated routing edition.
 	path (deprecated)
 		The optional third argument (a non slash terminated directory path) says where on the host the routing edition can be found.
@@ -157,32 +158,32 @@ if [ "$(id -u)" = "0" ]; then
 fi
 
 # Optional first argument is the source of the new routing editions
-if [ $# -gt 0 ]
-then
+if [ $# -gt 0 ]; then
     # Use as supplied
     importHostname=$1
 else
     # Check a value was provided by the config
     if [ -z "${importHostname}" ]; then
 	# Report and abandon
-	echo "#	Import host name must be provide as an argument or in the config." 1>&2
+	echo "#	Import host name must be provided as an argument or in the config." 1>&2
 	exit 1
     fi
 fi
 
 # Optional second argument 'edition' names the desired routing edition
-if [ $# -gt 1 ]
-then
+if [ $# -gt 1 ]; then
     # Use as supplied
     desiredEdition=$2
 else
-    # Default
-    desiredEdition="latest"
+    # When no value is provided by the config set a default
+    if [ -z "${desiredEdition}" ]; then
+	# Default
+	desiredEdition=latest
+    fi
 fi
 
 # Optional third argument 'path' says where on the host the routing edition can be found
-if [ $# -gt 2 ]
-then
+if [ $# -gt 2 ]; then
     # Use supplied location
     importMachineEditions=$3
 else
@@ -191,8 +192,7 @@ else
 fi
 
 # Check the source is OK
-if [ -z "${importMachineEditions}" ]
-then
+if [ -z "${importMachineEditions}" ]; then
     # Report and abandon
     echo "#	importMachineEditions is not valid" 1>&2
     exit 1
@@ -212,6 +212,8 @@ if [ -n "${testargs}" ]; then
     echo "#	dumpFile=${dumpFile}";
     echo "#	tsvFile=${tsvFile}";
     echo "#	importHostname=${importHostname}";
+    echo "#	desiredEdition=${desiredEdition}";
+    echo "#	importMachineEditions=${importMachineEditions}";
     exit 0
 fi
 

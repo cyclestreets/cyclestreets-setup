@@ -2,7 +2,7 @@
 # Installs new editions of cycle routing data from another host.
 #
 # This script is idempotent - it can be safely re-run without destroying existing data
-#
+
 # Controls echoed output default to on
 verbose=1
 
@@ -11,7 +11,7 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -s -t -m email importHostname [edition] [path]
+	$0 -h -q -s -t -m email [importHostname] [edition] [path]
 
 OPTIONS
 	-h Show this message
@@ -22,7 +22,7 @@ OPTIONS
 
 ARGUMENTS
 	importHostname
-		A hostname eg machinename.cyclestreets.net
+		A hostname eg machinename.cyclestreets.net, as provided else read from config.
 
 	edition
 		The optional second argument identifies a dated routing edition of the form routingYYMMDD e.g. routing161012.
@@ -105,6 +105,49 @@ vecho()
 
 
 
+
+# Bomb out if something goes wrong
+set -e
+
+# Lock directory
+lockdir=/var/lock/cyclestreets
+mkdir -p $lockdir
+
+# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
+(
+	flock -n 9 || { vecho '#\tAn installation is already running' ; exit 1; }
+
+
+### CREDENTIALS ###
+
+# Get the script directory see: http://stackoverflow.com/a/246128/180733
+# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
+SOURCE="${BASH_SOURCE[0]}"
+DIR="$( dirname "$SOURCE" )"
+while [ -h "$SOURCE" ]
+do
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+# Use this to remove the ../
+ScriptHome=$(readlink -f "${DIR}/..")
+
+# Name of the credentials file
+configFile=${ScriptHome}/.config.sh
+
+# Generate your own credentials file by copying from .config.sh.template
+if [ ! -x ${configFile} ]; then
+    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
+    exit 1
+fi
+
+# Load the credentials
+. ${configFile}
+
+
 ### Stage 1 - general setup
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
@@ -113,16 +156,19 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Check there is an argument
-if [ $# -lt 1 ]
+# Optional first argument is the source of the new routing editions
+if [ $# -gt 0 ]
 then
-    # Report and abandon
-    echo "#	Import host name is a required argument." 1>&2
-    exit 1
+    # Use as supplied
+    importHostname=$1
+else
+    # Check a value was provided by the config
+    if [ -z "${importHostname}" ]; then
+	# Report and abandon
+	echo "#	Import host name must be provide as an argument or in the config." 1>&2
+	exit 1
+    fi
 fi
-
-# Bind the source of the new routing editions
-importHostname=$1
 
 # Optional second argument 'edition' names the desired routing edition
 if [ $# -gt 1 ]
@@ -169,46 +215,6 @@ if [ -n "${testargs}" ]; then
     exit 0
 fi
 
-# Bomb out if something goes wrong
-set -e
-
-# Lock directory
-lockdir=/var/lock/cyclestreets
-mkdir -p $lockdir
-
-# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
-(
-	flock -n 9 || { vecho '#\tAn installation is already running' ; exit 1; }
-
-
-### CREDENTIALS ###
-
-# Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The multi-line method of geting the script directory is needed because this script is likely symlinked from cron
-SOURCE="${BASH_SOURCE[0]}"
-DIR="$( dirname "$SOURCE" )"
-while [ -h "$SOURCE" ]
-do 
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
-done
-DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-
-# Use this to remove the ../
-ScriptHome=$(readlink -f "${DIR}/..")
-
-# Name of the credentials file
-configFile=${ScriptHome}/.config.sh
-
-# Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
-    exit 1
-fi
-
-# Load the credentials
-. ${configFile}
 
 
 ## Main body of script

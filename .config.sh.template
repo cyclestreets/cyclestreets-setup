@@ -84,6 +84,9 @@ websitesBackupsFolder=/websites/www/backups
 websitesLogsFolder=/websites/www/logs
 importContentFolder=/websites/www/import
 
+# Bind the source of the new routing editions
+##importHostname=
+
 # Names the log containing journey api performance data (v1 api only)
 journeysLog="${csHostname}-access.log"
 

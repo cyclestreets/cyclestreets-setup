@@ -50,7 +50,7 @@ set -e
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo -e "#\tThe config file, ${configFile}, does not exist or is not executable. Copy your own based on the ${configFile}.template file, or create a symlink to the configuration."
+    echo -e "#\tThe config file, ${configFile}, does not exist or is not executable. Copy your own based on the .config.sh.template file, or create a symlink to the configuration."
     exit 1
 fi
 

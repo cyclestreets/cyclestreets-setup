@@ -1,24 +1,7 @@
 #cloud-config
 # https://cloudinit.readthedocs.io/en/latest/topics/examples.html
-# https://sysadmins.co.za/getting-started-with-multipass-vms/
 
 # CONFIGURED_BY_HERE
-
-# Add groups to the system
-groups:
-  - rollout
-
-# Add users to the system. Users are added after groups are added.
-users:
-  - default
-  - name: YOUR_LOGIN_NAME
-    gecos: YOUR_LOGIN_GECOS
-    groups: users, rollout, sudo
-    shell: /bin/bash
-    ssh_authorized_keys:
-      - YOUR_PUBLIC_KEY
-    sudo:
-      - ALL=(ALL) NOPASSWD:ALL
 
 # This is the configuration syntax that the write_files module
 # will know how to understand. encoding can be given b64 or gzip or (gz+b64).
@@ -50,43 +33,51 @@ write_files:
       # CycleStreets
       csHostname=cs-multipass
       # ...
+
+# Add groups to the system
+groups:
+  - rollout
+
+# Add users to the system. Users are added after groups are added.
+users:
+  # A default user
+  - default
+
+  # Your user
+  - name: YOUR_LOGIN_NAME
+    gecos: YOUR_LOGIN_GECOS
+    groups: users, rollout, sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - YOUR_PUBLIC_KEY
+    sudo:
+      - ALL=(ALL) NOPASSWD:ALL
+
       
 runcmd:
- # Own your home folder
- - [ chown, YOUR_LOGIN_NAME.YOUR_LOGIN_NAME, /home/YOUR_LOGIN_NAME ]
- - [ chmod, g+ws, /home/YOUR_LOGIN_NAME ]
+  # Set the ownership of the home folders
+ - chown YOUR_LOGIN_NAME.YOUR_LOGIN_NAME /home/YOUR_LOGIN_NAME && chmod g+ws /home/YOUR_LOGIN_NAME
 
- # Create temporary containing folder
- # Advice from https://cloudinit.readthedocs.io/en/latest/topics/examples.html#run-commands-on-first-boot suggests:
- # Note: Don't write files to /tmp from cloud-init use /run/somedir instead.
- # Early boot environments can race systemd-tmpfiles-clean LP: #1707222.
- - [ mkdir, -p, /run/mydir ]
- - [ chown, YOUR_LOGIN_NAME.rollout, /run/mydir ]
- - [ chmod, g+ws, /run/mydir ]
+# Clone the cyclestreets-setup repo
+ - mkdir -p /opt/cyclestreets-setup
+ - chown YOUR_LOGIN_NAME.rollout /opt/cyclestreets-setup && chmod g+ws /opt/cyclestreets-setup
+ - su --login YOUR_LOGIN_NAME -c "git clone \"git@github.com:cyclestreets/cyclestreets-setup.git\" /opt/cyclestreets-setup"
+ - su --login YOUR_LOGIN_NAME -c "git config -f /opt/cyclestreets-setup/.git/config core.sharedRepository group"
+ - cp /opt/cyclestreets-setup/live-deployment/cyclestreets-setup-update.cron /etc/cron.d/cyclestreets-setup-update && chown root.root /etc/cron.d/cyclestreets-setup-update && chmod 0600 /etc/cron.d/cyclestreets-setup-update
 
- # Clone the cyclestreets-setup repo
- - [ su, --login, YOUR_LOGIN_NAME, -c, "git clone \"https://github.com/cyclestreets/cyclestreets-setup.git\" /run/mydir/cyclestreets-setup" ]
- - [ su, --login, YOUR_LOGIN_NAME, -c, "git config -f /run/mydir/cyclestreets-setup/.git/config core.sharedRepository group" ]
- - [ mv, /run/mydir/cyclestreets-setup, /opt ]
 
  # Link configuration script
- - [ su, --login, YOUR_LOGIN_NAME, -c, "ln -s /home/YOUR_LOGIN_NAME/cyclestreets-setup-config.sh /opt/cyclestreets-setup/.config.sh" ]
+ - su --login YOUR_LOGIN_NAME -c "ln -s /home/YOUR_LOGIN_NAME/cyclestreets-setup-config.sh /opt/cyclestreets-setup/.config.sh"
 
  # Install CycleStreets website
-# - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/live-deployment/deploy.sh" ]
+# - su --login YOUR_LOGIN_NAME -c "sudo /opt/cyclestreets-setup/live-deployment/deploy.sh"
 
  # Alternately install the import system
-# - [ su, --login, YOUR_LOGIN_NAME, -c, "sudo /opt/cyclestreets-setup/import-deployment/deploy.sh" ]
+# - su --login YOUR_LOGIN_NAME -c "sudo /opt/cyclestreets-setup/import-deployment/deploy.sh"
 
  # Build a new routing edition
-# - [ su, --login, cyclestreets, -c, "/opt/cyclestreets-setup/newbuild.sh /websites/www/content/import/.config.php" ]
-
- # Tidy up
- - [ rmdir, /run/mydir ]
+# - su --login cyclestreets -c "/opt/cyclestreets-setup/newbuild.sh /websites/www/content/import/.config.php"
 
 
 # final_message
-# default: cloud-init boot finished at $TIMESTAMP. Up $UPTIME seconds
-# this message is written by cloud-final when the system is finished
-# its first boot
-final_message: "At last, the system is finally up, after $UPTIME seconds."
+final_message: "At last, the CycleStreets system is finally up, after $UPTIME seconds."

@@ -108,7 +108,7 @@ if [ -n "${devHostname}" ]; then
     # If connections failed clear the cache by using: mysqladmin flush-hosts
     # https://dev.mysql.com/doc/refman/8.0/en/problems-connecting.html
     if [ -n "${devIPv6}" ]; then
-	echo -e "\n# The dev machine's IPv6 address via NAT64, added by cloud-init\n${devIPv6} ${devHostname}\n" >> /etc/hosts
+	echo -e "\n# The dev machine's IPv6 address via NAT64, needed for PhpMyAdmin added by CycleStreets\n${devIPv6} ${devHostname}\n" >> /etc/hosts
     fi
     # Useful binding
     # The defaults-extra-file is a positional argument which must come first.

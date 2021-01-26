@@ -553,8 +553,9 @@ then
     ${superMysql} cyclestreets -e "insert map_apikeys (id, service, apiKey, approved) values (2, 'Sample API calls from /api/ webpage', '${testsApiKey}', 1);"
 
     # Create an admin user
+    # Use a validatedAt that is a day old to avoid notification of new users from pseudoCron.
     encryption=`php -r"echo password_hash('${password}', PASSWORD_DEFAULT);"`
-    ${superMysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', NOW(), NOW());"
+    ${superMysql} cyclestreets -e "insert user_user (username, email, password, privileges, validatedAt, createdAt) values ('${username}', '${administratorEmail}', '${encryption}', 'administrator', date_sub(now(), interval 1 day), NOW());"
 
     # Create a welcome tinkle
     ${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (1, 'Welcome to CycleStreets');"

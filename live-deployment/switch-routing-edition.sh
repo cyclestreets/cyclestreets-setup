@@ -239,8 +239,6 @@ if [ -n "${fallbackRoutingUrl}" ]; then
 
     # Use the fallback server during switch over
     ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' where id = 1;";
-    # Restore the multiple editions state
-    ${superMysql} cyclestreets -e "update map_config set multipleEditions='${multipleEditions}';";
     echo "#	Now using fallback routing service"
 else
 

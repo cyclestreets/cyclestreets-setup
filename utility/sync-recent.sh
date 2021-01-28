@@ -23,6 +23,9 @@ $download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers
 # rsync: mkstemp "/websites/www/content/data/photomap2/46302/.original.jpg.H3xy2f" failed: Permission denied (13)
 # rsync: mkstemp "/websites/www/content/data/photomap2/46302/.rotated.jpg.Y3sb28" failed: Permission denied (13)
 # these appear to be temporary files, possibly generated and owned by the system. Hard to track down and probably safe to ignore.
+# To avoid them use:
+# sudo chmod g+w -R ${websitesContentFolder}/data/photomap*
+
 # Tolerate errors from rsync
 set +e
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data

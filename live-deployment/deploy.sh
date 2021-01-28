@@ -98,18 +98,28 @@ then
     systemctl restart mysql
 fi
 
-# Allow specific access from the dev machine
+# Allow specific access to mysql from the dev machine
 if [ -n "${devHostname}" ]; then
+
+    # NAT64 - Network Address Translation between IP versions 6 and 4.
     # The dev machine is currently an IPv4 only host.
-    # When accessing using IPv6 then reverse DNS needs setup to verify the dev hostname.
-    # Check with:
-    # getent hosts ${devHostname}
-    #
-    # If connections failed clear the cache by using: mysqladmin flush-hosts
-    # https://dev.mysql.com/doc/refman/8.0/en/problems-connecting.html
-    if [ -n "${devIPv6}" ]; then
-	echo -e "\n# The dev machine's IPv6 address via NAT64, needed for PhpMyAdmin added by CycleStreets\n${devIPv6} ${devHostname}\n" >> /etc/hosts
+    # Servers that have IPv6 addresses are reached via NAT64 routers which provide mappings for IPv4.
+    hasIPv6=`dig -t AAAA ${csHostname} +short`
+
+    # MySQL authenticates connections with a reverse DNS lookup.
+    # For those cases a reverse lookup of the IPv6 address resolves to the NAT64 router, rather than the dev machine.
+    # To work around that problem a hard coded reverse lookup is added to /etc/hosts
+    if [ -n "${hasIPv6}" -a -n "${devIPv6}" ]; then
+
+	# Check it worked with:
+	# getent hosts ${devHostname}
+	#
+	# If connections failed clear the cache by using: mysqladmin flush-hosts
+	# or in the mysql client by running: flush hosts;
+	# https://dev.mysql.com/doc/refman/8.0/en/problems-connecting.html
+	echo -e "\n# The dev machine's IPv6 address via NAT64, needed for PhpMyAdmin added by CycleStreets live-deployment\n${devIPv6} ${devHostname}\n" >> /etc/hosts
     fi
+
     # Useful binding
     # The defaults-extra-file is a positional argument which must come first.
     superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"

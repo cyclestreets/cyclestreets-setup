@@ -578,7 +578,7 @@ ${superMysql} ${importEdition} -e "call indexPhotos(0);"
 # Add the new row to the map_edition table
 if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${importEdition}')" cyclestreets
 then
-    echo "#	There was a problem adding the new edition: ${importEdition}. The import install did not complete."
+    echo "#	$(date)	There was a problem adding the new edition: ${importEdition}. The import install did not complete."
     exit 1
 fi
 
@@ -586,7 +586,7 @@ fi
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "#	$(date) Installation completed, switching to the routing service using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
+echo "#	$(date)	Installation completed, switching to the routing service using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
 
 # Switch to the new edition
 ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}

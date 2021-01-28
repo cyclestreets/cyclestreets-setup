@@ -208,6 +208,18 @@ if [ ! -e "${websitesContentFolder}/data/routing/${newEdition}/installationCompl
 	exit 1
 fi
 
+## Multiple editions - result will be yes or no
+multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1;")
+if [ "${multipleEditions}" = yes ]; then
+
+    # Turn off multiple editions for the switchover
+    ${superMysql} cyclestreets -e "update map_config set multipleEditions='no';";
+
+    # With multiple editions turned off the map_edition table is not read, and so can be prepared for the new state
+    ${superMysql} cyclestreets -e "update map_edition set active = 'no'  where ordering > 1;";
+    ${superMysql} cyclestreets -e "update map_edition set active = 'yes' where name = '${newEdition}';";
+fi
+
 ### Do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)
@@ -226,7 +238,9 @@ if [ -n "${fallbackRoutingUrl}" ]; then
     fi
 
     # Use the fallback server during switch over
-    ${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' WHERE id = 1;";
+    ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' where id = 1;";
+    # Restore the multiple editions state
+    ${superMysql} cyclestreets -e "update map_config set multipleEditions='${multipleEditions}';";
     echo "#	Now using fallback routing service"
 else
 
@@ -274,7 +288,10 @@ if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
 fi
 
 # Switch the website to the local server and ensure the routingDb is also set
-${superMysql} cyclestreets -e "UPDATE map_config SET routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' WHERE id = 1;";
+${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' where id = 1;";
+
+# Restore the multiple editions state
+${superMysql} cyclestreets -e "update map_config set multipleEditions='${multipleEditions}';";
 
 # Re-open the journey planner
 ${superMysql} cyclestreets -e "call openJourneyPlanner();";

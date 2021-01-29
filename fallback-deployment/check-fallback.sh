@@ -55,15 +55,18 @@ logFile=$SCRIPTDIRECTORY/log.txt
 
 # This script is called by cron.
 # Check the daily fallback log wrote a success message having today's date.
-todayDatePattern="$(date +%a\ %b\ %_d) [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\} [A-Z]\{3\} $(date +%Y)"
+# Items are logged using: date --iso-8601=seconds which is this format: 2021-01-29T12:40:47+00:00
+# This pattern searches for the date followed by multiple non-whitespace (upper S) and then a single space (lower s)
+todayDatePattern="$(date +%Y-%m-%d)\S\+\s"
 inComplete=
 
 # Check the log for confirmation that the item given as first argument has completed
-checkItemDone()
+checkItemDone ()
 {
-    if ! grep -q "${todayDatePattern}\s$1 done" "${logFile}"; then
+    local item=$1
+    if ! grep -q "${todayDatePattern}${item} done" "${logFile}"; then
 	# Set or append to the list of incomplete items
-	[[ -z "${inComplete}" ]] && inComplete=$1 || inComplete="${inComplete}, $1"
+	[[ -z "${inComplete}" ]] && inComplete=${item} || inComplete="${inComplete}, ${item}"
     fi
 }
 
@@ -82,7 +85,7 @@ if [ -n "${inComplete}" ]; then
 fi
 
 # Finish
-echo "$(date)	Checked" >> ${logFile}
+echo "$(date --iso-8601=seconds)	Checked" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

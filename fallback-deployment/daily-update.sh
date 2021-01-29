@@ -64,17 +64,17 @@ fi
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
 #echo "#	CycleStreets fallback update in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets fallback update" >> ${setupLogFile}
+echo "$(date --iso-8601=seconds)	CycleStreets fallback update" >> ${setupLogFile}
 
 # Ensure a fallback database name is set
 if [ -z "${csFallbackDb}" ]; then
-    echo "$(date) Set a fallback database name to restore."
+    echo "$(date --iso-8601=seconds) Set a fallback database name to restore."
     exit 1
 fi
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-    echo "$(date) User ${username} must exist: please run the main website install script"
+    echo "$(date --iso-8601=seconds) User ${username} must exist: please run the main website install script"
     exit 1
 fi
 
@@ -86,7 +86,7 @@ fi
 
 # Ensure the main website installation is present
 if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-    echo "$(date) The main website installation must exist: please run the main website install script"
+    echo "$(date --iso-8601=seconds) The main website installation must exist: please run the main website install script"
     exit 1
 fi
 
@@ -128,7 +128,7 @@ ${superMysql} ${csFallbackDb} -e "update map_config set photomapStatus = 'closed
 ${superMysql} ${csFallbackDb} -e "update map_config set enforceSignin = 'yes';";
 
 # Finish (the presence of this exact text is sought by check-fallback.sh)
-echo "$(date)	Fallback update done" >> ${setupLogFile}
+echo "$(date --iso-8601=seconds)	Fallback update done" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

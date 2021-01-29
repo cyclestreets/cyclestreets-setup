@@ -19,11 +19,11 @@ minItineraryId=$(${superMysql} cyclestreets -Nse "select min(id) from map_itiner
 if [ "${minItineraryId}" = "NULL" ]; then
 
     #	No new routes to partition (can happen e.g if the site is in a fallback mode)
-    echo "$(date)	No new routes, so skipping repartition." >> ${setupLogFile}
+    echo "$(date --iso-8601=seconds)	No new routes, so skipping repartition." >> ${setupLogFile}
 
 else
     #	Repartition latest routes
-    echo "$(date)	Repartition batch: ${minItineraryId}. Now closing site to routing." >> ${setupLogFile}
+    echo "$(date --iso-8601=seconds)	Repartition batch: ${minItineraryId}. Now closing site to routing." >> ${setupLogFile}
 
     #	Do this task first so that the closure of the journey planner has a predictable time - ie. the start of the cron job.
     #	Close the journey planner to stop new itineraries being made while we archive the current IJS tables
@@ -39,7 +39,7 @@ else
     ${superMysql} cyclestreets -e "update map_config set journeyPlannerStatus='live',notice=''";
 
     #	Notify re-opened
-    echo "$(date)	Re-opened site to routing." >> ${setupLogFile}
+    echo "$(date --iso-8601=seconds)	Re-opened site to routing." >> ${setupLogFile}
 
     #	Archive the IJS tables
     dump=${websitesBackupsFolder}/recentroutes/${dumpPrefix}_routes_${minItineraryId}.sql.gz
@@ -62,7 +62,7 @@ else
     fi
 
     #	Notify dumped
-    echo "$(date)	Dump file created." >> ${setupLogFile}
+    echo "$(date --iso-8601=seconds)	Dump file created." >> ${setupLogFile}
 
     #	Create md5 hash
     openssl dgst -md5 ${dump} > ${dump}.md5

@@ -40,7 +40,7 @@ subject="CycleStreets cron scripts: A dump download issue on server: $server has
 
 #	A function to log and email its first argument, which should be a helpful message
 function logAndEmail {
-    echo "$(date)	$1" >> $log
+    echo "$(date --iso-8601=seconds)	$1" >> $log
     echo $1 | mail -s "$subject" "$email"
 }
 
@@ -66,7 +66,7 @@ then
     size80=$((($size - ($size/5))))
 
     # Log
-    echo "$(date)	Size of existing ${dump} is ${size}" >> $log
+    echo "$(date --iso-8601=seconds)	Size of existing ${dump} is ${size}" >> $log
 fi
 
 #	Keep trying while there's still time
@@ -111,7 +111,7 @@ do
     fi
 
     # Trace
-    # echo "$(date)	The md5 is not ready, waiting minutes left = ${minutesWait}"
+    # echo "$(date --iso-8601=seconds)	The md5 is not ready, waiting minutes left = ${minutesWait}"
 
     # Wait a minute
     sleep 60
@@ -129,7 +129,7 @@ fi
 #	The -p tries to set the mode of the file, which will require the right permissions
 scp -p ${server}:${md5} ${folder}
 #	Log
-echo "$(date)	Fetched ${md5}" >> $log
+echo "$(date --iso-8601=seconds)	Fetched ${md5}" >> $log
 
 
 #	Download the main file
@@ -137,7 +137,7 @@ echo "$(date)	Fetched ${md5}" >> $log
 #	Use rsync instead...
 rsync -t ${server}:${dump} ${folder}
 #	Log
-echo "$(date)	Fetched ${dump}" >> $log
+echo "$(date --iso-8601=seconds)	Fetched ${dump}" >> $log
 
 #	The dump must be readable
 if [ ! -r ${dump} ]
@@ -163,7 +163,7 @@ fi
 #	Warn if the dump has shrunk
 newSize=$(stat -c%s $dump)
 #	Log
-echo "$(date)	Size of new ${dump} is ${newSize}" >> $log
+echo "$(date --iso-8601=seconds)	Size of new ${dump} is ${newSize}" >> $log
 if [ $newSize -lt $size80 ]
 then
     logAndEmail "${dump} has shrunk by more than 20% from ${size} to ${newSize}"

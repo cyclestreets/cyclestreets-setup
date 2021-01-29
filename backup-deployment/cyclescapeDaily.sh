@@ -59,7 +59,7 @@ fi
 # Logging
 logFile=$SCRIPTDIRECTORY/log.txt
 touch ${logFile}
-echo "$(date)	Cyclescape daily backup" >> ${logFile}
+echo "$(date --iso-8601=seconds)	Cyclescape daily backup" >> ${logFile}
 
 
 # Main body
@@ -74,7 +74,7 @@ $download $administratorEmail $server $folder cyclescapeDB.sql.gz
 $download $administratorEmail $server $folder cyclescapeShared.tar.bz2
 
 # Finish
-echo "$(date)	Cyclescape daily backup done" >> ${logFile}
+echo "$(date --iso-8601=seconds)	Cyclescape daily backup done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

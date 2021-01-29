@@ -61,11 +61,11 @@ fi
 # Logging
 logFile=$SCRIPTDIRECTORY/log.txt
 touch ${logFile}
-echo "$(date)	CycleStreets daily backup" >> ${logFile}
+echo "$(date --iso-8601=seconds)	CycleStreets daily backup" >> ${logFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-    echo "$(date) User ${username} must exist: please run the main website install script"
+    echo "$(date --iso-8601=seconds) User ${username} must exist: please run the main website install script"
     exit 1
 fi
 
@@ -99,8 +99,8 @@ if [ -n "${micrositesServer}" ]; then
     mv ${folder}/microsites_allDatabases.sql.gz* $micrositesBackupsFolder
 fi
 
-# Finish
-echo "$(date)	CycleStreets daily backup done" >> ${logFile}
+# Finish (the presence of this exact text is sought by check-backup.sh)
+echo "$(date --iso-8601=seconds)	CycleStreets daily backup done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

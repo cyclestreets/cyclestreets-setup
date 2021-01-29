@@ -55,17 +55,17 @@ fi
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
 #echo "#	CycleStreets daily backup in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily backup $(id)" >> ${setupLogFile}
+echo "$(date --iso-8601=seconds)	CycleStreets daily backup $(id)" >> ${setupLogFile}
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} >/dev/null 2>&1 ]; then
-	echo "$(date) User ${username} must exist: please run the main website install script" >> ${setupLogFile}
+	echo "$(date --iso-8601=seconds) User ${username} must exist: please run the main website install script" >> ${setupLogFile}
 	exit 1
 fi
 
 # Ensure the main website installation is present
 if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]; then
-	echo "$(date) The main website installation must exist: please run the main website install script" >> ${setupLogFile}
+	echo "$(date --iso-8601=seconds) The main website installation must exist: please run the main website install script" >> ${setupLogFile}
 	exit 1
 fi
 
@@ -88,7 +88,7 @@ dumpPrefix=www
 
 
 # Finish
-echo "$(date)	All done" >> ${setupLogFile}
+echo "$(date --iso-8601=seconds)	All done" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

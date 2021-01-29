@@ -50,7 +50,7 @@ fi
 # Logging
 logFile=$SCRIPTDIRECTORY/log.txt
 touch ${logFile}
-echo "$(date)	CycleStreets daily rotation" >> ${logFile}
+echo "$(date --iso-8601=seconds)	CycleStreets daily rotation" >> ${logFile}
 
 # Main body
 
@@ -67,14 +67,14 @@ folder=/websites/microsites/backup
 $rotateDaily $folder microsites_websites.tar.bz2
 $rotateDaily $folder microsites_allDatabases.sql.gz
 
-echo "$(date)	CycleStreets daily rotation done" >> ${logFile}
+echo "$(date --iso-8601=seconds)	CycleStreets daily rotation done" >> ${logFile}
 
 #	Cyclescape
 folder=/websites/cyclescape/backup
 $rotateDaily $folder cyclescapeDB.sql.gz
 $rotateDaily $folder cyclescapeShared.tar.bz2
 
-echo "$(date)	Cyclescape daily rotation done" >> ${logFile}
+echo "$(date --iso-8601=seconds)	Cyclescape daily rotation done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

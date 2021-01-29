@@ -50,7 +50,7 @@ fi
 # Logging
 logFile=$SCRIPTDIRECTORY/log.txt
 touch ${logFile}
-echo "$(date)	CycleStreets weekly rotation" >> ${logFile}
+echo "$(date --iso-8601=seconds)	CycleStreets weekly rotation" >> ${logFile}
 
 # Main body
 
@@ -71,7 +71,7 @@ folder=/websites/cyclescape/backup
 $rotateWeekly $folder cyclescapeDB.sql.gz
 $rotateWeekly $folder cyclescapeShared.tar.bz2
 
-echo "$(date)	CycleStreets weekly rotation done" >> ${logFile}
+echo "$(date --iso-8601=seconds)	CycleStreets weekly rotation done" >> ${logFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

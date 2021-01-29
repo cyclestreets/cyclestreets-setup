@@ -1,13 +1,8 @@
 #!/bin/bash
-# Script to update CycleStreets on a daily basis
-# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
+# Script to update CycleStreets fallback
 
 # This script is idempotent - it can be safely re-run without destroying existing data.
 # It should be run as cyclestreets user - a check for that occurs below.
-
-# When in fallback mode uncomment the next two lines:
-#echo "# Skipping in fallback mode"
-#exit 1
 
 ### Stage 1 - general setup
 
@@ -26,7 +21,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo 'CycleStreets daily update is already running' ; exit 1; }
+	flock -n 9 || { echo 'CycleStreets fallback update is already running' ; exit 1; }
 
 
 ### DEFAULTS ###
@@ -68,8 +63,8 @@ fi
 # Logging
 setupLogFile=$SCRIPTDIRECTORY/log.txt
 touch ${setupLogFile}
-#echo "#	CycleStreets daily update in progress, follow log file with: tail -f ${setupLogFile}"
-echo "$(date)	CycleStreets daily update" >> ${setupLogFile}
+#echo "#	CycleStreets fallback update in progress, follow log file with: tail -f ${setupLogFile}"
+echo "$(date)	CycleStreets fallback update" >> ${setupLogFile}
 
 # Ensure a fallback database name is set
 if [ -z "${csFallbackDb}" ]; then
@@ -132,8 +127,8 @@ ${superMysql} ${csFallbackDb} -e "update map_config set photomapStatus = 'closed
 #	Enforce sign-in to avoid this fallback server being spidered while in normal mode
 ${superMysql} ${csFallbackDb} -e "update map_config set enforceSignin = 'yes';";
 
-# Finish
-echo "$(date)	All done" >> ${setupLogFile}
+# Finish (the presence of this exact text is sought by check-fallback.sh)
+echo "$(date)	Fallback update done" >> ${setupLogFile}
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

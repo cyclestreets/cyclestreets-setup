@@ -11,13 +11,12 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -s -t -m email [importHostname] [edition] [path]
+	$0 -h -q -t -m email [importHostname] [edition] [path]
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
-	-s Skip the database dump file and suggest an alternative strategy for copying the database
 	-t Does a dry run showing the resolved options
 
 ARGUMENTS
@@ -65,16 +64,13 @@ dumpFile=dump.sql.gz
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qst" option ; do
+while getopts "hm:qt" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
 	    ;;
-	# Skip the mysql dump file
-	s) dumpFile=
-	   ;;
 	# Dry run shows results of arg processing
 	t)
 	    testargs=test
@@ -393,11 +389,7 @@ scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/siev
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 
 #	Mysql dump file
-if [ -n "${dumpFile}" ]; then
-    scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
-else
-    echo "#	Skipping dump file"
-fi
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
 
 #	Note that all files are downloaded
 echo "#	$(date)	File transfer stage complete"
@@ -407,11 +399,9 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionF
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
 fi
-if [ -n "${dumpFile}" ]; then
-    if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
-	echo "#	Stopping: dump md5 does not match"
-	exit 1
-    fi
+if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
+    echo "#	Stopping: dump md5 does not match"
+    exit 1
 fi
 
 ### Pre stage 4: Close system to routing and stop the existing routing service
@@ -443,124 +433,14 @@ rm -f ${tsvFile}
 # Narrate
 echo "#	$(date)	Installing the routing database: ${importEdition}"
 
-if [ -n "${dumpFile}" ]; then
+#	Create the database (which will be empty for now) and set default collation
+${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
-    #	Create the database (which will be empty for now) and set default collation
-    ${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+# Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
+gunzip < ${dumpFile} | ${superMysql} ${importEdition}
 
-    # Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
-    gunzip < ${dumpFile} | ${superMysql} ${importEdition}
-
-    # Remove the zip
-    rm -f ${dumpFile}
-
-else
-
-    cat <<EOF
-### Alternative strategy for transfering database demonstrated for user: simon
-### (Deprecated August 2020)
-
-## On source machine
-# In mysql park some tables
-# rmysql
-
--- Create database to park the tables
-create database routing180000;
-use ${importEdition}
-select database();
-
--- Park these tables - which are not necessary on the live machine
--- Map tables
-rename table map_cello_joint to routing180000.map_cello_joint;
-rename table map_cello_leg to routing180000.map_cello_leg;
-rename table map_cello_minCosts to routing180000.map_cello_minCosts;
-rename table map_cello_routing to routing180000.map_cello_routing;
-
--- Dev tables
-rename table dev_elevationGridCell to routing180000.dev_elevationGridCell;
-rename table dev_publicParkingPlace to routing180000.dev_publicParkingPlace;
-
-
-# Shutdown mysql
-# simon@${importHostname}:~$
-sudo systemctl stop mysql
-
-# Move the database folder and change owner
-sudo mv /var/lib/mysql/${importEdition} ~/tmp/
-sudo chown -R simon.simon ~/tmp/${importEdition}
-
-
-## On target machine
-# simon@target.cyclestreets.net:~$
-
-# Copy from source (may take many hours)
-# Use a low priority to allow other stuff to run smoothly
-nice -n12 rsync -avz ${importHostname}:~/tmp/${importEdition} ~/tmp
-
-# Move copy into datbase
-# Ownership
-sudo chown -R mysql.mysql ~/tmp/${importEdition}
-
-# Move
-sudo mv ~/tmp/${importEdition} /var/lib/mysql/
-
-# May be necessary to restart mysql
-sudo systemctl restart mysql
-
-##	Load nearest point stored procedures
-smysql ${importEdition} < /websites/www/content/documentation/schema/nearestPoint.sql
-
-## Build the photo index
-smysql ${importEdition} < /websites/www/content/documentation/schema/photosEnRoute.sql
-
-# Create a file that indicates the end of the script was reached - this can be tested for by the switching script
-touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
-
-# This takes about 75 minutes
-smysql ${importEdition} -e "call indexPhotos(0);"
-
-## Clean up
-## Back on source machine
-# simon@${importHostname}:~$
-# Put the database back
-# Ownership
-sudo chown -R mysql.mysql ~/tmp/${importEdition}
-
-# Move
-sudo mv ~/tmp/${importEdition} /var/lib/mysql/
-
-# Start mysql
-sudo systemctl start mysql
-
-# Restore the parked tables
--- Map tables
-rename table routing180000.map_cello_joint to ${importEdition}.map_cello_joint;
-rename table routing180000.map_cello_leg to ${importEdition}.map_cello_leg;
-rename table routing180000.map_cello_minCosts to ${importEdition}.map_cello_minCosts;
-rename table routing180000.map_cello_routing to ${importEdition}.map_cello_routing;
-
--- Dev tables
-rename table routing180000.dev_elevationGridCell to ${importEdition}.dev_elevationGridCell;
-rename table routing180000.dev_publicParkingPlace to ${importEdition}.dev_publicParkingPlace;
-
--- Check tables
-show tables from routing180000;
-
--- If empty!
--- drop database routing180000;
-
-### /Alternative strategy
-
-#	$(date) Installation completed.
-#
-## On target machine
-#	Final step:
-#	To switch routing service use:
-#	${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
-
-EOF
-    exit;
-fi
+# Remove the zip
+rm -f ${dumpFile}
 
 ### Stage 6 - run post-install stored procedures
 

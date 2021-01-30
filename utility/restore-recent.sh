@@ -7,7 +7,7 @@ folder=${websitesBackupsFolder}
 
 # Fix the ownership after the photomap rsync using the same fixups as applied by
 # fallback-deployment/install-website.sh - but that requires root user.
-echo "$(date)	Photomap ownership" >> ${setupLogFile}
+echo "$(date --iso-8601=seconds)	Photomap ownership" >> ${setupLogFile}
 sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
 
 # Useful binding
@@ -15,7 +15,7 @@ sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFold
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Replace the database
-echo "$(date)	Replacing ${csFallbackDb} db" >> ${setupLogFile}
+echo "$(date --iso-8601=seconds)	Replacing ${csFallbackDb} db" >> ${setupLogFile}
 ${superMysql} -e "drop database if exists ${csFallbackDb};";
 ${superMysql} -e "create database ${csFallbackDb} default character set utf8mb4 collate utf8mb4_unicode_ci;";
 gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} ${csFallbackDb}
@@ -38,7 +38,7 @@ if [ "$restoreRecentRoutes" = true ]; then
 
 	#   Load them directly into the archive
 	gunzip < ${websitesBackupsFolder}/recentroutes/$fileName | ${superMysql} csArchive
-	echo "$(date)	Restored to archive: $fileName" >> ${setupLogFile}
+	echo "$(date --iso-8601=seconds)	Restored to archive: $fileName" >> ${setupLogFile}
 
 	# !! Consider deleting the file now that it has been used
 	#    but review how that would work with the rsync in sync-recent.sh

@@ -74,6 +74,11 @@ try {
 # Define a queries function; see: https://stackoverflow.com/a/23258691
 function runQueries ($databaseConnection, $sql)
 {
+	# If the SQL contains an indication that it should be run manually, skip
+	if (substr_count ($sql, '-- manual-installation')) {
+		return true;	// Return true, so that the counter advances
+	}
+	
 	# Execute the SQL
 	$stmt = $databaseConnection->prepare ($sql);
 	$stmt->execute ();

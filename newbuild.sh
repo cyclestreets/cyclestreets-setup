@@ -5,11 +5,10 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -a alias -h -q -r -s -m email config
+	$0 -h -q -r -s -m email config
 
 OPTIONS
 	-h Show this message
-	-a Argument is a name to use as an alias to symlink to the routing edtion
 	-m Take an email address as an argument - for notifications when the build breaks or completes
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
@@ -17,7 +16,8 @@ OPTIONS
 
 ARGUMENTS
 	config
-		Configuration file
+		Configuration file or symlink to one.
+		When a symlink is provided it's basename is used as an alias to create symlink to the output routing edtion.
 
 DESCRIPTION
 	Builds a new routing edition, installs on the local server, and runs tests, optionally emailing results.
@@ -33,19 +33,15 @@ removeOldest=
 notifyEmail=
 # Secondary edition
 secondaryEdition=
-# Routing edition alias: a folder name which is used as a symlink e.g. centralLondon or custom32
+# Routing edition alias: a folder name which is used as a symlink e.g. centralLondon or custom641
 editionAlias=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "a:hm:qrs" option ; do
+while getopts "hm:qrs" option ; do
     case ${option} in
         h) usage; exit ;;
-	a)
-	    # Set routing edition alias
-	    editionAlias=$OPTARG
-	    ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
@@ -80,6 +76,12 @@ if [ -z "$1" ]; then
 fi
 importConfig=$1
 
+# Dereference any symlink
+if [ -L "${importConfig}" ]; then
+    # Use the symlink as the alias for the edition
+    editionAlias=`basename ${importConfig}`
+    importConfig=`readlink ${importConfig}`
+fi
 
 # Helper function
 # Echo output only if the verbose option has been set

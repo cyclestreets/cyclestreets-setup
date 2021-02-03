@@ -69,21 +69,6 @@ done
 # After getopts is done, shift all processed options away with
 shift $((OPTIND-1))
 
-# Check required arguemnt
-if [ -n "$1" ]; then
-    importConfig=$1
-else
-    # Set default
-    importConfig=${importContentFolder}/.config.php
-fi
-
-# Dereference any symlink
-if [ -L "${importConfig}" ]; then
-    # Use the symlink as the alias for the edition
-    editionAlias=`basename ${importConfig}`
-    importConfig=`readlink ${importConfig}`
-fi
-
 # Helper function
 # Echo output only if the verbose option has been set
 vecho()
@@ -125,6 +110,21 @@ set -e
 ## Start
 vecho "#\tStarting $0"
 
+
+# Check required arguemnt
+if [ -n "$1" ]; then
+    importConfig=$1
+else
+    # Set default
+    importConfig=${importContentFolder}/.config.php
+fi
+
+# Dereference any symlink
+if [ -L "${importConfig}" ]; then
+    # Use the symlink as the alias for the edition
+    editionAlias=`basename ${importConfig}`
+    importConfig=`readlink ${importConfig}`
+fi
 
 ## Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then

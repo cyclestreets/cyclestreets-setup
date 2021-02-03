@@ -5,7 +5,7 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -s -m email config
+	$0 -h -q -r -s -m email [config]
 
 OPTIONS
 	-h Show this message
@@ -15,8 +15,8 @@ OPTIONS
 	-s Builds and switches secondary routing edition, removing previous one
 
 ARGUMENTS
-	config
-		Configuration file or symlink to one.
+	[config]
+		Optional configuration file or symlink to one.
 		When a symlink is provided it's basename is used as an alias to create symlink to the output routing edtion.
 
 DESCRIPTION
@@ -70,11 +70,12 @@ done
 shift $((OPTIND-1))
 
 # Check required arguemnt
-if [ -z "$1" ]; then
-    echo "#	$0 No config argument" 1>&2
-    exit 1
+if [ -n "$1" ]; then
+    importConfig=$1
+else
+    # Set default
+    importConfig=${importContentFolder}/.config.php
 fi
-importConfig=$1
 
 # Dereference any symlink
 if [ -L "${importConfig}" ]; then

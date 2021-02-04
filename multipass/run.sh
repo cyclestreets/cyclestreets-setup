@@ -74,6 +74,7 @@ echo -e "#\t-------------------------------"
 # get prompted for confirmation when logging in to monitor progress.
 echo -e "#\tRemove cached known_host entries if they exist:"
 ssh-keygen -R ${vm_name}
+ssh-keygen -R ${vm_name}.cyclestreets.net
 
 # Advise
 echo -e "#\n#\tLaunching Ubuntu ${ubuntuImage}..."

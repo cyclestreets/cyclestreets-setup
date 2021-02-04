@@ -6,3 +6,4 @@
 .\#*
 # Ignore the instantiated copy of the config template
 .config.sh
+buildError.txt

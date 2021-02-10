@@ -71,6 +71,7 @@ After the repository has been cloned from Github above, proceed by making your o
 
     cd /opt/cyclestreets-setup/
     cp .config.sh.template .config.sh
+	chmod a+x  .config.sh
     pico -w .config.sh
 
 The *root* user is required to install the packages, but most of the installation is done as the *cyclestreets* user (using `sudo`).

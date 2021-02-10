@@ -723,9 +723,11 @@ fi
 # Restore abandon-on-error
 set -e
 
+# Set the python logs to be group-writable so that the routing engine can also be started from the command line
+sudo chmod g+w ${websitesLogsFolder}/python*.log
+
 # Add the service to the system initialization, so that it will start on reboot
 sudo systemctl enable cyclestreets
-
 
 # Advise setting up
 if [ "${csHostname}" != "localhost" ]; then

@@ -1,15 +1,16 @@
 #!/bin/bash
-# Script to change CycleStreets served routes
+# Script to change CycleStreets routing edition
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h [newEdition]
+	$0 -h -f [newEdition]
 
 OPTIONS
 	-h Show this message
+	-f Force restart if the newEdition is already being served.
 
 DESCRIPTION
 	newEdition
@@ -18,18 +19,25 @@ DESCRIPTION
 EOF
 }
 
+# Flag: Leave empty to avoid restarting if already serving the requested edition
+forceRestart=
+
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
-while getopts ":h" option ; do
+while getopts "hf" option ; do
     case ${option} in
         h) usage; exit ;;
+        f)
+	    # Force a restart when edition unchanged
+	    forceRestart=1
+	    ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
 
-# This file is only geared towards updating the locally served routes to a new edition.
-# Pre-requisites:
-# If a fallbackRoutingUrl is specified, it must already be serving routes for the new edition.
+# After getopts is done, shift all processed options away with
+shift $((OPTIND-1))
+
 
 ### Stage 1 - general setup
 
@@ -57,6 +65,7 @@ mkdir -p $lockdir
 ### DEFAULTS ###
 
 # An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
+# If a fallbackRoutingUrl is specified, it must already be serving routes for the new edition.
 fallbackRoutingUrl=
 
 
@@ -160,16 +169,15 @@ else
 	exit 1
     fi
 
-    # Check the fallback routing edition is the same as the proposed edition
+    # Check if the newEdition is already being served
     if [ "${newEdition}" == "${currentRoutingEdition}" ]; then
 	echo "#	The proposed edition: ${newEdition} is already being served from ${localRoutingUrl}"
-	echo "#	Restart it using: sudo /bin/systemctl restart cyclestreets"
-	echo "#	Routing restart will be attempted:"
-	sudo ${routingServiceRestart}
-	echo "#	Routing service has restarted"
 
-	# Clean exit
-	exit 0
+	# Abandon unless a restart is forced
+	if [ -z "${forceRestart}" ]; then
+	    echo "#	Force a restart by setting the -f option, or using: sudo /bin/systemctl restart cyclestreets"
+	    exit 0
+	fi
     fi
 
     # Report edition

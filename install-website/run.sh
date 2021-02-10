@@ -723,10 +723,6 @@ fi
 # Restore abandon-on-error
 set -e
 
-# Set the python logs to be group-writable so that the routing engine can also be started from the command line
-# These files are created sometime after the routing service is started and so this change is only advisory:
-echo "#	Developers wanting to start the routing service from the command line will need to grant permissions as follows:\nsudo chmod g+w ${websitesLogsFolder}/python*.log"
-
 # Add the service to the system initialization, so that it will start on reboot
 sudo systemctl enable cyclestreets
 

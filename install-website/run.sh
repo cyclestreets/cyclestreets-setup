@@ -502,6 +502,12 @@ then
 	devSiteRewrite="'YOUR_APISERVERNAME'				=> 'api.YOUR_CSSERVERNAME',"
     fi
 
+    # Routing engine timeout (RETO)
+    retoReplacement=
+    if [ -n "${routingEngineTimeOut}" ]; then
+	retoReplacement="\$config['routingEngineTimeOut']	= ${routingEngineTimeOut}"
+    fi
+
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
     sed -i \
@@ -515,6 +521,7 @@ then
 	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \
+	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
 	${phpConfig}
 
 fi

@@ -10,18 +10,17 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h -k -q routingEdition
+	$0 -h -q routingEdition
 
 OPTIONS
 	-h Show this message
-	-k (int) Minimum number of old editions to keep (default is 3) when removing oldest or newest
 	-q Suppress narrative messages, error messages are still produced
 
 DESCRIPTION
 	routingEdition
 		Names a routing database of the form routingYYMMDD, eg. routing151205
-		Alternatively the terms newest or oldest can be used, and in these cases
-		at at least k other routing editions must exist. If not then a warning
+		Alternatively the terms newest or oldest can be used, and in those cases a config setting,
+		keepEditions, requires that that many other routing editions must exist. If not then a warning
 		is given, nothing is removed and the script exits without setting error state.
 EOF
 }
@@ -38,13 +37,9 @@ keepEditions=3
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
-while getopts "hk:q" option ; do
+while getopts "hq" option ; do
     case ${option} in
         h) usage; exit ;;
-	k)
-	    # Set the number of editions to keep
-	    keepEditions=$OPTARG
-	    ;;
         q) quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
@@ -123,10 +118,10 @@ then
     exit 1
 fi
 
-# Check -k argument is int
+# Check this config setting is a positive integer
 if [[ ! "${keepEditions}" =~ ^[0-9]+$ ]];
 then
-    echo "#	The keepEditions option value: (${keepEditions}), must be a number."
+    echo "#	The keepEditions config value: (${keepEditions}), must be a number."
     exit 1
 fi
 
@@ -144,7 +139,7 @@ then
     # Check that there enough existing routing editions - to avoid removing the most recent ones
     if [ -z "${numEditions}" -o "${numEditions}" -le ${keepEditions} ]
     then
-	vecho "#\tThere are ${numEditions} editions which is too few to use for the oldest/newest argument to have any effect."
+	vecho "#\tThere are ${numEditions} editions, but least ${keepEditions} must exist for the oldest/newest option to work."
 	# Exit cleanly, not setting error status
 	exit 0
     fi

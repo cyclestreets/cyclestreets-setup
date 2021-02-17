@@ -10,17 +10,18 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h -q routingEdition
+	$0 -h -k -q routingEdition
 
 OPTIONS
 	-h Show this message
+	-k (int) Minimum number of old editions to keep (default is 3) when removing oldest or newest
 	-q Suppress narrative messages, error messages are still produced
 
 DESCRIPTION
 	routingEdition
 		Names a routing database of the form routingYYMMDD, eg. routing151205
-		Alternatively the words newest or oldest can be used, and in these cases
-		at at least two other routing editions must exist. If not then a warning
+		Alternatively the terms newest or oldest can be used, and in these cases
+		at at least k other routing editions must exist. If not then a warning
 		is given, nothing is removed and the script exits without setting error state.
 EOF
 }
@@ -32,12 +33,18 @@ quietmode()
     verbose=
 }
 
+# Minimum number of existing editions to keep
+keepEditions=3
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
-while getopts ":hq" option ; do
+while getopts "hk:q" option ; do
     case ${option} in
         h) usage; exit ;;
+	k)
+	    # Set the number of editions to keep
+	    keepEditions=$OPTARG
+	    ;;
         q) quietmode ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
@@ -116,6 +123,13 @@ then
     exit 1
 fi
 
+# Check -k argument is int
+if [[ ! "${keepEditions}" =~ ^[0-9]+$ ]];
+then
+    echo "#	The keepEditions option value: (${keepEditions}), must be a number."
+    exit 1
+fi
+
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
@@ -127,8 +141,8 @@ then
     # Count the number of routing editions not including the null edition
     numEditions=$(${superMysql} -s cyclestreets<<<"SELECT count(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME != 'routing000000' and SCHEMA_NAME LIKE 'routing%';")
 
-    # Check that there are at least three routing editions - to avoid removing the most recent ones
-    if [ -z "${numEditions}" -o "${numEditions}" -lt 3 ]
+    # Check that there enough existing routing editions - to avoid removing the most recent ones
+    if [ -z "${numEditions}" -o "${numEditions}" -le ${keepEditions} ]
     then
 	vecho "#\tThere are ${numEditions} editions which is too few to use for the oldest/newest argument to have any effect."
 	# Exit cleanly, not setting error status
@@ -150,12 +164,6 @@ fi
 # Check the format is routingYYMMDD
 if [[ ! "$removeEdition" =~ routing([0-9]{6}) ]]; then
   echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${removeEdition}."
-  exit 1
-fi
-
-# Check it is not a special edition
-if [[ "$removeEdition" = routing180000 ]]; then
-  echo "#	The supplied argument must not be routing180000 which is a special edition temporarily used to park tables."
   exit 1
 fi
 

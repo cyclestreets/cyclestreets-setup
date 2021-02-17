@@ -505,7 +505,7 @@ then
     # Routing engine timeout (RETO)
     retoReplacement=
     if [ -n "${routingEngineTimeOut}" ]; then
-	retoReplacement="\$config['routingEngineTimeOut']	= ${routingEngineTimeOut}"
+	retoReplacement="\$config['routingEngineTimeOut']	= ${routingEngineTimeOut};"
     fi
 
     # Make the substitutions

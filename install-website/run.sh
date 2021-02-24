@@ -183,6 +183,12 @@ chmod -R g+w ${websitesContentFolder}
 chmod -R g+w ${websitesLogsFolder}
 chmod -R g+w ${websitesBackupsFolder}
 
+# Create these log files to avoid them being created with root ownership when the routing service starts
+touch ${websitesLogsFolder}/pythonAstarPort9000.log
+chown ${username}:${rollout} ${websitesLogsFolder}/pythonAstarPort9000.log
+touch ${websitesLogsFolder}/pythonAstarPort9000_status.log
+chown ${username}:${rollout} ${websitesLogsFolder}/pythonAstarPort9000_status.log
+
 # Allow the Apache webserver process to write / add to the data/ folder
 echo "#	chown -R www-data ${websitesContentFolder}/data"
 chown -R www-data ${websitesContentFolder}/data

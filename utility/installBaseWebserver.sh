@@ -210,6 +210,7 @@ character-set-client-handshake = FALSE
 collation-server = utf8mb4_unicode_ci
 character-set-server = utf8mb4
 sql_mode=NO_ENGINE_SUBSTITUTION
+skip-log-bin
 
 # !! The following are not part of utf8 configuration but this a convenient place to put them.
 

@@ -375,7 +375,7 @@ then
     # That is not caused by these scripts and does not seem to be harfmul.
     if [ -n "${aliases}" ]; then
 	echo "#	Adding aliases for localhost: ${aliases}"
-	sed -i -e "s/^127.0.1.1.*$/# Alias added by CycleStreets installation\n\0 ${aliases}/" /etc/hosts
+	sed -i -e "s/^127.0.0.1.*$/# Alias added by CycleStreets installation\n\0 ${aliases}/" /etc/hosts
     else
 	echo "#	No cs or api hostname aliases set for localhost"
     fi

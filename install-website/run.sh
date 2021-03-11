@@ -474,8 +474,8 @@ mysqlWebsitePassword=${password}
 # Users are created by the grant command if they do not exist, making these idem potent.
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
 ${superMysql} -e "create user if not exists '${mysqlWebsiteUsername}'@'localhost' identified with mysql_native_password by '${mysqlWebsitePassword}';"
-${superMysql} -e "grant select, insert, update, delete, create, execute on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost';"
-${superMysql} -e "grant select, execute on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+${superMysql} -e "grant select, insert, update, delete, create, execute, show view on cyclestreets.* to '${mysqlWebsiteUsername}'@'localhost';"
+${superMysql} -e "grant select, execute, show view on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Allow the website to view any planetExtract files that have been created by an import
 ${superMysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';"

@@ -46,10 +46,6 @@ fi
 # Bomb out if something goes wrong
 set -e
 
-# Lock directory
-lockdir=/var/lock/cyclestreets
-mkdir -p $lockdir
-
 
 ### CREDENTIALS ###
 
@@ -92,16 +88,16 @@ apt install -y unzip
 cd /tmp
 mkdir boundary-line
 cd boundary-line
-wget http://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-05.zip
+wget http://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-10.zip
 unzip bdline_gpkg_gb*.zip
 
 # Install GDAL
 apt install -y gdal-bin
-ogrinfo --version
+
+# Prepare the database
+mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 
 # Import gpkg data to MySQL
-mysql -u root -p${mysqlRootPassword} -e "CREATE DATABASE IF NOT EXISTS osboundaryline;"
-
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 # Use -skipfailures for complex shapes such as Shetland
 ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -skipfailures
@@ -111,5 +107,6 @@ mysql -u root -p${mysqlRootPassword} -e "grant select, insert, update, delete, c
 
 # Report completion
 echo "#	Installing OS Boundary Line completed"
+echo "#	Remove unwanted files from /tmp/boundary-line"
 
 # End of file

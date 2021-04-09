@@ -11,12 +11,19 @@ https://gdal.org/drivers/vector/mysql.html (and search for SRID)
 
 */
 
-CREATE TABLE if not exists`osboundaryline`.`spatial_ref_sys` (
-     `SRID` int(11) NOT NULL,
+drop table if exists `osboundaryline`.`spatial_ref_sys`;
+CREATE TABLE if not exists `osboundaryline`.`spatial_ref_sys` (
+     `SRID` int(11) NOT NULL primary key,
      `AUTH_NAME` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
      `AUTH_SRID` int(11) DEFAULT NULL,
      `SRTEXT` varchar(2048) COLLATE utf8mb4_unicode_ci DEFAULT NULL
-) ENGINE=MyIsam DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyIsam DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci comment = "Pre-created for SRID work-around";
 
+
+-- Pre create this entry having SRID=0, the primary key stops duplicates from being created by the ogr2ogr call.
 insert ignore osboundaryline.spatial_ref_sys
 values (0, null, null, 'GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]');
+
+
+-- Permit the website to view the database
+grant select, insert, update, delete, create, execute on osboundaryline.* to 'website'@'localhost';

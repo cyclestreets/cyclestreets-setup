@@ -86,12 +86,17 @@ apt install -y unzip
 
 # Obtain and unzip the data from My Society
 cd /tmp
-mkdir boundary-line
+mkdir -p boundary-line
 cd boundary-line
-wget http://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-10.zip
-unzip bdline_gpkg_gb*.zip
+wget https://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-05.zip
+unzip -u bdline_gpkg_gb*.zip
 
-# Install GDAL
+# Install GDAL/ogr2ogr; see:
+# https://mothergeo-py.readthedocs.io/en/latest/development/how-to/gdal-ubuntu-pkg.html
+# that adds a repository for gdal:
+add-apt-repository -y ppa:ubuntugis/ppa
+# then proceed with:
+apt -y update
 apt install -y gdal-bin
 
 # Prepare the database
@@ -102,11 +107,8 @@ mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 # Use -skipfailures for complex shapes such as Shetland
 ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -skipfailures
 
-# Permit the website to view the database
-mysql -u root -p${mysqlRootPassword} -e "grant select, insert, update, delete, create, execute on osboundaryline.* to 'website'@'localhost';"
-
 # Report completion
-echo "#	Installing OS Boundary Line completed"
+echo "#	Installing OS Boundary Line completed $(date)"
 echo "#	Remove unwanted files from /tmp/boundary-line"
 
 # End of file

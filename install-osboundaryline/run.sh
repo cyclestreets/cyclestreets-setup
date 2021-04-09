@@ -95,12 +95,7 @@ cd boundary-line
 wget http://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-05.zip
 unzip bdline_gpkg_gb*.zip
 
-# Install GDAL/ogr2ogr; see:
-# https://mothergeo-py.readthedocs.io/en/latest/development/how-to/gdal-ubuntu-pkg.html
-# that adds a repository for gdal:
-add-apt-repository ppa:ubuntugis/ppa
-# then proceed with:
-apt update
+# Install GDAL
 apt install -y gdal-bin
 ogrinfo --version
 

@@ -9,6 +9,8 @@ See:
 https://gis.stackexchange.com/a/236732/23695
 https://gdal.org/drivers/vector/mysql.html (and search for SRID)
 
+When moving to MySQL 8.0 this workaround will need reviewing as SRIDs are better respected in that version.
+
 */
 
 drop table if exists `osboundaryline`.`spatial_ref_sys`;

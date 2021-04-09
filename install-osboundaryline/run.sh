@@ -82,22 +82,22 @@ echo "# OS Boundary Line installation $(date)"
 
 # Update sources and packages
 apt -y update
-apt install -y unzip
+apt install -y unzip gdal-bin
 
-# Obtain and unzip the data from My Society
+# Source of the Boundary Line data - it should be in a GeoPackage format
+# Directly from OS
+# https://osdatahub.os.uk/downloads/open/BoundaryLine
+sourceUrl="https://api.os.uk/downloads/v1/products/BoundaryLine/downloads?area=GB&format=GeoPackage&redirect"
+
+# Alternatively from My Society
+# - but this May 2020 version is the latest in the GeoPackage format on their site.
+#sourceUrl="https://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-05.zip"
+
 cd /tmp
 mkdir -p boundary-line
 cd boundary-line
-wget https://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-05.zip
+wget --output-document=bdline_gpkg_gb.zip "${sourceUrl}"
 unzip -u bdline_gpkg_gb*.zip
-
-# Install GDAL/ogr2ogr; see:
-# https://mothergeo-py.readthedocs.io/en/latest/development/how-to/gdal-ubuntu-pkg.html
-# that adds a repository for gdal:
-add-apt-repository -y ppa:ubuntugis/ppa
-# then proceed with:
-apt -y update
-apt install -y gdal-bin
 
 # Prepare the database
 mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
@@ -105,7 +105,7 @@ mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 # Use -skipfailures for complex shapes such as Shetland
-ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -skipfailures
+ogr2ogr -skipfailures -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM
 
 # Report completion
 echo "#	Installing OS Boundary Line completed $(date)"

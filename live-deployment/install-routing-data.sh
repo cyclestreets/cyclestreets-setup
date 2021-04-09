@@ -80,7 +80,7 @@ while getopts "hm:qt" option ; do
 	    # Turn off verbose messages by setting this variable to the empty string
 	    verbose=
 	    ;;
-	# Missing expected argumnet
+	# Missing expected argument
 	:)
 	    echo "Option -$OPTARG requires an argument." >&2
 	    exit 1

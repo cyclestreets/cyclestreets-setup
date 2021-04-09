@@ -22,7 +22,7 @@ EOF
 while getopts "hq" option ; do
     case ${option} in
         h) usage; exit ;;
-	# Missing expected argumnet
+	# Missing expected argument
 	:)
 	    echo "Option -$OPTARG requires an argument." >&2
 	    exit 1

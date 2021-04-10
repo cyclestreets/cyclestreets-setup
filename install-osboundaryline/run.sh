@@ -106,6 +106,8 @@ mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -progress
 
+# Ensure that CycleStreets uses the new boundary ids
+mysql -u root -p${mysqlRootPassword} cyclestreets < ${websitesContentFolder}/documentation/schema/boundarylineids.sql
 
 # Report completion
 echo "#	Installing OS Boundary Line completed $(date)"

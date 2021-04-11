@@ -75,7 +75,7 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Announce starting
-echo "# OS Boundary Line installation $(date)"
+echo "# $(date)	OS Boundary Line installation"
 
 
 ## Main body
@@ -100,17 +100,24 @@ wget --output-document=bdline_gpkg_gb.zip "${sourceUrl}"
 unzip -u bdline_gpkg_gb*.zip
 
 # Prepare the database
+echo "#	$(date)	Prepare osboundaryline database"
 mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
+echo "#	$(date)	Import GeoPackage into MySQL"
 ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -progress
 
+# Apply optimizations
+echo "#	$(date)	Boundary line optimizations"
+mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/optimizations.sql
+
 # Ensure that CycleStreets uses the new boundary ids
+echo "#	$(date)	Fix CycleStreets boundary ids"
 mysql -u root -p${mysqlRootPassword} cyclestreets < ${websitesContentFolder}/documentation/schema/boundarylineids.sql
 
 # Report completion
-echo "#	Installing OS Boundary Line completed $(date)"
+echo "#	$(date)	Installing OS Boundary Line completed"
 echo "#	Remove unwanted files from /tmp/boundary-line"
 
 # End of file

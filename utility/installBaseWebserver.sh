@@ -204,6 +204,7 @@ default-character-set=utf8mb4
 
 [mysql]
 default-character-set=utf8mb4
+prompt=\\u@\\h [\\d]>\\_
 
 [mysqld]
 character-set-client-handshake = FALSE

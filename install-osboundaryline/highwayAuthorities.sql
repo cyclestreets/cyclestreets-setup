@@ -1,5 +1,14 @@
--- This script creates a table containing the Highway Authorities
--- these are either 'Unitary Authority' or 'County'.
+/* This script creates a table containing the Highway Authorities.
+   These are comprised of:
+
+     - All rows from the county table
+     - Rows from the district_borough_unitary where area_description is 'Unitary Authority' or 'Metropolitan District'
+
+   Together their geometries should cover the whole of Great Britain.
+
+   The Boundary Line data is described at:
+   https://www.ordnancesurvey.co.uk/documents/product-support/release-notes/boundary-line-user-guide-Jul-19.pdf
+*/
 
 -- Load using
 -- mysql osboundaryline < /opt/cyclestreets-setup/install-osboundaryline/highwayAuthorities.sql
@@ -11,7 +20,8 @@ create table dev_combined_county_unitary like osboundaryline.district_borough_un
 alter table dev_combined_county_unitary
  change fid fid int not null,
   add id int unsigned not null auto_increment primary key first,
-  change area_description area_description enum('Unitary Authority','County', 'Greater London Authority'),
+  add color varchar(7) not null default '#48f' comment 'Colour' after id,
+  change area_description area_description enum('Unitary Authority', 'Metropolitan District', 'County', 'Greater London Authority'),
  drop area_code,
  drop file_name,
  drop feature_serial_number,
@@ -25,6 +35,7 @@ alter table dev_combined_county_unitary
  drop area_type_description,
  drop non_area_type_code,
  drop non_area_type_description,
+-- These next two are not present when on MySQL 8.0
  drop longitude,
  drop latitude,
  drop key `fid`;
@@ -69,10 +80,12 @@ select fid, name, area_description,
        when 'Redcar and Cleveland (B)'            then 0.0001
        when 'Perth and Kinross'                   then 0.0001
        when 'Northumberland'                      then 0.0001
+       when 'Sefton District (B)'                 then 0.0002
+       when 'Sunderland District (B)'             then 0.0002
        when 'Bournemouth, Christchurch and Poole' then 0.0006
        else                                        0.001 end)
   from osboundaryline.district_borough_unitary
- where area_description = 'Unitary Authority';
+ where area_description in ('Unitary Authority', 'Metropolitan District');
 
 -- Fill with County
 insert dev_combined_county_unitary (fid, name, area_description, geometry)
@@ -87,6 +100,14 @@ select fid, name, area_description,
        else                               0.0001 end)
   from osboundaryline.county;
 
+-- Colorize
+update dev_combined_county_unitary
+   set color =
+       case area_description
+       when 'Unitary Authority' then '#f06'
+       when 'Metropolitan District' then '#444'
+       else '#3cc' end;
+
 -- Check validity
 /*
 select count(*)
@@ -97,10 +118,22 @@ select fid, name
   from dev_combined_county_unitary
  where not st_isvalid(geometry);
 */
+
+/* In MySQL 8 it may be necessary to convert back to SRID=0 from 4326 as not all st_* functions work with geographical data yet.
+
+-- How to convert from 4326 to SRID=0
+set @wkt := 'Point(50 100)';
+select st_astext(st_geomfromtext(@wkt, 4326));
+select st_asgeojson(st_geomfromtext(@wkt, 4326));
+-- Read from the geojson as SRId=0
+select st_asgeojson(st_geomfromgeojson(st_asgeojson(st_geomfromtext(@wkt, 4326)), 2, 0));
+*/
+
+
 -- Generic geometry table viewer
 /*
 drop view view_geometry_table;
 create or replace view view_geometry_table as
-select fid id, name, area_description description, geometry
+select id, fid, name, area_description description, color, geometry
   from dev_combined_county_unitary;
 */

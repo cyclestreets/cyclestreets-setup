@@ -11,6 +11,7 @@
 */
 
 -- Load using
+-- !! #mysql8 Account for comments when using MySQL 8.0.
 -- mysql osboundaryline < /opt/cyclestreets-setup/install-osboundaryline/highwayAuthorities.sql
 
 -- Combine County and 'Unitary Authority'
@@ -35,10 +36,21 @@ alter table dev_combined_county_unitary
  drop area_type_description,
  drop non_area_type_code,
  drop non_area_type_description,
--- These next two are not present when on MySQL 8.0
+-- #mysql8 These next two are not present when on MySQL 8.0
  drop longitude,
  drop latitude,
  drop key `fid`;
+
+/* #mysql8
+-- On MySQL 8.0 change the geometry to SRID=0
+alter table dev_combined_county_unitary
+ drop key geometry;
+
+alter table dev_combined_county_unitary
+ change geometry geometry geometry not null srid 0 comment 'SRID zero';
+alter table dev_combined_county_unitary
+ add spatial key (geometry);
+*/
 
 -- Check
 -- show create table dev_combined_county_unitary\G
@@ -47,6 +59,7 @@ alter table dev_combined_county_unitary
 truncate dev_combined_county_unitary;
 
 -- Fill with 'Unitary Authority'
+-- #mysql8 This won't work unless the source table has data converted to SRID=0.
 insert dev_combined_county_unitary (fid, name, area_description, geometry)
 select fid, name, area_description,
        /* Maximal tolerances obtained by trial-and-error that maintain geometry validity. */
@@ -134,6 +147,6 @@ select st_asgeojson(st_geomfromgeojson(st_asgeojson(st_geomfromtext(@wkt, 4326))
 /*
 drop view view_geometry_table;
 create or replace view view_geometry_table as
-select id, fid, name, area_description description, color, geometry
+select id, fid, name, area_description description, color, 5 weight, 0.2 fillOpacity, geometry
   from dev_combined_county_unitary;
 */

@@ -559,12 +559,12 @@ then
 
     # Set an internal api key
     ${superMysql} cyclestreets -e "update map_gui set internalApikey=lower(hex(random_bytes(8))) where id = 1;"
-    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type) values (1, 'CycleStreets Service', 'Desktop');"
+    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type, apiKey, userid, notes) values (1, 'CycleStreets Service', 'Desktop', '0123456789abcdef', 0, '');"
     ${superMysql} cyclestreets -e "update map_apikeys set approved = 1 where id = 1;"
     ${superMysql} cyclestreets -e "update map_apikeys set apiKey = (select internalApikey from map_gui where id = 1) where id = 1;"
 
     # Tests API key
-    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, apiKey, approved) values (2, 'Sample API calls from /api/ webpage', '${testsApiKey}', 1);"
+    ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type, apiKey, userid, notes, approved) values (2, 'Sample API calls from /api/ webpage', 'Both', '${testsApiKey}', 1, '', 1);"
 
     # Create an admin user
     # Use a validatedAt that is a day old to avoid notification of new users from pseudoCron.
@@ -600,7 +600,7 @@ if [ -n "${externalDb}" ]; then
 
 	# Create external database
 	echo "#	Create ${externalDb} database"
-	echo "#	Note: this contains table definitions only and contains no data. A full version must be downloaded separately see ../install-import/run.sh"
+	echo "#	Note: contains table definitions only and no data - a full version is downloaded next."
 	${superMysql} < ${websitesContentFolder}/documentation/schema/csExternal.sql
 
 	# Allow website read only access

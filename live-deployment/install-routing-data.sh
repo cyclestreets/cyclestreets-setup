@@ -213,6 +213,7 @@ if [ -n "${testargs}" ]; then
     echo "#	\$2=${2}";
     echo "#	verbose=${verbose}";
     echo "#	notifyEmail=${notifyEmail}";
+    echo "#	skipSwitch=${skipSwitch}";
     echo "#	dumpFile=${dumpFile}";
     echo "#	tsvFile=${tsvFile}";
     echo "#	importHostname=${importHostname}";

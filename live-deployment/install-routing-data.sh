@@ -324,7 +324,7 @@ newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition
 scp ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#\tThe import machine file could not be retrieved; please check the 'importHostname': ${importHostname} and 'newImportDefinition': ${newImportDefinition} settings."
+	vecho "#\tThe import machine file could not be retrieved from:\n#\t${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini\n#\tCopying to: ${newImportDefinition}."
 	exit 1
 fi
 

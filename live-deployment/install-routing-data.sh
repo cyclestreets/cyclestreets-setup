@@ -11,12 +11,13 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -t -m email [importHostname] [edition] [path]
+	$0 -h -q -s -t -m email [importHostname] [edition] [path]
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
+	-s Skip switching to new edition
 	-t Does a dry run showing the resolved options
 
 ARGUMENTS
@@ -57,6 +58,9 @@ EOF
 notifyEmail=
 testargs=
 
+# Default to switch to the new edition when this is empty
+skipSwitch=
+
 # Files
 tsvFile=tsv.tar.gz
 dumpFile=dump.sql.gz
@@ -64,13 +68,17 @@ dumpFile=dump.sql.gz
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qt" option ; do
+while getopts "hm:qst" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
 	    ;;
+	# Skip switching to the new edition
+	s)
+	    skipSwitch=1
+	   ;;
 	# Dry run shows results of arg processing
 	t)
 	    testargs=test
@@ -466,10 +474,15 @@ fi
 touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "#	$(date)	Installation completed, switching to the routing service using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
+echo "#	$(date)	Installation completed"
 
 # Switch to the new edition
-${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
+if [ -z "${skipSwitch}" ]; then
+    echo "#	$(date) Switching to the new edition"
+    ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
+else
+    echo "#	$(date) Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
+fi
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

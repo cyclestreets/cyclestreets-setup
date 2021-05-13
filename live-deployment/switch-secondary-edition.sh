@@ -6,22 +6,30 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h
+	$0 -h -k
 
 OPTIONS
 	-h Show this message
+	-k Keep the previous secondary edition.
 
 DESCRIPTION
-	Switches the secondary routing edition to the latest edition, and removes the old one.
+	Switches the secondary routing edition to the latest edition, and removes the old one (unless -k).
 	Secondary editions are assumed to be served from port 9001.
 EOF
 }
 
+# Set to keep the old edition (default is empty)
+keepOldOne=
+
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
-while getopts ":h" option ; do
+while getopts ":hk" option ; do
     case ${option} in
         h) usage; exit ;;
+	# Keep the old edition
+	k)
+	    keepOldOne=1
+	   ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
@@ -253,7 +261,11 @@ ${superMysql} cyclestreets -e "update map_config set multipleEditions = 'yes' wh
 ${superMysql} ${newSecondaryEdition} -e "call indexPhotos(0);";
 
 # Remove the now previous secondary edition
-live-deployment/remove-routing-edition.sh ${currentSecondaryEdition}
+if [ -z "${keepOldOne}" ]; then
+    live-deployment/remove-routing-edition.sh ${currentSecondaryEdition}
+else
+    echo "#	$(date)	Previous secondary edition ${currentSecondaryEdition} is retained."
+fi
 
 ### Finishing
 

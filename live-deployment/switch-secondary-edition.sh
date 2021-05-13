@@ -6,14 +6,15 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h -k
+	$0 -h -k [edition]
 
 OPTIONS
 	-h Show this message
 	-k Keep the previous secondary edition.
 
 DESCRIPTION
-	Switches the secondary routing edition to the latest edition, and removes the old one (unless -k).
+	Switches the secondary routing edition to the optionally provided edition, which defaults to the latest edition.
+	Unless the -k option is set the previous edition is removed.
 	Secondary editions are assumed to be served from port 9001.
 EOF
 }
@@ -33,6 +34,9 @@ while getopts ":hk" option ; do
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
+
+# After getopts is done, shift all processed options away with
+shift $((OPTIND-1))
 
 ### Stage 1 - general setup
 

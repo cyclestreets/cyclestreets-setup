@@ -13,7 +13,7 @@ $download $administratorEmail $server $folder ${dumpPrefix}_schema_cyclestreets.
 #	Download CycleStreets database
 $download $administratorEmail $server $folder ${dumpPrefix}_cyclestreets.sql.gz
 
-#	Doanload Batch db key tables
+#	Download Batch database key tables
 $download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz
 
 
@@ -31,6 +31,9 @@ set +e
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${websitesContentFolder}/data
+
+# Sync the migration status
+rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/dbmigrate.txt ${websitesContentFolder}/data
 
 # Hosted
 rsync -a --cvs-exclude ${server}:${websitesContentFolder}/hosted ${websitesContentFolder}/

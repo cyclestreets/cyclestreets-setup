@@ -527,10 +527,11 @@ then
 	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \
-	-e "s/TESTS_ADDITIONAL_HERE/${testsAdditional}/g" \
-#	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
 	${phpConfig}
 
+    # These two lines may need including in the above after debugging why they cause a cloud init fail.
+    #	-e "s/TESTS_ADDITIONAL_HERE/${testsAdditional}/g" \
+    #	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
 fi
 
 

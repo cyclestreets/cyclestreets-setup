@@ -528,7 +528,7 @@ then
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \
 	-e "s/TESTS_ADDITIONAL_HERE/${testsAdditional}/g" \
-	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
+#	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
 	${phpConfig}
 
 fi

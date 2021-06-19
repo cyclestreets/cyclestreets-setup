@@ -516,6 +516,9 @@ then
 
     # Make the substitutions
     echo "#	Configuring the ${phpConfig}";
+    # Substitutions that contains slashes are delimited by |.
+    # The g modifier is used to perform a global match (find all matches rather than stopping after the first match).
+    # It should be used when the substitution might occur more than once within the same line.
     sed -i \
 	-e "s|CONFIGURED_BY_HERE|Configured by cyclestreets-setup $(date) for csHostname: ${csHostname}${sourceConfig}|" \
 	-e "s/WEBSITE_USERNAME_HERE/${mysqlWebsiteUsername}/" \
@@ -527,11 +530,9 @@ then
 	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \
+	-e "s|TESTS_ADDITIONAL_HERE|${testsAdditional}|" \
+	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
 	${phpConfig}
-
-    # These two lines may need including in the above after debugging why they cause a cloud init fail.
-    #	-e "s/TESTS_ADDITIONAL_HERE/${testsAdditional}/g" \
-    #	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \
 fi
 
 

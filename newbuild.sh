@@ -126,6 +126,23 @@ if [ -L "${importConfig}" ]; then
     importConfig=`readlink ${importConfig}`
 fi
 
+# Import type
+# The type of the import can be determined either from the alias, the basename of the config file
+# or failing that the full path of the config file
+importTitle=
+# Use alias if present
+if [ -n "${editionAlias}" ]; then
+    importTitle=${editionAlias}
+else
+    # Use the basename
+    importTitle=`basename ${importConfig}`
+
+    # If the basename matches the default then use the full path
+    if [ "${importTitle}" = ".config.php" ]; then
+	importTitle=${importConfig}
+    fi
+fi
+
 ## Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then
     live-deployment/remove-routing-edition.sh oldest
@@ -218,6 +235,7 @@ cd "${websitesContentFolder}"
 # Generate Build Summary message
 summaryFile=import/buildSummary.txt
 echo -e "#\tBuild summary" > ${summaryFile}
+echo -e "#\tConfig file: ${importConfig}" >> ${summaryFile}
 
 # Append last few lines of import log
 tail -n3 import/log.txt >> ${summaryFile}
@@ -233,7 +251,7 @@ php runtests.php "call=elevation.values&name=Elevation auto generated test:" >> 
 if [ -n "${notifyEmail}" ]; then
 
     # Send last lines of log and test results
-    cat ${summaryFile} | mail -s "${csHostname} import finished" "${notifyEmail}"
+    cat ${summaryFile} | mail -s "${csHostname} import ${importTitle} finished" "${notifyEmail}"
 
 fi
 

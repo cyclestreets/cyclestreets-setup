@@ -139,7 +139,7 @@ then
     # Check that there enough existing routing editions - to avoid removing the most recent ones
     if [ -z "${numEditions}" -o "${numEditions}" -le ${keepEditions} ]
     then
-	vecho "#\tThere are ${numEditions} editions, but least ${keepEditions} must exist for the oldest/newest option to work."
+	vecho "#\tThere are ${numEditions} editions, but more than ${keepEditions} must exist for the oldest/newest option to work."
 	# Exit cleanly, not setting error status
 	exit 0
     fi

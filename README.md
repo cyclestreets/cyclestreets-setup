@@ -60,7 +60,7 @@ exec newgrp rollout
 # user@machine:~$
 sudo chown -R cyclestreets.rollout /opt/cyclestreets-setup
 
-# Set group permissions and add sticky group bit
+# Set group permissions and add setgid bit
 sudo chmod -R g+w /opt/cyclestreets-setup
 sudo find /opt/cyclestreets-setup -type d -exec chmod g+s {} \;
 ```

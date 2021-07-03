@@ -17,6 +17,7 @@ OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
+	-r Removes the oldest routing edition
 	-s Skip switching to new edition
 	-t Does a dry run showing the resolved options
 
@@ -58,6 +59,8 @@ EOF
 notifyEmail=
 testargs=
 
+# By default do not remove oldest routing edtion
+removeOldest=
 # Default to switch to the new edition when this is empty
 skipSwitch=
 
@@ -68,13 +71,16 @@ dumpFile=dump.sql.gz
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qst" option ; do
+while getopts "hm:qrst" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
 	    ;;
+	# Remove oldest routing edition
+	r) removeOldest=1
+	   ;;
 	# Skip switching to the new edition
 	s)
 	    skipSwitch=1
@@ -159,6 +165,11 @@ fi
 if [ "$(id -u)" = "0" ]; then
     echo "#	This script must NOT be run as root." 1>&2
     exit 1
+fi
+
+## Optionally remove oldest routing edtion
+if [ "${removeOldest}" ]; then
+    live-deployment/remove-routing-edition.sh oldest
 fi
 
 # Optional first argument is the source of the new routing editions

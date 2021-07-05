@@ -169,7 +169,7 @@ fi
 
 ## Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then
-    live-deployment/remove-routing-edition.sh oldest
+    ${ScriptHome}/live-deployment/remove-routing-edition.sh oldest
 fi
 
 # Optional first argument is the source of the new routing editions

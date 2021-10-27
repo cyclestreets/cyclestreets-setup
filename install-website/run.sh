@@ -646,7 +646,7 @@ if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW D
     ${superMysql} -e "create database if not exists ${batchDb} default character set utf8mb4 collate utf8mb4_unicode_ci;"
 
     # Grants; note that the FILE privilege (which is not database-specific) is required so that table contents can be loaded from a file
-    ${superMysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+    ${superMysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES, CREATE VIEW on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
     ${superMysql} -e "GRANT FILE ON *.* TO '${mysqlWebsiteUsername}'@'localhost';"
 
     echo "#	Note: this contains table definitions only and contains no data."

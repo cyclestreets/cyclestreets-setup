@@ -226,6 +226,13 @@ echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newSeconda
 # Ensure it is executable
 chmod a+x $routingEngine2ConfigFile
 
+# Copy the json routing config, if it exists
+jsonRoutingConfig=${websitesContentFolder}/data/routing/${newSecondaryEdition}/.config.json
+if [ -r "${jsonRoutingConfig}" ]; then
+    cp ${jsonRoutingConfig} ${websitesContentFolder}/routingengine/.config2.json
+fi
+
+
 # Remove routing data caches
 rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php
 rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php

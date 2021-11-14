@@ -255,17 +255,27 @@ else
     echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
-# Configure the routing engine to use the new edition
-# !! This block is deprecated [:] 14 Nov 2021 in favour of the subsequent JSON configuration.
+
+## Configure the routing engine to use the new edition
+
+# Remove any old deprecated shell-style configuration
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
-echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
-chmod a+x $routingEngineConfigFile
+rm -f $routingEngineConfigFile
+
+# Remove any old JSON configuration
+jsonConfig=${websitesContentFolder}/routingengine/.config.json
+rm -f $jsonConfig
 
 # Configure the routing engine to use the new edition
 jsonRoutingConfig=${websitesContentFolder}/data/routing/${newEdition}/.config.json
 if [ -r "${jsonRoutingConfig}" ]; then
-    cp ${jsonRoutingConfig} ${websitesContentFolder}/routingengine
+    cp ${jsonRoutingConfig} $jsonConfig
+else
+    # Use deprecated shell-style config file
+    echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
+    chmod a+x $routingEngineConfigFile
 fi
+
 
 # Remove routing data caches
 rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php

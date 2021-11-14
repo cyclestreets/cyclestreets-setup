@@ -676,19 +676,11 @@ if [ ! -d ${websitesContentFolder}/data/routing/${sampleRoutingDb} ]; then
 fi
 
 
-# Routing service configuration
+# Routing service configuration if not already present
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.json
-
-# Create a config if not already present
-if [ ! -x "${routingEngineConfigFile}" ]; then
-	# Create the JSON config for the basic routing db, as cyclestreets user
-	${asCS} touch "${routingEngineConfigFile}"
-	${asCS} cat > ${routingEngineConfigFile} <<EOF
-{
-	"_comment": "Routing edition configured by install website script",
-	"basedir": "${websitesContentFolder}/data/routing/${sampleRoutingDb}"
-}
-EOF
+if [ ! -e $routingEngineConfigFile ]; then
+	# Link to the JSON config for the basic routing db, as cyclestreets user
+	${asCS} ln -s ${websitesContentFolder}/data/routing/${sampleRoutingDb}/.config.json $routingEngineConfigFile
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring

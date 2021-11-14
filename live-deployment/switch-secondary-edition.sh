@@ -219,6 +219,7 @@ ${superMysql} cyclestreets -e "update map_config set multipleEditions = 'no' whe
 ${superMysql} cyclestreets -e "update map_edition set active = 'no' where name = '${currentSecondaryEdition}';";
 echo "#	Multiple editions are deactivated for the duration of the switch over."
 
+
 ## Configure the routing engine to use the new edition
 
 # Remove any old deprecated shell-style configuration
@@ -232,7 +233,7 @@ rm -f $jsonConfig2
 # Configure the routing engine to use the new edition
 jsonRoutingConfig=${websitesContentFolder}/data/routing/${newSecondaryEdition}/.config.json
 if [ -r "${jsonRoutingConfig}" ]; then
-    cp ${jsonRoutingConfig} $jsonConfig2
+    ln -s ${jsonRoutingConfig} $jsonConfig2
 else
     # Use deprecated shell-style config file
     echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newSecondaryEdition}" > $routingEngine2ConfigFile

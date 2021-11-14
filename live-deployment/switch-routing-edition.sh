@@ -269,7 +269,7 @@ rm -f $jsonConfig
 # Configure the routing engine to use the new edition
 jsonRoutingConfig=${websitesContentFolder}/data/routing/${newEdition}/.config.json
 if [ -r "${jsonRoutingConfig}" ]; then
-    cp ${jsonRoutingConfig} $jsonConfig
+    ln -s ${jsonRoutingConfig} $jsonConfig
 else
     # Use deprecated shell-style config file
     echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile

@@ -677,16 +677,19 @@ fi
 
 
 # Routing service configuration
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.json
 
 # Create a config if not already present
 if [ ! -x "${routingEngineConfigFile}" ]; then
 	# Create the config for the basic routing db, as cyclestreets user
 	${asCS} touch "${routingEngineConfigFile}"
-	${asCS} echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${sampleRoutingDb}" > "${routingEngineConfigFile}"
-	# Ensure it is executable
-	chmod a+x "${routingEngineConfigFile}"
-fi
+	${asCS} cat > ${routingEngineConfigFile} <<EOF
+{
+	"_comment": "Routing edition configured by install website script",
+	"basedir": "${websitesContentFolder}/data/routing/${sampleRoutingDb}"
+}
+EOF
+if
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
 sudo apt -y install gcc g++ python-dev make cmake doxygen graphviz

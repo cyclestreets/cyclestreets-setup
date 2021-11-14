@@ -255,16 +255,13 @@ else
     echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
-# Routing service configuration
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
-
 # Configure the routing engine to use the new edition
+# !! This block is deprecated [:] 14 Nov 2021 in favour of the subsequent JSON configuration.
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
-
-# Ensure it is executable
 chmod a+x $routingEngineConfigFile
 
-# Copy the json routing config, if it exists
+# Configure the routing engine to use the new edition
 jsonRoutingConfig=${websitesContentFolder}/data/routing/${newEdition}/.config.json
 if [ -r "${jsonRoutingConfig}" ]; then
     cp ${jsonRoutingConfig} ${websitesContentFolder}/routingengine

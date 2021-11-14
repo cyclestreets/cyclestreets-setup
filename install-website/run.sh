@@ -681,7 +681,7 @@ routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.json
 
 # Create a config if not already present
 if [ ! -x "${routingEngineConfigFile}" ]; then
-	# Create the config for the basic routing db, as cyclestreets user
+	# Create the JSON config for the basic routing db, as cyclestreets user
 	${asCS} touch "${routingEngineConfigFile}"
 	${asCS} cat > ${routingEngineConfigFile} <<EOF
 {
@@ -689,7 +689,7 @@ if [ ! -x "${routingEngineConfigFile}" ]; then
 	"basedir": "${websitesContentFolder}/data/routing/${sampleRoutingDb}"
 }
 EOF
-if
+fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
 sudo apt -y install gcc g++ python-dev make cmake doxygen graphviz

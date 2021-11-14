@@ -220,13 +220,12 @@ ${superMysql} cyclestreets -e "update map_edition set active = 'no' where name =
 echo "#	Multiple editions are deactivated for the duration of the switch over."
 
 # Configure the routing engine to use the new edition
+# !! This block is deprecated [:] 14 Nov 2021 in favour of the subsequent JSON configuration.
 routingEngine2ConfigFile=${websitesContentFolder}/routingengine/.config2.sh
 echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newSecondaryEdition}" > $routingEngine2ConfigFile
-
-# Ensure it is executable
 chmod a+x $routingEngine2ConfigFile
 
-# Copy the json routing config, if it exists
+# Configure the routing engine to use the new edition
 jsonRoutingConfig=${websitesContentFolder}/data/routing/${newSecondaryEdition}/.config.json
 if [ -r "${jsonRoutingConfig}" ]; then
     cp ${jsonRoutingConfig} ${websitesContentFolder}/routingengine/.config2.json

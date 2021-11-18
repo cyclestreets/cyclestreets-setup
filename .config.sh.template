@@ -85,6 +85,9 @@ websitesBackupsFolder=/websites/www/backups
 websitesLogsFolder=/websites/www/logs
 ##importContentFolder=
 
+# Profile - definitions, datasets and rules for cycle routing
+cyclestreetsProfileFolder=
+
 # Bind the source of the new routing editions
 ##importHostname=
 ##desiredEdition=

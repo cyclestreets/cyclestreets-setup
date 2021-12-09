@@ -16,7 +16,7 @@
 
 -- Combine County and 'Unitary Authority'
 drop table if exists dev_combined_county_unitary;
-create table dev_combined_county_unitary like osboundaryline.district_borough_unitary;
+create table dev_combined_county_unitary like district_borough_unitary;
 
 alter table dev_combined_county_unitary
  change fid fid int not null,
@@ -36,7 +36,7 @@ alter table dev_combined_county_unitary
  drop area_type_description,
  drop non_area_type_code,
  drop non_area_type_description,
--- #mysql8 These next two are not present when on MySQL 8.0
+-- These next two are added by the centroids
  drop longitude,
  drop latitude,
  drop key `fid`;
@@ -67,7 +67,7 @@ select fid, name, area_description,
        case name
        when 'Shetland Islands'                    then 0.000007
        when 'Highland'                            then 0.000007
-       when 'Aberdeen City'                       then 0.00009
+       when 'Isle of Wight'                       then 0.00001
        when 'Sir Ynys Mon - Isle of Anglesey'     then 0.00001
        when 'Argyll and Bute'                     then 0.00001
        when 'Orkney Islands'                      then 0.00001
@@ -78,12 +78,13 @@ select fid, name, area_description,
        when 'Fife'                                then 0.00002
        when 'Aberdeenshire'                       then 0.00002
        when 'Moray'                               then 0.00002
+       when 'Northumberland'                      then 0.00003
        when 'Gwynedd - Gwynedd'                   then 0.00003
        when 'Falkirk'                             then 0.00003
        when 'South Ayrshire'                      then 0.00005
        when 'City of Edinburgh'                   then 0.00005
        when 'Sir y Fflint - Flintshire'           then 0.00005
-       when 'Isle of Wight'                       then 0.00007
+       when 'Aberdeen City'                       then 0.00009
        when 'South Gloucestershire'               then 0.0007
        when 'Sir Fynwy - Monmouthshire'           then 0.0001
        when 'Dumfries and Galloway'               then 0.0001
@@ -92,7 +93,6 @@ select fid, name, area_description,
        when 'Isles of Scilly'                     then 0.0001
        when 'Redcar and Cleveland (B)'            then 0.0001
        when 'Perth and Kinross'                   then 0.0001
-       when 'Northumberland'                      then 0.0001
        when 'Sefton District (B)'                 then 0.0002
        when 'Sunderland District (B)'             then 0.0002
        when 'Bournemouth, Christchurch and Poole' then 0.0006
@@ -138,15 +138,15 @@ select fid, name
 set @wkt := 'Point(50 100)';
 select st_astext(st_geomfromtext(@wkt, 4326));
 select st_asgeojson(st_geomfromtext(@wkt, 4326));
--- Read from the geojson as SRId=0
+-- Read from the geojson as SRID=0
 select st_asgeojson(st_geomfromgeojson(st_asgeojson(st_geomfromtext(@wkt, 4326)), 2, 0));
 */
 
 
 -- Generic geometry table viewer
 /*
-drop view view_geometry_table;
-create or replace view view_geometry_table as
+drop view routing211201.view_geometry_table;
+create or replace view routing211201.view_geometry_table as
 select id, fid, name, area_description description, color, 5 weight, 0.2 fillOpacity, geometry
   from dev_combined_county_unitary;
 */

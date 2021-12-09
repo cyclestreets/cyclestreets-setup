@@ -1,5 +1,5 @@
 #!/bin/bash
-# Script Integrate OS Boundary Line from OS open data and takes about 20 minutes to run.
+# Script Integrate OS Boundary Line from OS open data and takes about 2 hours to run.
 usage()
 {
     cat << EOF
@@ -90,8 +90,9 @@ apt install -y unzip gdal-bin
 sourceUrl="https://api.os.uk/downloads/v1/products/BoundaryLine/downloads?area=GB&format=GeoPackage&redirect"
 
 # Alternatively from My Society
-# - but this May 2020 version is the latest in the GeoPackage format on their site.
-#sourceUrl="https://parlvid.mysociety.org/os/boundary-line/bdline_gpkg_gb-2020-05.zip"
+# This Oct 2021 version is the latest in the GeoPackage format on their site,
+# but did not have the GeoPackage format when tried on 8 Dec 2021 18:34:54.
+# sourceUrl="https://parlvid.mysociety.org/os/boundary-line/bdline_gb-2021-10.zip"
 
 cd /tmp
 mkdir -p boundary-line
@@ -107,6 +108,10 @@ mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 echo "#	$(date)	Import GeoPackage into MySQL"
 ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -progress
+
+# Convert SRID
+echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"
+mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/convert_srid.sql
 
 # Apply optimizations
 echo "#	$(date)	Boundary line optimizations"

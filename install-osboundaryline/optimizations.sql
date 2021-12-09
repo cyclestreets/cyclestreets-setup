@@ -17,8 +17,6 @@ change area_description area_description enum('Metropolitan District','Unitary A
  add index(area_description);
 
 
-
-
 -- Centroids
 /*
 -- This query lists the tables that are affected:
@@ -34,7 +32,55 @@ having count(*)=5;
 */
 
 
--- 1
+-- boundary_line_ceremonial_counties
+-- Add fields for centroids
+alter table boundary_line_ceremonial_counties
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update boundary_line_ceremonial_counties
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- boundary_line_historic_counties
+-- Add fields for centroids
+alter table boundary_line_historic_counties
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update boundary_line_historic_counties
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- community_ward
+-- Add fields for centroids
+alter table community_ward
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update community_ward
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- country_region
+-- Add fields for centroids
+alter table country_region
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update country_region
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- county
 -- Add fields for centroids
 alter table county
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -46,7 +92,7 @@ update county
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 2
+-- county_electoral_division
 -- Add fields for centroids
 alter table county_electoral_division
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -58,7 +104,7 @@ update county_electoral_division
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 3
+-- district_borough_unitary
 -- Add fields for centroids
 alter table district_borough_unitary
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -70,7 +116,7 @@ update district_borough_unitary
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 4
+-- district_borough_unitary_ward
 -- Add fields for centroids
 alter table district_borough_unitary_ward
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -82,19 +128,19 @@ update district_borough_unitary_ward
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 5
+-- english_region
 -- Add fields for centroids
-alter table european_region
+alter table english_region
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
  add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
 
 -- Set centroid coordinates
-update european_region
+update english_region
    set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 6
+-- greater_london_const
 -- Add fields for centroids
 alter table greater_london_const
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -106,7 +152,31 @@ update greater_london_const
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 7
+-- high_water
+-- Add fields for centroids
+alter table high_water
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update high_water
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- historic_european_region
+-- Add fields for centroids
+alter table historic_european_region
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update historic_european_region
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- parish
 -- Add fields for centroids
 alter table parish
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -118,7 +188,19 @@ update parish
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 8
+-- polling_districts_england
+-- Add fields for centroids
+alter table polling_districts_england
+ add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
+ add latitude  decimal(7,5) not null default 0 comment 'Latitude of centroid';
+
+-- Set centroid coordinates
+update polling_districts_england
+   set longitude = ROUND(ST_X(ST_Centroid(geometry)), 5),
+       latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
+
+
+-- scotland_and_wales_const
 -- Add fields for centroids
 alter table scotland_and_wales_const
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -130,7 +212,7 @@ update scotland_and_wales_const
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 9
+-- scotland_and_wales_region
 -- Add fields for centroids
 alter table scotland_and_wales_region
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -142,7 +224,7 @@ update scotland_and_wales_region
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 10
+-- unitary_electoral_division
 -- Add fields for centroids
 alter table unitary_electoral_division
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',
@@ -154,7 +236,7 @@ update unitary_electoral_division
        latitude  = ROUND(ST_Y(ST_Centroid(geometry)), 5);
 
 
--- 11
+-- westminster_const
 -- Add fields for centroids
 alter table westminster_const
  add longitude decimal(8,5) not null default 0 comment 'Longitude of centroid',

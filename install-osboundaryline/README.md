@@ -1,5 +1,10 @@
 # OS Boundary Line
 
+```shell
+# user@machine$
+sudo /opt/cyclestreets-setup/install-osboundaryline/run.sh
+```
+
 https://osdatahub.os.uk/downloads/open/BoundaryLine
 
 This utility fetches the Boundary Line product from Ordnance survey and installs it into a MySQL database called `osboundaryline`.

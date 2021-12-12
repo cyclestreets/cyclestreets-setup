@@ -121,8 +121,12 @@ mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/optimizat
 echo "#	$(date)	Fix CycleStreets boundary ids"
 mysql -u root -p${mysqlRootPassword} cyclestreets < ${websitesContentFolder}/documentation/schema/boundarylineids.sql
 
+# Highway authorities
+echo "#	$(date)	Highway authorities"
+mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/highwayAuthorities.sql
+
 # Report completion
 echo "#	$(date)	Installing OS Boundary Line completed"
-echo "#	Remove unwanted files from /tmp/boundary-line"
+echo "#	Please remove unwanted or all files from /tmp/boundary-line"
 
 # End of file

@@ -7,20 +7,22 @@
    Together their geometries should cover the whole of Great Britain.
 
    The Boundary Line data is described at:
-   https://www.ordnancesurvey.co.uk/documents/product-support/release-notes/boundary-line-user-guide-Jul-19.pdf
+   https://www.ordnancesurvey.co.uk/business-government/tools-support/boundaryline-support
+
+   This file works in MySQL 8 as it derives the geometry field from a table that is setup as SRID 0 restricted.
 */
 
 -- Load using
--- !! #mysql8 Account for comments when using MySQL 8.0.
 -- mysql osboundaryline < /opt/cyclestreets-setup/install-osboundaryline/highwayAuthorities.sql
 
 -- Combine County and 'Unitary Authority'
-drop table if exists dev_combined_county_unitary;
-create table dev_combined_county_unitary like district_borough_unitary;
+-- Use the prefix cs_ to indicate that this is a CycleStreets generated table.
+drop table if exists cs_highway_authority;
+create table cs_highway_authority like district_borough_unitary;
 
-alter table dev_combined_county_unitary
- change fid fid int not null,
-  add id int unsigned not null auto_increment primary key first,
+alter table cs_highway_authority
+ drop fid,
+  add id int unsigned not null auto_increment primary key comment 'A global polygon id from the Ordnance Survey boundary database' first,
   add color varchar(7) not null default '#48f' comment 'Colour' after id,
   change area_description area_description enum('Unitary Authority', 'Metropolitan District', 'County', 'Greater London Authority'),
  drop area_code,
@@ -38,30 +40,22 @@ alter table dev_combined_county_unitary
  drop non_area_type_description,
 -- These next two are added by the centroids
  drop longitude,
- drop latitude,
- drop key `fid`;
+ drop latitude;
 
-/* #mysql8
--- On MySQL 8.0 change the geometry to SRID=0
-alter table dev_combined_county_unitary
- drop key geometry;
+-- Comment
+alter table cs_highway_authority
+ comment 'CycleStreets highway authorities using geometries simplified by up to one thousandth of a degree, approximately 100 metres';
 
-alter table dev_combined_county_unitary
- change geometry geometry geometry not null srid 0 comment 'SRID zero';
-alter table dev_combined_county_unitary
- add spatial key (geometry);
-*/
 
 -- Check
--- show create table dev_combined_county_unitary\G
+-- show create table cs_highway_authority\G
 
 -- Reset
-truncate dev_combined_county_unitary;
+truncate cs_highway_authority;
 
 -- Fill with 'Unitary Authority'
--- #mysql8 This won't work unless the source table has data converted to SRID=0.
-insert dev_combined_county_unitary (fid, name, area_description, geometry)
-select fid, name, area_description,
+insert cs_highway_authority (id, name, area_description, geometry)
+select global_polygon_id, name, area_description,
        /* Maximal tolerances obtained by trial-and-error that maintain geometry validity. */
        st_simplify(geometry,
        case name
@@ -101,8 +95,8 @@ select fid, name, area_description,
  where area_description in ('Unitary Authority', 'Metropolitan District');
 
 -- Fill with County
-insert dev_combined_county_unitary (fid, name, area_description, geometry)
-select fid, name, area_description,
+insert cs_highway_authority (id, name, area_description, geometry)
+select global_polygon_id, name, area_description,
        /* Maximal tolerances obtained by trial-and-error that maintain geometry validity. */
        st_simplify(geometry,
        case name
@@ -114,39 +108,26 @@ select fid, name, area_description,
   from osboundaryline.county;
 
 -- Colorize
-update dev_combined_county_unitary
+update cs_highway_authority
    set color =
        case area_description
-       when 'Unitary Authority' then '#f06'
-       when 'Metropolitan District' then '#444'
-       else '#3cc' end;
+       when 'Unitary Authority'     then '#f06'	-- Fuschia (bright pink)
+       when 'Metropolitan District' then '#444'	-- Dark grey
+       else '#3cc'				-- Cyan
+       end;
 
--- Check validity
 /*
-select count(*)
-  from dev_combined_county_unitary
- where not st_isvalid(geometry);
-
-select fid, name
-  from dev_combined_county_unitary
+-- Check validity
+-- Takes about a minute
+select id, name
+  from cs_highway_authority
  where not st_isvalid(geometry);
 */
-
-/* In MySQL 8 it may be necessary to convert back to SRID=0 from 4326 as not all st_* functions work with geographical data yet.
-
--- How to convert from 4326 to SRID=0
-set @wkt := 'Point(50 100)';
-select st_astext(st_geomfromtext(@wkt, 4326));
-select st_asgeojson(st_geomfromtext(@wkt, 4326));
--- Read from the geojson as SRID=0
-select st_asgeojson(st_geomfromgeojson(st_asgeojson(st_geomfromtext(@wkt, 4326)), 2, 0));
-*/
-
 
 -- Generic geometry table viewer
 /*
-drop view routing211201.view_geometry_table;
-create or replace view routing211201.view_geometry_table as
-select id, fid, name, area_description description, color, 5 weight, 0.2 fillOpacity, geometry
-  from dev_combined_county_unitary;
+drop view routing211212.view_geometry_table;
+create or replace view routing211212.view_geometry_table as
+select id, name, area_description description, color, 5 weight, 0.2 fillOpacity, geometry
+  from cs_highway_authority;
 */

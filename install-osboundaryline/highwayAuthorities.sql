@@ -91,7 +91,7 @@ select global_polygon_id, name, area_description,
        when 'Sunderland District (B)'             then 0.0002
        when 'Bournemouth, Christchurch and Poole' then 0.0006
        else                                        0.001 end)
-  from osboundaryline.district_borough_unitary
+  from district_borough_unitary
  where area_description in ('Unitary Authority', 'Metropolitan District');
 
 -- Fill with County
@@ -105,7 +105,7 @@ select global_polygon_id, name, area_description,
        when 'North Yorkshire County' then 0.00005
        when 'Kent County'            then 0.00008
        else                               0.0001 end)
-  from osboundaryline.county;
+  from county;
 
 -- Colorize
 update cs_highway_authority
@@ -116,6 +116,18 @@ update cs_highway_authority
        else '#3cc'				-- Cyan
        end;
 
+-- Add census_code
+alter table cs_highway_authority
+  add census_code char(9) not null default '000000000' comment "Census/Government Statistical Service Code for the boundary";
+
+update cs_highway_authority ha
+  join county               ct on ct.global_polygon_id = ha.id
+   set ha.census_code = ct.census_code;
+
+update cs_highway_authority ha
+  join district_borough_unitary dbu on dbu.global_polygon_id = ha.id
+   set ha.census_code = dbu.census_code;
+
 /*
 -- Check validity
 -- Takes about a minute
@@ -125,9 +137,10 @@ select id, name
 */
 
 -- Generic geometry table viewer
+-- /geometrytable/osboundaryline.public_view_highway_authority/
 /*
-drop view routing211212.view_geometry_table;
-create or replace view routing211212.view_geometry_table as
+use osboundaryline;
+create or replace view public_view_highway_authority as
 select id, name, area_description description, color, 5 weight, 0.2 fillOpacity, geometry
   from cs_highway_authority;
 */

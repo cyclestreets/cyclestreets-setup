@@ -116,17 +116,23 @@ update cs_highway_authority
        else '#3cc'				-- Cyan
        end;
 
--- Add census_code
+-- Add census_code, which is thought to be a stable and well known identifier
 alter table cs_highway_authority
   add census_code char(9) not null default '000000000' comment "Census/Government Statistical Service Code for the boundary";
 
+-- Set census code from county table
 update cs_highway_authority ha
   join county               ct on ct.global_polygon_id = ha.id
    set ha.census_code = ct.census_code;
 
+-- Set census code from district_borough_unitary table
 update cs_highway_authority ha
   join district_borough_unitary dbu on dbu.global_polygon_id = ha.id
    set ha.census_code = dbu.census_code;
+
+-- Apply a unique index to the census code
+alter table cs_highway_authority
+  add unique `unique(census_code)` (census_code);
 
 /*
 -- Check validity

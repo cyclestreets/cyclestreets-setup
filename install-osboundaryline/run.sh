@@ -127,6 +127,30 @@ mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/highwayAu
 
 # Report completion
 echo "#	$(date)	Installing OS Boundary Line completed"
-echo "#	Please remove unwanted or all files from /tmp/boundary-line"
+
+
+# Ireland
+echo "#	$(date)	Ireland"
+
+# https://data-osi.opendata.arcgis.com/datasets/14251ccbb15d4d99b984b5c956bb835a_0/explore?location=53.422627%2C-8.258350%2C7.28
+# Get the data
+cd /tmp
+mkdir -p ireland_counties
+cd ireland_counties
+wget -O Counties_-_OSi_National_Statutory_Boundaries.geojson https://opendata.arcgis.com/datasets/14251ccbb15d4d99b984b5c956bb835a_0.geojson
+
+# Load into csExternal
+ogr2ogr -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" Counties_-_OSi_National_Statutory_Boundaries.geojson -nln 'ireland_counties' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+
+# Convert SRID
+echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"
+mysql -u root -p${mysqlRootPassword} csExternal < $SCRIPTDIRECTORY/ireland_convert_srid.sql
+
+# Report completion
+echo "#	$(date)	Installing Ireland counties completed"
+
+
+# Report completion
+echo "#	Please remove unwanted or all files from /tmp/boundary-line and /tmp/ireland_counties"
 
 # End of file

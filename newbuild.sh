@@ -111,7 +111,7 @@ set -e
 vecho "#\tStarting $0"
 
 
-# Check required arguemnt
+# Check optional argument
 if [ -n "$1" ]; then
     importConfig=$1
 else

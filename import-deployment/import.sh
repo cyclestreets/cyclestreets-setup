@@ -53,7 +53,7 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Check required arguemnt
+# Check required argument
 if [ -z "$1" ]; then
     echo "#	$0 No config argument" 1>&2
     exit 1
@@ -114,6 +114,7 @@ echo "#	Progress is logged in ${importContentFolder}/log.txt"
 
 
 # Guess the likely name of the routing edition, which is usually routingYYMMDD
+# !! This is messy and probably unnecesary.
 likelyEdition=routing$(date +%y%m%d)
 
 # Check whether the edition already exists either as a directory or symbolic link
@@ -160,6 +161,8 @@ cd ${importContentFolder}
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
 php run.php $importConfig
 
+# !! The latest edition is not always the right one - ideally the newly generated import edition could be provided
+#    as the result from the above php call.
 # Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
 latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
 

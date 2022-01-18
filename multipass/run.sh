@@ -35,7 +35,7 @@ done
 # After getopts is done, shift all processed options away with
 shift $((OPTIND-1))
 
-# Check required arguemnt
+# Check required argument
 if [ -z "$1" ]; then
     echo "#	$0 Error: no config argument" 1>&2
     exit 1

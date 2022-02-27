@@ -405,6 +405,9 @@ mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 #	Sieve file (do first as it is the smallest)
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
+#	Config json file (do next as it is also small)
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/.config.json ${newEditionFolder}/
+
 #	Transfer the TSV file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 

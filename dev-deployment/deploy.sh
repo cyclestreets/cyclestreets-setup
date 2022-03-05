@@ -91,6 +91,13 @@ if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 	# NB These will deliberately overwrite any existing config; it is assumed that once set, the config will only be changed via this setup script (as otherwise it is painful during testing)
 	sed -i "s/dc_eximconfig_configtype=.*/dc_eximconfig_configtype='internet'/" /etc/exim4/update-exim4.conf.conf
 	sed -i "s/dc_local_interfaces=.*/dc_local_interfaces=''/" /etc/exim4/update-exim4.conf.conf
+	
+	# Enable TLS 1.2+ (see MB232122)
+	#!# Currently this needs manual intervention to enter the server name
+	/usr/share/doc/exim4-base/examples/exim-gencert
+	echo MAIN_TLS_ENABLE=yes > /etc/exim4/exim4.conf.localmacros
+	
+	# Reload
 	update-exim4.conf
 	service exim4 restart
 fi

@@ -95,7 +95,7 @@ if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
 	# Enable TLS 1.2+ (see MB232122)
 	#!# Currently this needs manual intervention to enter the server name
 	/usr/share/doc/exim4-base/examples/exim-gencert
-	echo MAIN_TLS_ENABLE=yes > /etc/exim4/exim4.conf.localmacros
+	echo MAIN_TLS_ENABLE=yes > /etc/exim4/conf.d/main/00_exim4-enable_tls
 	
 	# Reload
 	update-exim4.conf

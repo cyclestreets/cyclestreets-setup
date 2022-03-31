@@ -159,13 +159,7 @@ fi
 cd ${importContentFolder}
 
 # Start the import (sets a file lock called /var/lock/cyclestreets/importInProgress to stop multiple imports running)
-php run.php $importConfig
-
-# !! The latest edition is not always the right one - ideally the newly generated import edition could be provided
-#    as the result from the above php call.
-# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
-
+routingEdition=`php run.php $importConfig`
 
 # Reopen the website if it was closed earlier
 if [ -n "${stopRoutingDuringImport}" ]; then
@@ -173,7 +167,7 @@ if [ -n "${stopRoutingDuringImport}" ]; then
 fi
 
 # Report completion and next steps
-echo "#	$(date)	CycleStreets import has created a new edition: ${latestEdition}"
+echo "#	$(date)	CycleStreets import has created a new edition: ${routingEdition}"
 echo "#	To prepare this data for serving locally, remotely or both:"
 echo "#	Locally  run: ${ScriptHome}/live-deployment/installLocalLatestEdition.sh"
 echo "#	Remotely run: ${username}@other:${ScriptHome}/live-deployment\$ ./install-routing-data.sh"

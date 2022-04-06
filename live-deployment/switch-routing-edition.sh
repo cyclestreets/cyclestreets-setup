@@ -290,11 +290,17 @@ localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
 echo "#	Initial status: ${localRoutingStatus}"
 
 # Wait until it has restarted
+sleeptime=1
+timewaited=0
 # !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
-    sleep 12
+    sleep $sleeptime
     localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
-    echo "#	Status: ${localRoutingStatus}"
+    (( timewaited += sleeptime ))		# Increment https://tldp.org/LDP/abs/html/arithexp.html
+    echo "#	Status: ${localRoutingStatus}	Seconds waited: ${timewaited}"
+    if [ $sleeptime -lt 60 ]; then		# Keep less than 60
+	(( sleeptime += 1 ))			# Increment
+    fi
 done
 
 # Get the locally running service

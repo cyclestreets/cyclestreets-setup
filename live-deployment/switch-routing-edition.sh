@@ -327,7 +327,7 @@ ${superMysql} cyclestreets -e "call openJourneyPlanner();";
 # The importDate may not be a valid date because e.g. values such as 220000 are used for special builds, so tolerate those.
 set +e
 formattedDate=`date -d "20${importDate}" "+%-d %B %Y"`
-if [ -n "${formattedDate}" ]; then
+if [ -z "${formattedDate}" ]; then
     formattedDate="${importDate} as YYMMDD"
 fi
 set -e

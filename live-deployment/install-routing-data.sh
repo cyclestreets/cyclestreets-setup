@@ -310,7 +310,7 @@ if [ -z "${resolvedEdition}" ]; then
     exit 1
 fi
 
-# Double-check the format is routingYYMMDD
+# Double-check the routing edition format is correct
 if [[ ! "${resolvedEdition}" =~ routing([0-9]{6}) ]]; then
     vecho "#\tThe desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
     exit 1

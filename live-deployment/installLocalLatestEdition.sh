@@ -6,10 +6,15 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	installLocalLatestEdition.sh
+	installLocalLatestEdition.sh -h [edition]
 
 OPTIONS
 	-h Show this message
+
+ARGUMENTS
+	[edition]
+		Optional routing edition of the form routingYYMMDD
+		If not provided the latest one is looked up from the importContentFolder.
 
 DESCRIPTION
 	Used on a server that provides both the live and import deployments. I.e. usually a developer machine.
@@ -96,18 +101,30 @@ fi
 
 
 ### Determine latest import
-
 # New routing editions should be found at this location
 importMachineEditions=${importContentFolder}/output
 
-# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
+# Check optional argument
+if [ -n "$1" ]; then
+    latestEdition=$1
+else
+    # Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
+    latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
+fi
+
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then
     echo "Error: No editions found in ${importMachineEditions}"
     exit 1
 fi
+
+# Double-check the routing edition format is correct
+if [[ ! "${latestEdition}" =~ routing([0-9]{6}) ]]; then
+    echo -e "#\tThe edition: ${latestEdition} does not match the expected pattern routingYYMMDD."
+    exit 1
+fi
+
 
 # Check (at least one of) the files exist
 if [ ! -e ${importMachineEditions}/${latestEdition}/legDetail.tsv ]; then

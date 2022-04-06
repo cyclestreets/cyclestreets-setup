@@ -318,12 +318,20 @@ ${superMysql} cyclestreets -e "call openJourneyPlanner();";
 
 ### Finishing
 
-# Tinkle the update - the account with userId = 2 is a general notification account so that message appears to come from CycleStreets
+# The importDate may not be a valid date because e.g. values such as 220000 are used for special builds, so tolerate those.
+set +e
 formattedDate=`date -d "20${importDate}" "+%-d %B %Y"`
+if [ -n "${formattedDate}" ]; then
+    formattedDate="${importDate} as YYMMDD"
+fi
+set -e
+
+# Tinkle the update
+# The account with userId = 2 is a general notification account so that message appears to come from CycleStreets
 ${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${formattedDate}, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Report
-echo "#	$(date)	Completed switch to $newEdition"
+echo "#	$(date)	Completed switch to ${newEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

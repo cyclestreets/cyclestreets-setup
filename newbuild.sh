@@ -196,7 +196,7 @@ if [ -n "${editionAlias}" ]; then
 fi
 
 ## Install
-if live-deployment/installLocalLatestEdition.sh ;
+if live-deployment/installLocalLatestEdition.sh newEdition ;
 then
     vecho "#\t$(date)\tLocal install completed just fine."
 else

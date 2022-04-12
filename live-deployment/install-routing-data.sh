@@ -169,7 +169,12 @@ fi
 
 ## Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then
-    ${ScriptHome}/live-deployment/remove-routing-edition.sh oldest
+    # Forward the quiet option
+    quietOption=-q
+    if [ -n "${verbose}" ]; then
+	quietOption=
+    fi
+    ${ScriptHome}/live-deployment/remove-routing-edition.sh ${quietOption} oldest
 fi
 
 # Optional first argument is the source of the new routing editions

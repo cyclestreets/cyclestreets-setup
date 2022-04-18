@@ -60,6 +60,7 @@ exec newgrp rollout
 # Set ownership and group
 # user@machine:~$
 sudo chown -R cyclestreets.rollout /opt/cyclestreets-setup
+git config --global --add safe.directory /opt/cyclestreets-setup
 
 # Set group permissions and add setgid bit
 sudo chmod -R g+w /opt/cyclestreets-setup

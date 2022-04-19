@@ -61,7 +61,7 @@ vecho()
 ### Stage 1 - general setup
 
 # Announce start
-vecho "#\t$(date) CycleStreets routing edition removal (keepEditions: ${keepEditions})"
+vecho "#\t$(date) CycleStreets routing edition removal"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then

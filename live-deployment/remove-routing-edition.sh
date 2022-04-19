@@ -61,7 +61,7 @@ vecho()
 ### Stage 1 - general setup
 
 # Announce start
-vecho "#\t$(date) CycleStreets routing edition removal"
+vecho "#\t$(date) CycleStreets routing edition removal (keepEditions: ${keepEditions})"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
@@ -132,9 +132,11 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # Check the supplied argument
 if [ "$1" = 'oldest' -o "$1" = 'newest' ]
 then
-    # Find the oldest edition
-    # Count the number of routing editions not including the null edition
-    numEditions=$(${superMysql} -s cyclestreets<<<"SELECT count(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME != 'routing000000' and SCHEMA_NAME LIKE 'routing%';")
+    # Find the oldest edition not including the null edition, or the modify graph edition
+    selector="from INFORMATION_SCHEMA.SCHEMATA where SCHEMA_NAME not in ('routing000000', 'routing220000') and SCHEMA_NAME LIKE 'routing%'"
+
+    # Count the number of routing editions
+    numEditions=$(${superMysql} -s cyclestreets<<<"select count(*) ${selector};")
 
     # Check that there enough existing routing editions - to avoid removing the most recent ones
     if [ -z "${numEditions}" -o "${numEditions}" -le ${keepEditions} ]
@@ -148,7 +150,7 @@ then
     [[ "$1" = 'oldest' ]] && sort='asc' || sort='desc'
 
     # Determine oldest edition not including the null edition (the -s suppresses the tabular output)
-    removeEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME != 'routing000000' and SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME ${sort} limit 1;")
+    removeEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME ${selector} order by SCHEMA_NAME ${sort} limit 1;")
 
 else
 
@@ -215,18 +217,22 @@ else
     # Check not already serving this edition
 
     # POST the request to the server
-    currentRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    if currentRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+    then
 
-    if [ -z "${currentRoutingEdition}" ]; then
-	vecho "#\tThe current edition at ${localRoutingUrl} could not be determined."
-	exit 1
-    fi
+	if [ -z "${currentRoutingEdition}" ]; then
+	    vecho "#\tThe current edition at ${localRoutingUrl} could not be determined."
+	    exit 1
+	fi
 
-    # Check the fallback routing edition is the same as the proposed edition
-    if [ "${removeEdition}" == "${currentRoutingEdition}" ]; then
-	vecho "#\tThe proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
-	vecho "#\tStop it using: sudo /bin/systemctl stop cyclestreets"
-	exit 1
+	# Check the fallback routing edition is the same as the proposed edition
+	if [ "${removeEdition}" == "${currentRoutingEdition}" ]; then
+	    vecho "#\tThe proposed edition to remove: ${removeEdition} is currently being served from ${localRoutingUrl}"
+	    vecho "#\tStop it using: sudo /bin/systemctl stop cyclestreets"
+	    exit 1
+	fi
+    else
+	vecho "#\tAn error was received from ${localRoutingUrl} proceeding anway"
     fi
 fi
 

@@ -273,11 +273,11 @@ if [ -f /etc/apparmor.d/usr.sbin.mysqld -a ! -f /etc/apparmor.d/disable/usr.sbin
 fi
 
 # Node - later version than v. 8.10.0 which is supplied with Ubuntu 18.04
+apt-get install -y curl
 curl -sL https://deb.nodesource.com/setup_16.x | bash -
 apt-get install -y nodejs
 
 # Yarn, for JS package management; see: https://www.howtoforge.com/how-to-install-yarn-npm-package-manager-on-ubuntu-20-04/
-apt-get install -y curl
 curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 apt-get update

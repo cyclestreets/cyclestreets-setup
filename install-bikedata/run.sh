@@ -80,14 +80,16 @@ cd "${bikedataContentFolder}"
 if [ ! -d "${bikedataContentFolder}/.git" ]
 then
 	${asCS} git clone https://github.com/cyclestreets/bikedata.git "${bikedataContentFolder}/"
-	${asCS} git clone https://github.com/cyclestreets/Leaflet.LayerViewer.git "${bikedataContentFolder}/js/lib/Leaflet.LayerViewer/"
 else
 	${asCS} git -C "${bikedataContentFolder}" pull
-	${asCS} git -C "${bikedataContentFolder}/js/lib/Leaflet.LayerViewer/" pull
 fi
 
 # Make the repository writable to avoid permissions problems when manually editing
 chmod -R g+w "${bikedataContentFolder}"
+
+# Add dependencies
+cd "${bikedataContentFolder}"
+yarn install
 
 # Create the VirtualHost config if it doesn't exist, and write in the configuration
 vhConf=/etc/apache2/sites-available/bikedata.conf

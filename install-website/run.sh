@@ -121,7 +121,7 @@ service apache2 restart
 # Install Python
 echo "#	Installing python"
 # These are used by deployment scripts to correspond with the routing servers via xml
-apt -y install python php-xmlrpc php-curl python3-dev python-argparse python3-pip curl libxml-xpath-perl
+apt -y install python3 php-xmlrpc php-curl python3-dev python-argparse python3-pip curl libxml-xpath-perl
 
 # Upgrade pip
 python3 -m pip install --upgrade pip
@@ -678,15 +678,15 @@ fi
 
 # Routing service configuration if not already present
 routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.json
-if [ ! -e $routingEngineConfigFile ]; then
+if [ ! -L $routingEngineConfigFile ]; then
 	# Link to the JSON config for the basic routing db, as cyclestreets user
 	${asCS} ln -s ${websitesContentFolder}/data/routing/${sampleRoutingDb}/.config.json $routingEngineConfigFile
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt -y install gcc g++ python-dev make cmake doxygen graphviz
+sudo apt -y install gcc g++ python3-dev make cmake doxygen graphviz
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
-	echo "Now building the C++ routing module..."
+	echo "Building CycleStreets routing C++ module..."
 	cd "${websitesContentFolder}/routingengine/"
 	${asCS} ./buildre.sh
 	cd ${websitesContentFolder}

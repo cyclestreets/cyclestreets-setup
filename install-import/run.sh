@@ -310,7 +310,7 @@ fi
 
 # Fetching dependencies
 echo "#	$(date)	Fetching dependencies"
-$packageInstall libboost-dev cmake gcc g++ python-dev python3-pip make doxygen graphviz
+$packageInstall libboost-dev cmake gcc g++ python3-dev python3-pip make doxygen graphviz
 
 # Upgrade pip
 python3 -m pip install --upgrade pip

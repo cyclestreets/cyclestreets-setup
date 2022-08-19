@@ -75,31 +75,36 @@ dumpFile=dump.sql.gz
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qrst" option ; do
+while getopts "fhm:qrst" option ; do
     case ${option} in
         h) usage; exit ;;
+	f)
+	    # Set option to repair geometry
+	    repairSpatial=1
+	    ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
 	    ;;
-	# Remove oldest routing edition
-	r) removeOldest=1
+	r)
+	    # Set option to remove oldest routing edition
+	    removeOldest=1
 	   ;;
-	# Skip switching to the new edition
 	s)
+	    # Skip switching to the new edition
 	    skipSwitch=1
 	   ;;
-	# Dry run shows results of arg processing
 	t)
+	    # Dry run shows results of arg processing
 	    testargs=test
 	   ;;
-	# Set quiet mode and proceed
         q)
+	    # Set quiet mode and proceed
 	    # Turn off verbose messages by setting this variable to the empty string
 	    verbose=
 	    ;;
-	# Missing expected argument
 	:)
+	    # Missing expected argument
 	    echo "Option -$OPTARG requires an argument." >&2
 	    exit 1
 	    ;;

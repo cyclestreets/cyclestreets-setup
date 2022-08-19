@@ -11,10 +11,11 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -s -t -m email [importHostname] [edition] [path]
+	$0 -h -f -q -r -s -t -m email [importHostname] [edition] [path]
 
 OPTIONS
 	-h Show this message
+	-f Repairs map_wayDynamic spatial geometry column which needs doing when source is created on MySQL < 8.
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
@@ -63,6 +64,9 @@ testargs=
 removeOldest=
 # Default to switch to the new edition when this is empty
 skipSwitch=
+
+# Default to no repair
+repairSpatial=
 
 # Files
 tsvFile=tsv.tar.gz
@@ -471,6 +475,12 @@ gunzip < ${dumpFile} | ${superMysql} ${importEdition}
 rm -f ${dumpFile}
 
 ### Stage 6 - run post-install stored procedures
+if [ -n "${repairSpatial}" ]; then
+    echo "#	$(date) Repairing map_wayDynamic geometry"
+    ${superMysql} ${importEdition} -e "alter table map_wayDynamic drop key geometry;"
+    ${superMysql} ${importEdition} -e "alter table map_wayDynamic change geometry geometry geometry NOT NULL srid 0;"
+    ${superMysql} ${importEdition} -e "alter table map_wayDynamic add spatial key (geometry);"
+fi
 
 #	Load nearest point stored procedures
 echo "#	$(date)	Loading nearestPoint technology"

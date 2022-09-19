@@ -336,6 +336,9 @@ if [ -n "$tagsLanguages" ]; then
     su - ${SUDO_USER} -c "cd ${websitesContentFolder} && etags -R --languages=$tagsLanguages"
 fi
 
+# Install firewall
+. ${ScriptHome}/utility/installFirewall.sh
+
 # Confirm end of script
 cd ${importContentFolder}
 echo "#	$(date)	All now installed."

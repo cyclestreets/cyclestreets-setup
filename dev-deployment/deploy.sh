@@ -141,6 +141,9 @@ service apache2 reload
 # Downloads area
 . ${ScriptHome}/dev-deployment/install-downloads.sh
 
+# Install firewall
+. ${ScriptHome}/utility/installFirewall.sh
+
 # Confirm end of script
 echo -e "#	All now deployed $(date)"
 

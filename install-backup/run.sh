@@ -160,6 +160,9 @@ fi
 ### Restart munin-node
 systemctl restart munin-node
 
+# Install firewall
+. ${SCRIPTDIRECTORY}/utility/installFirewall.sh
+
 
 ## Report completion
 echo "#	Installing backup system completed"

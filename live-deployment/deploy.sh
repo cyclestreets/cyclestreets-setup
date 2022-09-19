@@ -126,6 +126,9 @@ if [ -n "${devHostname}" ]; then
     ${superMysql} -e "drop user if exists 'root'@'${devHostname}';create user 'root'@'${devHostname}' identified with mysql_native_password by '${mysqlRootPassword}';grant all privileges on *.* to 'root'@'${devHostname}' with grant option;flush privileges;"
 fi
 
+# Install firewall
+. ${ScriptHome}/utility/installFirewall.sh
+
 # Confirm end of script
 echo -e "#	All now deployed $(date)"
 

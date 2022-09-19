@@ -192,6 +192,9 @@ munin-node-configure --suggest --shell | sh
 echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest
 
+# Install firewall
+. ${SCRIPTDIRECTORY}/utility/installFirewall.sh
+
 # Report completion
 echo "#	Installing tilecache completed"
 

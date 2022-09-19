@@ -28,6 +28,7 @@ ufw allow http
 ufw allow https
 
 # Munin-node, accessible only from dev
+ufw allow from 127.0.0.1 to any port 4949
 ufw allow from 46.235.226.213 to any port 4949
 
 # MySQL, if present

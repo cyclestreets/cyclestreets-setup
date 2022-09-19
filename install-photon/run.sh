@@ -18,14 +18,14 @@ set -e
 lockdir=/var/lock/cyclestreets
 mkdir -p $lockdir
 
-# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
+# Set a lock file; see: https://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
 	flock -n 9 || { echo '#	An installation is already running' ; exit 1; }
 
 
 ### CREDENTIALS ###
 
-# Get the script directory see: http://stackoverflow.com/a/246128/180733
+# Get the script directory see: https://stackoverflow.com/a/246128/180733
 # The multi-line method of geting the script directory is needed to enable the script to be called from elsewhere.
 SOURCE="${BASH_SOURCE[0]}"
 DIR="$( dirname "$SOURCE" )"
@@ -71,7 +71,7 @@ echo "# Photon geocoder installation $(date)"
 
 # https://github.com/komoot/photon
 # https://github.com/komoot/leaflet.photon
-# http://photon.komoot.de/
+# https://photon.komoot.io/
 
 
 # Set up installation directory
@@ -89,7 +89,7 @@ fi
 apt -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
 	echo "Downloading compiled data file (at November 2021 this is 76GB and unpacks to 146GB)"
-	$asCS wget http://download1.graphhopper.com/public/photon-db-latest.tar.bz2
+	$asCS wget https://download1.graphhopper.com/public/photon-db-latest.tar.bz2
 	$asCS pbzip2 -d photon-db-latest.tar.bz2
 	$asCS tar vxf photon-db-latest.tar
 fi

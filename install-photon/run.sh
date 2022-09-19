@@ -56,9 +56,6 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
-# Photon requires Java
-apt-get -y install default-jre
-
 
 # Shortcut for running commands as the cyclestreets user
 asCS="sudo -u ${username}"
@@ -73,6 +70,9 @@ echo "# Photon geocoder installation $(date)"
 # https://github.com/komoot/leaflet.photon
 # https://photon.komoot.io/
 
+
+# Photon requires Java
+apt-get -y install default-jre
 
 # Set up installation directory
 mkdir -p /opt/photon/

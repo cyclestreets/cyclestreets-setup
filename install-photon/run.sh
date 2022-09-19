@@ -51,13 +51,13 @@ fi
 . $SCRIPTDIRECTORY/${configFile}
 
 # Update sources and packages
-apt -y update
-apt -y upgrade
-apt -y dist-upgrade
-apt -y autoremove
+apt-get -y update
+apt-get -y upgrade
+apt-get -y dist-upgrade
+apt-get -y autoremove
 
 # Photon requires Java
-apt -y install default-jre
+apt-get -y install default-jre
 
 
 # Shortcut for running commands as the cyclestreets user
@@ -86,7 +86,7 @@ if [ ! -f "/opt/photon/photon-${VERSION}.jar" ]; then
 fi
 
 # Get the latest data
-apt -y install pbzip2
+apt-get -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
 	echo "Downloading compiled data file (at November 2021 this is 76GB and unpacks to 146GB)"
 	$asCS wget https://download1.graphhopper.com/public/photon-db-latest.tar.bz2

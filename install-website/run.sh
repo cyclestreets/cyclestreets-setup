@@ -551,8 +551,8 @@ if [ -n "${useSSL}" -a -n "${apiSSLVirtualHostFile}" ]; then
 	ServerName ${apiHostname}
 
 	# Logging
-	CustomLog /websites/www/logs/${apiHostname}-access.log combined
-	ErrorLog /websites/www/logs/${apiHostname}-error.log
+	CustomLog /websites/www/logs/${apiHostname}_ssl-access.log combined
+	ErrorLog /websites/www/logs/${apiHostname}_ssl-error.log
 
 	# Where the files are
 	DocumentRoot /websites/www/content/

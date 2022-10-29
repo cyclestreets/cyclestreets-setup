@@ -341,20 +341,20 @@ if [ ! -r ${csVirtualHostFile} ]; then
     # Create the VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
     cat > ${csVirtualHostFile} << EOF
 <VirtualHost *:80>
-	
+
 	# Available URL(s)
 	# Note: ServerName should not use wildcards; use ServerAlias for that.
 	ServerName cyclestreets.net
 	ServerAlias *.cyclestreets.net
 	ServerAlias ${csHostname}
-	
+
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}-access.log combined
 	ErrorLog /websites/www/logs/${csHostname}-error.log
-	
+
 	# Where the files are
 	DocumentRoot /websites/www/content/
-	
+
 	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit rescans
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
@@ -390,20 +390,20 @@ if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
 	# Create the SSL VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
 	cat > ${csSSLVirtualHostFile} << EOF
 <VirtualHost *:443>
-	
+
 	# Available URL(s)
 	# Note: ServerName should not use wildcards; use ServerAlias for that.
 	ServerName cyclestreets.net
 	ServerAlias *.cyclestreets.net
 	ServerAlias ${csHostname}
-	
+
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}-access.log combined
 	ErrorLog /websites/www/logs/${csHostname}-error.log
-	
+
 	# Where the files are
 	DocumentRoot /websites/www/content/
-	
+
 	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit rescans
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
@@ -415,7 +415,7 @@ if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
 	SSLCertificateFile      /etc/apache2/sslcerts/STAR_cyclestreets_net.crt
 	SSLCertificateKeyFile   /etc/apache2/sslcerts/STAR_cyclestreets_net.key
 	SSLCACertificateFile    /etc/apache2/sslcerts/STAR_cyclestreets_net.ca-bundle
-	
+
 ${locahostSpecialCase}
 ${phpAssertions}
 </VirtualHost>
@@ -469,43 +469,94 @@ then
 fi
 
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
-apilocalconf=api.cyclestreets.conf
-apiLocalVirtualHostFile=/etc/apache2/sites-available/${apilocalconf}
+apiConf=api.cyclestreets.conf
+apiVirtualHostFile=/etc/apache2/sites-available/${apiConf}
+apiSSLConf=
+apiSSLVirtualHostFile=
+if [ -n "${useSSL}" ]; then
+    apiSSLConf=api.cyclestreets_ssl.conf
+    apiSSLVirtualHostFile=/etc/apache2/sites-available/${apiSSLConf}
+fi
+
 
 # Setup api virtualhost if distinct from main virtual host
 # Also check if the api VirtualHost exists already
-if [ -z "${apiSameHost}" -a ! -r ${apiLocalVirtualHostFile} ]; then
-    # Create the local VirtualHost (avoid any backquotes in the text as they'll spawn sub-processes)
-    cat > ${apiLocalVirtualHostFile} << EOF
+if [ -z "${apiSameHost}" -a ! -r ${apiVirtualHostFile} ]; then
+
+	# Create the VirtualHost (avoid any backquotes in the text as they'll spawn sub-processes)
+	cat > ${apiVirtualHostFile} << EOF
 <VirtualHost *:80>
 
 	ServerName ${apiHostname}
-	
+
 	# Logging
 	CustomLog /websites/www/logs/${apiHostname}-access.log combined
 	ErrorLog /websites/www/logs/${apiHostname}-error.log
-	
+
 	# Where the files are
 	DocumentRoot /websites/www/content/
-	
+
 	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-api
-	
+
 	# Development environment
 	# Use MacroDevelopmentEnvironment '/'
-${phpAssertions}
 </VirtualHost>
 EOF
 
-    # Allow the user to edit this file
-    chown ${username}:${rollout} ${apiLocalVirtualHostFile}
+	# Allow the user to edit this file
+	chown ${username}:${rollout} ${apiVirtualHostFile}
 
-    # Enable this VirtualHost
-    a2ensite ${apilocalconf}
+	# Enable this VirtualHost
+	a2ensite ${apiConf}
 
 else
-    echo "#	API VirtualHost is not needed or already exists: ${apiLocalVirtualHostFile}"
+    echo "#	API VirtualHost is not needed or already exists: ${apiVirtualHostFile}"
+fi
+
+
+# Same but for SSL version
+# Check if the VirtualHost exists already
+if [ -n "${useSSL}" -a -n "${apiSSLVirtualHostFile}" ]; then
+    if [ -z "${apiSameHost}" -a ! -r "${apiSSLVirtualHostFile}" ]; then
+	# Create the VirtualHost (avoid any backquotes in the text as they'll spawn sub-processes)
+	cat > ${apiSSLVirtualHostFile} << EOF
+<VirtualHost *:443>
+
+	ServerName ${apiHostname}
+
+	# Logging
+	CustomLog /websites/www/logs/${apiHostname}-access.log combined
+	ErrorLog /websites/www/logs/${apiHostname}-error.log
+
+	# Where the files are
+	DocumentRoot /websites/www/content/
+
+	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit
+	Include /websites/www/content/.htaccess-base
+	Include /websites/www/content/.htaccess-api
+
+	# Certificates
+	# http://billpatrianakos.me/blog/2014/04/04/installing-comodo-positive-ssl-certs-on-apache-and-openssl/
+	SSLEngine on
+	SSLCertificateFile      /etc/apache2/sslcerts/STAR_cyclestreets_net.crt
+	SSLCertificateKeyFile   /etc/apache2/sslcerts/STAR_cyclestreets_net.key
+	SSLCACertificateFile    /etc/apache2/sslcerts/STAR_cyclestreets_net.ca-bundle
+
+	# Development environment
+	# Use MacroDevelopmentEnvironment '/'
+</VirtualHost>
+EOF
+
+	# Allow the user to edit this file
+	chown ${username}:${rollout} ${apiSSLVirtualHostFile}
+
+	# Enable this VirtualHost
+	a2ensite ${apiSSLConf}
+   else
+       echo "#	API VirtualHost is not needed or already exists: ${apiVirtualHostFile}"
+    fi
 fi
 
 

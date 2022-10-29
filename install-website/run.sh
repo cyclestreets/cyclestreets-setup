@@ -258,7 +258,7 @@ if [ -n "${runtimePhpAssertions}" -o -n "${longerPhpSessions}" ]; then
 zend.assertions = 0
 EOF
 
-	# The read can return non zero even though it has not errored so tempoarily turn off stop on error
+	# The read can return non zero even though it has not errored so temporarily turn off stop on error
 	set +e
 
 	# Bind multi-line string for use in both main and api virtualhost configurations.
@@ -292,10 +292,35 @@ EOF
 
 fi
 
-# This variable is set if the api uses the main hostname
+# This variable is set when the hostname is localhost
+usingLocalhost=
+if [ "${csHostname}" = "localhost" ]; then
+    usingLocalhost=1
+fi
+
+# This variable is set when the api uses the main hostname
 apiSameHost=
 if [ "${csHostname}" = "${apiHostname}" ]; then
     apiSameHost=1
+fi
+
+# Special case for localhost
+locahostSpecialCase=
+if [ -n "${usingLocalhost}" ]; then
+
+    # The read can return non zero even though it has not errored so temporarily turn off stop on error
+    set +e
+
+    # Bind multi-line string for use in both main and api virtualhost configurations.
+    # IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
+    IFS='' read -r -d '' locahostSpecialCase <<"EOF"
+
+	# This is necessary to enable cookies to work on the domain http://localhost/
+	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
+	php_admin_value session.cookie_domain none
+EOF
+	# Resume stop on error
+	set -e
 fi
 
 # Check if the VirtualHost exists already
@@ -328,10 +353,8 @@ if [ ! -r ${csVirtualHostFile} ]; then
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-cyclestreets
 	${htaccessApi}
-	
-	# This is necessary to enable cookies to work on the domain http://localhost/
-	# http://stackoverflow.com/questions/1134290/cookies-on-localhost-with-explicit-domain
-	php_admin_value session.cookie_domain none
+
+${locahostSpecialCase}
 ${phpAssertions}
 </VirtualHost>
 EOF
@@ -359,7 +382,7 @@ then
     fi
 
     # Unless localhost is being used, check cs server name
-    if [ "${csHostname}" != "localhost" ]; then
+    if [ -n "${usingLocalhost}" ]; then
 
 	# If the servername is not present add an alias to localhost
 	if  ! cat /etc/hosts | grep "\b${csHostname}\b" > /dev/null 2>&1
@@ -739,7 +762,7 @@ set -e
 sudo systemctl enable cyclestreets
 
 # Advise setting up
-if [ "${csHostname}" != "localhost" ]; then
+if [ -n "${usingLocalhost}" ]; then
     echo "#	Ensure ${csHostname} routes to this machine, eg by adding this line to /etc/hosts"
     echo "127.0.0.1	${csHostname} ${apiHostname}"
 fi

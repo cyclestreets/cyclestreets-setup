@@ -25,6 +25,8 @@ csHostname=localhost
 administratorEmail=webmaster@example.com
 ##mainEmail=$administratorEmail
 
+# Whether to setup the site with SSL certificates
+useSSL=
 
 # API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates
 apiHostname=api-"${csHostname}"

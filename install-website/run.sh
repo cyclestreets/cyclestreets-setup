@@ -211,6 +211,12 @@ chown www-data:${rollout} ${websitesContentFolder}/tests/
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
 csConf=cyclestreets.conf
 csVirtualHostFile=/etc/apache2/sites-available/${csConf}
+csSSLConf=
+csSSLVirtualHostFile=
+if [ -n "${useSSL}" ]; then
+    csSSLConf=cyclestreets_ssl.conf
+    csSSLVirtualHostFile=/etc/apache2/sites-available/${csSSLConf}
+fi
 
 # Used to tune assertions directives in the virtualhosts if needed, initialize as empty.
 phpAssertions=
@@ -368,6 +374,64 @@ EOF
 else
     echo "#	VirtualHost already exists: ${csVirtualHostFile}"
 fi
+
+
+# Same but for SSL version
+# Check if the VirtualHost exists already
+if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
+    if [ ! -r ${csSSLVirtualHostFile} ]; then
+
+	# When the api is the same as the hostname then include /v2/ redirects
+	htaccessApi=
+	if [ -n "${apiSameHost}" ]; then
+	    htaccessApi="Include /websites/www/content/.htaccess-api"
+	fi
+
+	# Create the SSL VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
+	cat > ${csSSLVirtualHostFile} << EOF
+<VirtualHost *:443>
+	
+	# Available URL(s)
+	# Note: ServerName should not use wildcards; use ServerAlias for that.
+	ServerName cyclestreets.net
+	ServerAlias *.cyclestreets.net
+	ServerAlias ${csHostname}
+	
+	# Logging
+	CustomLog /websites/www/logs/${csHostname}-access.log combined
+	ErrorLog /websites/www/logs/${csHostname}-error.log
+	
+	# Where the files are
+	DocumentRoot /websites/www/content/
+	
+	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit rescans
+	Include /websites/www/content/.htaccess-base
+	Include /websites/www/content/.htaccess-cyclestreets
+	${htaccessApi}
+
+	# Certificates
+	# http://billpatrianakos.me/blog/2014/04/04/installing-comodo-positive-ssl-certs-on-apache-and-openssl/
+	SSLEngine on
+	SSLCertificateFile      /etc/apache2/sslcerts/STAR_cyclestreets_net.crt
+	SSLCertificateKeyFile   /etc/apache2/sslcerts/STAR_cyclestreets_net.key
+	SSLCACertificateFile    /etc/apache2/sslcerts/STAR_cyclestreets_net.ca-bundle
+	
+${locahostSpecialCase}
+${phpAssertions}
+</VirtualHost>
+EOF
+
+	# Allow the user to edit this file
+	chown ${username}:${rollout} ${csSSLVirtualHostFile}
+
+	# Enable this VirtualHost
+	a2ensite ${csSSLConf}
+
+    else
+	echo "#	SSL VirtualHost already exists: ${csSSLVirtualHostFile}"
+    fi
+fi
+
 
 # Add the api address to /etc/hosts if it is not already present
 if ! cat /etc/hosts | grep "\b${apiHostname}\b" > /dev/null 2>&1

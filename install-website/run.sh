@@ -329,6 +329,30 @@ EOF
 	set -e
 fi
 
+
+
+# Redirect to https when SSL active
+redirectHttps=
+if [ -n "${useSSL}" ]; then
+
+    # The read can return non zero even though it has not errored so temporarily turn off stop on error
+    set +e
+
+    # Bind multi-line string for use in both main and api virtualhost configurations.
+    # IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
+    IFS='' read -r -d '' redirectHttps <<"EOF"
+
+	# Redirect all URLs to HTTPS, except API V1 calls
+	RewriteEngine on
+	RewriteCond %{REQUEST_URI} !^/api/([a-z]+)\.(xml|json)
+	RewriteRule (.*) https://%{HTTP_HOST}%{REQUEST_URI} [L,R]
+
+EOF
+	# Resume stop on error
+	set -e
+fi
+
+
 # Check if the VirtualHost exists already
 if [ ! -r ${csVirtualHostFile} ]; then
 
@@ -351,7 +375,7 @@ if [ ! -r ${csVirtualHostFile} ]; then
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}-access.log combined
 	ErrorLog /websites/www/logs/${csHostname}-error.log
-
+{$redirectHttps}
 	# Where the files are
 	DocumentRoot /websites/www/content/
 
@@ -536,6 +560,9 @@ if [ -n "${useSSL}" -a -n "${apiSSLVirtualHostFile}" ]; then
 	# Include the application routing and configuration directives, loading it into memory rather than forcing per-hit
 	Include /websites/www/content/.htaccess-base
 	Include /websites/www/content/.htaccess-api
+
+	# Set a low-bandwidth error message for 404
+	ErrorDocument 404 "404 https resource not found"
 
 	# Certificates
 	# http://billpatrianakos.me/blog/2014/04/04/installing-comodo-positive-ssl-certs-on-apache-and-openssl/

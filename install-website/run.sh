@@ -216,6 +216,9 @@ csSSLVirtualHostFile=
 if [ -n "${useSSL}" ]; then
     csSSLConf=cyclestreets_ssl.conf
     csSSLVirtualHostFile=/etc/apache2/sites-available/${csSSLConf}
+
+    # Copy SSL certs into apache folder
+    cp -r ${useSSL} /etc/apache2/
 fi
 
 # Used to tune assertions directives in the virtualhosts if needed, initialize as empty.

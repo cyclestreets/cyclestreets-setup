@@ -209,8 +209,8 @@ chown www-data:${rollout} ${websitesContentFolder}/untemplatisedpages.txt
 chown www-data:${rollout} ${websitesContentFolder}/tests/
 
 # VirtualHost configuration - for best compatibiliy use *.conf for the apache configuration files
-cslocalconf=cyclestreets.conf
-localVirtualHostFile=/etc/apache2/sites-available/${cslocalconf}
+csConf=cyclestreets.conf
+csVirtualHostFile=/etc/apache2/sites-available/${csConf}
 
 # Used to tune assertions directives in the virtualhosts if needed, initialize as empty.
 phpAssertions=
@@ -298,8 +298,8 @@ if [ "${csHostname}" = "${apiHostname}" ]; then
     apiSameHost=1
 fi
 
-# Check if the local VirtualHost exists already
-if [ ! -r ${localVirtualHostFile} ]; then
+# Check if the VirtualHost exists already
+if [ ! -r ${csVirtualHostFile} ]; then
 
     # When the api is the same as the hostname then include /v2/ redirects
     htaccessApi=
@@ -307,8 +307,8 @@ if [ ! -r ${localVirtualHostFile} ]; then
 	htaccessApi="Include /websites/www/content/.htaccess-api"
     fi
 
-    # Create the local VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
-    cat > ${localVirtualHostFile} << EOF
+    # Create the VirtualHost (avoid any backquotes in the text as they will spawn sub-processes)
+    cat > ${csVirtualHostFile} << EOF
 <VirtualHost *:80>
 	
 	# Available URL(s)
@@ -337,13 +337,13 @@ ${phpAssertions}
 EOF
 
     # Allow the user to edit this file
-    chown ${username}:${rollout} ${localVirtualHostFile}
+    chown ${username}:${rollout} ${csVirtualHostFile}
 
     # Enable this VirtualHost
-    a2ensite ${cslocalconf}
+    a2ensite ${csConf}
 
 else
-    echo "#	VirtualHost already exists: ${localVirtualHostFile}"
+    echo "#	VirtualHost already exists: ${csVirtualHostFile}"
 fi
 
 # Add the api address to /etc/hosts if it is not already present

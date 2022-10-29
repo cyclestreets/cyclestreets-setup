@@ -375,7 +375,7 @@ if [ ! -r ${csVirtualHostFile} ]; then
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}-access.log combined
 	ErrorLog /websites/www/logs/${csHostname}-error.log
-{$redirectHttps}
+${redirectHttps}
 	# Where the files are
 	DocumentRoot /websites/www/content/
 

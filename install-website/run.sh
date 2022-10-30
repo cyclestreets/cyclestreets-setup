@@ -425,8 +425,8 @@ if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
 	ServerAlias ${csHostname}
 
 	# Logging
-	CustomLog /websites/www/logs/${csHostname}-access.log combined
-	ErrorLog /websites/www/logs/${csHostname}-error.log
+	CustomLog /websites/www/logs/${csHostname}_ssl-access.log combined
+	ErrorLog /websites/www/logs/${csHostname}_ssl-error.log
 
 	# Where the files are
 	DocumentRoot /websites/www/content/

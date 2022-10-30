@@ -26,11 +26,19 @@ $download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers
 # To avoid them use:
 # sudo chmod g+w -R ${websitesContentFolder}/data/photomap*
 
+if [ "$restorePhotomap" = true ]; then
+
+    # Tolerate errors from rsync
+    set +e
+    rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
+    rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
+    rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${websitesContentFolder}/data
+    # Resume exit on error
+    set -e
+fi
+
 # Tolerate errors from rsync
 set +e
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
-rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${websitesContentFolder}/data
 
 # Sync the migration status
 rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/dbmigrate.txt ${websitesContentFolder}/data

@@ -29,6 +29,9 @@ mkdir -p $lockdir
 # Controls syncing and restoration of recent route zips: true or empty
 restoreRecentRoutes=
 
+# Controls syncing and restoration of photomap: true or empty
+restorePhotomap=
+
 # Fallback deployment restores the cyclestreets database to one having this name
 csFallbackDb=cyclestreets
 

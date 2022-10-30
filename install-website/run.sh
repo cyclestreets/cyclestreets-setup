@@ -58,6 +58,9 @@ htmlToPdfComponent=
 # Potlatch
 potlatchComponent=
 
+# Default dev site rewrite
+devSiteRewrite=
+
 
 ### CREDENTIALS ###
 
@@ -669,10 +672,10 @@ fi
 if grep CONFIGURED_BY_HERE ${phpConfig} >/dev/null 2>&1;
 then
     # Pre substitution
-    # skip the dev site rewrite when the api is the same as main host
-    devSiteRewrite=
-    # Else setup local devsite rewrite so that api calls can find the right gui
-    if [ -z "${apiSameHost}" ]; then
+
+    # Developer site rewrites
+    # Uses the value provided, else use a rewrite when the api is the same as main host so that api calls can find the right gui
+    if [ -z "${devSiteRewrite}" -a -z "${apiSameHost}" ]; then
 	devSiteRewrite="'YOUR_APISERVERNAME'				=> 'api.YOUR_CSSERVERNAME',"
     fi
 

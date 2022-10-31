@@ -709,7 +709,7 @@ then
 	-e "s/YOUR_CSSERVERNAME/${csHostname}/g" \
 	-e "s/YOUR_APISERVERNAME/${apiHostname}/g" \
 	-e "s/YOUR_HOSTPORT/${hostPortwithColon}/g" \
-	-e "s/EXTRAAPIV2URLS/${extraApiV2urls}/g" \
+	-e "s|EXTRAAPIV2URLS|${extraApiV2urls}|" \
 	-e "s|TESTS_ADDITIONAL_HERE|${testsAdditional}|" \
 	-e "s|IMPORTCONTENTFOLDER_HERE|${importContentFolder}|" \
 	-e "s/#YOUR_ROUTINGENGINETIMEOUT/${retoReplacement}/" \

@@ -519,7 +519,10 @@ if [ -z "${apiSameHost}" -a ! -r ${apiVirtualHostFile} ]; then
 	cat > ${apiVirtualHostFile} << EOF
 <VirtualHost *:80>
 
-	ServerName ${apiHostname}
+	# Available URL(s)
+	# Note: ServerName should not use wildcards; use ServerAlias for that.
+	ServerName api.cyclestreets.net
+	ServerAlias ${apiHostname}
 
 	# Logging
 	CustomLog /websites/www/logs/${apiHostname}-access.log combined
@@ -556,7 +559,10 @@ if [ -n "${useSSL}" -a -n "${apiSSLVirtualHostFile}" ]; then
 	cat > ${apiSSLVirtualHostFile} << EOF
 <VirtualHost *:443>
 
-	ServerName ${apiHostname}
+	# Available URL(s)
+	# Note: ServerName should not use wildcards; use ServerAlias for that.
+	ServerName api.cyclestreets.net
+	ServerAlias ${apiHostname}
 
 	# Logging
 	CustomLog /websites/www/logs/${apiHostname}_ssl-access.log combined

@@ -744,6 +744,9 @@ then
     # #!# This needs review - on one live machine it is set as localhost and always ignored
     ${superMysql} cyclestreets -e "update map_gui set server='${csHostname}' where id = 1;"
 
+    # Only the main www site needs city-specific urls, this turns them off for general installations
+    ${superMysql} cyclestreets -e "update map_gui set cityId = 0 where id = 1;"
+
     # Set an internal api key
     ${superMysql} cyclestreets -e "update map_gui set internalApikey=lower(hex(random_bytes(8))) where id = 1;"
     ${superMysql} cyclestreets -e "insert map_apikeys (id, service, type, apiKey, userid, notes) values (1, 'CycleStreets Service', 'Desktop', '0123456789abcdef', 0, '');"

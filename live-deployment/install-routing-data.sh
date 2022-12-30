@@ -40,7 +40,7 @@ DESCRIPTION
  	Checks whether there's is a new edition of routing data on the importHostname.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The routing edition database is installed.
-	If successful it prompts to use the switch-routing-edition.sh script to start using the new routing edition.
+	If successful it switches to the new routing edition and runs tests.
 
 	Secure shell access is required to the importHostname which can be setup as follows:
 # cyclestreets@machinename1:~$
@@ -515,6 +515,10 @@ echo "#	$(date)	Installation completed"
 if [ -z "${skipSwitch}" ]; then
     echo "#	$(date) Switching to the new edition"
     ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
+
+    # Run the tests, writing this summary
+    summaryFile=${websitesLogsFolder}/install_test_results_${importEdition}.txt
+    . /opt/cyclestreets-setup/utility/runTests.sh
 else
     echo "#	$(date) Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
 fi

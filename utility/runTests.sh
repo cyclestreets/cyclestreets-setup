@@ -17,20 +17,20 @@ fi
 echo -e "#\tTests Summary" > ${summaryFile}
 
 # Run tests relevant to the new build, appending to summary
-echo -e "#\t$(date) Starting nearest point tests" >> ${summaryFile}
+echo -e "# $(date)\tStarting nearest point tests" >> ${summaryFile}
 php runtests.php "call=nearestpoint" >> ${summaryFile}
 
-echo -e "#\t$(date) Starting journey API 1 tests" >> ${summaryFile}
+echo -e "# $(date)\tStarting journey API 1 tests" >> ${summaryFile}
 php runtests.php "call=journey&apiVersion=1" >> ${summaryFile}
 
-echo -e "#\t$(date) Starting journey API 2 tests" >> ${summaryFile}
+echo -e "# $(date)\tStarting journey API 2 tests" >> ${summaryFile}
 php runtests.php "call=journey&apiVersion=2" >> ${summaryFile}
 
 # Compare new coverage with when the elevation.values auto tests were created
-echo -e "#\t$(date) Starting elevation auto generated tests" >> ${summaryFile}
+echo -e "# $(date)\tStarting elevation auto generated tests" >> ${summaryFile}
 php runtests.php "call=elevation.values&name=Elevation auto generated test:" >> ${summaryFile}
 
 # Finished
-echo -e "#\t$(date) Completed tests" >> ${summaryFile}
+echo -e "# $(date)\tCompleted tests" >> ${summaryFile}
 
 # End of file

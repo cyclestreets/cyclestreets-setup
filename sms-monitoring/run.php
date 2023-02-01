@@ -235,7 +235,7 @@ class doCheck
 	private function test_journey_new (&$errorMessage = false, &$result = false)
 	{
 		# Plan a route (the split is to avoid bots traversing a repository)
-		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&plan=quietest&itinerarypoints=-0.14009,51.50202,Buckingham+Palace|-0.12920,51.50435,Horse+Guards+Parade|-0.12939,51.49950,Westminster+Abbey";
+		$apiUrl = $this->serverUrl . "/api/journey.json?key={$this->testApiKey}&archive=none&plan=quietest&itinerarypoints=-0.14009,51.50202,Buckingham+Palace|-0.12920,51.50435,Horse+Guards+Parade|-0.12939,51.49950,Westminster+Abbey";
 
 		// Include any additonalParameter
 		if ($this->additionalParameter) {$apiUrl .= '&' . $this->additionalParameter;}

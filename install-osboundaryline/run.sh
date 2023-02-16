@@ -12,6 +12,7 @@ OPTIONS
 
 DESCRIPTION
 	Import whole GeoPackage direct to MySQL.
+	Note: the Ireland counties source geojson must be present in the calling folder.
 
 EOF
 }
@@ -77,6 +78,16 @@ fi
 # Announce starting
 echo "# $(date)	OS Boundary Line installation"
 
+# Check that Ireland file is present
+irelandFile=Counties_-_OSi_National_Statutory_Boundaries.geojson
+if [ ! -e "${irelandFile}" ]; then
+    echo "# $(date)	The Ireland file must be obtained first and saved in the calling folder with name ${irelandFile}"
+    exit 1
+fi
+irelandFolder=/tmp/ireland_counties
+mkdir -p $irelandFolder
+cp $irelandFile $irelandFolder
+
 
 ## Main body
 
@@ -100,6 +111,13 @@ cd boundary-line
 wget --output-document=bdline_gpkg_gb.zip "${sourceUrl}"
 unzip -u bdline_gpkg_gb*.zip
 
+# Bind the name of the file and check it exists
+gpkgFile='Data/bdline_gb.gpkg'
+if [ ! -e "${gpkgFile}" ]; then
+    echo "#	$(date)	Error, file: ${gpkgFile} cannot be found."
+    exit 1
+fi
+
 # Prepare the database
 echo "#	$(date)	Prepare osboundaryline database"
 mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
@@ -107,7 +125,7 @@ mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 echo "#	$(date)	Import GeoPackage into MySQL"
-ogr2ogr -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword data/bdline_gb.gpkg -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco ENGINE=MyISAM -progress
+ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"
@@ -130,17 +148,18 @@ echo "#	$(date)	OS Boundary Line completed"
 
 
 # Ireland
-# https://data-osi.opendata.arcgis.com/datasets/14251ccbb15d4d99b984b5c956bb835a_0/explore?location=53.422627%2C-8.258350%2C7.28
 echo "#	$(date)	Ordnance Survey of Ireland"
-
-# Get the data
-cd /tmp
-mkdir -p ireland_counties
-cd ireland_counties
-wget -O Counties_-_OSi_National_Statutory_Boundaries.geojson https://opendata.arcgis.com/datasets/14251ccbb15d4d99b984b5c956bb835a_0.geojson
+# This does not appear to be directly downloadable, but can be obtained from
+# https://data-osi.opendata.arcgis.com/
+# Search for Counties and choose:
+# Counties - OSi National Statutory Boundaries - 2019
+# and download the Geojson.
+# Previously it has been obtained like:
+#wget -O $irelandFile https://opendata.arcgis.com/datasets/14251ccbb15d4d99b984b5c956bb835a_0.geojson
+# But is now copied from calling folder earlier in this script
 
 # Load into csExternal
-ogr2ogr -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" Counties_-_OSi_National_Statutory_Boundaries.geojson -nln 'ireland_counties' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" $irelandFolder/$irelandFile -nln 'ireland_counties' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions"
@@ -161,7 +180,7 @@ cd osni
 wget -O OSNI_Open_Data_-_Largescale_Boundaries_-_Local_Government_Districts_2012.geojson https://osni-spatialni.opendata.arcgis.com/datasets/eaa08860c50045deb8c4fdc7fa3dac87_2.geojson?outSR=%7B%22latestWkid%22%3A29902%2C%22wkid%22%3A29900%7D
 
 # Load into csExternal
-ogr2ogr -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" OSNI_Open_Data_-_Largescale_Boundaries_-_Local_Government_Districts_2012.geojson -nln 'northern_ireland' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -progress
+ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" OSNI_Open_Data_-_Largescale_Boundaries_-_Local_Government_Districts_2012.geojson -nln 'northern_ireland' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry
 
 
 # Convert SRID

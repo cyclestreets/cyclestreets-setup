@@ -12,7 +12,8 @@ OPTIONS
 
 DESCRIPTION
 	Import whole GeoPackage direct to MySQL.
-	Note: the Ireland counties source geojson must be present in the calling folder, see notes in this script for how to obtain.
+	Note: the Ireland counties source geojson must be present in the calling folder.
+	Search for irelandFile in this script for notes on how to obtain.
 
 EOF
 }
@@ -75,10 +76,15 @@ fi
 # Load the credentials
 . $SCRIPTDIRECTORY/${configFile}
 
+# Provide crendentials to mysql
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
+
 # Announce starting
 echo "# $(date)	OS Boundary Line installation"
 
 # Check that Ireland file is present (see notes below for how to obtain)
+# Note: the downloaded one my not have exactly this name so it may need renaming.
 irelandFile=Counties_-_OSi_National_Statutory_Boundaries.geojson
 if [ ! -e "${irelandFile}" ]; then
     echo "# $(date)	The Ireland file must be obtained first and saved in the calling folder with name ${irelandFile}"
@@ -87,6 +93,15 @@ fi
 irelandFolder=/tmp/ireland_counties
 mkdir -p $irelandFolder
 cp $irelandFile $irelandFolder
+
+# Check that the external DB exists already
+testDB=csExternal
+if [[ -z "`${superMysql} -sBe "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='${testDB}'" 2>&1`" ]];
+then
+    echo "# $(date)	Error: Database ${testDB} does not exist."
+    exit 1
+fi
+
 
 
 ## Main body
@@ -120,7 +135,7 @@ fi
 
 # Prepare the database
 echo "#	$(date)	Prepare osboundaryline database"
-mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
+${superMysql} < $SCRIPTDIRECTORY/osboundaryline.sql
 
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
@@ -129,19 +144,19 @@ ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPas
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"
-mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/convert_srid.sql
+${superMysql} osboundaryline < $SCRIPTDIRECTORY/convert_srid.sql
 
 # Apply optimizations
 echo "#	$(date)	Boundary line optimizations"
-mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/optimizations.sql
+${superMysql} osboundaryline < $SCRIPTDIRECTORY/optimizations.sql
 
 # Ensure that CycleStreets uses the new boundary ids
 echo "#	$(date)	Fix CycleStreets boundary ids"
-mysql -u root -p${mysqlRootPassword} cyclestreets < ${websitesContentFolder}/documentation/schema/boundarylineids.sql
+${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/boundarylineids.sql
 
 # Highway authorities
 echo "#	$(date)	Highway authorities"
-mysql -u root -p${mysqlRootPassword} osboundaryline < $SCRIPTDIRECTORY/highwayAuthorities.sql
+${superMysql} osboundaryline < $SCRIPTDIRECTORY/highwayAuthorities.sql
 
 # Report completion
 echo "#	$(date)	OS Boundary Line completed"
@@ -163,7 +178,7 @@ ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPasswo
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions"
-mysql -u root -p${mysqlRootPassword} csExternal < $SCRIPTDIRECTORY/ireland_convert_srid.sql
+${superMysql} csExternal < $SCRIPTDIRECTORY/ireland_convert_srid.sql
 
 # Report completion
 echo "#	$(date) Ireland counties loaded"
@@ -185,18 +200,17 @@ ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPasswo
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions"
-mysql -u root -p${mysqlRootPassword} csExternal < $SCRIPTDIRECTORY/northern_ireland_convert_srid.sql
+${superMysql} csExternal < $SCRIPTDIRECTORY/northern_ireland_convert_srid.sql
 
 # Report completion
 echo "#	$(date) Northern Ireland districts loaded"
 
-
+# Clean up
+rm -r /tmp/boundary-line
+rm -r /tmp/ireland_counties
+rm -r /tmp/osni
 
 # Report completion
 echo "#	$(date) All regions completed."
-echo "#	Please remove unwanted files from:"
-echo "#	/tmp/boundary-line"
-echo "#	/tmp/ireland_counties"
-echo "#	/tmp/osni"
 
 # End of file

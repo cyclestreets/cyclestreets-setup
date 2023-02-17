@@ -12,7 +12,7 @@ OPTIONS
 
 DESCRIPTION
 	Import whole GeoPackage direct to MySQL.
-	Note: the Ireland counties source geojson must be present in the calling folder.
+	Note: the Ireland counties source geojson must be present in the calling folder, see notes in this script for how to obtain.
 
 EOF
 }
@@ -78,7 +78,7 @@ fi
 # Announce starting
 echo "# $(date)	OS Boundary Line installation"
 
-# Check that Ireland file is present
+# Check that Ireland file is present (see notes below for how to obtain)
 irelandFile=Counties_-_OSi_National_Statutory_Boundaries.geojson
 if [ ! -e "${irelandFile}" ]; then
     echo "# $(date)	The Ireland file must be obtained first and saved in the calling folder with name ${irelandFile}"
@@ -125,7 +125,7 @@ mysql -u root -p${mysqlRootPassword} < $SCRIPTDIRECTORY/osboundaryline.sql
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 echo "#	$(date)	Import GeoPackage into MySQL"
-ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry -lco
+ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"

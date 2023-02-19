@@ -138,6 +138,9 @@ apt-get install -y munin
 a2disconf munin
 service apache2 reload
 
+# Wordpress recommended dependency
+apt-get install -y php-intl
+
 # Downloads area
 . ${ScriptHome}/dev-deployment/install-downloads.sh
 

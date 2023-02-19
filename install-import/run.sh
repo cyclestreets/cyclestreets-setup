@@ -333,7 +333,7 @@ if [ -n "$tagsLanguages" ]; then
     $packageInstall exuberant-ctags
 
     # Parse the tags
-    su - ${SUDO_USER} -c "cd ${websitesContentFolder} && etags -R --languages=$tagsLanguages"
+    su - ${SUDO_USER} -c "cd ${websitesContentFolder} && ctags -e -R --languages=$tagsLanguages"
 fi
 
 # Install firewall

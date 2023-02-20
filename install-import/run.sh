@@ -170,7 +170,7 @@ then
 -e "s/MySQL_KEY_BUFFER_SIZE_HERE/${import_key_buffer_size}/" \
 -e "s/MySQL_MAX_HEAP_TABLE_SIZE_HERE/${import_max_heap_table_size}/" \
 -e "s/MySQL_TMP_TABLE_SIZE_HERE/${import_tmp_table_size}/" \
--e "s/CYCLESTREETSPROFILEFOLDER_HERE/${cyclestreetsProfileFolder}/" \
+-e "s|CYCLESTREETSPROFILEFOLDER_HERE|${cyclestreetsProfileFolder}|" \
 	${phpConfig}
 fi
 

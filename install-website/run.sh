@@ -466,16 +466,12 @@ fi
 
 
 # Add the api address to /etc/hosts if it is not already present
+echo "#	Checking entries on /etc/hosts"
 if ! cat /etc/hosts | grep "\b${apiHostname}\b" > /dev/null 2>&1
 then
 
     # Start a list of aliases to add
-    aliases=
-
-    # Add api if distinct from main hostname
-    if [ -z "${apiSameHost}" ]; then
-	aliases=${apiHostname}
-    fi
+    aliases=${apiHostname}
 
     # Unless localhost is being used, check cs server name
     if [ -n "${usingLocalhost}" ]; then
@@ -489,14 +485,12 @@ then
 	fi
     fi
 
-
-    # Beware that the on the multipass setup the hostname appears twice on the 127.0.1.1 line for some unknown reason.
-    # That is not caused by these scripts and does not seem to be harfmul.
+    # Add aliases
     if [ -n "${aliases}" ]; then
-	echo "#	Adding aliases for localhost: ${aliases}"
+	echo "#	Appending aliases for localhost: ${aliases}"
 	sed -i -e "s/^127.0.0.1.*$/# Alias added by CycleStreets installation\n\0 ${aliases}/" /etc/hosts
     else
-	echo "#	No cs or api hostname aliases set for localhost"
+	echo "#	No cs or api hostname aliases added for localhost"
     fi
 fi
 

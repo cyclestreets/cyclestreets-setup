@@ -22,3 +22,14 @@ Instantiate the virtual machine and setup the website:
 	multipass/run.sh .config.sh
 
 The run file explains how to monitor progress and connect.
+
+
+## Troubleshooting
+
+The apache error log may show messages like:
+
+    PHP Warning:  file_get_contents(): Failed to open stream: php_network_getaddresses: getaddrinfo for ... failed: Temporary failure in name resolution in ....
+
+when the server tries to call the API, as happens from the `/tests/` and `/routing.html` pages.
+If so check that both the cs host name and api host name have entries in `/etc/hosts`.
+These should have been set during the `install-website` script.

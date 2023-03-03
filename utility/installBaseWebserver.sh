@@ -183,37 +183,27 @@ fi
 # PHP
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php php-mbstring
 
-# Setup a .cnf file which sets up mysql to connect with utf8mb4 for greatest compatibility
-mysqlUtf8CnfFile=/etc/mysql/conf.d/utf8.cnf
-if [ ! -e ${mysqlUtf8CnfFile} ]; then
+# Create a .cnf file which sets up MySQL configuration
+#!# Legacy filename
+mysqlCnfFile=/etc/mysql/conf.d/cyclestreets.cnf
+if [ ! -e ${mysqlCnfFile} ]; then
 
     # Narrative
-    echo "#	Configure mysql for utf8mb4"
+    echo "#	Configure MySQL"
 
     # Create the file
-    touch ${mysqlUtf8CnfFile}
+    touch ${mysqlCnfFile}
 
     # Own by the user
-    chown ${username}:${rollout} ${mysqlUtf8CnfFile}
+    chown ${username}:${rollout} ${mysqlCnfFile}
 
     # Write config
-    # https://mathiasbynens.be/notes/mysql-utf8mb4
-    cat > ${mysqlUtf8CnfFile} << EOF
-[client]
-default-character-set=utf8mb4
-
+    cat > ${mysqlCnfFile} << EOF
 [mysql]
-default-character-set=utf8mb4
 prompt=\\u@\\h [\\d]>\\_
 
 [mysqld]
-character-set-client-handshake = FALSE
-collation-server = utf8mb4_unicode_ci
-character-set-server = utf8mb4
-sql_mode=NO_ENGINE_SUBSTITUTION
 skip-log-bin
-
-# !! The following are not part of utf8 configuration but this a convenient place to put them.
 
 # Use tables rather than files to log problems
 log_output=table

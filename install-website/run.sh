@@ -719,10 +719,10 @@ if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'map_config'
 then
     # Load cyclestreets data
     echo "#	Load cyclestreets data"
-    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql
+    ${superMysql} cyclestreets < ${websitesContentFolder}/documentation/schema/sampleCycleStreets.sql
 
     # Set the database migration revison based on the creation data of the sample database file
-    date -r ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql +%Y%m%d%H%M%S > ${websitesContentFolder}/data/dbmigrate.txt
+    date -r ${websitesContentFolder}/documentation/schema/sampleCycleStreets.sql +%Y%m%d%H%M%S > ${websitesContentFolder}/data/dbmigrate.txt
     chown ${username}:${rollout} ${websitesContentFolder}/data/dbmigrate.txt
 
 

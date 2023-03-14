@@ -64,7 +64,7 @@ ${superMysql} ${sampleDb} < ${websitesContentFolder}/documentation/schema/prepar
 ${superMysql} ${sampleDb} -e "call prepareSampleCycleStreetsDB();"
 
 #	Write (requires a subsequent commit to become part of the repo)
-mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob ${sampleDb} --routines --no-create-db > ${websitesContentFolder}/documentation/schema/sampleCyclestreets.sql
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob ${sampleDb} --routines --no-create-db > ${websitesContentFolder}/documentation/schema/sampleCycleStreets.sql
 
 #	Advise
 echo "#	Actions required next:"

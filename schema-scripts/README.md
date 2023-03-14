@@ -18,7 +18,7 @@ mysql cyclestreets < documentation/schema/csStoredRoutines.sql
 mysql cyclestreets < documentation/schema/trigger.sql
 ```
 
-Result is written to: `/documentation/schema/sampleCyclestreets.sql`.
+Result is written to: `/documentation/schema/sampleCycleStreets.sql`.
 
 
 ## externalDb.sh

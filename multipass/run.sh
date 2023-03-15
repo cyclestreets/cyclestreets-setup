@@ -82,7 +82,7 @@ echo -e "#\n#\tLaunching Ubuntu ${ubuntuImage}..."
 # Check progress on the vm using:
 echo -e "#\n# Monitor progress"
 echo -e "#\n#\tAfter 'Starting ...' changes to 'Waiting ...' progress on the vm can be checked using:"
-echo -e "#\t${USER}@${vm_name}:~$ less +F /var/log/cloud-init-output.log"
+echo -e "#\t${USER}@${vm_name}:~$ sudo less +F /var/log/cloud-init-output.log"
 
 # Note: the cloud-init run scripts may take longer than five minutes to run in which case the above announces that:
 #   launch failed: The following errors occurred:

@@ -22,6 +22,5 @@ vm_disk=20g
 vm_cpus=2
 
 # List available images using: multipass find
-#ubuntuImage=18.04
-ubuntuImage=20.10
-
+# lts = Long Term Support
+ubuntuImage=lts

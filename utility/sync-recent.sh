@@ -33,6 +33,10 @@ if [ "$restorePhotomap" = true ]; then
     rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data
     rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap2 ${websitesContentFolder}/data
     rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap3 ${websitesContentFolder}/data
+
+    # Extras: these two are more to do with custom routing than photomap
+    rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/curatedpois ${websitesContentFolder}/data
+    rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/quickzoom ${websitesContentFolder}/data
     # Resume exit on error
     set -e
 fi

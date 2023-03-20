@@ -108,7 +108,7 @@ echo -e "#\n# Website:\n#\thttp://${vm_name}/"
 multipass launch --verbose \
 	  --name $vm_name \
 	  --cpus $vm_cpus \
-	  --mem $vm_mem \
+	  --memory $vm_mem \
 	  --disk $vm_disk \
 	  --cloud-init $vm_cloud_init $ubuntuImage
 

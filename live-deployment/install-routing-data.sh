@@ -127,7 +127,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { vecho '#\tAn installation is already running' ; exit 1; }
+	flock -n 9 || { vecho '#\tAn installation is already running, unlock with:\n#\tsudo rm /var/lock/cyclestreets/*.sh' ; exit 1; }
 
 
 ### CREDENTIALS ###

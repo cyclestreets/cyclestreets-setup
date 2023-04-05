@@ -19,9 +19,6 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Bomb out if something goes wrong
-set -e
-
 #	Folder locations
 email=$1
 server=$2

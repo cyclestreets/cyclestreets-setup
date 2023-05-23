@@ -70,8 +70,16 @@ folder=/websites/cyclescape/backup
 download=${SCRIPTDIRECTORY}/../utility/downloadDumpAndMd5.sh
 
 #	Download
-$download $administratorEmail $server $folder cyclescapeDB.sql.gz
-$download $administratorEmail $server $folder cyclescapeShared.tar.bz2
+name=cyclescapeDB.sql.gz
+$download $administratorEmail $server $folder $name
+if [ ! $? = 0 ]; then
+    echo "$(date --iso-8601=seconds)	Cyclescape daily problem dowloading $name" >> ${logFile}
+fi
+name=cyclescapeShared.tar.bz2
+$download $administratorEmail $server $folder $name
+if [ ! $? = 0 ]; then
+    echo "$(date --iso-8601=seconds)	Cyclescape daily problem dowloading $name" >> ${logFile}
+fi
 
 # Finish
 echo "$(date --iso-8601=seconds)	Cyclescape daily backup done" >> ${logFile}

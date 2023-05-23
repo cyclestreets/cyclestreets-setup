@@ -164,7 +164,7 @@ mySuperCredFile=
 # Archive db
 ##archiveDb=
 
-# External database (leave empty if not wanted)
+# External database
 ##externalDb=
 
 # Batch database: csBatch (leave empty if not wanted)

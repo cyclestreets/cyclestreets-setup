@@ -44,6 +44,8 @@ elevationDatasources=(
 # Archive db
 archiveDb=
 
+# External db
+externalDb=
 
 ### CREDENTIALS ###
 
@@ -249,6 +251,7 @@ importpermissions="grant select, insert, update, delete, create, drop, index, al
 ${superMysql} -e "${importpermissions} \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`routing%\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`${archiveDb}\` . * to '${mysqlImportUsername}'@'localhost';"
+${superMysql} -e "${importpermissions} \`${externalDb}\` . * to '${mysqlImportUsername}'@'localhost';"
 
 # Elevation data - these are often multiple GB in size
 # Tip: These are big files; so can use this to resume a broken copy:

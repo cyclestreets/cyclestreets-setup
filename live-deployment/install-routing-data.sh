@@ -67,6 +67,7 @@ skipSwitch=
 # Files
 tsvFile=tsv.tar.gz
 dumpFile=dump.sql.gz
+tablesDump=routingTableData.tar.gz
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
@@ -231,8 +232,9 @@ if [ -n "${testargs}" ]; then
     echo "#	verbose=${verbose}";
     echo "#	notifyEmail=${notifyEmail}";
     echo "#	skipSwitch=${skipSwitch}";
-    echo "#	dumpFile=${dumpFile}";
     echo "#	tsvFile=${tsvFile}";
+    echo "#	dumpFile=${dumpFile}";
+    echo "#	tablesDump=${tablesDump}";
     echo "#	importHostname=${importHostname}";
     echo "#	desiredEdition=${desiredEdition}";
     echo "#	importMachineEditions=${importMachineEditions}";
@@ -355,10 +357,11 @@ timestamp=`sed -n                   's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'    
 importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
 md5Tsv=`sed -n                      's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'           $newImportDefinition`
 md5Dump=`sed -n                     's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'          $newImportDefinition`
+md5TablesDump=`sed -n               's/^md5TablesDump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
 
 # Ensure the key variables are specified
-if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" ]; then
-	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Dump"
+if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" -o -z "$md5TablesDump" ]; then
+	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Dump,md5TablesDump"
 	exit 1
 fi
 
@@ -420,6 +423,9 @@ scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${ts
 #	Mysql dump file
 scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
 
+#	Tables dump file
+scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tablesDump} ${newEditionFolder}/
+
 #	Note that all files are downloaded
 echo "#	$(date)	File transfer stage complete"
 
@@ -430,6 +436,10 @@ if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionF
 fi
 if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
     echo "#	Stopping: dump md5 does not match"
+    exit 1
+fi
+if [ "$(openssl dgst -md5 ${newEditionFolder}/${tablesDump})" != "MD5(${newEditionFolder}/${tablesDump})= ${md5TablesDump}" ]; then
+    echo "#	Stopping: tables dump md5 does not match"
     exit 1
 fi
 

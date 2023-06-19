@@ -11,11 +11,12 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -s -t -m email [importHostname] [edition] [path]
+	$0 -h -q -r -s -t -m email -p port [importHostname] [edition] [path]
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
+	-p Take a port as argument which is used in ssh and scp connections with the import host.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
 	-s Skip switching to new edition
@@ -41,6 +42,8 @@ DESCRIPTION
 	The routing edition database is installed.
 	If successful it switches to the new routing edition and runs tests.
 
+	The -p option is to support non-standard ssh port connections, e.g. -p5258 to connect to an IPv6 only server via and IPv4 interface.
+
 	Secure shell access is required to the importHostname which can be setup as follows:
 # cyclestreets@machinename1:~$
 ssh-keygen
@@ -58,6 +61,7 @@ EOF
 # Default to no notification
 notifyEmail=
 testargs=
+sshPort=
 
 # By default do not remove oldest routing edtion
 removeOldest=
@@ -69,15 +73,19 @@ tsvFile=tsv.tar.gz
 dumpFile=dump.sql.gz
 tablesDump=routingTableData.tar.gz
 
-# http://wiki.bash-hackers.org/howto/getopts_tutorial
+# Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qrst" option ; do
+while getopts "hm:p:qrst" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
+	    ;;
+	p)
+	    # Set the port
+	    sshPort=$OPTARG
 	    ;;
 	r)
 	    # Set option to remove oldest routing edition
@@ -221,6 +229,16 @@ if [ -z "${importMachineEditions}" ]; then
 fi
 
 
+# Port options: use -p with ssh and -P with scp
+portSsh=
+portScp=
+if [ -n "${sshPort}" ]; then
+    portSsh=-p$sshPort
+    portScp=-P$sshPort
+fi
+
+
+
 # Testargs: show argument resuolution
 if [ -n "${testargs}" ]; then
     echo "#	Argument resolution";
@@ -231,6 +249,9 @@ if [ -n "${testargs}" ]; then
     echo "#	\$2=${2}";
     echo "#	verbose=${verbose}";
     echo "#	notifyEmail=${notifyEmail}";
+    echo "#	sshPort=${sshPort}";
+    echo "#	portSsh=${portSsh}";
+    echo "#	portScp=${portScp}";
     echo "#	skipSwitch=${skipSwitch}";
     echo "#	tsvFile=${tsvFile}";
     echo "#	dumpFile=${dumpFile}";
@@ -303,18 +324,18 @@ else
     if [ ${desiredEdition} == "latest" ]; then
 
 	# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-	resolvedEdition=`ssh ${username}@${importHostname} ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
+	resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
 
     else
 	# Treat it as an alias and dereference to find the target edition
-	resolvedEdition=$(ssh ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
+	resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
 	resolvedEdition=$(basename ${resolvedEdition})
     fi
 fi
 
 # Abandon if not found
 if [ -z "${resolvedEdition}" ]; then
-    vecho "#\tThe desired edition: ${desiredEdition} matched no routing editions on ${importHostname}"
+    vecho "#\tThe desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
     exit 1
 fi
 
@@ -340,10 +361,10 @@ vecho "#\tResolved edition: ${resolvedEdition}"
 newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
 
 #	Copy definition file
-scp ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
 if [ $? -ne 0 ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#\tThe import machine file could not be retrieved from:\n#\t${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini\n#\tCopying to: ${newImportDefinition}."
+	vecho "#\tThe import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini\n#\tCopying to: ${newImportDefinition}."
 	exit 1
 fi
 
@@ -412,19 +433,19 @@ mkdir -p ${newEditionFolder}
 mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 
 #	Sieve file (do first as it is the smallest)
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
 #	Config json file (do next as it is also small)
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/.config.json ${newEditionFolder}/
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/.config.json ${newEditionFolder}/
 
 #	Transfer the TSV file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 
 #	Mysql dump file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
 
 #	Tables dump file
-scp ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tablesDump} ${newEditionFolder}/
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tablesDump} ${newEditionFolder}/
 
 #	Note that all files are downloaded
 echo "#	$(date)	File transfer stage complete"

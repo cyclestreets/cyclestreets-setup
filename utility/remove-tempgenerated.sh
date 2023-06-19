@@ -57,7 +57,7 @@ tempDir=${websitesContentFolder}/data/tempgenerated/
 folders="elevationProfile maplet photomaplet tile"
 for folder in ${folders}
 do
-    find ${tempDir}${folder} -maxdepth 1 \! -mtime 0 \! -name '.gitignore' -type f -delete
+    find ${tempDir}${folder} -maxdepth 1 \! -name '.gitignore' -type f -delete
 done
 
 # Thumbnails

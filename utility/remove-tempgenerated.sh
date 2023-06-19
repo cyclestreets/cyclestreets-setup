@@ -52,12 +52,12 @@ tempDir=${websitesContentFolder}/data/tempgenerated/
 # -maxdepth option stops find going into the .git folder relative to the paths.
 # ! (which is escaped) negates the next test.
 # -mtime 0 finds files modified within the last 24 hours
-# -type f finds only files
 # ! -name Skips files matching the given name
+# -type f finds only files
 folders="elevationProfile maplet photomaplet tile"
 for folder in ${folders}
 do
-    find ${tempDir}${folder} -maxdepth 1 \! -name '.gitignore' -type f -delete
+    find ${tempDir}${folder} -maxdepth 1 \! -mtime 0 \! -name '.gitignore' -type f -delete
 done
 
 # Thumbnails

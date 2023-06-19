@@ -396,6 +396,7 @@ fi
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Check to see if this routing database already exists
@@ -496,11 +497,28 @@ echo "#	$(date)	Installing the routing database: ${importEdition}"
 #	Create the database (which will be empty for now) and set default collation
 ${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
-# Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
-gunzip < ${dumpFile} | ${superMysql} ${importEdition}
+# MyslDump - now deprecated
+#	Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
+#gunzip < ${dumpFile} | ${superMysql} ${importEdition}
 
-# Remove the zip
-rm -f ${dumpFile}
+#	Remove the zip
+#rm -f ${dumpFile}
+
+
+# Tables dump (new Summer 2023)
+#	Unpack
+tar xf ${tablesDump}
+
+#	Load table definisions
+${superMysql} ${importEdition} < routingTableData/routingTableDefinitions.sql
+
+#	Import the data
+find ${newEditionFolder}/routingTableData -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${importEdition}
+
+#	Clean up
+rm -r ${newEditionFolder}/routingTableData
+rm -f ${tablesDump}
+
 
 #	Load nearest point stored procedures
 echo "#	$(date)	Loading nearestPoint technology"

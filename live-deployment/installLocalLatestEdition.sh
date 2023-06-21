@@ -133,25 +133,27 @@ if [ ! -e ${importMachineEditions}/${latestEdition}/legDetail.tsv ]; then
     exit 1
 fi
 
+# Check this edition is not already installed
+if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
+
+    # Report
+    echo "#	Edition ${latestEdition} is already installed."
+    echo "#	-------------------------------------------"
+    echo "#	This is blocking moving the new edition into the target folder."
+    echo "#	This folder needs to be moved or deleted before retrying:"
+    echo "#		${websitesContentFolder}/data/routing/${latestEdition}"
+    echo "#	Very old advice not checked recently:"
+    echo "#		... but note that may not be necessary if a new import has just updated that location:"
+    echo "#		sudo /bin/systemctl start cyclestreets"
+    echo "#		Then switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
+    exit 1
+fi
+
 # Build a limited photo index
 echo "#	$(date)	Building a limited photosEnRoute index"
 ${superMysql} ${latestEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 ${superMysql} ${latestEdition} -e "call indexPhotos(100);"
 
-
-# Check this edition is not already installed
-if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
-
-    # Report
-    echo "#	Edition ${latestEdition} is already installed - to remove it use:"
-    echo "#	rm -r ${websitesContentFolder}/data/routing/${latestEdition}"
-    echo "#	... but note that may not be necessary if a new import has just updated that location:"
-    echo "#	sudo /bin/systemctl start cyclestreets"
-    echo "#	Then switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
-
-    # Clean exit
-    exit 0
-fi
 
 #	Report finding
 echo "#	Installing latest edition: ${latestEdition}"
@@ -175,8 +177,8 @@ touch "${websitesContentFolder}/data/routing/${latestEdition}/installationComple
 
 # Report completion and next steps
 echo "#	$(date) Installation completed."
-echo "#	If the import was configured for supporting large amounts of data then a MySQL restart could restore values more appropriate for serving routes."
-echo "#	To switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
+echo "#	To switch routing service use:"
+echo "#		${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

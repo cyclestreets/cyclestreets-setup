@@ -70,7 +70,6 @@ skipSwitch=
 
 # Files
 tsvFile=tsv.tar.gz
-dumpFile=dump.sql.gz
 tablesDump=routingTableData.tar.gz
 
 # Help for this BASH builtin: help getopts
@@ -254,7 +253,6 @@ if [ -n "${testargs}" ]; then
     echo "#	portScp=${portScp}";
     echo "#	skipSwitch=${skipSwitch}";
     echo "#	tsvFile=${tsvFile}";
-    echo "#	dumpFile=${dumpFile}";
     echo "#	tablesDump=${tablesDump}";
     echo "#	importHostname=${importHostname}";
     echo "#	desiredEdition=${desiredEdition}";
@@ -442,9 +440,6 @@ scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEd
 #	Transfer the TSV file
 scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
 
-#	Mysql dump file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${dumpFile} ${newEditionFolder}/
-
 #	Tables dump file
 scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tablesDump} ${newEditionFolder}/
 
@@ -455,10 +450,6 @@ echo "#	$(date)	File transfer stage complete"
 if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionFolder}/${tsvFile})= ${md5Tsv}" ]; then
 	echo "#	Stopping: TSV md5 does not match"
 	exit 1
-fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/${dumpFile})" != "MD5(${newEditionFolder}/${dumpFile})= ${md5Dump}" ]; then
-    echo "#	Stopping: dump md5 does not match"
-    exit 1
 fi
 if [ "$(openssl dgst -md5 ${newEditionFolder}/${tablesDump})" != "MD5(${newEditionFolder}/${tablesDump})= ${md5TablesDump}" ]; then
     echo "#	Stopping: tables dump md5 does not match"
@@ -497,15 +488,7 @@ echo "#	$(date)	Installing the routing database: ${importEdition}"
 #	Create the database (which will be empty for now) and set default collation
 ${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
-# MyslDump - now deprecated
-#	Unpack and restore the database using the lowest possible priority to avoid interrupting the live server
-#gunzip < ${dumpFile} | ${superMysql} ${importEdition}
-
-#	Remove the zip
-#rm -f ${dumpFile}
-
-
-# Tables dump (new Summer 2023)
+# Tables dump
 #	Unpack
 tar xf ${tablesDump}
 

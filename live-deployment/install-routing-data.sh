@@ -69,8 +69,8 @@ removeOldest=
 skipSwitch=
 
 # Files
-tsvFile=tsv.tar.gz
-tablesDump=routingTableData.tar.gz
+tableGzip=table.tar.gz
+graphGzip=graph.tar.gz
 
 # Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
@@ -252,8 +252,8 @@ if [ -n "${testargs}" ]; then
     echo "#	portSsh=${portSsh}";
     echo "#	portScp=${portScp}";
     echo "#	skipSwitch=${skipSwitch}";
-    echo "#	tsvFile=${tsvFile}";
-    echo "#	tablesDump=${tablesDump}";
+    echo "#	tableGzip=${tableGzip}";
+    echo "#	graphGzip=${graphGzip}";
     echo "#	importHostname=${importHostname}";
     echo "#	desiredEdition=${desiredEdition}";
     echo "#	importMachineEditions=${importMachineEditions}";
@@ -372,15 +372,14 @@ set -e
 # Get the required variables from the routing definition file; this is not directly executed for security
 # Sed extraction method as at http://stackoverflow.com/a/1247828/180733
 # NB the timestamp parameter is not really used yet in the script below
-timestamp=`sed -n                   's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'           $newImportDefinition`
-importEdition=`sed -n               's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
-md5Tsv=`sed -n                      's/^md5Tsv\s*=\s*\([0-9a-f]*\)\s*$/\1/p'           $newImportDefinition`
-md5Dump=`sed -n                     's/^md5Dump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'          $newImportDefinition`
-md5TablesDump=`sed -n               's/^md5TablesDump\s*=\s*\([0-9a-f]*\)\s*$/\1/p'    $newImportDefinition`
+timestamp=`sed -n      's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'           $newImportDefinition`
+importEdition=`sed -n  's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
+md5TableGzip=`sed -n   's/^md5TableGzip\s*=\s*\([0-9a-f]*\)\s*$/\1/p'     $newImportDefinition`
+md5GraphGzip=`sed -n   's/^md5GraphGzip\s*=\s*\([0-9a-f]*\)\s*$/\1/p'     $newImportDefinition`
 
 # Ensure the key variables are specified
-if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5Tsv" -o -z "$md5Dump" -o -z "$md5TablesDump" ]; then
-	echo "# The routing definition file does not contain all of timestamp,importEdition,md5Tsv,md5Dump,md5TablesDump"
+if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5TableGzip" -o -z "$md5GraphGzip" ]; then
+	echo "# The routing definition file does not contain all of timestamp, importEdition, md5TableGzip, md5GraphGzip"
 	exit 1
 fi
 
@@ -431,29 +430,29 @@ mkdir -p ${newEditionFolder}
 # Move the temporary definition to correct place and name
 mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
 
-#	Sieve file (do first as it is the smallest)
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
-
-#	Config json file (do next as it is also small)
+#	Get json config file (do first as it is the smallest)
 scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/.config.json ${newEditionFolder}/
 
-#	Transfer the TSV file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tsvFile} ${newEditionFolder}/
+#	Get sieve file (do early as it is also small)
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
 
-#	Tables dump file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tablesDump} ${newEditionFolder}/
+#	Get tables file
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tableGzip} ${newEditionFolder}/
+
+#	Get graph file
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${graphGzip} ${newEditionFolder}/
 
 #	Note that all files are downloaded
 echo "#	$(date)	File transfer stage complete"
 
 # MD5 checks
-if [ "$(openssl dgst -md5 ${newEditionFolder}/${tsvFile})" != "MD5(${newEditionFolder}/${tsvFile})= ${md5Tsv}" ]; then
-	echo "#	Stopping: TSV md5 does not match"
-	exit 1
-fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/${tablesDump})" != "MD5(${newEditionFolder}/${tablesDump})= ${md5TablesDump}" ]; then
-    echo "#	Stopping: tables dump md5 does not match"
+if [ "$(openssl dgst -md5 ${newEditionFolder}/${tableGzip})" != "MD5(${newEditionFolder}/${tableGzip})= ${md5TableGzip}" ]; then
+    echo "#	Stopping: tableGzip md5 does not match"
     exit 1
+fi
+if [ "$(openssl dgst -md5 ${newEditionFolder}/${graphGzip})" != "MD5(${newEditionFolder}/${graphGzip})= ${md5GraphGzip}" ]; then
+	echo "#	Stopping: graphGzip md5 does not match"
+	exit 1
 fi
 
 ### Pre stage 4: Close system to routing and stop the existing routing service
@@ -475,10 +474,10 @@ fi
 ### Stage 4 - unpack and install the TSV files
 echo "#	$(date)	Unpack and install the TSV files"
 cd ${newEditionFolder}
-tar xf ${tsvFile}
+tar xf ${graphGzip}
 
 #	Clean up the compressed TSV data
-rm -f ${tsvFile}
+rm -f ${graphGzip}
 
 ### Stage 5 - create the routing database
 
@@ -490,7 +489,7 @@ ${superMysql} -e "create database ${importEdition} default character set utf8mb4
 
 # Tables dump
 #	Unpack
-tar xf ${tablesDump}
+tar xf ${tableGzip}
 
 #	Load table definisions
 ${superMysql} ${importEdition} < routingTableData/routingTableDefinitions.sql
@@ -500,7 +499,7 @@ find ${newEditionFolder}/routingTableData -name '*.tsv' -type f -print | xargs $
 
 #	Clean up
 rm -r ${newEditionFolder}/routingTableData
-rm -f ${tablesDump}
+rm -f ${tableGzip}
 
 
 #	Load nearest point stored procedures

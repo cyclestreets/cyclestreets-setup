@@ -146,7 +146,11 @@ if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
     echo "#		... but note that may not be necessary if a new import has just updated that location:"
     echo "#		sudo /bin/systemctl start cyclestreets"
     echo "#		Then switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
-    exit 1
+    echo "#"
+    echo "#	Carrying on regardless!"
+    echo "#	-------------------------------------------"
+    echo "#	By setting: set +e"
+    set +e
 fi
 
 # Build a limited photo index

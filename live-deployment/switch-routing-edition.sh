@@ -258,10 +258,6 @@ fi
 
 ## Configure the routing engine to use the new edition
 
-# Remove any old deprecated shell-style configuration
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.sh
-rm -f $routingEngineConfigFile
-
 # Remove any old JSON configuration
 jsonConfig=${websitesContentFolder}/routingengine/.config.json
 rm -f $jsonConfig
@@ -271,9 +267,9 @@ jsonRoutingConfig=${websitesContentFolder}/data/routing/${newEdition}/.config.js
 if [ -r "${jsonRoutingConfig}" ]; then
     ln -s ${jsonRoutingConfig} $jsonConfig
 else
-    # Use deprecated shell-style config file
-    echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newEdition}" > $routingEngineConfigFile
-    chmod a+x $routingEngineConfigFile
+    # Warning
+    echo "#	The routing configuration file is absent: ${jsonRoutingConfig}"
+    exit 1
 fi
 
 

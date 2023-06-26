@@ -222,10 +222,6 @@ echo "#	Multiple editions are deactivated for the duration of the switch over."
 
 ## Configure the routing engine to use the new edition
 
-# Remove any old deprecated shell-style configuration
-routingEngine2ConfigFile=${websitesContentFolder}/routingengine/.config2.sh
-rm -f $routingEngine2ConfigFile
-
 # Remove any old JSON configuration
 jsonConfig2=${websitesContentFolder}/routingengine/.config2.json
 rm -f $jsonConfig2
@@ -235,9 +231,9 @@ jsonRoutingConfig=${websitesContentFolder}/data/routing/${newSecondaryEdition}/.
 if [ -r "${jsonRoutingConfig}" ]; then
     ln -s ${jsonRoutingConfig} $jsonConfig2
 else
-    # Use deprecated shell-style config file
-    echo -e "#!/bin/bash\nBASEDIR=${websitesContentFolder}/data/routing/${newSecondaryEdition}" > $routingEngine2ConfigFile
-    chmod a+x $routingEngine2ConfigFile
+    # Warning
+    echo "#	The routing configuration file is absent: ${jsonRoutingConfig}"
+    exit 1
 fi
 
 

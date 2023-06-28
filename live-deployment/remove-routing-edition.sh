@@ -3,9 +3,6 @@
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 
-# Controls echoed output default to on
-verbose=1
-
 usage()
 {
     cat << EOF
@@ -26,11 +23,8 @@ EOF
 }
 
 
-quietmode()
-{
-    # Turn off verbose messages by setting this variable to the empty string
-    verbose=
-}
+# Controls echoed output default to on
+verbose=1
 
 # Minimum number of existing editions to keep
 keepEditions=3
@@ -40,7 +34,11 @@ keepEditions=3
 while getopts "hq" option ; do
     case ${option} in
         h) usage; exit ;;
-        q) quietmode ;;
+        q)
+	    # Set quiet mode and proceed
+	    # Turn off verbose messages by setting this variable to the empty string
+	    verbose=
+	    ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
@@ -251,6 +249,8 @@ fi
 # Remove from the import output (may only be a symlink from there)
 if [ -n "${importContentFolder}" -a -d ${importContentFolder}/output/ ]; then
     rm -rf ${importContentFolder}/output/${removeEdition}
+    rm -f ${importContentFolder}/output/${removeEdition}.tar.gz
+    rm -f ${importContentFolder}/output/${removeEdition}.tar.gz.md5
 fi
 
 # Remove from the map_edition table

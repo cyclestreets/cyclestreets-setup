@@ -2,16 +2,16 @@
 # Installs new editions of cycle routing data from another host.
 #
 # This script is idempotent - it can be safely re-run without destroying existing data
-
-# Controls echoed output default to on
-verbose=1
+#
+# Run as the cyclestreets user (a check is peformed after the config file is loaded).
+# Requires password-less access to the import machine, using a public key.
 
 usage()
 {
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -s -t -m email -p port [importHostname] [edition] [path]
+	$0 -h -q -r -s -t -m email -p port [importHostname] [edition]
 
 OPTIONS
 	-h Show this message
@@ -31,10 +31,6 @@ ARGUMENTS
 		It identifies either a dated routing edition of the form routingYYMMDD e.g. routing161012, or an alias.
 		If not specified, it defaults to 'latest', the edition on the host having the most recent date.
 		It can also name an alias that symlinks to a dated routing edition.
-	path (deprecated)
-		The optional third argument (a non slash terminated directory path) says where on the host the routing edition can be found.
-		Defaults to the hardwired location: /websites/www/import/output
-		This argument is deprecated in favour of using aliases for the edition argument.
 
 DESCRIPTION
  	Checks whether there's is a new edition of routing data on the importHostname.
@@ -55,8 +51,8 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub machinename2.cyclestreets.net
 EOF
 }
 
-# Run as the cyclestreets user (a check is peformed after the config file is loaded).
-# Requires password-less access to the import machine, using a public key.
+# Controls echoed output default to on
+verbose=1
 
 # Default to no notification
 notifyEmail=
@@ -71,6 +67,9 @@ skipSwitch=
 # Files
 tableGzip=table.tar.gz
 graphGzip=graph.tar.gz
+
+# Default to this hardwired location - as live installs cannot expect the config option: importContentFolder
+importMachineEditions=/websites/www/import/output
 
 # Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
@@ -211,14 +210,13 @@ else
     fi
 fi
 
-# Optional third argument 'path' says where on the host the routing edition can be found
+# Optional third argument now blocked.
 if [ $# -gt 2 ]; then
-    # Use supplied location
-    importMachineEditions=$3
-else
-    # Default to this hardwired location - as live installs cannot expect the config option: importContentFolder
-    importMachineEditions=/websites/www/import/output
+	# Report and abandon
+	echo -e "#\t	Support for the third argument 'path' has been removed." 1>&2
+	exit 1
 fi
+
 
 # Check the source is OK
 if [ -z "${importMachineEditions}" ]; then

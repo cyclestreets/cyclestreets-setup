@@ -33,6 +33,7 @@ ARGUMENTS
 DESCRIPTION
  	Checks whether there's is a new edition of pois data on the importHostname.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
+	The tables are loaded into the external database and replace the existing POI tables there.
 
 	The -p option is to support non-standard ssh port connections, e.g. -p5258 to connect to an IPv6 only server via and IPv4 interface.
 
@@ -289,7 +290,7 @@ fi
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${resolvedEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "Note the edition ${resolvedEdition} is already installed, proceeding."
+	vecho "Note the edition ${resolvedEdition} is already installed, proceeding with POIs installation."
 fi
 
 #	Report finding
@@ -302,21 +303,21 @@ vecho "Resolved edition: ${resolvedEdition}"
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+externalDb=csExternal
 
-# Check to see if this routing database already exists
-if ${smysqlshow} | grep "\b${resolvedEdition}\b" > /dev/null 2>&1
+# Check to see if that the external database already exists
+if ! ${smysqlshow} | grep "\b${externalDb}\b" > /dev/null 2>&1
 then
-	# Avoid echo if possible as this generates cron emails
-	vecho "Note that the routing database ${resolvedEdition} already exists, proceeding."
+    # Avoid echo if possible as this generates cron emails
+    vecho "Stoppping because the external database ${externalDb} does not exist."
+    exit 1
 fi
 
 # Check to see if a routing data file for this routing edition already exists
 newEditionFolder=${websitesContentFolder}/data/routing/${resolvedEdition}
 if [ -d ${newEditionFolder} ]; then
-	vecho "Note that the routing data folder ${resolvedEdition} already exists, proceeding."
+	vecho "Note that the routing data folder ${resolvedEdition} already exists, proceeding with POIs installation."
 fi
-
-
 
 
 
@@ -383,22 +384,22 @@ rm -f ${neTarball} ${neTarballMd5}
 ### Stage 5 - create the routing database
 
 # Narrate
-vecho "Installing the routing database: ${resolvedEdition}"
+vecho "Installing into the external database: ${externalDb}"
 
 # Go to the edition folder
 cd ${newEditionFolder}
 
-#	Create the database (which will be empty for now) and set default collation
-${superMysql} -e "create database if not exists ${resolvedEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
-
 #	Load table definisions
-${superMysql} ${resolvedEdition} < table/tableDefinitions.sql
+${superMysql} ${externalDb} < table/tableDefinitions.sql
 
 #	Import the data
-find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${resolvedEdition}
+find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
 
 #	Clean up
 rm -r ${newEditionFolder}/table
+
+#	Rename the tables
+${superMysql} ${externalDb} < installPoiTables.sql
 
 ### Stage 7 - Finish
 
@@ -407,7 +408,7 @@ rm -r ${newEditionFolder}/table
 touch "${newEditionFolder}/installationCompleted.txt"
 
 # Report completion and next steps
-vecho "Installation completed"
+vecho "POIs Installation completed"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

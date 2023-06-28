@@ -60,6 +60,14 @@ done
 # After getopts is done, shift all processed options away with
 shift $((OPTIND-1))
 
+# Set quiet option variables when not verbose
+quietOption=
+quietLongOption=
+if [ -z "${verbose}" ]; then
+    quietOption=-1
+    quietLongOption=--quiet
+fi
+
 # Helper function
 # Echo output only if the verbose option has been set
 vecho()
@@ -170,7 +178,7 @@ fi
 # Download
 vecho "#\t	Downloading: $planetMd5url"
 # Use -N to avoid download if not modified
-wget -N $planetMd5url
+wget -N ${quietLongOption} $planetMd5url
 
 
 # Create if not exists

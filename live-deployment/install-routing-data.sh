@@ -114,11 +114,19 @@ done
 # After getopts is done, shift all processed options away with
 shift $((OPTIND-1))
 
-# Echo output only if the verbose option has been set
+# Set quiet option variables when not verbose
+quietOption=
+quietLongOption=
+if [ -z "${verbose}" ]; then
+    quietOption=-1
+    quietLongOption=--quiet
+fi
+
+    # Echo output only if the verbose option has been set
 vecho()
 {
 	if [ "${verbose}" ]; then
-		echo -e $1
+		echo -e "# $(date)\t	$1"
 	fi
 }
 
@@ -134,7 +142,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { vecho '#\tAn installation is already running, unlock with:\n#\tsudo rm /var/lock/cyclestreets/*.sh' ; exit 1; }
+	flock -n 9 || { vecho 'An installation is already running, unlock with:\n#\tsudo rm /var/lock/cyclestreets/*.sh' ; exit 1; }
 
 
 ### CREDENTIALS ###
@@ -177,11 +185,6 @@ fi
 
 ## Optionally remove oldest routing edtion
 if [ "${removeOldest}" ]; then
-    # Forward the quiet option
-    quietOption=-q
-    if [ -n "${verbose}" ]; then
-	quietOption=
-    fi
     ${ScriptHome}/live-deployment/remove-routing-edition.sh ${quietOption} oldest
 fi
 
@@ -263,7 +266,7 @@ fi
 ## Main body of script
 
 # Avoid echo if possible as this generates cron emails
-vecho "#\t$(date) CycleStreets routing data installation"
+vecho "CycleStreets routing data installation"
 
 # Ensure there is a cyclestreets user account
 if [ ! id -u ${username} > /dev/null 2>&1 ]; then
@@ -284,13 +287,14 @@ if [ ! -d ${websitesContentFolder}/data/routing ]; then
 fi
 
 
-### Stage 2 - obtain the routing import definition
+
+### Stage 2 - Resolve the desired routing edition
 
 # Ensure import machine and definition file variables has been defined
 if [ -z "${importHostname}" -o -z "${importMachineEditions}" ]; then
 
 	# Avoid echoing as these are called by a cron job
-	vecho "#\tAn import machine with an editions folder must be defined in order to run an import"
+	vecho "An import machine with an editions folder must be defined in order to run an import"
 	exit 1
 fi
 
@@ -320,7 +324,7 @@ else
     if [ ${desiredEdition} == "latest" ]; then
 
 	# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-	resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
+	resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} |  grep "^routing\([0-9]\)\{6\}$" | tail -n1`
 
     else
 	# Treat it as an alias and dereference to find the target edition
@@ -331,13 +335,13 @@ fi
 
 # Abandon if not found
 if [ -z "${resolvedEdition}" ]; then
-    vecho "#\tThe desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
+    vecho "The desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
     exit 1
 fi
 
 # Double-check the routing edition format is correct
 if [[ ! "${resolvedEdition}" =~ routing([0-9]{6}) ]]; then
-    vecho "#\tThe desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
+    vecho "The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
     exit 1
 fi
 
@@ -345,50 +349,16 @@ fi
 # Check this edition is not already installed
 if [ -d ${websitesContentFolder}/data/routing/${resolvedEdition} ]; then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#\tEdition ${resolvedEdition} is already installed."
+	vecho "Edition ${resolvedEdition} is already installed."
 	exit 1
 fi
 
 #	Report finding
 # Avoid echo if possible as this generates cron emails
-vecho "#\tResolved edition: ${resolvedEdition}"
-
-# Useful binding
-newImportDefinition=${websitesContentFolder}/data/routing/temporaryNewDefinition.txt
-
-#	Copy definition file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini $newImportDefinition > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-	# Avoid echo if possible as this generates cron emails
-	vecho "#\tThe import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${resolvedEdition}/importdefinition.ini\n#\tCopying to: ${newImportDefinition}."
-	exit 1
-fi
-
-# Stop on errors
-set -e
-
-# Get the required variables from the routing definition file; this is not directly executed for security
-# Sed extraction method as at http://stackoverflow.com/a/1247828/180733
-# NB the timestamp parameter is not really used yet in the script below
-timestamp=`sed -n      's/^timestamp\s*=\s*\([0-9]*\)\s*$/\1/p'           $newImportDefinition`
-importEdition=`sed -n  's/^importEdition\s*=\s*\([0-9a-zA-Z]*\)\s*$/\1/p' $newImportDefinition`
-md5TableGzip=`sed -n   's/^md5TableGzip\s*=\s*\([0-9a-f]*\)\s*$/\1/p'     $newImportDefinition`
-md5GraphGzip=`sed -n   's/^md5GraphGzip\s*=\s*\([0-9a-f]*\)\s*$/\1/p'     $newImportDefinition`
-
-# Ensure the key variables are specified
-if [ -z "$timestamp" -o -z "$importEdition" -o -z "$md5TableGzip" -o -z "$md5GraphGzip" ]; then
-	echo "# The routing definition file does not contain all of timestamp, importEdition, md5TableGzip, md5GraphGzip"
-	exit 1
-fi
-
-#	Ensure these variables match
-if [ "$importEdition" != "$resolvedEdition" ]; then
-	echo "# The import edition: $importEdition does not match the desired edition: $resolvedEdition"
-	exit 1
-fi
+vecho "Resolved edition: ${resolvedEdition}"
 
 
-# Useful binding
+# Useful bindings
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
@@ -398,60 +368,73 @@ smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 if ${smysqlshow} | grep "\b${resolvedEdition}\b" > /dev/null 2>&1
 then
 	# Avoid echo if possible as this generates cron emails
-	vecho "#\tStopping because the routing database ${importEdition} already exists."
+	vecho "Stopping because the routing database ${resolvedEdition} already exists."
 	# Clean exit - because this is not an error, it is just that there is no new data available
 	exit 0
 fi
 
 # Check to see if a routing data file for this routing edition already exists
-newEditionFolder=${websitesContentFolder}/data/routing/${importEdition}
+newEditionFolder=${websitesContentFolder}/data/routing/${resolvedEdition}
 if [ -d ${newEditionFolder} ]; then
-	vecho "#\tStopping because the routing data folder ${importEdition} already exists."
+	vecho "Stopping because the routing data folder ${resolvedEdition} already exists."
 	exit 1
 fi
 
 
-### Stage 3 - get the routing files and check data integrity
+
+
+
+## Download
+
+# Useful bindings
+routingFolder=${websitesContentFolder}/data/routing
+neTarball=${resolvedEdition}.tar.gz
+neTarballMd5=${neTarball}.md5
+
+# Begin the file transfer
+vecho "Transferring the routing files from the import machine ${importHostname}"
+
+#	Copy md5 file
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarballMd5} $routingFolder > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	# Avoid echo if possible as this generates cron emails
+	vecho "The import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarballMd5}\n#\tCopying to: ${routingFolder}."
+	exit 1
+fi
+#	Copy tarball file
+scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarball} $routingFolder > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	# Avoid echo if possible as this generates cron emails
+	vecho "The import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarball}\n#\tCopying to: ${routingFolder}."
+	exit 1
+fi
+
+#	Note that all files are downloaded
+vecho "File transfer stage complete"
+
+
+
+### Stage 3 - check data integrity
+
+# MD5 check
+cd $routingFolder
+md5sum ${quietLongOption} -c ${neTarballMd5}
+if [ $? -ne 0 ]; then
+	# Avoid echo if possible as this generates cron emails
+	vecho "Failed md5 check: md5sum -c $routingFolder/${neTarballMd5}"
+	exit 1
+fi
+
+# Stop on errors
+set -e
 
 # Notify that an installation has begun
 if [ -n "${notifyEmail}" ]; then
-    echo "Data transfer from ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
+    echo "Routing edition installationfrom ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
 fi
-
-# Begin the file transfer
-echo "#	$(date)	CycleStreets routing data installation"
-echo "#	$(date)	Transferring the routing files from the import machine ${importHostname}"
 
 # Create the folder
 mkdir -p ${newEditionFolder}
-
-# Move the temporary definition to correct place and name
-mv ${newImportDefinition} ${newEditionFolder}/importdefinition.ini
-
-#	Get json config file (do first as it is the smallest)
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/.config.json ${newEditionFolder}/
-
-#	Get sieve file (do early as it is also small)
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/sieve.sql ${newEditionFolder}/
-
-#	Get tables file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${tableGzip} ${newEditionFolder}/
-
-#	Get graph file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${importEdition}/${graphGzip} ${newEditionFolder}/
-
-#	Note that all files are downloaded
-echo "#	$(date)	File transfer stage complete"
-
-# MD5 checks
-if [ "$(openssl dgst -md5 ${newEditionFolder}/${tableGzip})" != "MD5(${newEditionFolder}/${tableGzip})= ${md5TableGzip}" ]; then
-    echo "#	Stopping: tableGzip md5 does not match"
-    exit 1
-fi
-if [ "$(openssl dgst -md5 ${newEditionFolder}/${graphGzip})" != "MD5(${newEditionFolder}/${graphGzip})= ${md5GraphGzip}" ]; then
-	echo "#	Stopping: graphGzip md5 does not match"
-	exit 1
-fi
 
 ### Pre stage 4: Close system to routing and stop the existing routing service
 if [ -z "${keepRoutingDuringUpdate}" ]; then
@@ -470,56 +453,52 @@ if [ -z "${keepRoutingDuringUpdate}" ]; then
 fi
 
 ### Stage 4 - unpack and install the TSV files
-echo "#	$(date)	Unpack and install the TSV files"
-cd ${newEditionFolder}
-tar xf ${graphGzip}
+vecho "Unpack the tarbsll"
+tar xf ${neTarball}
 
 #	Clean up the compressed TSV data
-rm -f ${graphGzip}
+rm -f ${neTarball} ${neTarballMd5}
 
 ### Stage 5 - create the routing database
 
 # Narrate
-echo "#	$(date)	Installing the routing database: ${importEdition}"
+vecho "Installing the routing database: ${resolvedEdition}"
+
+# Go to the edition folder
+cd ${newEditionFolder}
 
 #	Create the database (which will be empty for now) and set default collation
-${superMysql} -e "create database ${importEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
-
-# Tables dump
-#	Unpack
-tar xf ${tableGzip}
+${superMysql} -e "create database ${resolvedEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
 #	Load table definisions
-${superMysql} ${importEdition} < routingTableData/routingTableDefinitions.sql
+${superMysql} ${resolvedEdition} < table/tableDefinitions.sql
 
 #	Import the data
-find ${newEditionFolder}/routingTableData -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${importEdition}
+find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${resolvedEdition}
 
 #	Clean up
-rm -r ${newEditionFolder}/routingTableData
-rm -f ${tableGzip}
-
+rm -r ${newEditionFolder}/table
 
 #	Load nearest point stored procedures
 echo "#	$(date)	Loading nearestPoint technology"
-${superMysql} ${importEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
+${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 
 # Build the photo index
 echo "#	$(date)	Building the photosEnRoute tables"
-${superMysql} ${importEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-${superMysql} ${importEdition} -e "call indexPhotos(0);"
+${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 
 ### Stage 7 - Finish
 
 # Add the new row to the map_edition table
-if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${importEdition}')" cyclestreets
+if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}')" cyclestreets
 then
-    echo "#	$(date)	There was a problem adding the new edition: ${importEdition}. The import install did not complete."
+    echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}. The import install did not complete."
     exit 1
 fi
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
-touch "${websitesContentFolder}/data/routing/${importEdition}/installationCompleted.txt"
+touch "${newEditionFolder}/installationCompleted.txt"
 
 # Report completion and next steps
 echo "#	$(date)	Installation completed"
@@ -527,13 +506,13 @@ echo "#	$(date)	Installation completed"
 # Switch to the new edition
 if [ -z "${skipSwitch}" ]; then
     echo "#	$(date) Switching to the new edition"
-    ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}
+    ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}
 
     # Run the tests, writing this summary
-    summaryFile=${websitesLogsFolder}/install_test_results_${importEdition}.txt
+    summaryFile=${websitesLogsFolder}/install_test_results_${resolvedEdition}.txt
     . /opt/cyclestreets-setup/utility/runTests.sh
 else
-    echo "#	$(date) Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${importEdition}"
+    echo "#	$(date) Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}"
 fi
 
 # Remove the lock file - ${0##*/} extracts the script's basename

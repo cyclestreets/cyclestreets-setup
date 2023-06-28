@@ -109,7 +109,7 @@ if [ -n "$1" ]; then
     latestEdition=$1
 else
     # Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-    latestEdition=`ls -1 ${importMachineEditions} | grep "routing\([0-9]\)\{6\}" | tail -n1`
+    latestEdition=`ls -1 ${importMachineEditions} | grep "^routing\([0-9]\)\{6\}$" | tail -n1`
 fi
 
 
@@ -127,9 +127,9 @@ fi
 
 
 # Check (at least one of) the files exist
-if [ ! -e ${importMachineEditions}/${latestEdition}/legDetail.tsv ]; then
+if [ ! -e ${importMachineEditions}/${latestEdition}/graph/legDetail.tsv ]; then
     # This usually happens if trying re reinstall.
-    echo "Error: TSV files missing in: ${importMachineEditions}/${latestEdition}"
+    echo "Error: TSV files missing in: ${importMachineEditions}/${latestEdition}/graph"
     exit 1
 fi
 

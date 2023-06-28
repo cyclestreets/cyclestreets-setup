@@ -117,7 +117,7 @@ fi
 # Create subfolder if not exists
 if [ ! -d $subfolder ]; then
     mkdir -p $subfolder
-    echo "Files used to manage downloads of latest planet data." > $subfolder/readme.txt
+    echo "Files used by $0 to manage downloads of latest planet data." > $subfolder/readme.txt
 fi
 cd $subfolder
 

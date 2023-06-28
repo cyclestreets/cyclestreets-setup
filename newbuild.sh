@@ -50,7 +50,7 @@ while getopts "hm:Pqrs" option ; do
 	    notifyEmail=$OPTARG
 	    ;;
 	# POIs build
-	p) poisBuild=1
+	P) poisBuild=1
 	   ;;
 	# Set quiet mode and proceed
         q)

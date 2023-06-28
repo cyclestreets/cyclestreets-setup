@@ -5,11 +5,12 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -s -m email [config]
+	$0 -h -P -q -r -s -m email [config]
 
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - for notifications when the build breaks or completes
+	-P POIs (places of interest) build - special option that stops after the import phase.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
 	-s Builds and switches secondary routing edition, removing previous one
@@ -31,6 +32,8 @@ verbose=1
 removeOldest=
 # Default to no notification
 notifyEmail=
+# POIs build
+poisBuild=
 # Secondary edition
 secondaryEdition=
 # Routing edition alias: a folder name which is used as a symlink e.g. centralLondon or custom641
@@ -39,12 +42,20 @@ editionAlias=
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:qrs" option ; do
+while getopts "hm:Pqrs" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
+	    ;;
+	# POIs build
+	p) poisBuild=1
+	   ;;
+	# Set quiet mode and proceed
+        q)
+	    # Turn off verbose messages by setting this variable to the empty string
+	    verbose=
 	    ;;
 	# Remove oldest routing edition
 	r) removeOldest=1
@@ -52,11 +63,6 @@ while getopts "hm:qrs" option ; do
 	# Secondary edtion
 	s) secondaryEdition=1
 	   ;;
-	# Set quiet mode and proceed
-        q)
-	    # Turn off verbose messages by setting this variable to the empty string
-	    verbose=
-	    ;;
 	# Missing expected argument
 	:)
 	    echo "Option -$OPTARG requires an argument." >&2
@@ -193,6 +199,12 @@ if [ -n "${editionAlias}" ]; then
     # Create a symlink to the new edition - this allows remote machines to install the edition using the alias
     ln -s ${importMachineEditions}/${newEdition} ${importMachineEditions}/${editionAlias}
     vecho "#\tAlias: ${editionAlias}"
+fi
+
+# Break here on POIs build
+if [ -n "$poisBuild" ]; then
+    vecho "#\t$(date)\tPOIs builds stop here"
+    exit
 fi
 
 ## Install

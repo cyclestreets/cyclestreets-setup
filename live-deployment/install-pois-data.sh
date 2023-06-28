@@ -395,11 +395,13 @@ ${superMysql} ${externalDb} < table/tableDefinitions.sql
 #	Import the data
 find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
 
-#	Clean up
-rm -r ${newEditionFolder}/table
-
 #	Rename the tables
 ${superMysql} ${externalDb} < installPoiTables.sql
+
+#	Clean up
+rm -r ${newEditionFolder}/table
+rm -f ${newEditionFolder}/installPoiTables.sql
+
 
 ### Stage 7 - Finish
 

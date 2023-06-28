@@ -480,11 +480,11 @@ find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysql
 rm -r ${newEditionFolder}/table
 
 #	Load nearest point stored procedures
-echo "#	$(date)	Loading nearestPoint technology"
+vecho "Loading nearestPoint technology"
 ${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
 
 # Build the photo index
-echo "#	$(date)	Building the photosEnRoute tables"
+vecho "Building the photosEnRoute tables"
 ${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 ${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 
@@ -501,18 +501,18 @@ fi
 touch "${newEditionFolder}/installationCompleted.txt"
 
 # Report completion and next steps
-echo "#	$(date)	Installation completed"
+vecho "Installation completed"
 
 # Switch to the new edition
 if [ -z "${skipSwitch}" ]; then
-    echo "#	$(date) Switching to the new edition"
+    vecho "Switching to the new edition"
     ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}
 
     # Run the tests, writing this summary
     summaryFile=${websitesLogsFolder}/install_test_results_${resolvedEdition}.txt
     . /opt/cyclestreets-setup/utility/runTests.sh
 else
-    echo "#	$(date) Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}"
+    vecho "Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}"
 fi
 
 # Remove the lock file - ${0##*/} extracts the script's basename

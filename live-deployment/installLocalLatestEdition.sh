@@ -166,7 +166,10 @@ echo "#	Installing latest edition: ${latestEdition}"
 mv ${importMachineEditions}/${latestEdition} ${websitesContentFolder}/data/routing
 
 # Create a symlink to the installed edition - this allows remote machines to install this edition
-ln -s ${websitesContentFolder}/data/routing/${latestEdition} ${importMachineEditions}/${latestEdition}
+# Ensure the link does not yet already exist (which would create the link within itself)
+if [ ! -L "${importMachineEditions}/${latestEdition}" ]; then
+    ln -s ${websitesContentFolder}/data/routing/${latestEdition} ${importMachineEditions}/${latestEdition}
+fi
 
 # Add the new row to the map_edition table
 if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${latestEdition}')" cyclestreets

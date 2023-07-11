@@ -36,10 +36,10 @@ dataDirectory=rawdata-asof-$today
 mkdir -p $dataDirectory
 
 
-# 1979 - 2020 (released 16 October 2021)
-wget -P $dataDirectory -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-accident-1979-2020.csv
-wget -P $dataDirectory -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-2020.csv
-wget -P $dataDirectory -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-2020.csv
+# 1979 - 2021 (released 15 October 2022)
+wget -P $dataDirectory -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-accident-1979-2021.csv
+wget -P $dataDirectory -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-2021.csv
+wget -P $dataDirectory -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-2021.csv
 
 
 # ------------------------------------------------------------------------------------------------------------------------
@@ -91,9 +91,9 @@ echo -e "\n"
 # ------------------------------------------------------------------------------------------------------------------------
 
 # Zip files into a single distribution
-zip collisions-to$year.zip accidents.csv casualties.csv vehicles.csv
+zip collisions.zip accidents.csv casualties.csv vehicles.csv
 
-echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions-to$year.zip temporarily, then use that URL in the import UI. That takes around 30-40 minutes to run."
+echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions.zip temporarily, then use that URL in the import UI. That takes around 30-40 minutes to run."
 
 
 

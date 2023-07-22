@@ -488,6 +488,33 @@ vecho "Building the photosEnRoute tables"
 ${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 ${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 
+### Stage 6 - create the planet database if provided
+if [ -d ${newEditionFolder}/planet ]; then
+
+    # Planet db
+    # Made by concatenating last 6 digits from the edition
+    # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion
+    planedDb=planetExtractOSM${resolvedEdition: -6}
+
+    # Narrate
+    vecho "Installing the planet database: ${planedDb}"
+
+    # Go to the edition folder
+    cd ${newEditionFolder}
+
+    #	Create the database (which will be empty for now) and set default collation
+    ${superMysql} -e "create database ${planedDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+
+    #	Load table definisions
+    ${superMysql} ${planedDb} < planet/tableDefinitions.sql
+
+    #	Import the data
+    find ${newEditionFolder}/planet -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planedDb}
+
+    #	Clean up
+    rm -r ${newEditionFolder}/planet
+fi
+
 ### Stage 7 - Finish
 
 # Add the new row to the map_edition table

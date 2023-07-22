@@ -453,7 +453,7 @@ if [ -z "${keepRoutingDuringUpdate}" ]; then
 fi
 
 ### Stage 4 - unpack and install the TSV files
-vecho "Unpack the tarbsll"
+vecho "Unpack the tarball"
 tar xf ${neTarball}
 
 #	Clean up the compressed TSV data

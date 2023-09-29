@@ -37,9 +37,9 @@ mkdir -p $dataDirectory
 
 
 # 1979 - 2021 (released 15 October 2022)
-wget -P $dataDirectory -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-accident-1979-2021.csv
-wget -P $dataDirectory -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-2021.csv
-wget -P $dataDirectory -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-2021.csv
+wget -P $dataDirectory -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-collision-1979-latest-published-year.csv
+wget -P $dataDirectory -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-latest-published-year.csv
+wget -P $dataDirectory -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-latest-published-year.csv
 
 
 # ------------------------------------------------------------------------------------------------------------------------

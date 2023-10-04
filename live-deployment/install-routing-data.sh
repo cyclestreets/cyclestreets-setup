@@ -363,6 +363,7 @@ vecho "Resolved edition: ${resolvedEdition}"
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+smysqlcheck="mysqlcheck --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Check to see if this routing database already exists
 if ${smysqlshow} | grep "\b${resolvedEdition}\b" > /dev/null 2>&1
@@ -499,6 +500,9 @@ fi
 #	Import the data
 find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${resolvedEdition}
 
+#	Optimize the tables
+${smysqlcheck} -o ${resolvedEdition}
+
 #	Clean up
 rm -r ${mysqlReadableFolder}/*.tsv
 rmdir ${mysqlReadableFolder}
@@ -550,6 +554,9 @@ if [ -d ${newEditionFolder}/planet ]; then
 
     #	Load the data
     find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planedDb}
+
+    #	Optimize the tables
+    ${smysqlcheck} -o ${planedDb}
 
     #	Clean up
     rm -r ${mysqlReadableFolder}/*.tsv

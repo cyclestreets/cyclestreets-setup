@@ -473,11 +473,35 @@ ${superMysql} -e "create database ${resolvedEdition} default character set utf8m
 #	Load table definisions
 ${superMysql} ${resolvedEdition} < table/tableDefinitions.sql
 
+# Folder from where mysql can read the data
+mysqlReadableFolder=${newEditionFolder}/table
+
+# Handle secure-file-priv, if set
+# Use of set from comment by dorsh:
+# https://stackoverflow.com/a/9558954/225876
+# This puts the values of the two columns in $1 and $2
+set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
+secureFilePriv=$2
+
+# If there's a secure folder then move the tsv files there
+if [ -n "$secureFilePriv" ]; then
+
+    # Secure readable location
+    mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
+
+    # Ensure it exists
+    mkdir -p ${mysqlReadableFolder}
+
+    # Move tsv files there
+    mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+fi
+
 #	Import the data
-find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${resolvedEdition}
+find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${resolvedEdition}
 
 #	Clean up
-rm -r ${newEditionFolder}/table
+rm -r ${mysqlReadableFolder}/*.tsv
+rmdir ${mysqlReadableFolder}
 
 #	Load nearest point stored procedures
 vecho "Loading nearestPoint technology"
@@ -509,10 +533,27 @@ if [ -d ${newEditionFolder}/planet ]; then
     ${superMysql} ${planedDb} < planet/tableDefinitions.sql
 
     #	Import the data
-    find ${newEditionFolder}/planet -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planedDb}
+    mysqlReadableFolder=${newEditionFolder}/planet
+
+    # If there's a secure folder then move the tsv files there
+    if [ -n "$secureFilePriv" ]; then
+
+	# Secure readable location
+	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/planet
+
+	# Ensure it exists
+	mkdir -p ${mysqlReadableFolder}
+
+	# Move tsv files there
+	mv ${newEditionFolder}/planet/*.tsv ${mysqlReadableFolder}
+    fi
+
+    #	Load the data
+    find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planedDb}
 
     #	Clean up
-    rm -r ${newEditionFolder}/planet
+    rm -r ${mysqlReadableFolder}/*.tsv
+    rmdir ${mysqlReadableFolder}
 fi
 
 ### Stage 7 - Finish

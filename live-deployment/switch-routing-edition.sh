@@ -145,11 +145,6 @@ getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><met
 # Cycle routing restart command (should match passwordless sudo entry)
 routingServiceRestart="/bin/systemctl restart cyclestreets"
 
-# Check the local routing service.
-# The status check produces an error if it is not running, so temporarily
-# turn off abandon-on-error to catch and report the problem.
-set +e
-
 # Note: use a path to check the status, rather than service which needs sudo
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
 if [[ ! "$localRoutingStatus" =~ serving ]]
@@ -160,8 +155,16 @@ else
     # Check not already serving this edition
     echo "#	Checking current edition on: ${localRoutingUrl}"
 
+    # Check the local routing service.
+    # The status check produces an error if it is not running, so temporarily
+    # turn off abandon-on-error to catch and report the problem.
+    set +e
+
     # POST the request to the server
     currentRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+
+    # Restore abandon-on-error
+    set -e
 
     # Check empty response
     if [ -z "${currentRoutingEdition}" ]; then
@@ -183,9 +186,6 @@ else
     # Report edition
     echo "#	Current edition: ${currentRoutingEdition}"
 fi
-
-# Restore abandon-on-error
-set -e
 
 # Check the format is routingYYMMDD
 if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
@@ -216,6 +216,35 @@ if [ ! -e "${websitesContentFolder}/data/routing/${newEdition}/installationCompl
 	exit 1
 fi
 
+# If a fallbackRoutingUrl is supplied, check it is running and using the proposed edition
+if [ -n "${fallbackRoutingUrl}" ]; then
+
+    # The curl / xpath check produces an error if it is not running, so temporarily
+    # turn off abandon-on-error to catch and report the problem.
+    set +e
+
+    # POST the request to the server
+    fallbackRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${fallbackRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+
+    # Restore abandon-on-error
+    set -e
+
+    # Check empty response
+    if [ -z "${fallbackRoutingEdition}" ]; then
+	echo "#	The fallback edition at ${fallbackRoutingUrl} could not be determined."
+	exit 1
+    fi
+
+    # Check the fallback routing edition is the same as the proposed edition
+    if [ "${newEdition}" != "${fallbackRoutingEdition}" ]; then
+	echo "#	The fallback server is running: ${fallbackRoutingEdition} which differs from the proposed edition: ${newEdition}"
+	exit 1
+    fi
+fi
+
+
+### Do switch-over
+
 ## Multiple editions - result will be yes or no
 multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1;")
 if [ "${multipleEditions}" = yes ]; then
@@ -228,26 +257,17 @@ if [ "${multipleEditions}" = yes ]; then
     ${superMysql} cyclestreets -e "update map_edition set active = 'yes' where name = '${newEdition}';";
 fi
 
-### Do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
-# If a fallbackRoutingUrl is supplied, check it is running and using the proposed edition
+# Use fallbackRoutingUrl which is available as previously checked
 if [ -n "${fallbackRoutingUrl}" ]; then
-
-    # POST the request to the server
-    fallbackRoutingEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${fallbackRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
-
-    # Check the fallback routing edition is the same as the proposed edition
-    if [ "${newEdition}" != "${fallbackRoutingEdition}" ]; then
-	echo "#	The fallback server is running: ${fallbackRoutingEdition} which differs from the proposed edition: ${newEdition}"
-	exit 1
-    fi
 
     # Use the fallback server during switch over
     ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' where id = 1;";
-    echo "#	Now using fallback routing service"
+    echo "#	Now using fallback routing service at: ${fallbackRoutingUrl}"
+
 else
 
     # Close the journey planner

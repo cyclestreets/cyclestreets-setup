@@ -505,9 +505,9 @@ find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImp
 ${smysqlcheck} -o ${resolvedEdition}
 
 #	Clean up
-rm -r ${mysqlReadableFolder}/*.tsv
-rm -r ${mysqlReadableFolder}/*.sql
-rm -r ${mysqlReadableFolder}/*.sh
+rm -f ${mysqlReadableFolder}/*.tsv
+rm -f ${mysqlReadableFolder}/*.sql
+rm -f ${mysqlReadableFolder}/*.sh
 rmdir ${mysqlReadableFolder}
 
 #	Load nearest point stored procedures
@@ -562,9 +562,9 @@ if [ -d ${newEditionFolder}/planet ]; then
     ${smysqlcheck} -o ${planedDb}
 
     #	Clean up tables and other developer files
-    rm -r ${mysqlReadableFolder}/*.tsv
-    rm -r ${mysqlReadableFolder}/*.sql
-    rm -r ${mysqlReadableFolder}/*.sh
+    rm -f ${mysqlReadableFolder}/*.tsv
+    rm -f ${mysqlReadableFolder}/*.sql
+    rm -f ${mysqlReadableFolder}/*.sh
     rmdir ${mysqlReadableFolder}
 fi
 

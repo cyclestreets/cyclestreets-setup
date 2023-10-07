@@ -48,6 +48,7 @@ ssh-keygen
 # Copy to the importHostname eg:
 ssh-copy-id -i ~/.ssh/id_rsa.pub machinename2.cyclestreets.net
 
+	Alternatively if using ed25519 keys for the cyclestreets user then add the correponding public key to the ~/.ssh/authorized_keys on the importHostname.
 EOF
 }
 

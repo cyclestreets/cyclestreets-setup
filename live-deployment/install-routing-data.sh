@@ -506,6 +506,8 @@ ${smysqlcheck} -o ${resolvedEdition}
 
 #	Clean up
 rm -r ${mysqlReadableFolder}/*.tsv
+rm -r ${mysqlReadableFolder}/*.sql
+rm -r ${mysqlReadableFolder}/*.sh
 rmdir ${mysqlReadableFolder}
 
 #	Load nearest point stored procedures
@@ -559,8 +561,10 @@ if [ -d ${newEditionFolder}/planet ]; then
     #	Optimize the tables
     ${smysqlcheck} -o ${planedDb}
 
-    #	Clean up
+    #	Clean up tables and other developer files
     rm -r ${mysqlReadableFolder}/*.tsv
+    rm -r ${mysqlReadableFolder}/*.sql
+    rm -r ${mysqlReadableFolder}/*.sh
     rmdir ${mysqlReadableFolder}
 fi
 

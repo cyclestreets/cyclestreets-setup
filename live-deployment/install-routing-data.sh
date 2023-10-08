@@ -505,10 +505,7 @@ find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImp
 ${smysqlcheck} -o ${resolvedEdition}
 
 #	Clean up
-rm -f ${mysqlReadableFolder}/*.tsv
-rm -f ${mysqlReadableFolder}/*.sql
-rm -f ${mysqlReadableFolder}/*.sh
-rmdir ${mysqlReadableFolder}
+rm -r ${mysqlReadableFolder}
 
 #	Load nearest point stored procedures
 vecho "Loading nearestPoint technology"
@@ -561,11 +558,8 @@ if [ -d ${newEditionFolder}/planet ]; then
     #	Optimize the tables
     ${smysqlcheck} -o ${planedDb}
 
-    #	Clean up tables and other developer files
-    rm -f ${mysqlReadableFolder}/*.tsv
-    rm -f ${mysqlReadableFolder}/*.sql
-    rm -f ${mysqlReadableFolder}/*.sh
-    rmdir ${mysqlReadableFolder}
+    #	Clean up
+    rm -r ${mysqlReadableFolder}
 fi
 
 ### Stage 7 - Finish

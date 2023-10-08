@@ -261,6 +261,7 @@ if [ -n "${testargs}" ]; then
     echo "#	portSsh=${portSsh}";
     echo "#	portScp=${portScp}";
     echo "#	skipSwitch=${skipSwitch}";
+    echo "#	skipPlanet=${skipPlanet}";
     echo "#	tableGzip=${tableGzip}";
     echo "#	graphGzip=${graphGzip}";
     echo "#	importHostname=${importHostname}";

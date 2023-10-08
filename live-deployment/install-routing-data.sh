@@ -21,6 +21,7 @@ OPTIONS
 	-r Removes the oldest routing edition
 	-s Skip switching to new edition
 	-t Does a dry run showing the resolved options
+	-x Do not install the optional planet db even if available. It is mainly useful for debugging and inspecting routes.
 
 ARGUMENTS
 	importHostname
@@ -64,6 +65,8 @@ sshPort=
 removeOldest=
 # Default to switch to the new edition when this is empty
 skipSwitch=
+# Default to blank so that the planet is installed if available
+skipPlanet=
 
 # Files
 tableGzip=table.tar.gz
@@ -75,7 +78,7 @@ importMachineEditions=/websites/www/import/output
 # Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:p:qrst" option ; do
+while getopts "hm:p:qrstx" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
@@ -102,6 +105,10 @@ while getopts "hm:p:qrst" option ; do
 	    # Set quiet mode and proceed
 	    # Turn off verbose messages by setting this variable to the empty string
 	    verbose=
+	    ;;
+	x)
+	    # Set option to skip planet installation
+	    skipPlanet=1
 	    ;;
 	:)
 	    # Missing expected argument
@@ -517,6 +524,15 @@ ${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema
 ${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 
 ### Stage 6 - create the planet database if provided
+## First check whether it can be skipped and removed
+if [ -d ${newEditionFolder}/planet -a -n "${skipPlanet}" ]; then
+    # Narrate
+    vecho "The planet database: ${planedDb} is available but the x option blocks installation and so it is removed."
+
+    # Remove the planet
+    rm -r ${newEditionFolder}/planet
+fi
+## If the planet is still there then install it
 if [ -d ${newEditionFolder}/planet ]; then
 
     # Planet db

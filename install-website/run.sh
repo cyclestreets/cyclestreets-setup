@@ -119,6 +119,9 @@ cd ${websitesContentFolder}
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
 apt -y install php-json php-yaml php-zip imagemagick php-imagick
 
+# Install Composer packages
+composer install
+
 # Enable mod_deflate for Apache
 sudo a2enmod deflate
 service apache2 restart

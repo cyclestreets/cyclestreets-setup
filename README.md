@@ -1,13 +1,13 @@
 # cyclestreets-setup
 
-Scripts for installing CycleStreets, written for Ubuntu Server 16.04 LTS
+Scripts for installing CycleStreets, written for Ubuntu Server 22.04 LTS
 
 **Note this is work-in-progress and the CycleStreets repo which is needed is not yet publicly available.**
 
 ## Requirements
 
-Written for Ubuntu Server 16.04 LTS.
-Earlier versions of scripts tested, March 2015 on a Ubuntu Server 14.04.2 LTS VM with 1 GB RAM, 8GB HD.
+Written for Ubuntu Server 22.04 LTS.
+
 
 ## Timezone
 

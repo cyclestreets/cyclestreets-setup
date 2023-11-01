@@ -126,7 +126,7 @@ shift $((OPTIND-1))
 quietOption=
 quietLongOption=
 if [ -z "${verbose}" ]; then
-    quietOption=-1
+    quietOption=-q
     quietLongOption=--quiet
 fi
 
@@ -191,11 +191,6 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-## Optionally remove oldest routing edtion
-if [ "${removeOldest}" ]; then
-    ${ScriptHome}/live-deployment/remove-routing-edition.sh ${quietOption} oldest
-fi
-
 # Optional first argument is the source of the new routing editions
 if [ $# -gt 0 ]; then
     # Use as supplied
@@ -255,24 +250,34 @@ if [ -n "${testargs}" ]; then
     echo "#	\$0=${0}";
     echo "#	\$1=${1}";
     echo "#	\$2=${2}";
-    echo "#	verbose=${verbose}";
-    echo "#	notifyEmail=${notifyEmail}";
-    echo "#	sshPort=${sshPort}";
-    echo "#	portSsh=${portSsh}";
-    echo "#	portScp=${portScp}";
-    echo "#	skipSwitch=${skipSwitch}";
-    echo "#	skipPlanet=${skipPlanet}";
-    echo "#	tableGzip=${tableGzip}";
+    echo "#	";
+    echo "#	desiredEdition=${desiredEdition}";
     echo "#	graphGzip=${graphGzip}";
     echo "#	importHostname=${importHostname}";
-    echo "#	desiredEdition=${desiredEdition}";
     echo "#	importMachineEditions=${importMachineEditions}";
+    echo "#	notifyEmail=${notifyEmail}";
+    echo "#	portScp=${portScp}";
+    echo "#	portSsh=${portSsh}";
+    echo "#	quietOption=${quietOption}";
+    echo "#	quietLongOption=${quietLongOption}";
+    echo "#	removeOldest=${removeOldest}";
+    echo "#	skipSwitch=${skipSwitch}";
+    echo "#	skipPlanet=${skipPlanet}";
+    echo "#	sshPort=${sshPort}";
+    echo "#	tableGzip=${tableGzip}";
+    echo "#	testargs=${testargs}";
+    echo "#	verbose=${verbose}";
     exit 0
 fi
 
 
 
 ## Main body of script
+
+## Optionally remove oldest routing edtion
+if [ -n "${removeOldest}" ]; then
+    ${ScriptHome}/live-deployment/remove-routing-edition.sh ${quietOption} oldest
+fi
 
 # Avoid echo if possible as this generates cron emails
 vecho "CycleStreets routing data installation"

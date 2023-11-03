@@ -184,7 +184,7 @@ fi
 $packageInstall php php-xml php-gd php-cli php-mysql libapache2-mod-php php-mbstring
 
 # Composer (for PHP)
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+$packageInstall composer
 
 # Create a .cnf file which sets up MySQL configuration
 #!# Legacy filename

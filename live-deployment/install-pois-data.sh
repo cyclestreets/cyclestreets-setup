@@ -27,8 +27,8 @@ ARGUMENTS
 	edition
 		The optional second argument can also be read from the config.
 		It identifies either a dated routing edition of the form routingYYMMDD e.g. routing161012, or an alias.
-		If not specified, it defaults to 'latest', the edition on the host having the most recent date.
-		It can also name an alias that symlinks to a dated routing edition.
+		An alias should be a symlink to a dated routing edition.
+		If not specified, it defaults to 'pois'.
 
 DESCRIPTION
  	Checks whether there's is a new edition of pois data on the importHostname.
@@ -175,7 +175,7 @@ else
     # When no value is provided by the config set a default
     if [ -z "${desiredEdition}" ]; then
 	# Default
-	desiredEdition=latest
+	desiredEdition=pois
     fi
 fi
 
@@ -252,8 +252,7 @@ set +e
 #
 # The script arguement desiredEdition is converted into an explicitly dated edition of the form routingYYMMDD, as follows:
 # 1. If desiredEdition matches routingYYMMDD then use it directly.
-# 2. If desiredEdition = "latest" then read the folder of editions and select the one with the newest date.
-# 3. Otherwise treat it as an alias which can be dereferenced.
+# 2. Otherwise treat it as an alias which can be dereferenced.
 
 # Examine the desiredEdition argument
 if [[ "${desiredEdition}" =~ routing([0-9]{6}) ]]; then
@@ -262,16 +261,9 @@ if [[ "${desiredEdition}" =~ routing([0-9]{6}) ]]; then
     resolvedEdition=${desiredEdition}
 else
     # Cases when the format is not routingYYMMDD
-    if [ ${desiredEdition} == "latest" ]; then
-
-	# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-	resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} |  grep "^routing\([0-9]\)\{6\}$" | tail -n1`
-
-    else
-	# Treat it as an alias and dereference to find the target edition
-	resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
-	resolvedEdition=$(basename ${resolvedEdition})
-    fi
+    # Treat it as an alias and dereference to find the target edition
+    resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
+    resolvedEdition=$(basename ${resolvedEdition})
 fi
 
 # Abandon if not found

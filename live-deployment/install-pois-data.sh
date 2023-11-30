@@ -172,11 +172,8 @@ if [ $# -gt 1 ]; then
     # Use as supplied
     desiredEdition=$2
 else
-    # When no value is provided by the config set a default
-    if [ -z "${desiredEdition}" ]; then
-	# Default
-	desiredEdition=pois
-    fi
+    # Default
+    desiredEdition=pois
 fi
 
 # There are only two arguments

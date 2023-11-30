@@ -411,9 +411,6 @@ find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImp
 #	Rename the tables
 ${superMysql} ${externalDb} < installPoiTables.sql
 
-#	Optimize the tables
-${smysqlcheck} -o ${resolvedEdition}
-
 #	Clean up
 rm -r ${mysqlReadableFolder}
 

@@ -295,6 +295,7 @@ vecho "Resolved edition: ${resolvedEdition}"
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+smysqlcheck="mysqlcheck --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 externalDb=csExternal
 
 # Check to see if that the external database already exists
@@ -384,15 +385,40 @@ cd ${newEditionFolder}
 #	Load table definisions
 ${superMysql} ${externalDb} < table/tableDefinitions.sql
 
+# Folder from where mysql can read the data
+mysqlReadableFolder=${newEditionFolder}/table
+
+# Handle secure-file-priv, if set
+# Use of set from comment by dorsh:
+# https://stackoverflow.com/a/9558954/225876
+# This puts the values of the two columns in $1 and $2
+set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
+secureFilePriv=$2
+
+# If there's a secure folder then move the tsv files there
+if [ -n "$secureFilePriv" ]; then
+
+    # Secure readable location
+    mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
+
+    # Ensure it exists
+    mkdir -p ${mysqlReadableFolder}
+
+    # Move tsv files there
+    mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+fi
+
 #	Import the data
-find ${newEditionFolder}/table -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
+find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
 
 #	Rename the tables
 ${superMysql} ${externalDb} < installPoiTables.sql
 
+#	Optimize the tables
+${smysqlcheck} -o ${resolvedEdition}
+
 #	Clean up
-rm -r ${newEditionFolder}/table
-rm -f ${newEditionFolder}/installPoiTables.sql
+rm -r ${mysqlReadableFolder}
 
 
 ### Stage 7 - Finish

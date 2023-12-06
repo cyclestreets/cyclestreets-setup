@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to install CycleStreets Postcodes on Ubuntu
-# Tested on 12.10 (View Ubuntu version using 'lsb_release -a')
+#
 # This script is idempotent - it can be safely re-run without destroying existing data
 #
 # Run using:
@@ -62,7 +62,7 @@ if [ ! -r ONSdata.csv ]; then
 #	--------
 #	(Source tends to move around see Alternative)
 #	Download the archived csv version of ONSPD data from:
-#	http://www.ons.gov.uk/ons/guide-method/geography/products/postcode-directories/-nspp-/index.html
+#	https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-november-2023
 #
 #	Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
 #
@@ -141,6 +141,8 @@ echo "#	Loading CSV file"
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege.
 # The --local option is needed in some situations.
+# May also need:
+# set global local_infile=true;
 mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --ignore-lines=1 --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
@@ -157,6 +159,11 @@ ${superMysql} ${externalDb} < newPostcodeTable.sql
 # Create the partial and district postcodes
 echo "#	Creating partial and district tables"
 ${superMysql} ${externalDb} < PartialPostcode.sql
+
+# Label with installed date
+installedDate=$(date +%F)
+${superMysql} ${externalDb} -e "alter table map_postcode comment = 'UK postcodes from Office of National Statistics, installed ${installedDate}'"
+
 
 # Confirm end of script
 echo -e "#	All now installed $(date)"

@@ -80,7 +80,7 @@ chown $username /opt/photon/
 cd /opt/photon/
 
 # Get the latest distribution
-VERSION='0.3.5'
+VERSION='0.4.3'
 if [ ! -f "/opt/photon/photon-${VERSION}.jar" ]; then
 	$asCs wget "https://github.com/komoot/photon/releases/download/${VERSION}/photon-${VERSION}.jar"
 fi
@@ -88,7 +88,7 @@ fi
 # Get the latest data
 apt-get -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
-	echo "Downloading compiled data file (at November 2021 this is 76GB and unpacks to 146GB)"
+	echo "Downloading compiled data file (at December 2023 this is 73GB and unpacks to 159GB)"
 	$asCS wget https://download1.graphhopper.com/public/photon-db-latest.tar.bz2
 	$asCS pbzip2 -d photon-db-latest.tar.bz2
 	$asCS tar vxf photon-db-latest.tar

@@ -1,5 +1,25 @@
 #!/bin/bash
 # Installs the Photon geocoder
+#
+
+# Creates a service:
+#
+# wget http://localhost:2322/api?q=station+road
+#
+
+# Updating
+# Apply these steps before re-running the script:
+#
+# 1. cd /opt/photon
+#
+# 2. Move or delete the old data folder:
+#    mv photon_data photon_data.YYMMDD
+#
+# 3. Remove the link to the init so a new one will be created:
+#    sudo rm /etc/init.d/photon
+#
+# 4. Set VERSION
+#
 
 ### Stage 1 - general setup
 
@@ -88,9 +108,11 @@ fi
 # Get the latest data
 apt-get -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
-	echo "Downloading compiled data file (at December 2023 this is 73GB and unpacks to 159GB)"
+	# Note: twice that amount of space is needed because of the tar extract phase
+	echo "Downloading compiled data file (at December 2023 this is 73GB and unpacks to 161GB, so twice this free space is needed)"
 	$asCS wget https://download1.graphhopper.com/public/photon-db-latest.tar.bz2
 	$asCS pbzip2 -d photon-db-latest.tar.bz2
+	# Makes a copy as it extracts, so doubling the space requirement
 	$asCS tar vxf photon-db-latest.tar
 fi
 

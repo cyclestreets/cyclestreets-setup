@@ -275,9 +275,9 @@ echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.co
 apt-get update
 apt-get install -y nodejs
 
-# Yarn, for JS package management; see: https://www.howtoforge.com/how-to-install-yarn-npm-package-manager-on-ubuntu-20-04/
-curl -sL https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+# Yarn, for JS package management; see: https://www.howtoforge.com/how-to-install-yarn-npm-package-manager-on-ubuntu-20-04/ and https://stackoverflow.com/a/74123377/
+curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /usr/share/keyrings/yarn.gpg >/dev/null
+echo "deb [signed-by=/usr/share/keyrings/yarn.gpg] https://dl.yarnpkg.com/debian/ stable main" > /etc/apt/sources.list.d/yarn.list
 apt-get update
 apt-get install -y yarn
 

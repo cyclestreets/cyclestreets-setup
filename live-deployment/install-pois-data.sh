@@ -34,6 +34,7 @@ DESCRIPTION
  	Checks whether there's is a new edition of pois data on the importHostname.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The tables are loaded into the external database and replace the existing POI tables there.
+	If there's no new edition the script terminates successfully.
 
 	The -p option is to support non-standard ssh port connections, e.g. -p5258 to connect to an IPv6 only server via and IPv4 interface.
 
@@ -306,7 +307,9 @@ fi
 # Check to see if a routing data file for this routing edition already exists
 newEditionFolder=${websitesContentFolder}/data/routing/${resolvedEdition}
 if [ -d ${newEditionFolder} ]; then
-	vecho "Note that the routing data folder ${resolvedEdition} already exists, proceeding with POIs installation."
+    vecho "The routing data folder ${resolvedEdition} already exists, abandoning POIs installation."
+    # Return success
+    exit 0
 fi
 
 

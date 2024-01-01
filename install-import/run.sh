@@ -248,7 +248,7 @@ ${superMysql} -e "grant select, reload, file, super, lock tables, event, trigger
 # Useful binding
 importpermissions="grant select, insert, update, delete, create, drop, index, alter, create temporary tables, lock tables, create view, show view, create routine, alter routine, execute on"
 
-${superMysql} -e "${importpermissions} \`planetExtractOSM%\` . * to '${mysqlImportUsername}'@'localhost';"
+${superMysql} -e "${importpermissions} \`planet%\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`routing%\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`${archiveDb}\` . * to '${mysqlImportUsername}'@'localhost';"
 ${superMysql} -e "${importpermissions} \`${externalDb}\` . * to '${mysqlImportUsername}'@'localhost';"

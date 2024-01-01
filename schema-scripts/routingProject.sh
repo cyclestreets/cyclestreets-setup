@@ -45,7 +45,7 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # The current database name will be the sample database
 sampleRoutingDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_config limit 1")
 # Use the date part of that (from character 7) as the basis for getting the planet db.
-samplePlanetDb=planetExtractOSM${sampleRoutingDb:7}
+samplePlanetDb=planet${sampleRoutingDb:7}
 echo "# Using routing data from the db named: ${sampleRoutingDb} and planet ${samplePlanetDb}"
 
 #	Write

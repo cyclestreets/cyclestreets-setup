@@ -239,6 +239,8 @@ set -e
 
 # Drop the routing and planet databases
 ${superMysql} cyclestreets -e "drop database if exists ${removeEdition};";
+${superMysql} cyclestreets -e "drop database if exists planet${editionDate};";
+# Retain the following line until all instances have been removed
 ${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${editionDate};";
 
 # Remove the routing folder without generating any prompts or warnings

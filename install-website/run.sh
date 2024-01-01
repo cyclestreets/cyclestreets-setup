@@ -654,7 +654,7 @@ ${superMysql} -e "grant select, insert, update, delete, create, execute, show vi
 ${superMysql} -e "grant select, execute, show view on \`routing%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Allow the website to view any planetExtract files that have been created by an import
-${superMysql} -e "grant select on \`planetExtractOSM%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
+${superMysql} -e "grant select on \`planet%\` . * to '${mysqlWebsiteUsername}'@'localhost';"
 
 # Create the settings file if it doesn't exist
 phpConfig=".config.php"

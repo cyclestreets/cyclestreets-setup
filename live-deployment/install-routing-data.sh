@@ -544,7 +544,7 @@ if [ -d ${newEditionFolder}/planet ]; then
     # Planet db
     # Made by concatenating last 6 digits from the edition
     # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion
-    planedDb=planetExtractOSM${resolvedEdition: -6}
+    planedDb=planet${resolvedEdition: -6}
 
     # Narrate
     vecho "Installing the planet database: ${planedDb}"

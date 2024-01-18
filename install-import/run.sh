@@ -123,7 +123,7 @@ cd ${cyclestreetsProfileFolder}
 
 # SUDO_USER is the name of the user that invoked the script using sudo
 # !! This technique which is a bit like doing an 'unsudo' is messy.
-chown ${SUDO_USER} ${cyclestreetsProfileFolder}
+chown ${SUDO_USER}:${rollout} ${cyclestreetsProfileFolder}
 
 # Create/update the repository from the sudo-invoking user's account
 # !! This may prompt for git username / password.

@@ -71,22 +71,28 @@ fi
 # Load the credentials
 . ${configFile}
 
-# Check a base OS has been defined
+# Check required config
 if [ -z "${baseOS}" ]; then
     echo "#	Please set a value for baseOS in the config file."
     exit 1
 fi
 
-# Check the importContentFolder has been defined
+# Check required config
 if [ -z "${importContentFolder}" ]; then
     echo "#	Please set a value for importContentFolder in the config file."
     exit 1
 fi
 
 
-# Check the mysqlImportUsername has been defined
+# Check required config
 if [ -z "${mysqlImportUsername}" ]; then
     echo "#	Please set a value for mysqlImportUsername in the config file."
+    exit 1
+fi
+
+# Check required config
+if [ -z "${cyclestreetsProfileFolder}" ]; then
+    echo "#	Please set a value for cyclestreetsProfileFolder in the config file."
     exit 1
 fi
 
@@ -104,6 +110,41 @@ if [ ! -d "${websitesContentFolder}" ]; then
     echo "#	Please install the main CycleStreets repo first"
     exit 1
 fi
+
+
+## Repo: cyclestreets-profiles
+
+# Add the path to content
+mkdir -p ${cyclestreetsProfileFolder}
+
+# Switch to content folder
+cd ${cyclestreetsProfileFolder}
+
+
+# SUDO_USER is the name of the user that invoked the script using sudo
+# !! This technique which is a bit like doing an 'unsudo' is messy.
+chown ${SUDO_USER} ${cyclestreetsProfileFolder}
+
+# Create/update the repository from the sudo-invoking user's account
+# !! This may prompt for git username / password.
+if [ ! -d ${cyclestreetsProfileFolder}/.git ]
+then
+	su - ${SUDO_USER} -c "git clone ${repoOrigin}cyclestreets/cyclestreets-profiles.git ${cyclestreetsProfileFolder}"
+	git config --global --add safe.directory ${cyclestreetsProfileFolder}
+
+else
+    # Set permissions before the update
+    chgrp -R rollout ${cyclestreetsProfileFolder}/.git
+    su - ${SUDO_USER} -c "cd ${cyclestreetsProfileFolder} && git pull"
+fi
+
+# Add cronned update of the repo
+cp /opt/cyclestreets-profiles/cyclestreets-profiles-update.cron /etc/cron.d/cyclestreets-profiles-update
+chown root.root /etc/cron.d/cyclestreets-profiles-update
+chmod 0600 /etc/cron.d/cyclestreets-profiles-update
+
+
+
 
 # GDAL - which provides tools for reading elevation data
 # A backported version (for Ubuntu 16.04 LTS) that provides some json options is available, see:

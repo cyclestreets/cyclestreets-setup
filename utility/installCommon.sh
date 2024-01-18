@@ -18,7 +18,7 @@ if [ ! -d ${websitesContentFolder}/.git ]
 then
 	su - ${SUDO_USER} -c "git clone ${repoOrigin}cyclestreets/cyclestreets.git ${websitesContentFolder}"
 	git config --global --add safe.directory ${websitesContentFolder}
-	
+
 else
     # Set permissions before the update
     chgrp -R rollout ${websitesContentFolder}/.git

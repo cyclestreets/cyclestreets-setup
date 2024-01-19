@@ -1,8 +1,6 @@
 #!/bin/bash
 # Installs new editions of cycle routing data from another host.
 #
-# This script is idempotent - it can be safely re-run without destroying existing data
-#
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 # Requires password-less access to the import machine, using a public key.
 
@@ -19,7 +17,7 @@ OPTIONS
 	-p Take a port as argument which is used in ssh and scp connections with the import host.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
-	-s Skip switching to new edition
+	-s Skip switching to new edition, maintaining any currently served routing edition
 	-t Does a dry run showing the resolved options
 	-x Do not install the optional planet db even if available. It is mainly useful for debugging and inspecting routes.
 
@@ -96,6 +94,9 @@ while getopts "hm:p:qrstx" option ; do
 	s)
 	    # Skip switching to the new edition
 	    skipSwitch=1
+	    # Doesn't turn off routing during update
+	    # Note this is also a .config.sh option
+	    keepRoutingDuringUpdate=1
 	   ;;
 	t)
 	    # Dry run shows results of arg processing
@@ -255,6 +256,7 @@ if [ -n "${testargs}" ]; then
     echo "#	graphGzip=${graphGzip}";
     echo "#	importHostname=${importHostname}";
     echo "#	importMachineEditions=${importMachineEditions}";
+    echo "#	keepRoutingDuringUpdate=${keepRoutingDuringUpdate}";
     echo "#	notifyEmail=${notifyEmail}";
     echo "#	portScp=${portScp}";
     echo "#	portSsh=${portSsh}";

@@ -69,6 +69,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Use this to remove the ../
 ScriptHome=$(readlink -f "${DIR}/..")
 
+# Change to the script's folder
+cd ${ScriptHome}
+
 # Name of the credentials file
 configFile=${ScriptHome}/.config.sh
 

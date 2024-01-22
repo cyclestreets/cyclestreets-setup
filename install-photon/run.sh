@@ -1,6 +1,6 @@
 #!/bin/bash
 # Installs the Photon geocoder
-#
+# Takes about 3 hours in total, 90 minute download plus similar to unpack.
 
 # Creates a service:
 #

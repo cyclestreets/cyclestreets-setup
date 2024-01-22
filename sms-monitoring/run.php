@@ -19,7 +19,7 @@ class doCheck
 	);
 	private $retryInterval	= 20;	// Time to wait before retrying a test
 	private $additionalParameter = '';	// Extra parameter used in journey testing on some services
-
+	private $errorLogFile	= '/websites/www/logs/tests.log';
 
 	# Constructor
 	public function __construct ()
@@ -175,6 +175,9 @@ class doCheck
 		$date = date ('H:i,j/M');
 		$errorMessage = $date . ': ' . $errorMessage;
 		
+		// Log
+		error_log ($errorMessage, 3, $this->errorLogFile);
+
 		# Send e-mail
 		$this->email ($test, $errorMessage, $result);
 		

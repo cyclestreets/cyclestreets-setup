@@ -10,7 +10,7 @@ SYNOPSIS
 OPTIONS
 	-h Show this message
 	-q Suppress helpful messages, error messages are still produced
-	-r Resets the file that is used to block retries on the same day.
+	-r Resets the files that block retries on the same day.
 
 ARGUMENTS
 	planetMd5url
@@ -34,7 +34,7 @@ subfolder=dailybuild
 dateFileLatestBuild=date-cyclestreets-latest-build.txt
 dateFileTodaysDate=date-cyclestreets-today.txt
 
-# Used to reset file that blocks retries on the same day
+# Used to flag requirement to reset files that block retries on the same day
 resetBlocker=
 
 # Last used planet md5
@@ -53,7 +53,7 @@ while getopts "hqr" option ; do
 	    verbose=
 	    ;;
         r)
-	    # Set flag to reset the daily retry blocking file
+	    # Set reset flag
 	    resetBlocker=1
 	    ;;
 	# Missing expected argument
@@ -163,10 +163,21 @@ if [ -z "${planetMd5LatestBuild}" ]; then
 fi
 
 
+# Create if not exists
+if [ -n "${resetBlocker}" ]; then
+    vecho "#\t	Resetting all files that block a retry today"
+    rm $dateFileLatestBuild
+    rm $planetMd5LatestBuild
+    rm $dateFileTodaysDate
+    vecho "#\t	Cleared ready for a retry."
+    exit 0
+fi
+
+
 
 # Create if not exists
-if [ ! -e $dateFileLatestBuild -o -n "${resetBlocker}" ]; then
-    vecho "#\t	Creating or resetting dummy initial file to record date of last build"
+if [ ! -e $dateFileLatestBuild ]; then
+    vecho "#\t	Creating dummy initial file to record date of last build"
     echo '000000' > $dateFileLatestBuild
 fi
 
@@ -190,8 +201,8 @@ wget -N ${quietLongOption} $planetMd5url
 
 
 # Create if not exists
-if [ ! -e $planetMd5LatestBuild -o -n "${resetBlocker}" ]; then
-    vecho "#\t	Creating or resetting dummy file to record md5 of last planet file used to create a new routing edition"
+if [ ! -e $planetMd5LatestBuild ]; then
+    vecho "#\t	Creating dummy file to record md5 of last planet file used to create a new routing edition"
     echo 'DummyMD5 data' > $planetMd5LatestBuild
 fi
 

@@ -10,6 +10,7 @@ SYNOPSIS
 OPTIONS
 	-h Show this message
 	-q Suppress helpful messages, error messages are still produced
+	-r Resets the file that is used to block retries on the same day.
 
 ARGUMENTS
 	planetMd5url
@@ -33,6 +34,9 @@ subfolder=dailybuild
 dateFileLatestBuild=date-cyclestreets-latest-build.txt
 dateFileTodaysDate=date-cyclestreets-today.txt
 
+# Used to reset file that blocks retries on the same day
+resetBlocker=
+
 # Last used planet md5
 planetMd5LatestBuild=planetLatestBuild.md5
 
@@ -40,13 +44,17 @@ planetMd5LatestBuild=planetLatestBuild.md5
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hq" option ; do
+while getopts "hqr" option ; do
     case ${option} in
         h) usage; exit ;;
 	# Set quiet mode and proceed
         q)
 	    # Turn off verbose messages by setting this variable to the empty string
 	    verbose=
+	    ;;
+        r)
+	    # Set flag to reset the daily retry blocking file
+	    resetBlocker=1
 	    ;;
 	# Missing expected argument
 	:)
@@ -157,8 +165,8 @@ fi
 
 
 # Create if not exists
-if [ ! -e $dateFileLatestBuild ]; then
-    vecho "#\t	Creating dummy initial file to record date of last build"
+if [ ! -e $dateFileLatestBuild -o -n "${resetBlocker}" ]; then
+    vecho "#\t	Creating or resetting dummy initial file to record date of last build"
     echo '000000' > $dateFileLatestBuild
 fi
 
@@ -169,7 +177,7 @@ echo `date +%y%m%d` > $dateFileTodaysDate
 # If a build has already been done today then abandon
 if cmp -s $dateFileTodaysDate $dateFileLatestBuild
 then
-    vecho "#\t	A build has already been done today."
+    vecho "#\t	A build has already been done today. Use -r option to reset and try again."
     exit 1
 else
     vecho "#\t	The possibility of doing a new build will be examined."

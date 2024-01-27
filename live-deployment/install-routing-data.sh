@@ -9,9 +9,10 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -q -r -s -t -m email -p port [importHostname] [edition]
+	$0 -e -h -q -r -s -t -x -m email -p port [importHostname] [edition]
 
 OPTIONS
+	-e Do not install tables from the optional external db even if available.
 	-h Show this message
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-p Take a port as argument which is used in ssh and scp connections with the import host.
@@ -65,6 +66,8 @@ removeOldest=
 skipSwitch=
 # Default to blank so that the planet is installed if available
 skipPlanet=
+# Default to blank so that the external is installed if available
+skipExternal=
 
 # Files
 tableGzip=table.tar.gz
@@ -76,9 +79,13 @@ importMachineEditions=/websites/www/import/output
 # Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:p:qrstx" option ; do
+while getopts "ehm:p:qrstx" option ; do
     case ${option} in
         h) usage; exit ;;
+	e)
+	    # Set option to skip external installation
+	    skipExternal=1
+	    ;;
 	m)
 	    # Set the notification email address
 	    notifyEmail=$OPTARG
@@ -535,7 +542,7 @@ ${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 ## First check whether it can be skipped and removed
 if [ -d ${newEditionFolder}/planet -a -n "${skipPlanet}" ]; then
     # Narrate
-    vecho "The planet database: ${planedDb} is available but the x option blocks installation and so it is removed."
+    vecho "The planet database is available but an option blocks installation and so it is removed."
 
     # Remove the planet
     rm -r ${newEditionFolder}/planet
@@ -546,19 +553,19 @@ if [ -d ${newEditionFolder}/planet ]; then
     # Planet db
     # Made by concatenating last 6 digits from the edition
     # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion
-    planedDb=planet${resolvedEdition: -6}
+    planetDb=planet${resolvedEdition: -6}
 
     # Narrate
-    vecho "Installing the planet database: ${planedDb}"
+    vecho "Installing the planet database: ${planetDb}"
 
     # Go to the edition folder
     cd ${newEditionFolder}
 
     #	Create the database (which will be empty for now) and set default collation
-    ${superMysql} -e "create database ${planedDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+    ${superMysql} -e "create database ${planetDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
     #	Load table definisions
-    ${superMysql} ${planedDb} < planet/tableDefinitions.sql
+    ${superMysql} ${planetDb} < planet/tableDefinitions.sql
 
     #	Import the data
     mysqlReadableFolder=${newEditionFolder}/planet
@@ -577,10 +584,60 @@ if [ -d ${newEditionFolder}/planet ]; then
     fi
 
     #	Load the data
-    find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planedDb}
+    find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planetDb}
 
     #	Optimize the tables
-    ${smysqlcheck} -o ${planedDb}
+    ${smysqlcheck} -o ${planetDb}
+
+    #	Clean up
+    rm -r ${mysqlReadableFolder}
+fi
+
+### Stage 6.5 - create the external database if provided
+## First check whether it can be skipped and removed
+if [ -d ${newEditionFolder}/external -a -n "${skipExternal}" ]; then
+    # Narrate
+    vecho "Some tables for the external database are available but an option blocks installation and so it is removed."
+
+    # Remove the external
+    rm -r ${newEditionFolder}/external
+fi
+## If the external is still there then install it
+if [ -d ${newEditionFolder}/external ]; then
+
+    # External db
+    externalDb=csExternal
+
+    # Narrate
+    vecho "Installing tables into the external database: ${externalDb}"
+
+    # Go to the edition folder
+    cd ${newEditionFolder}
+
+    #	Load table definisions
+    ${superMysql} ${externalDb} < external/tableDefinitions.sql
+
+    #	Import the data
+    mysqlReadableFolder=${newEditionFolder}/external
+
+    # If there's a secure folder then move the tsv files there
+    if [ -n "$secureFilePriv" ]; then
+
+	# Secure readable location
+	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/external
+
+	# Ensure it exists
+	mkdir -p ${mysqlReadableFolder}
+
+	# Move tsv files there
+	mv ${newEditionFolder}/external/*.tsv ${mysqlReadableFolder}
+    fi
+
+    #	Load the data
+    find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
+
+    #	Optimize the tables
+    ${smysqlcheck} -o ${externalDb}
 
     #	Clean up
     rm -r ${mysqlReadableFolder}

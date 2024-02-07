@@ -173,7 +173,7 @@ class readLogFile ():
         Scan the log file.
         """
         # Trace
-        print ("#\tScanning log file: {}, API: {}".format(str(self.logfile), self.apiCall))
+        # print ("#\tScanning log file: {}, API: {}".format(str(self.logfile), self.apiCall))
         
         # Get the last few lines of the log file
         p = subprocess.Popen(["tail", "--lines=" + str(self.numberOfLines), self.logfile], stdout=subprocess.PIPE)

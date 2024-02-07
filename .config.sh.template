@@ -31,6 +31,9 @@ useSSL=
 # API - subdomain use hyphen rather than dot for compatibiity with wildcard ssl certificates
 apiHostname=api-"${csHostname}"
 
+# Use this if the host name uses secure transport https
+##apiHostHttps=s
+
 # Port forwarding
 # Used when setting up a virtual server inside a developer machine, has a number value like: 3080
 ##hostPort=

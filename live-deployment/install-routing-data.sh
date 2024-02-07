@@ -636,8 +636,8 @@ if [ -d ${newEditionFolder}/external ]; then
     #	Load the data
     find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
 
-    #	Optimize the tables
-    ${smysqlcheck} -o ${externalDb}
+    #	Optimize only the new tables by getting the basenames minus .tsv
+    find ${mysqlReadableFolder} -name '*.tsv' -type f -exec basename {} .tsv ';' | xargs ${smysqlcheck} -o ${externalDb}
 
     #	Clean up
     rm -r ${mysqlReadableFolder}

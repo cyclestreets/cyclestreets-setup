@@ -41,7 +41,7 @@ class readLogFile ():
     def __init__(self, logfile):
 
         # Trace
-        # print "#\tStarting"
+        # print ("#\tStarting")
 
         # Initialize these statistics as time in millisconds
         self.averageLingerMs = 0
@@ -118,7 +118,7 @@ class readLogFile ():
         age = self.now - datetime_object
 
         # Trace
-        #print age.seconds
+        # print (age.seconds)
 
         # Result
         return age.seconds <= 300
@@ -153,7 +153,7 @@ class readLogFile ():
         if not self.checkLastEntryIsRecent():
 
             # Trace
-            # print "#\tLog file is stale: " + str(self.logfile)
+            # print ("#\tLog file is stale: " + str(self.logfile))
 
             # They will all be zero
             self.printResults()
@@ -215,7 +215,7 @@ class readLogFile ():
         # Insufficient input data?
         if count < self.minimumDataLines:
             # Trace
-            # print "#\tStopping, counted: " + str(count)
+            # print ("#\tStopping, counted: " + str(count))
             return
 
         # Calculate the average
@@ -234,10 +234,10 @@ class readLogFile ():
         self.slowestLingerMs = math.ceil(float(ascending[-1]) / 1000)
 
         # Trace
-        # print "#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms"
+        # print ("#\tTop 90% index: " + str(top90startIndex) + ", time: " + str(self.top90percentLingerMs) + " ms")
 
         # Trace
-        # print "#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds."
+        # print ("#\tStopping, counted: " + str(count) + " time: " + str(self.averageLingerMs) + "ms, " + str(microSeconds) + " microseconds.")
 
 
 # Main

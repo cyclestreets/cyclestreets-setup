@@ -16,7 +16,7 @@
 #	* Response time at the 90th percentile when ordered by ascending time
 #
 # Example
-# user@veebee:/opt/cyclestreets-setup$
+# user@veebee:$
 # python utility/readLogFile.py /websites/www/logs/veebee-access.log
 # journey_linger.value 22
 # journey_top90linger.value 39
@@ -59,7 +59,12 @@ class readLogFile ():
         self.minimumDataLines = 10
 
         # Api call pattern
-        self.apiCall = 'api/journey.'
+        # v1
+        # self.apiCall = 'api/journey.'
+        # v2
+        # self.apiCall = 'v2/journey.'
+        # Both
+        self.apiCall = '/journey.'
 
         # Current time
         self.now = datetime.now()
@@ -73,6 +78,9 @@ class readLogFile ():
 
         # Get the first line
         line = p.stdout.readline()
+
+        # Convert from bytes to str
+        line = line.decode('utf8')
 
         # Close
         p.kill()
@@ -121,9 +129,9 @@ class readLogFile ():
         """
         Print statistics
         """
-        print 'journey_slowest.value {:d}'.format(int(self.slowestLingerMs))
-        print 'journey_linger.value {:d}'.format(int(self.averageLingerMs))
-        print 'journey_top90linger.value {:d}'.format(int(self.top90percentLingerMs))
+        print('journey_slowest.value {:d}'.format(int(self.slowestLingerMs)))
+        print('journey_linger.value {:d}'.format(int(self.averageLingerMs)))
+        print('journey_top90linger.value {:d}'.format(int(self.top90percentLingerMs)))
 
     def considerLine (self, line):
         """
@@ -165,12 +173,12 @@ class readLogFile ():
         Scan the log file.
         """
         # Trace
-        # print "#\tScanning log file: " + str(self.logfile)
+        print ("#\tScanning log file: {}, API: {}".format(str(self.logfile), self.apiCall))
         
         # Get the last few lines of the log file
         p = subprocess.Popen(["tail", "--lines=" + str(self.numberOfLines), self.logfile], stdout=subprocess.PIPE)
 
-        # Get the first line
+        # Get the first line, arrives as bytes
         line = p.stdout.readline()
 
         # Count matching lines
@@ -185,16 +193,19 @@ class readLogFile ():
         # Scan
         while line:
 
+            # Convert from bytes to str
+            line = line.decode('utf8')
+
             # Check if the line contains call to the journey api
             if self.considerLine(line):
 
                 # Trace
-                # print "#\tConsidering ... " + str(count)
+                # print ("#\tConsidering ... " + str(count))
                 
                 # Find the number at the end of the line after a solidus
                 match = re.match('.+?/([0-9]+)$', line)
                 if match:
-	            count += 1
+                    count += 1
                     microSeconds += int(match.group(1))
                     lingerTimes.append(int(match.group(1)))
 

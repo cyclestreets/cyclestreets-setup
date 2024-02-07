@@ -99,7 +99,7 @@ output_values() {
     if [ -z "${journeysLog}" ]; then
 	journeysLog="${csHostname}-access.log"
     fi
-    python ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${journeysLog} | while read line ; do
+    python3 ${ScriptHome}/utility/readLogFile.py ${websitesLogsFolder}/${journeysLog} | while read line ; do
 	echo $line
     done
 }

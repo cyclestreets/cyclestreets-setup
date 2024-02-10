@@ -285,7 +285,6 @@ EOF
 	# Assertions - turn on for development mode
 	# Changing the first setting will only work when it has been initialized to 0 by the php.ini system.
 	php_admin_value zend.assertions  1
-	php_admin_value assert.exception 0
 EOF
 	# Resume stop on error
 	set -e

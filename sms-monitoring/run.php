@@ -172,11 +172,11 @@ class doCheck
 		}
 		
 		# Prepend the date
-		$date = date ('H:i,j/M');
+		$date = date ('Y-m-d H:i:s');
 		$errorMessage = $date . ': ' . $errorMessage;
 		
-		// Log
-		error_log ($errorMessage, 3, $this->errorLogFile);
+		// Log, the 3 means append to the destination, not automatically with a new line
+		error_log ($errorMessage . PHP_EOL, 3, $this->errorLogFile);
 
 		# Send e-mail
 		$this->email ($test, $errorMessage, $result);

@@ -192,7 +192,7 @@ latestEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME ${selector} 
 
 # Check the format is routingYYMMDD
 if [[ ! "$latestEdition" =~ routing([0-9]{6}) ]]; then
-  echo "#	The latest edition found: ${latestEdition} is not of the form routingYYMMDD."
+  vecho "#\t	The latest edition found: ${latestEdition} is not of the form routingYYMMDD."
   exit 1
 fi
 
@@ -217,9 +217,9 @@ fi
 
 # Download
 vecho "#\t	Downloading: $planetMd5url"
+
 # Use -N to avoid download if not modified
 wget -N ${quietLongOption} $planetMd5url
-
 
 # Create if not exists
 if [ ! -e $planetMd5LatestBuild ]; then
@@ -227,11 +227,10 @@ if [ ! -e $planetMd5LatestBuild ]; then
     echo 'DummyMD5 data' > $planetMd5LatestBuild
 fi
 
-
 # Compare downloaded MD5 with the md5 last used in a build
 if cmp -s $planetMd5basename $planetMd5LatestBuild
 then
-    vecho "#\t	The latest planed MD5 matches the one already used in a build, so no new build should be done."
+    vecho "#\t	The latest planed MD5 matches the one previously downloaded, so no new build should be done."
     exit 1
 fi
 

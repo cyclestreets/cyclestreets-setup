@@ -17,6 +17,7 @@ ARGUMENTS
 		URL of planet MD5 file.
 
 DESCRIPTION
+	Check if a new planet file is ready for download.
 	If an error occurs return false.
 	If a new build has already been done today then return false.
 	If there is no new build available return false.
@@ -138,7 +139,7 @@ fi
 cd $subfolder
 
 
-# Check arguments are non zero
+# Check variables are non zero
 if [ -z "${dateFileLatestBuild}" ]; then
     vecho "#\t	Variable: dateFileLatestBuild is empty"
     exit 1
@@ -176,10 +177,30 @@ fi
 
 
 # Create if not exists
-if [ ! -e $dateFileLatestBuild ]; then
-    vecho "#\t	Creating dummy initial file to record date of last build"
-    echo '000000' > $dateFileLatestBuild
+vecho "#\t	Record date of latest build"
+
+# Get latest routing database based on remove-routing-edition.sh
+# Find editions not including the null edition, or the modify graph edition
+selector="from INFORMATION_SCHEMA.SCHEMATA where SCHEMA_NAME not in ('routing000000', 'routing220000') and SCHEMA_NAME LIKE 'routing%'"
+
+# Useful binding
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
+# Determine newest edition not including the null edition (the -s suppresses the tabular output)
+latestEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME ${selector} order by SCHEMA_NAME desc limit 1;")
+
+# Check the format is routingYYMMDD
+if [[ ! "$latestEdition" =~ routing([0-9]{6}) ]]; then
+  echo "#	The latest edition found: ${latestEdition} is not of the form routingYYMMDD."
+  exit 1
 fi
+
+# Extract the date part of the routing database
+latestEditionDate=${BASH_REMATCH[1]}
+
+# Write to file
+echo $latestEditionDate > $dateFileLatestBuild
 
 # Today's date
 echo `date +%y%m%d` > $dateFileTodaysDate
@@ -188,7 +209,7 @@ echo `date +%y%m%d` > $dateFileTodaysDate
 # If a build has already been done today then abandon
 if cmp -s $dateFileTodaysDate $dateFileLatestBuild
 then
-    vecho "#\t	A build has already been done today. Use -r option to reset and try again."
+    vecho "#\t	A build has already been started today. Use -r option to reset and try again."
     exit 1
 else
     vecho "#\t	The possibility of doing a new build will be examined."
@@ -217,8 +238,7 @@ fi
 # Report that a new build can be tried
 vecho "#\t	The latest planet differs from the one used in a build, hence a new build can be tried."
 
-# Overwrite the date and md5 to block re-entry
-cp $dateFileTodaysDate $dateFileLatestBuild
+# Overwrite the md5 to block re-entry
 cp $planetMd5basename $planetMd5LatestBuild
 
 

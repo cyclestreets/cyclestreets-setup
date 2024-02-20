@@ -1,17 +1,19 @@
 #!/bin/bash
-# Script to return last line of api error log
+# Script to search backwards through api access log for unique_id, with timeout.
 usage()
 {
 	cat << EOF
 SYNOPSIS
-	$0 -h -s
+	$0 -h -s unique_id
 
 OPTIONS
 	-h Show this message
-	-s If set reads from log defined by the secure, i.e. SSL virtual host.
+	-s If set searchs log defined by the secure, i.e. SSL virtual host.
 
 DESCRIPTION
-	Returns the last line of the error log defined by the Apache cyclestreets API virtual host.
+	Searches backwards through access log defined by the Apache cyclestreets API virtual host.
+    The search looks for unique_id, with timeout of one second.
+	The unique_id is an option used by Apache to mark requests in an access log with a unique reference.
 
 EOF
 }
@@ -42,6 +44,16 @@ if [ "$(id -u)" = "0" ]; then
 	echo "#	This script must NOT be run as root." 1>&2
 	exit 1
 fi
+
+# Check required argument
+if [ $# -ne 1 ]; then
+	# Report and abandon
+	echo -e "#\t	There must be exactly one argument." 1>&2
+	exit 1
+fi
+
+# Bind first argument
+uniqueId=$1
 
 ### CREDENTIALS ###
 
@@ -78,9 +90,10 @@ if [ "${apiHostname}" = "api.cyclestreets.net" ]; then
 fi
 
 # Debug
-#echo "tail -n1 ${websitesLogsFolder}/${mainName}${secureLog}-error.log"
+#echo "(timeout 1 tac ${websitesLogsFolder}/${mainName}${secureLog}-access.log || : ) | grep -F -m1 ${uniqueId}"
 
-# Show the last line
-tail -n1 ${websitesLogsFolder}/${mainName}${secureLog}-error.log
+# Search
+# Limit search time to one second, while searching backwards through the access log, return the first match with the unique id
+(timeout 1 tac ${websitesLogsFolder}/${mainName}${secureLog}-access.log || : ) | grep -F -m1 ${uniqueId}
 
 # End of file

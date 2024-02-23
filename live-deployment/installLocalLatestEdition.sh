@@ -153,6 +153,10 @@ if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
     set +e
 fi
 
+#	Load nearest point stored procedures
+echo "#	Loading nearestPoint technology"
+${superMysql} ${latestEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
+
 # Build a limited photo index
 echo "#	$(date)	Building a limited photosEnRoute index"
 ${superMysql} ${latestEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql

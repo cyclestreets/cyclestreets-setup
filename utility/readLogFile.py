@@ -17,7 +17,7 @@
 #
 # Example
 # user@veebee:$
-# python utility/readLogFile.py /websites/www/logs/veebee-access.log
+# python3 utility/readLogFile.py /websites/www/logs/veebee-access.log
 # journey_linger.value 22
 # journey_top90linger.value 39
 # journey_slowest.value 39
@@ -37,7 +37,7 @@ class readLogFile ():
     """
     Functions for reading a log file
     """
-    
+
     def __init__(self, logfile):
 
         # Trace
@@ -69,6 +69,7 @@ class readLogFile ():
         # Current time
         self.now = datetime.now()
 
+
     def checkLastEntryIsRecent (self):
         """
         Checks that the last entry in the log has occurred in the last five minutes.
@@ -87,14 +88,17 @@ class readLogFile ():
 
         # Result
         return self.recentlyLoggedLine(line)
-        
+
+
     # Helper function
     def recentlyLoggedLine (self, line):
         """
         Determines if the line was logged within the last five minutes.
         """
         # Extract the date time component
-        loggedTime = re.compile(r".*\[\s?([^\s]+)\s([^\]]+)\]").search(line)
+        # The log lines having the combined format begin:
+        # 127.0.0.1 - - [01/Jun/2020:00:01:08 +0100] "GET ..."
+        loggedTime = re.compile(r"\[([^\s]+)").search(line)
         if not loggedTime:
             return False
 
@@ -127,11 +131,12 @@ class readLogFile ():
     # Helper functions
     def printResults (self):
         """
-        Print statistics
+        Produce statistics in the format expected by munin.
         """
         print('journey_slowest.value {:d}'.format(int(self.slowestLingerMs)))
         print('journey_linger.value {:d}'.format(int(self.averageLingerMs)))
         print('journey_top90linger.value {:d}'.format(int(self.top90percentLingerMs)))
+
 
     def considerLine (self, line):
         """
@@ -144,7 +149,7 @@ class readLogFile ():
             return False
         return self.recentlyLoggedLine(line)
 
-    
+
     def generateStatistics (self):
         """
         Main procedure for reading the log and getting the stats.
@@ -153,7 +158,7 @@ class readLogFile ():
         if not self.checkLastEntryIsRecent():
 
             # Trace
-            # print ("#\tLog file is stale: " + str(self.logfile))
+            # print ("#\tLog file has not been updated in the last five minutes: " + str(self.logfile))
 
             # They will all be zero
             self.printResults()
@@ -163,7 +168,7 @@ class readLogFile ():
 
         # Scan the file
         self.scan()
-        
+
         # Print results
         self.printResults()
 
@@ -174,7 +179,7 @@ class readLogFile ():
         """
         # Trace
         # print ("#\tScanning log file: {}, API: {}".format(str(self.logfile), self.apiCall))
-        
+
         # Get the last few lines of the log file
         p = subprocess.Popen(["tail", "--lines=" + str(self.numberOfLines), self.logfile], stdout=subprocess.PIPE)
 
@@ -201,7 +206,7 @@ class readLogFile ():
 
                 # Trace
                 # print ("#\tConsidering ... " + str(count))
-                
+
                 # Find the number at the end of the line after a solidus
                 match = re.match('.+?/([0-9]+)$', line)
                 if match:

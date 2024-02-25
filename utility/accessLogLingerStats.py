@@ -7,7 +7,7 @@
 # the caller must linger for a result.
 #
 # Synopsis
-#	readLogFile.py logFile
+#	accessLogLingerStats.py logFile
 #
 # Result
 #	Serveral results, in milisconds, are generated each on a new line:
@@ -17,7 +17,7 @@
 #
 # Example
 # user@veebee:$
-# python3 utility/readLogFile.py /websites/www/logs/veebee-access.log
+# python3 utility/accessLogLingerStats.py /websites/www/logs/veebee-access.log
 # journey_linger.value 22
 # journey_top90linger.value 39
 # journey_slowest.value 39
@@ -33,9 +33,9 @@
 import subprocess, re, sys, math
 from datetime import datetime
 
-class readLogFile ():
+class accessLogLingerStats ():
     """
-    Functions for reading a log file
+    Functions for getting journey API linger statistics from an apache access log file.
     """
 
     def __init__(self, logfile):
@@ -96,7 +96,7 @@ class readLogFile ():
         Determines if the line was logged within the last five minutes.
         """
         # Extract the date time component
-        # The log lines having the combined format begin:
+        # The access log lines having the combined format begin:
         # 127.0.0.1 - - [01/Jun/2020:00:01:08 +0100] "GET ..."
         loggedTime = re.compile(r"\[([^\s]+)").search(line)
         if not loggedTime:
@@ -248,15 +248,11 @@ class readLogFile ():
 # Main
 if __name__ == '__main__':
 
-    # logfile = "/websites/www/logs/veebee-access.log"
     # Read args supplied to script
-    rlf = readLogFile(sys.argv[1])
+    alls = accessLogLingerStats(sys.argv[1])
 
     # Get the stats
-    rlf.generateStatistics()
+    alls.generateStatistics()
 
-
-#import sys
-#sys.exit()
 
 # End of file

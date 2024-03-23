@@ -8,8 +8,8 @@
 
 usage()
 {
-    cat << EOF
-    
+	cat << EOF
+
 SYNOPSIS
 	$0 -h -q -m email -p port [importHostname] [edition]
 
@@ -31,7 +31,7 @@ ARGUMENTS
 		If not specified, it defaults to 'pois'.
 
 DESCRIPTION
- 	Checks whether there's is a new edition of pois data on the importHostname.
+	Checks whether there's is a new edition of pois data on the importHostname.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The tables are loaded into the external database and replace the existing POI tables there.
 	If there's no new edition the script terminates successfully.
@@ -59,28 +59,28 @@ importMachineEditions=/websites/www/import/output
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
 while getopts "hm:p:q" option ; do
-    case ${option} in
-        h) usage; exit ;;
+	case ${option} in
+		h) usage; exit ;;
 	m)
-	    # Set the notification email address
-	    notifyEmail=$OPTARG
-	    ;;
+		# Set the notification email address
+		notifyEmail=$OPTARG
+		;;
 	p)
-	    # Set the port
-	    sshPort=$OPTARG
-	    ;;
-        q)
-	    # Set quiet mode and proceed
-	    # Turn off verbose messages by setting this variable to the empty string
-	    verbose=
-	    ;;
+		# Set the port
+		sshPort=$OPTARG
+		;;
+		q)
+		# Set quiet mode and proceed
+		# Turn off verbose messages by setting this variable to the empty string
+		verbose=
+		;;
 	:)
-	    # Missing expected argument
-	    echo "Option -$OPTARG requires an argument." >&2
-	    exit 1
-	    ;;
+		# Missing expected argument
+		echo "Option -$OPTARG requires an argument." >&2
+		exit 1
+		;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
-    esac
+	esac
 done
 
 # After getopts is done, shift all processed options away with
@@ -90,11 +90,11 @@ shift $((OPTIND-1))
 quietOption=
 quietLongOption=
 if [ -z "${verbose}" ]; then
-    quietOption=-1
-    quietLongOption=--quiet
+	quietOption=-1
+	quietLongOption=--quiet
 fi
 
-    # Echo output only if the verbose option has been set
+	# Echo output only if the verbose option has been set
 vecho()
 {
 	if [ "${verbose}" ]; then
@@ -139,8 +139,8 @@ configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
-    exit 1
+	echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
+	exit 1
 fi
 
 # Load the credentials
@@ -151,30 +151,30 @@ fi
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
-    echo "#	This script must NOT be run as root." 1>&2
-    exit 1
+	echo "#	This script must NOT be run as root." 1>&2
+	exit 1
 fi
 
 # Optional first argument is the source of the new routing editions
 if [ $# -gt 0 ]; then
-    # Use as supplied
-    importHostname=$1
+	# Use as supplied
+	importHostname=$1
 else
-    # Check a value was provided by the config
-    if [ -z "${importHostname}" ]; then
+	# Check a value was provided by the config
+	if [ -z "${importHostname}" ]; then
 	# Report and abandon
 	echo "#	Import host name must be provided as an argument or in the config." 1>&2
 	exit 1
-    fi
+	fi
 fi
 
 # Optional second argument 'edition' names the desired routing edition
 if [ $# -gt 1 ]; then
-    # Use as supplied
-    desiredEdition=$2
+	# Use as supplied
+	desiredEdition=$2
 else
-    # Default
-    desiredEdition=pois
+	# Default
+	desiredEdition=pois
 fi
 
 # There are only two arguments
@@ -187,9 +187,9 @@ fi
 
 # Check the source is OK
 if [ -z "${importMachineEditions}" ]; then
-    # Report and abandon
-    echo "#	importMachineEditions is not valid" 1>&2
-    exit 1
+	# Report and abandon
+	echo "#	importMachineEditions is not valid" 1>&2
+	exit 1
 fi
 
 
@@ -197,8 +197,8 @@ fi
 portSsh=
 portScp=
 if [ -n "${sshPort}" ]; then
-    portSsh=-p$sshPort
-    portScp=-P$sshPort
+	portSsh=-p$sshPort
+	portScp=-P$sshPort
 fi
 
 
@@ -215,8 +215,8 @@ fi
 
 # Ensure this script is run as cyclestreets user
 if [ ! "$(id -nu)" = "${username}" ]; then
-    echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
-    exit 1
+	echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
+	exit 1
 fi
 
 # Ensure the main website installation is present
@@ -255,25 +255,25 @@ set +e
 # Examine the desiredEdition argument
 if [[ "${desiredEdition}" =~ routing([0-9]{6}) ]]; then
 
-    # It matches routingYYMMDD so use it directly
-    resolvedEdition=${desiredEdition}
+	# It matches routingYYMMDD so use it directly
+	resolvedEdition=${desiredEdition}
 else
-    # Cases when the format is not routingYYMMDD
-    # Treat it as an alias and dereference to find the target edition
-    resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
-    resolvedEdition=$(basename ${resolvedEdition})
+	# Cases when the format is not routingYYMMDD
+	# Treat it as an alias and dereference to find the target edition
+	resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
+	resolvedEdition=$(basename ${resolvedEdition})
 fi
 
 # Abandon if not found
 if [ -z "${resolvedEdition}" ]; then
-    vecho "The desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
-    exit 1
+	vecho "The desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
+	exit 1
 fi
 
 # Double-check the routing edition format is correct
 if [[ ! "${resolvedEdition}" =~ routing([0-9]{6}) ]]; then
-    vecho "The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
-    exit 1
+	vecho "The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
+	exit 1
 fi
 
 
@@ -299,17 +299,17 @@ externalDb=csExternal
 # Check to see if that the external database already exists
 if ! ${smysqlshow} | grep "\b${externalDb}\b" > /dev/null 2>&1
 then
-    # Avoid echo if possible as this generates cron emails
-    vecho "Stoppping because the external database ${externalDb} does not exist."
-    exit 1
+	# Avoid echo if possible as this generates cron emails
+	vecho "Stoppping because the external database ${externalDb} does not exist."
+	exit 1
 fi
 
 # Check to see if a routing data file for this routing edition already exists
 newEditionFolder=${websitesContentFolder}/data/routing/${resolvedEdition}
 if [ -d ${newEditionFolder} ]; then
-    vecho "The routing data folder ${resolvedEdition} already exists, abandoning POIs installation."
-    # Return success
-    exit 0
+	vecho "The routing data folder ${resolvedEdition} already exists, abandoning POIs installation."
+	# Return success
+	exit 0
 fi
 
 
@@ -360,7 +360,7 @@ set -e
 
 # Notify that an installation has begun
 if [ -n "${notifyEmail}" ]; then
-    echo "Routing edition installationfrom ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
+	echo "Routing edition installation from ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
 fi
 
 # Create the folder
@@ -398,14 +398,14 @@ secureFilePriv=$2
 # If there's a secure folder then move the tsv files there
 if [ -n "$secureFilePriv" ]; then
 
-    # Secure readable location
-    mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
+	# Secure readable location
+	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
 
-    # Ensure it exists
-    mkdir -p ${mysqlReadableFolder}
+	# Ensure it exists
+	mkdir -p ${mysqlReadableFolder}
 
-    # Move tsv files there
-    mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+	# Move tsv files there
+	mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
 fi
 
 #	Import the data

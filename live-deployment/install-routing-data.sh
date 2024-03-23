@@ -454,7 +454,7 @@ set -e
 
 # Notify that an installation has begun
 if [ -n "${notifyEmail}" ]; then
-	echo "Routing edition installationfrom ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
+	echo "Routing edition installation from ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
 fi
 
 # Create the folder

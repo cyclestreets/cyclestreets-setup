@@ -6,8 +6,8 @@
 
 usage()
 {
-    cat << EOF
-    
+	cat << EOF
+
 SYNOPSIS
 	$0 -e -h -q -r -s -t -x -m email -p port [importHostname] [edition]
 
@@ -33,7 +33,7 @@ ARGUMENTS
 		It can also name an alias that symlinks to a dated routing edition.
 
 DESCRIPTION
- 	Checks whether there's is a new edition of routing data on the importHostname.
+	Checks whether there's is a new edition of routing data on the importHostname.
 	If so, it is downloaded to the local machine, checked and unpacked into the data/routing/ folder.
 	The routing edition database is installed.
 	If successful it switches to the new routing edition and runs tests.
@@ -80,51 +80,51 @@ importMachineEditions=/websites/www/import/output
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
 while getopts "ehm:p:qrstx" option ; do
-    case ${option} in
-        h) usage; exit ;;
-	e)
-	    # Set option to skip external installation
-	    skipExternal=1
-	    ;;
+	case ${option} in
+		h) usage; exit ;;
+		e)
+			# Set option to skip external installation
+			skipExternal=1
+			;;
 	m)
-	    # Set the notification email address
-	    notifyEmail=$OPTARG
-	    ;;
+		# Set the notification email address
+		notifyEmail=$OPTARG
+		;;
 	p)
-	    # Set the port
-	    sshPort=$OPTARG
-	    ;;
+		# Set the port
+		sshPort=$OPTARG
+		;;
 	r)
-	    # Set option to remove oldest routing edition
-	    removeOldest=1
+		# Set option to remove oldest routing edition
+		removeOldest=1
 	   ;;
 	s)
-	    # Skip switching to the new edition
-	    skipSwitch=1
-	    # Doesn't turn off routing during update
-	    # Note this is also a .config.sh option
-	    keepRoutingDuringUpdate=1
+		# Skip switching to the new edition
+		skipSwitch=1
+		# Doesn't turn off routing during update
+		# Note this is also a .config.sh option
+		keepRoutingDuringUpdate=1
 	   ;;
 	t)
-	    # Dry run shows results of arg processing
-	    testargs=test
+		# Dry run shows results of arg processing
+		testargs=test
 	   ;;
-        q)
-	    # Set quiet mode and proceed
-	    # Turn off verbose messages by setting this variable to the empty string
-	    verbose=
-	    ;;
+	q)
+		# Set quiet mode and proceed
+		# Turn off verbose messages by setting this variable to the empty string
+		verbose=
+		;;
 	x)
-	    # Set option to skip planet installation
-	    skipPlanet=1
-	    ;;
+		# Set option to skip planet installation
+		skipPlanet=1
+		;;
 	:)
-	    # Missing expected argument
-	    echo "Option -$OPTARG requires an argument." >&2
-	    exit 1
-	    ;;
+		# Missing expected argument
+		echo "Option -$OPTARG requires an argument." >&2
+		exit 1
+		;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
-    esac
+	esac
 done
 
 # After getopts is done, shift all processed options away with
@@ -134,11 +134,11 @@ shift $((OPTIND-1))
 quietOption=
 quietLongOption=
 if [ -z "${verbose}" ]; then
-    quietOption=-q
-    quietLongOption=--quiet
+	quietOption=-q
+	quietLongOption=--quiet
 fi
 
-    # Echo output only if the verbose option has been set
+# Echo output only if the verbose option has been set
 vecho()
 {
 	if [ "${verbose}" ]; then
@@ -183,8 +183,8 @@ configFile=${ScriptHome}/.config.sh
 
 # Generate your own credentials file by copying from .config.sh.template
 if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
-    exit 1
+	echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
+	exit 1
 fi
 
 # Load the credentials
@@ -195,33 +195,33 @@ fi
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
-    echo "#	This script must NOT be run as root." 1>&2
-    exit 1
+	echo "#	This script must NOT be run as root." 1>&2
+	exit 1
 fi
 
 # Optional first argument is the source of the new routing editions
 if [ $# -gt 0 ]; then
-    # Use as supplied
-    importHostname=$1
+	# Use as supplied
+	importHostname=$1
 else
-    # Check a value was provided by the config
-    if [ -z "${importHostname}" ]; then
-	# Report and abandon
-	echo "#	Import host name must be provided as an argument or in the config." 1>&2
+	# Check a value was provided by the config
+	if [ -z "${importHostname}" ]; then
+		# Report and abandon
+		echo "#	Import host name must be provided as an argument or in the config." 1>&2
 	exit 1
-    fi
+	fi
 fi
 
 # Optional second argument 'edition' names the desired routing edition
 if [ $# -gt 1 ]; then
-    # Use as supplied
-    desiredEdition=$2
+	# Use as supplied
+	desiredEdition=$2
 else
-    # When no value is provided by the config set a default
-    if [ -z "${desiredEdition}" ]; then
-	# Default
-	desiredEdition=latest
-    fi
+	# When no value is provided by the config set a default
+	if [ -z "${desiredEdition}" ]; then
+		# Default
+		desiredEdition=latest
+	fi
 fi
 
 # Optional third argument now blocked.
@@ -234,9 +234,9 @@ fi
 
 # Check the source is OK
 if [ -z "${importMachineEditions}" ]; then
-    # Report and abandon
-    echo "#	importMachineEditions is not valid" 1>&2
-    exit 1
+	# Report and abandon
+	echo "#	importMachineEditions is not valid" 1>&2
+	exit 1
 fi
 
 
@@ -244,39 +244,39 @@ fi
 portSsh=
 portScp=
 if [ -n "${sshPort}" ]; then
-    portSsh=-p$sshPort
-    portScp=-P$sshPort
+	portSsh=-p$sshPort
+	portScp=-P$sshPort
 fi
 
 
 
 # Testargs: show argument resuolution
 if [ -n "${testargs}" ]; then
-    echo "#	Argument resolution";
-    echo "#	\$#=${#}";
-    echo "#	\$@=${@}";
-    echo "#	\$0=${0}";
-    echo "#	\$1=${1}";
-    echo "#	\$2=${2}";
-    echo "#	";
-    echo "#	desiredEdition=${desiredEdition}";
-    echo "#	graphGzip=${graphGzip}";
-    echo "#	importHostname=${importHostname}";
-    echo "#	importMachineEditions=${importMachineEditions}";
-    echo "#	keepRoutingDuringUpdate=${keepRoutingDuringUpdate}";
-    echo "#	notifyEmail=${notifyEmail}";
-    echo "#	portScp=${portScp}";
-    echo "#	portSsh=${portSsh}";
-    echo "#	quietOption=${quietOption}";
-    echo "#	quietLongOption=${quietLongOption}";
-    echo "#	removeOldest=${removeOldest}";
-    echo "#	skipSwitch=${skipSwitch}";
-    echo "#	skipPlanet=${skipPlanet}";
-    echo "#	sshPort=${sshPort}";
-    echo "#	tableGzip=${tableGzip}";
-    echo "#	testargs=${testargs}";
-    echo "#	verbose=${verbose}";
-    exit 0
+	echo "#	Argument resolution";
+	echo "#	\$#=${#}";
+	echo "#	\$@=${@}";
+	echo "#	\$0=${0}";
+	echo "#	\$1=${1}";
+	echo "#	\$2=${2}";
+	echo "#	";
+	echo "#	desiredEdition=${desiredEdition}";
+	echo "#	graphGzip=${graphGzip}";
+	echo "#	importHostname=${importHostname}";
+	echo "#	importMachineEditions=${importMachineEditions}";
+	echo "#	keepRoutingDuringUpdate=${keepRoutingDuringUpdate}";
+	echo "#	notifyEmail=${notifyEmail}";
+	echo "#	portScp=${portScp}";
+	echo "#	portSsh=${portSsh}";
+	echo "#	quietOption=${quietOption}";
+	echo "#	quietLongOption=${quietLongOption}";
+	echo "#	removeOldest=${removeOldest}";
+	echo "#	skipSwitch=${skipSwitch}";
+	echo "#	skipPlanet=${skipPlanet}";
+	echo "#	sshPort=${sshPort}";
+	echo "#	tableGzip=${tableGzip}";
+	echo "#	testargs=${testargs}";
+	echo "#	verbose=${verbose}";
+	exit 0
 fi
 
 
@@ -285,7 +285,7 @@ fi
 
 ## Optionally remove oldest routing edtion
 if [ -n "${removeOldest}" ]; then
-    ${ScriptHome}/live-deployment/remove-routing-edition.sh ${quietOption} oldest
+	${ScriptHome}/live-deployment/remove-routing-edition.sh ${quietOption} oldest
 fi
 
 # Avoid echo if possible as this generates cron emails
@@ -299,8 +299,8 @@ fi
 
 # Ensure this script is run as cyclestreets user
 if [ ! "$(id -nu)" = "${username}" ]; then
-    echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
-    exit 1
+	echo "#	This script must be run as user ${username}, rather than as $(id -nu)."
+	exit 1
 fi
 
 # Ensure the main website installation is present
@@ -340,32 +340,32 @@ set +e
 # Examine the desiredEdition argument
 if [[ "${desiredEdition}" =~ routing([0-9]{6}) ]]; then
 
-    # It matches routingYYMMDD so use it directly
-    resolvedEdition=${desiredEdition}
+	# It matches routingYYMMDD so use it directly
+	resolvedEdition=${desiredEdition}
 else
-    # Cases when the format is not routingYYMMDD
-    if [ ${desiredEdition} == "latest" ]; then
+	# Cases when the format is not routingYYMMDD
+	if [ ${desiredEdition} == "latest" ]; then
 
 	# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
 	resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} |  grep "^routing\([0-9]\)\{6\}$" | tail -n1`
 
-    else
+	else
 	# Treat it as an alias and dereference to find the target edition
 	resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
 	resolvedEdition=$(basename ${resolvedEdition})
-    fi
+	fi
 fi
 
 # Abandon if not found
 if [ -z "${resolvedEdition}" ]; then
-    vecho "The desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
-    exit 1
+	vecho "The desired edition: ${desiredEdition} matched no routing editions on ${portSsh} ${importHostname}"
+	exit 1
 fi
 
 # Double-check the routing edition format is correct
 if [[ ! "${resolvedEdition}" =~ routing([0-9]{6}) ]]; then
-    vecho "The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
-    exit 1
+	vecho "The desired edition: ${desiredEdition} resolved into: ${resolvedEdition} which is does not match routingYYMMDD."
+	exit 1
 fi
 
 
@@ -454,26 +454,29 @@ set -e
 
 # Notify that an installation has begun
 if [ -n "${notifyEmail}" ]; then
-    echo "Routing edition installationfrom ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
+	echo "Routing edition installationfrom ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
 fi
 
 # Create the folder
 mkdir -p ${newEditionFolder}
 
+# Declare who (re-)created the folder
+echo "Created by install-routing-data around line 464: $(date)" >> ${newEditionFolder}/colophon
+
 ### Pre stage 4: Close system to routing and stop the existing routing service
 if [ -z "${keepRoutingDuringUpdate}" ]; then
 
-    # Narrate
-    echo "#	$(date)	Closing system to routing and stopping the existing routing service"
+	# Narrate
+	echo "#	$(date)	Closing system to routing and stopping the existing routing service"
 
-    # Close the journey planner
-    ${superMysql} cyclestreets -e "call closeJourneyPlanner();";
+	# Close the journey planner
+	${superMysql} cyclestreets -e "call closeJourneyPlanner();";
 
-    # Cycle routing stop command (should match passwordless sudo entry)
-    routingServiceStop="/bin/systemctl stop cyclestreets"
+	# Cycle routing stop command (should match passwordless sudo entry)
+	routingServiceStop="/bin/systemctl stop cyclestreets"
 
-    # Stop the routing service
-    sudo ${routingServiceStop}
+	# Stop the routing service
+	sudo ${routingServiceStop}
 fi
 
 ### Stage 4 - unpack and install the TSV files
@@ -510,14 +513,17 @@ secureFilePriv=$2
 # If there's a secure folder then move the tsv files there
 if [ -n "$secureFilePriv" ]; then
 
-    # Secure readable location
-    mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
+	# Secure readable location
+	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
 
-    # Ensure it exists
-    mkdir -p ${mysqlReadableFolder}
+	# Ensure it exists
+	mkdir -p ${mysqlReadableFolder}
 
-    # Move tsv files there
-    mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+	# Declare who (re-)created the folder
+	echo "Created by install-routing-data / tables around line 523 $(date)" >> ${mysqlReadableFolder}/colophon
+
+	# Move tsv files there
+	mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
 fi
 
 #	Import the data
@@ -541,37 +547,37 @@ ${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 ### Stage 6 - create the planet database if provided
 ## First check whether it can be skipped and removed
 if [ -d ${newEditionFolder}/planet -a -n "${skipPlanet}" ]; then
-    # Narrate
-    vecho "The planet database is available but an option blocks installation and so it is removed."
+	# Narrate
+	vecho "The planet database is available but an option blocks installation and so it is removed."
 
-    # Remove the planet
-    rm -r ${newEditionFolder}/planet
+	# Remove the planet
+	rm -r ${newEditionFolder}/planet
 fi
 ## If the planet is still there then install it
 if [ -d ${newEditionFolder}/planet ]; then
 
-    # Planet db
-    # Made by concatenating last 6 digits from the edition
-    # https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion
-    planetDb=planet${resolvedEdition: -6}
+	# Planet db
+	# Made by concatenating last 6 digits from the edition
+	# https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html#Shell-Parameter-Expansion
+	planetDb=planet${resolvedEdition: -6}
 
-    # Narrate
-    vecho "Installing the planet database: ${planetDb}"
+	# Narrate
+	vecho "Installing the planet database: ${planetDb}"
 
-    # Go to the edition folder
-    cd ${newEditionFolder}
+	# Go to the edition folder
+	cd ${newEditionFolder}
 
-    #	Create the database (which will be empty for now) and set default collation
-    ${superMysql} -e "create database ${planetDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+	#	Create the database (which will be empty for now) and set default collation
+	${superMysql} -e "create database ${planetDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
-    #	Load table definisions
-    ${superMysql} ${planetDb} < planet/tableDefinitions.sql
+	#	Load table definisions
+	${superMysql} ${planetDb} < planet/tableDefinitions.sql
 
-    #	Import the data
-    mysqlReadableFolder=${newEditionFolder}/planet
+	#	Import the data
+	mysqlReadableFolder=${newEditionFolder}/planet
 
-    # If there's a secure folder then move the tsv files there
-    if [ -n "$secureFilePriv" ]; then
+	# If there's a secure folder then move the tsv files there
+	if [ -n "$secureFilePriv" ]; then
 
 	# Secure readable location
 	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/planet
@@ -579,49 +585,52 @@ if [ -d ${newEditionFolder}/planet ]; then
 	# Ensure it exists
 	mkdir -p ${mysqlReadableFolder}
 
+	# Declare who (re-)created the folder
+	echo "Created by install-routing-data / planet database around line 589: $(date)" >> ${mysqlReadableFolder}/colophon
+
 	# Move tsv files there
 	mv ${newEditionFolder}/planet/*.tsv ${mysqlReadableFolder}
-    fi
+	fi
 
-    #	Load the data
-    find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planetDb}
+	#	Load the data
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planetDb}
 
-    #	Optimize the tables
-    ${smysqlcheck} -o ${planetDb}
+	#	Optimize the tables
+	${smysqlcheck} -o ${planetDb}
 
-    #	Clean up
-    rm -r ${mysqlReadableFolder}
+	#	Clean up
+	rm -r ${mysqlReadableFolder}
 fi
 
 ### Stage 6.5 - create the external database if provided
 ## First check whether it can be skipped and removed
 if [ -d ${newEditionFolder}/external -a -n "${skipExternal}" ]; then
-    # Narrate
-    vecho "Some tables for the external database are available but an option blocks installation and so it is removed."
+	# Narrate
+	vecho "Some tables for the external database are available but an option blocks installation and so it is removed."
 
-    # Remove the external
-    rm -r ${newEditionFolder}/external
+	# Remove the external
+	rm -r ${newEditionFolder}/external
 fi
 ## If the external is still there then install it
 if [ -d ${newEditionFolder}/external ]; then
 
-    # External db
-    externalDb=csExternal
+	# External db
+	externalDb=csExternal
 
-    # Narrate
-    vecho "Installing tables into the external database: ${externalDb}"
+	# Narrate
+	vecho "Installing tables into the external database: ${externalDb}"
 
-    # Go to the edition folder
-    cd ${newEditionFolder}
+	# Go to the edition folder
+	cd ${newEditionFolder}
 
-    #	Load table definisions
-    ${superMysql} ${externalDb} < external/tableDefinitions.sql
+	#	Load table definisions
+	${superMysql} ${externalDb} < external/tableDefinitions.sql
 
-    #	Import the data
-    mysqlReadableFolder=${newEditionFolder}/external
+	#	Import the data
+	mysqlReadableFolder=${newEditionFolder}/external
 
-    # If there's a secure folder then move the tsv files there
-    if [ -n "$secureFilePriv" ]; then
+	# If there's a secure folder then move the tsv files there
+	if [ -n "$secureFilePriv" ]; then
 
 	# Secure readable location
 	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/external
@@ -629,18 +638,21 @@ if [ -d ${newEditionFolder}/external ]; then
 	# Ensure it exists
 	mkdir -p ${mysqlReadableFolder}
 
+	# Declare who (re-)created the folder
+	echo "Created by install-routing-data / external database around line 642: $(date)" >> ${mysqlReadableFolder}/colophon
+
 	# Move tsv files there
 	mv ${newEditionFolder}/external/*.tsv ${mysqlReadableFolder}
-    fi
+	fi
 
-    #	Load the data
-    find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
+	#	Load the data
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
 
-    #	Optimize only the new tables by getting the basenames minus .tsv
-    find ${mysqlReadableFolder} -name '*.tsv' -type f -exec basename {} .tsv ';' | xargs ${smysqlcheck} -o ${externalDb}
+	#	Optimize only the new tables by getting the basenames minus .tsv
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -exec basename {} .tsv ';' | xargs ${smysqlcheck} -o ${externalDb}
 
-    #	Clean up
-    rm -r ${mysqlReadableFolder}
+	#	Clean up
+	rm -r ${mysqlReadableFolder}
 fi
 
 ### Stage 7 - Finish
@@ -648,8 +660,8 @@ fi
 # Add the new row to the map_edition table
 if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}')" cyclestreets
 then
-    echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}. The import install did not complete."
-    exit 1
+	echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}. The import install did not complete."
+	exit 1
 fi
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script
@@ -660,14 +672,14 @@ vecho "Installation completed"
 
 # Switch to the new edition
 if [ -z "${skipSwitch}" ]; then
-    vecho "Switching to the new edition"
-    ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}
+	vecho "Switching to the new edition"
+	${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}
 
-    # Run the tests, writing this summary
-    summaryFile=${websitesLogsFolder}/install_test_results_${resolvedEdition}.txt
-    . /opt/cyclestreets-setup/utility/runTests.sh
+	# Run the tests, writing this summary
+	summaryFile=${websitesLogsFolder}/install_test_results_${resolvedEdition}.txt
+	. /opt/cyclestreets-setup/utility/runTests.sh
 else
-    vecho "Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}"
+	vecho "Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}"
 fi
 
 # Remove the lock file - ${0##*/} extracts the script's basename

@@ -526,8 +526,8 @@ if [ -n "$secureFilePriv" ]; then
 	mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
 fi
 
-#	Import the data
-find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${resolvedEdition}
+#	Import the data in alphabetical order
+find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
 
 #	Optimize the tables
 ${smysqlcheck} -o ${resolvedEdition}
@@ -592,8 +592,8 @@ if [ -d ${newEditionFolder}/planet ]; then
 	mv ${newEditionFolder}/planet/*.tsv ${mysqlReadableFolder}
 	fi
 
-	#	Load the data
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${planetDb}
+	#	Load the data in alphabetical order
+	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${planetDb}
 
 	#	Optimize the tables
 	${smysqlcheck} -o ${planetDb}
@@ -645,8 +645,8 @@ if [ -d ${newEditionFolder}/external ]; then
 	mv ${newEditionFolder}/external/*.tsv ${mysqlReadableFolder}
 	fi
 
-	#	Load the data
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
+	#	Load the data in alphabetical order
+	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${externalDb}
 
 	#	Optimize only the new tables by getting the basenames minus .tsv
 	find ${mysqlReadableFolder} -name '*.tsv' -type f -exec basename {} .tsv ';' | xargs ${smysqlcheck} -o ${externalDb}

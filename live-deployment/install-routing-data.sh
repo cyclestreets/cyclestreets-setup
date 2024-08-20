@@ -529,9 +529,6 @@ fi
 #	Import the data in alphabetical order
 find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
 
-#	Optimize the tables
-${smysqlcheck} -o ${resolvedEdition}
-
 #	Clean up
 rm -r ${mysqlReadableFolder}
 
@@ -595,9 +592,6 @@ if [ -d ${newEditionFolder}/planet ]; then
 	#	Load the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${planetDb}
 
-	#	Optimize the tables
-	${smysqlcheck} -o ${planetDb}
-
 	#	Clean up
 	rm -r ${mysqlReadableFolder}
 fi
@@ -647,9 +641,6 @@ if [ -d ${newEditionFolder}/external ]; then
 
 	#	Load the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${externalDb}
-
-	#	Optimize only the new tables by getting the basenames minus .tsv
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -exec basename {} .tsv ';' | xargs ${smysqlcheck} -o ${externalDb}
 
 	#	Clean up
 	rm -r ${mysqlReadableFolder}

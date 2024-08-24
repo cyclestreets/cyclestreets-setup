@@ -20,7 +20,7 @@ EOF
 }
 
 # Set to keep the stale edition (default is empty)
-keepOldOne=
+keepStale=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
@@ -29,7 +29,7 @@ while getopts ":hk" option ; do
         h) usage; exit ;;
 	# Keep the stale edition
 	k)
-	    keepOldOne=1
+	    keepStale=1
 	   ;;
 	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
@@ -276,14 +276,13 @@ ${superMysql} cyclestreets -e "update map_edition set active = 'no' where name =
 sudo ${staleRoutingServiceStop}
 
 
-
 # Photos en route index
 ${superMysql} ${freshEdition} -e "call indexPhotos(0);";
 
 # Remove the stale edition
-if [ -z "${keepOldOne}" ]; then
-    echo "#	$(date)	Stale edition ${staleEdition} would now be removed."
-    ##live-deployment/remove-routing-edition.sh ${staleEdition}
+if [ -z "${keepStale}" ]; then
+    echo "#	$(date)	Stale edition ${staleEdition} will now be removed."
+    live-deployment/remove-routing-edition.sh ${staleEdition}
 else
     echo "#	$(date)	Previous edition ${staleEdition} is retained."
 fi

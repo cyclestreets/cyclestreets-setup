@@ -5,7 +5,7 @@ usage()
     cat << EOF
     
 SYNOPSIS
-	$0 -h -P -q -r -s -m email [config]
+	$0 -h -P -q -r -m email [config]
 
 OPTIONS
 	-h Show this message
@@ -13,7 +13,6 @@ OPTIONS
 	-P POIs (places of interest) build - special option that stops after the import phase.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
-	-s Builds and switches secondary routing edition, removing previous one
 
 ARGUMENTS
 	[config]
@@ -34,15 +33,13 @@ removeOldest=
 notifyEmail=
 # POIs build
 poisBuild=
-# Secondary edition
-secondaryEdition=
 # Routing edition alias: a folder name which is used as a symlink e.g. centralLondon or custom641
 editionAlias=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "hm:Pqrs" option ; do
+while getopts "hm:Pqr" option ; do
     case ${option} in
         h) usage; exit ;;
 	m)
@@ -59,9 +56,6 @@ while getopts "hm:Pqrs" option ; do
 	    ;;
 	# Remove oldest routing edition
 	r) removeOldest=1
-	   ;;
-	# Secondary edtion
-	s) secondaryEdition=1
 	   ;;
 	# Missing expected argument
 	:)
@@ -218,13 +212,6 @@ else
 	vecho "#\tImport stopped during install local lastest edition"
     fi
     exit 2
-fi
-
-## Secondary editions require manual completion
-if [ "${secondaryEdition}" ]; then
-    echo "$0 Secondary edition: Complete the installation from the command line"
-    live-deployment/switch-secondary-edition.sh
-    exit 0
 fi
 
 ## Switch

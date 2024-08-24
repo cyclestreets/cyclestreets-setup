@@ -1,25 +1,25 @@
 #!/bin/bash
-# Script to change CycleStreets secondary routing edition.
+# Script to change CycleStreets daily editions
 #
 # Run as the cyclestreets user (a check is peformed after the config file is loaded).
 usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h -k [edition]
+	$0 -h -k
 
 OPTIONS
 	-h Show this message
-	-k Keep the previous secondary edition.
+	-k Keep the stale edition.
 
 DESCRIPTION
-	Switches the secondary routing edition to the optionally provided edition, which defaults to the latest edition.
-	Unless the -k option is set the previous edition is removed.
-	Secondary editions are assumed to be served from port 9001.
+	This script switches route serving from a STALE edition to a FRESH edition, which is assumed to be the newest installed edition.
+	These editions are served from ports 8998 and 8999.
+	Unless the -k option is set the stale edition is removed.
 EOF
 }
 
-# Set to keep the old edition (default is empty)
+# Set to keep the stale edition (default is empty)
 keepOldOne=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
@@ -27,7 +27,7 @@ keepOldOne=
 while getopts ":hk" option ; do
     case ${option} in
         h) usage; exit ;;
-	# Keep the old edition
+	# Keep the stale edition
 	k)
 	    keepOldOne=1
 	   ;;
@@ -41,7 +41,7 @@ shift $((OPTIND-1))
 ### Stage 1 - general setup
 
 # Announce start
-echo "#	$(date)	CycleStreets secondary routing switchover"
+echo "#	$(date)	CycleStreets daily routing edition switchover"
 
 # Ensure this script is NOT run as root (it should be run as the cyclestreets user, having sudo rights as setup by install-website)
 if [ "$(id -u)" = "0" ]; then
@@ -49,7 +49,7 @@ if [ "$(id -u)" = "0" ]; then
     exit 1
 fi
 
-# Bomb out if something goes wrong
+# Set the script to exit when an error occurs
 set -e
 
 # Lock directory
@@ -58,7 +58,7 @@ mkdir -p $lockdir
 
 # Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
 (
-	flock -n 9 || { echo '#	A secondary switchover is already running' ; exit 1; }
+	flock -n 9 || { echo '#	A daily routing switchover is already running' ; exit 1; }
 
 ### CREDENTIALS ###
 
@@ -105,190 +105,193 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 	exit 1
 fi
 
-# Local routing2 server
-localRouting2Url=http://localhost:9001/
-
-# Check a local routing server 2 is configured
-if [ -z "${localRouting2Url}" ]; then
-	echo "#	The local routing service 2 is not specified."
-	exit 1
-fi
-
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
+# Check using multiple editions #multipleEditions
+multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1 limit 1;")
+if [ ! "${multipleEditions}" == "yes" ]; then
+	echo "# Abandoning: this script only works with multiple routing editions."
+	exit 1
+fi
+
 # Check the supplied argument - if exactly one use it, else default to latest routing db
 if [ $# -eq 1 ]
 then
+	# !! Unexplored/untested branch
+	echo "# Abandoning becuase providing an edition is not supported."
+	#exit 1
 
     # Allocate that argument
-    newSecondaryEdition=$1
+    freshEdition=$1
 else
 
     # Determine latest edition (the -s suppresses the tabular output)
-    newSecondaryEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME desc limit 1;")
+    freshEdition=$(${superMysql} -s cyclestreets<<<"select name from map_edition order by name desc limit 1;")
 fi
 
-# Announce edition
-echo "#	Planning to switch to secondary edition: ${newSecondaryEdition}"
+# Ensure the latest edition has ordering 1 - which is used to distinguish the daily editions from other editions.
+${superMysql} cyclestreets -e "update map_edition set ordering = 1 where name = '${freshEdition}';";
 
-# XML for the calls to get the routing edition
-getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+# Determine the stale edition
+staleEdition=$(${superMysql} -s cyclestreets<<<"select name from map_edition where ordering = 1 and active = 'yes' order by name desc limit 1;")
 
-# Cycle routing2 restart command (using command that matches pattern setup in passwordless sudo)
-routingService2Restart="/bin/systemctl restart cyclestreets2"
-
-# Check the local routing service.
-# The status check produces an error if it is not running, so temporarily
-# turn off abandon-on-error to catch and report the problem.
-set +e
-
-# Note: use a path to check the status, rather than service which needs sudo
-statusLog2=${websitesLogsFolder}/pythonAstarPort9001_status.log
-localRouting2Status=$(cat ${statusLog2})
-if [[ ! "$localRouting2Status" =~ serving ]]
-then
-  echo "#	Note: there is no current routing service. Switchover will proceed."
-else
-
-    # Check not already serving this edition
-    echo "#	Checking current edition on: ${localRouting2Url}"
-
-    # POST the request to the server
-    currentSecondaryEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRouting2Url} | xpath -q -e '/methodResponse/params/param/value/string/text()')
-
-    # Check empty response
-    if [ -z "${currentSecondaryEdition}" ]; then
-	echo "#	The current edition at ${localRouting2Url} could not be determined."
+# Abandon if no stale edition
+if [ -z "${staleEdition}" ]; then
+	echo "#	There is no stale edition: ${staleEdition}, so abandoning."
 	exit 1
-    fi
-
-    # Check the fallback routing edition is the same as the proposed edition
-    if [ "${newSecondaryEdition}" == "${currentSecondaryEdition}" ]; then
-	echo "#	The proposed edition: ${newSecondaryEdition} is already being served from ${localRouting2Url}"
-	echo "#	Restart it using: sudo /bin/systemctl restart cyclestreets"
-	echo "#	Routing restart 2 will be attempted:"
-	sudo ${routingService2Restart}
-	echo "#	Routing service 2 has restarted"
-
-	# Clean exit
-	exit 0
-    fi
-
-    # Report edition
-    echo "#	Current secondary edition: ${currentSecondaryEdition}"
 fi
 
-# Restore abandon-on-error
-set -e
+# Abandon if the two are the same
+if [ "${freshEdition}" == "${staleEdition}" ]; then
+	echo "#	The proposed edition: ${freshEdition} is the same as already running: ${staleEdition}, so abandoning"
+	exit 1
+fi
+
+# Determine the port of the stale edition
+stalePort=$(${superMysql} -s cyclestreets<<<"select substring(regexp_substr(url, ':[0-9]+'), 2) port from map_edition where name = '${staleEdition}';")
+
+# Abandon if no stale port
+if [ -z "${stalePort}" ]; then
+	echo "#	There is no stale port: ${stalePort}, so abandoning."
+	exit 1
+fi
+
+# Choose ports
+if [ "${stalePort}" == "8998" ]; then
+	freshPort=8999
+else
+	freshPort=8998
+	stalePort=8999
+fi
 
 # Check the format is routingYYMMDD
-if [[ ! "$newSecondaryEdition" =~ routing([0-9]{6}) ]]; then
-  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${newSecondaryEdition}."
+if [[ ! "$freshEdition" =~ routing([0-9]{6}) ]]; then
+  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${freshEdition}."
   exit 1
 fi
 
-# Extract the date part of the routing database
-importDate=${BASH_REMATCH[1]}
 
 ### Confirm existence of the routing import database and files
 
 # Check to see that this routing database exists
-if ! ${superMysql} -e "use ${newSecondaryEdition}"; then
-	echo "#	The secondary routing database ${newSecondaryEdition} is not present"
+if ! ${superMysql} -e "use ${freshEdition}"; then
+	echo "#	The fresh routing database ${freshEdition} is not present"
 	exit 1
 fi
 
 # Check that the data for this routing edition exists
-if [ ! -d "${websitesContentFolder}/data/routing/${newSecondaryEdition}" ]; then
-	echo "#	The secondary routing data ${newSecondaryEdition} is not present"
+if [ ! -d "${websitesContentFolder}/data/routing/${freshEdition}" ]; then
+	echo "#	The fresh routing data ${freshEdition} is not present"
 	exit 1
 fi
 
 # Check that the installation completed
-if [ ! -e "${websitesContentFolder}/data/routing/${newSecondaryEdition}/installationCompleted.txt" ]; then
+if [ ! -e "${websitesContentFolder}/data/routing/${freshEdition}/installationCompleted.txt" ]; then
 	echo "#	Switching cannot continue because the routing installation did not appear to complete."
 	exit 1
 fi
+
+# Announce planned changes
+echo "#	Planning to switch to fresh edition: ${freshEdition} port ${freshPort} from stale edition: ${staleEdition} port ${stalePort}."
+
 
 ### Do switch-over
 
 # Clear this cache - (whose rows relate to a specific routing edition)
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
-# Turn off multiple editions for the duration, and deactivate the current edition
-${superMysql} cyclestreets -e "update map_config set multipleEditions = 'no' where id = 1;";
-${superMysql} cyclestreets -e "update map_edition set active = 'no' where name = '${currentSecondaryEdition}';";
-echo "#	Multiple editions are deactivated for the duration of the switch over."
-
-
-## Configure the routing engine to use the new edition
-
-# Remove any old JSON configuration
-jsonConfig2=${websitesContentFolder}/routingengine/.config2.json
-rm -f $jsonConfig2
-
-# Configure the routing engine to use the new edition
-jsonRoutingConfig=${websitesContentFolder}/data/routing/${newSecondaryEdition}/.config.json
-if [ -r "${jsonRoutingConfig}" ]; then
-    ln -s ${jsonRoutingConfig} $jsonConfig2
-else
-    # Warning
-    echo "#	The routing configuration file is absent: ${jsonRoutingConfig}"
-    exit 1
-fi
-
-
 # Remove routing data caches
 rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php
 rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php
 
+# Remove old JSON configuration
+freshServiceJsonConfig=${websitesContentFolder}/routingengine/.config.daily.${freshPort}.json
+rm -f $freshServiceJsonConfig
+
+# Configure the fresh routing service to use the new edition
+freshJsonConfig=${websitesContentFolder}/data/routing/${freshEdition}/.config.json
+if [ -r "${freshJsonConfig}" ]; then
+    ln -s ${freshJsonConfig} $freshServiceJsonConfig
+else
+    # Error
+    echo "#	The fresh routing configuration file is absent: ${freshJsonConfig}"
+    exit 1
+fi
+
+# Bind service names
+freshService=cyclestreetsDaily${freshPort}
+staleService=cyclestreetsDaily${stalePort}
+
+# Routing service commands (using command that matches pattern setup in passwordless sudo)
+freshRoutingServiceRestart="/bin/systemctl restart ${freshService}"
+staleRoutingServiceStop="/bin/systemctl stop ${staleService}"
+
 # Restart the routing service
-sudo ${routingService2Restart}
+sudo ${freshRoutingServiceRestart}
 
-# Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRouting2Status=$(cat ${statusLog2})
-
-echo "#	Initial status: ${localRouting2Status}"
+# Check the status
+freshStatusLog=${websitesLogsFolder}/pythonAstarPort${freshPort}_status.log
+freshRoutingStatus=$(cat ${freshStatusLog})
+echo "#	Initial status: ${freshRoutingStatus}"
 
 # Wait until it has restarted
 # !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
-while [[ ! "$localRouting2Status" =~ serving ]]; do
-    sleep 12
-    localRouting2Status=$(cat ${statusLog2})
-    echo "#	Status: ${localRouting2Status}"
+while [[ ! "$freshRoutingStatus" =~ serving ]]; do
+	# The sleep is an attempt to avoid the loop forever
+    sleep 2
+    freshRoutingStatus=$(cat ${freshStatusLog})
+    echo "#	Status: ${freshRoutingStatus}"
 done
 
+# XML for the calls to get the routing edition
+getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
+
+# Fresh routing server
+freshRoutingUrl=http://localhost:${freshPort}/
+
+# Check the local routing service.
+# The status check produces an error if the service is not running, so temporarily
+# turn off abandon-on-error to catch and report the problem.
+set +e
+
 # Get the locally running service
-locallyRunningEdition=$(curl -s -X POST -d "${getRoutingEditionXML}" ${localRouting2Url} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+locallyRunningEdition=$(curl --connect-timeout 1 --silent --request POST --data "${getRoutingEditionXML}" ${freshRoutingUrl} | xpath -q -e '/methodResponse/params/param/value/string/text()')
+
+# Restore abandon on error
+set -e
 
 # Check the local service is as requested
-if [ "${locallyRunningEdition}" != "${newSecondaryEdition}" ]; then
-	echo "#	The local secondary server is running: ${locallyRunningEdition} not the requested edition: ${newSecondaryEdition}"
+if [ "${locallyRunningEdition}" != "${freshEdition}" ]; then
+	echo "#	The local fresh server is running: ${locallyRunningEdition} not the requested edition: ${freshEdition}"
 	exit 1
 fi
 
-# Switch the website to the local server and ensure the routingDb is also set
-${superMysql} cyclestreets -e "update map_edition set ordering = 1, url = '${localRouting2Url}', active = 'yes' where name = '${newSecondaryEdition}';";
+# Activate the fresh edition and deactivate the stale edition
+${superMysql} cyclestreets -e "update map_edition set ordering = 1, url = '${freshRoutingUrl}', active = 'yes' where name = '${freshEdition}';";
+${superMysql} cyclestreets -e "update map_edition set active = 'no' where name = '${staleEdition}';";
 
-# Restore the multiple editions
-${superMysql} cyclestreets -e "update map_config set multipleEditions = 'yes' where id = 1;";
+# Stop the stale service
+sudo ${staleRoutingServiceStop}
+
+
 
 # Photos en route index
-${superMysql} ${newSecondaryEdition} -e "call indexPhotos(0);";
+${superMysql} ${freshEdition} -e "call indexPhotos(0);";
 
-# Remove the now previous secondary edition
+# Remove the stale edition
 if [ -z "${keepOldOne}" ]; then
-    live-deployment/remove-routing-edition.sh ${currentSecondaryEdition}
+    echo "#	$(date)	Stale edition ${staleEdition} would now be removed."
+    ##live-deployment/remove-routing-edition.sh ${staleEdition}
 else
-    echo "#	$(date)	Previous secondary edition ${currentSecondaryEdition} is retained."
+    echo "#	$(date)	Previous edition ${staleEdition} is retained."
 fi
 
 ### Finishing
 
 # Report
-echo "#	$(date)	Completed switch to $newSecondaryEdition"
+echo "#	$(date)	Completed switch to $freshEdition"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -634,6 +634,10 @@ fi
 # Reload apache
 service apache2 reload
 
+# Allow imports of collision data by permitting LOAD DATA
+cp -pr "${DIR}/install-website/enable_local_infile.cnf" /etc/mysql/conf.d/
+service mysql restart
+
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"

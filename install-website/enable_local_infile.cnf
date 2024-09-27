@@ -1,0 +1,4 @@
+[mysqld]
+local_infile=1
+[client]
+local_infile=1

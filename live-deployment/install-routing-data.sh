@@ -9,11 +9,12 @@ usage()
 	cat << EOF
 
 SYNOPSIS
-	$0 -e -h -q -r -s -t -x -m email -p port [importHostname] [edition]
+	$0 -e -h -l -q -r -s -t -x -m email -p port [importHostname] [edition]
 
 OPTIONS
 	-e Do not install tables from the optional external db even if available.
 	-h Show this message
+	-l Truncate the python routing log.
 	-m Take an email address as an argument - notifies this address if a full installation starts.
 	-p Take a port as argument which is used in ssh and scp connections with the import host.
 	-q Suppress helpful messages, error messages are still produced
@@ -62,6 +63,8 @@ sshPort=
 
 # By default do not remove oldest routing edtion
 removeOldest=
+# By default do not truncate the python routing log
+truncateRoutingLog=
 # Default to switch to the new edition when this is empty
 skipSwitch=
 # Default to blank so that the planet is installed if available
@@ -79,13 +82,17 @@ importMachineEditions=/websites/www/import/output
 # Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "ehm:p:qrstx" option ; do
+while getopts "ehlm:p:qrstx" option ; do
 	case ${option} in
 		h) usage; exit ;;
 		e)
 			# Set option to skip external installation
 			skipExternal=1
 			;;
+	l)
+		# Set option to truncate the python routing log
+		truncateRoutingLog=1
+	   ;;
 	m)
 		# Set the notification email address
 		notifyEmail=$OPTARG
@@ -275,6 +282,7 @@ if [ -n "${testargs}" ]; then
 	echo "#	sshPort=${sshPort}";
 	echo "#	tableGzip=${tableGzip}";
 	echo "#	testargs=${testargs}";
+	echo "#	truncateRoutingLog=${truncateRoutingLog}";
 	echo "#	verbose=${verbose}";
 	exit 0
 fi
@@ -405,7 +413,10 @@ if [ -d ${newEditionFolder} ]; then
 fi
 
 
-
+# Optionally wipe the routing log
+if [ -n "${truncateRoutingLog}" ]; then
+	truncate -s 0 ${websitesLogsFolder}/pythonAstarPort9000.log
+fi
 
 
 ## Download

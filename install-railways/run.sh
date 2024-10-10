@@ -47,9 +47,12 @@ set -e
 
 ### DEFAULTS ###
 
-# External database (leave empty if not wanted)
+# Useful bindings
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 externalDb=csExternal
-
+tmpDir=/tmp
 
 ### CREDENTIALS ###
 
@@ -75,33 +78,55 @@ fi
 # Main body
 # Announce starting
 echo "#	CycleStreets Railway installation $(date)"
-rm /tmp/stations.tsv
+
+# Clear out any left over previous installation
+rm -f ${tmpDir}/stations.t*
 
 # Download
-#wget -O /tmp/stations.ods https://dataportal.orr.gov.uk/media/ootlf0cn/table-6329-station-attributes-for-all-mainline-stations.ods
+#wget -O ${tmpDir}/stations.ods https://dataportal.orr.gov.uk/media/ootlf0cn/table-6329-station-attributes-for-all-mainline-stations.ods
 
 # Convert from ods format using ssconvert which needs installing via:
 # sudo apt install gnumeric
-# Data is in a specific sheet
-ssconvert -S -O 'sheet=6329_station_attributes' --export-type=Gnumeric_stf:stf_csv /tmp/stations.ods /tmp/stations.tsv
+# Data is in a specific sheet, format output as tab separated, but requires using .txt extension
+ssconvert -S -O 'sheet=6329_station_attributes separator="	" format=raw quote=""' ${tmpDir}/stations.ods ${tmpDir}/stations.txt
 
 # The sheet is suffixed .0, rename
-mv /tmp/stations.tsv.0 /tmp/stations.tsv
+mv ${tmpDir}/stations.txt.0 ${tmpDir}/stations.tsv
 
 # Cut the first few lines using sed in-place:
 # There are three commentary lines and the column title lines include linebreaks.
-sed -i 1,6d /tmp/stations.tsv
+sed -i 1,6d ${tmpDir}/stations.tsv
 
-head -n1 /tmp/stations.tsv
+# First line
+# head -n1 ${tmpDir}/stations.tsv
 
 # Check the head line contains the first station name
 firstStation="Abbey Wood"
-headline=$(head -n1 /tmp/stations.tsv)
+headline=$(head -n1 ${tmpDir}/stations.tsv)
 if [[ ! "${headline}" =~ "${firstStation}" ]];then
 	echo "#	Extracting data: ${firstStation} is not the first station in the table."
 	exit 1
 fi
 
-# !! Unfinished
+# Load table definition
+$superMysql ${externalDb} < ${DIR}/railway_station.sql
+
+# Load the data
+$superMysqlImport ${externalDb} ${tmpDir}/stations.tsv
+
+# Load helper
+$superMysql ${externalDb} < ${websitesContentFolder}/documentation/schema/convertOSGB36.sql
+
+# Optimize
+$superMysql ${externalDb} < ${DIR}/optimize_station.sql
+
+# Comment
+$superMysql ${externalDb} -e "alter table map_poi_railwaystations comment 'Railway stations updated from ORR $(date)';"
+
+# Done
+echo "#	Railway stations table updated successfully."
+
+# Indicate success
+:
 
 # End of file

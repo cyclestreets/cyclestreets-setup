@@ -80,15 +80,18 @@ fi
 echo "#	CycleStreets Railway installation $(date)"
 
 # Clear out any left over previous installation
-rm -f ${tmpDir}/stations.t*
+rm -f ${tmpDir}/stations.*
 
 # Download
-#wget -O ${tmpDir}/stations.ods https://dataportal.orr.gov.uk/media/ootlf0cn/table-6329-station-attributes-for-all-mainline-stations.ods
+wget -O ${tmpDir}/stations.ods https://dataportal.orr.gov.uk/media/ootlf0cn/table-6329-station-attributes-for-all-mainline-stations.ods
 
 # Convert from ods format using ssconvert which needs installing via:
 # sudo apt install gnumeric
 # Data is in a specific sheet, format output as tab separated, but requires using .txt extension
 ssconvert -S -O 'sheet=6329_station_attributes separator="	" format=raw quote=""' ${tmpDir}/stations.ods ${tmpDir}/stations.txt
+
+# No longer needed
+rm -f ${tmpDir}/stations.ods
 
 # The sheet is suffixed .0, rename
 mv ${tmpDir}/stations.txt.0 ${tmpDir}/stations.tsv
@@ -113,6 +116,9 @@ $superMysql ${externalDb} < ${DIR}/railway_station.sql
 
 # Load the data
 $superMysqlImport ${externalDb} ${tmpDir}/stations.tsv
+
+# No longer needed
+rm -f ${tmpDir}/stations.tsv
 
 # Load helper
 $superMysql ${externalDb} < ${websitesContentFolder}/documentation/schema/convertOSGB36.sql

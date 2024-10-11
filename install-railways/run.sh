@@ -3,7 +3,7 @@
 usage()
 {
     cat << EOF
-    
+
 SYNOPSIS
 	$0 -h
 

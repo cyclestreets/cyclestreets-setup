@@ -1,10 +1,58 @@
 #!/bin/bash
-# Script to install CycleStreets Postcodes on Ubuntu
-#
-# This script is idempotent - it can be safely re-run without destroying existing data
-#
-# Run using:
-# sudo /opt/cyclestreets-setup/install-postcode/run.sh
+# Script to install CycleStreets Postcodes.
+usage()
+{
+    cat << EOF
+
+SYNOPSIS
+	$0 -h
+
+OPTIONS
+	-h Show this message
+
+DESCRIPTION
+	Downloads and installs or updates the table of Uk postcodes.
+
+GET DATA
+
+Official
+--------
+(Source tends to move around see Alternative)
+Download the archived csv version of ONSPD data from:
+https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-november-2023
+
+On 11 Oct 2024 the most recent is Aug 2024 found via this search:
+https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=-created&tags=all(PRD_ONSPD%2CAUG_2024)
+231MB download. The .csv is 1.4GB.
+
+Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
+
+Alternative
+-----------
+This is an alternative source of data, but latest is Nov-2022:
+http://parlvid.mysociety.org/os/
+
+EOF
+}
+
+# http://wiki.bash-hackers.org/howto/getopts_tutorial
+# An opening colon in the option-string switches to silent error reporting mode.
+# Colons after letters indicate that those options take an argument e.g. m takes an email address.
+while getopts "h" option ; do
+    case ${option} in
+        h) usage; exit ;;
+	# Missing expected argument
+	:)
+	    echo "Option -$OPTARG requires an argument." >&2
+	    exit 1
+	    ;;
+	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
+    esac
+done
+
+# After getopts is done, shift all processed options away with
+shift $((OPTIND-1))
+
 
 echo "#	CycleStreets Postcode installation $(date)"
 
@@ -56,23 +104,10 @@ if [ ! -r ONSdata.csv ]; then
 
 # Provide dowload instructions
     echo "#
-#	STOPPING: Required data files are not present.
-#
-#	Official
-#	--------
-#	(Source tends to move around see Alternative)
-#	Download the archived csv version of ONSPD data from:
-#	https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-november-2023
-#
-#	Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
-#
-#	Alternative
-#	-----------
-#	This is an alternative source of data:
-#	http://parlvid.mysociety.org/os/
-#
-#	The following contains dates that will obviously need updating for next time.
-#
+#	STOPPING: Required data files are not present. See help.
+
+The following contains dates that will obviously need updating for next time.
+
 cd ${onsFolder}
 wget http://parlvid.mysociety.org/os/ONSPD/2018-08.zip
 
@@ -146,7 +181,7 @@ echo "#	Loading CSV file"
 mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --ignore-lines=1 --local ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
-## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n';
+## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table csExternal.ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
 ## SHOW WARNINGS;
 
 # Remove the data file

@@ -47,13 +47,6 @@ set -e
 
 ### DEFAULTS ###
 
-# Useful bindings
-# The defaults-extra-file is a positional argument which must come first.
-superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-externalDb=csExternal
-tmpDir=/tmp
-
 ### CREDENTIALS ###
 
 # Define the location of the credentials file; see: http://stackoverflow.com/a/246128/180733
@@ -78,6 +71,13 @@ fi
 # Main body
 # Announce starting
 echo "#	CycleStreets Railway installation $(date)"
+
+# Useful bindings
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+externalDb=csExternal
+tmpDir=/tmp
 
 # Clear out any left over previous installation
 rm -f ${tmpDir}/stations.*

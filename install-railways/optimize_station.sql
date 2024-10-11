@@ -22,6 +22,12 @@ select letter_code, easting_northing_to_wgs84_point(easting, northing), name, ''
 update new_poi_railwaystations
    set website = concat('http://www.nationalrail.co.uk/stations/', lower(id), '/details.html');
 
+-- Dummy table to accommodate the rename below
+create table if not exists `map_poi_railwaystations` (
+     `id`       char(3)      not null comment 'station code',
+     primary key (`id`)
+) comment 'Dummy table';
+
 -- Move old one out
 drop table if exists old_poi_railwaystations;
 rename table map_poi_railwaystations to old_poi_railwaystations;

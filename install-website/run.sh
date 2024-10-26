@@ -140,6 +140,9 @@ python3 -m pip install polyline
 # Utilities
 echo "#	Some utilities"
 
+# Spreadsheet->CSV conversion
+apt -y install gnumeric
+
 # Image recognition
 if [ -n "${imageRecognitionComponent}" ]; then
 

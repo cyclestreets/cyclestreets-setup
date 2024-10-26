@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+ww#!/usr/bin/env bash
 
 
 # This script takes about 5-10 minutes to run.
@@ -23,13 +23,6 @@ rm -f accidents.csv casualties.csv vehicles.csv
 rm -f collisions.zip
 
 
-# Ensure there is a codings file; this should be exported from last year
-if [ ! -f codings.csv ]; then
-	echo 'There is no codings file'
-	exit
-fi
-
-
 
 
 # ------------------------------------------------------------------------------------------------------------------------
@@ -41,12 +34,19 @@ fi
 today=`date +%Y-%m-%d`
 dataDirectory=rawdata-asof-$today
 mkdir -p $dataDirectory
-
+cd $dataDirectory
 
 # 1979 - 2023 (released 27th September 2024)
-wget -P $dataDirectory -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-collision-1979-latest-published-year.csv
-wget -P $dataDirectory -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-latest-published-year.csv
-wget -P $dataDirectory -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-latest-published-year.csv
+wget -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-collision-1979-latest-published-year.csv
+wget -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-latest-published-year.csv
+wget -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-latest-published-year.csv
+
+# Codings - obtain, convert to CSV, and amend headings
+wget -O codings.xlsx https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-road-safety-open-dataset-data-guide-2023.xlsx
+ssconvert codings.xlsx codings.csv
+rm codings.xlsx
+sed -i 1d codings.csv
+sed -i '1s/^/sheet,field,code,label,note\n/' codings.csv
 
 
 # ------------------------------------------------------------------------------------------------------------------------
@@ -92,5 +92,5 @@ echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.n
 # CLEAN UP
 # ------------------------------------------------------------------------------------------------------------------------
 
-rm -f accidents.csv casualties.csv vehicles.csv
+rm -f accidents.csv casualties.csv vehicles.csv codings.csv
 

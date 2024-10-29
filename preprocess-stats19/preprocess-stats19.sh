@@ -1,4 +1,4 @@
-ww#!/usr/bin/env bash
+#!/usr/bin/env bash
 
 
 # This script takes about 5-10 minutes to run.
@@ -19,7 +19,7 @@ set -e
 
 
 # Remove any files from a previous run
-rm -f accidents.csv casualties.csv vehicles.csv
+rm -f collisions.csv casualties.csv vehicles.csv
 rm -f collisions.zip
 
 
@@ -37,7 +37,7 @@ mkdir -p $dataDirectory
 cd $dataDirectory
 
 # 1979 - 2023 (released 27th September 2024)
-wget -O accidents.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-collision-1979-latest-published-year.csv
+wget -O collisions.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-collision-1979-latest-published-year.csv
 wget -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-casualty-1979-latest-published-year.csv
 wget -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-latest-published-year.csv
 
@@ -66,7 +66,7 @@ dos2unix *.csv
 # ------------------------------------------------------------------------------------------------------------------------
 
 # Show counts of original files
-wc -l accidents.csv
+wc -l collisions.csv
 echo -e "\n"
 wc -l casualties.csv
 echo -e "\n"
@@ -82,7 +82,7 @@ echo -e "\n"
 # ------------------------------------------------------------------------------------------------------------------------
 
 # Zip files into a single distribution
-zip collisions.zip accidents.csv casualties.csv vehicles.csv codings.csv
+zip collisions.zip collisions.csv casualties.csv vehicles.csv codings.csv
 
 echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.net/collisions.zip temporarily, then use that URL in the import UI. That takes around 30-40 minutes to run."
 
@@ -92,5 +92,5 @@ echo "Please now SFTP the file to the server, e.g. to https://www.cyclestreets.n
 # CLEAN UP
 # ------------------------------------------------------------------------------------------------------------------------
 
-rm -f accidents.csv casualties.csv vehicles.csv codings.csv
+rm -f collisions.csv casualties.csv vehicles.csv codings.csv
 

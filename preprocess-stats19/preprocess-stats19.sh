@@ -45,8 +45,9 @@ wget -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road
 wget -O codings.xlsx https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-road-safety-open-dataset-data-guide-2023.xlsx
 ssconvert codings.xlsx codings.csv
 rm codings.xlsx
-sed -i 1d codings.csv
-sed -i '1s/^/sheet,field,code,label,note\n/' codings.csv
+sed -i.bak 1d codings.csv
+sed -i.bak '1s/^/sheet,field,code,label,note\n/' codings.csv
+rm codings.csv.bak
 
 
 # ------------------------------------------------------------------------------------------------------------------------

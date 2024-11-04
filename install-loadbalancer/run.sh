@@ -65,20 +65,8 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
-
-# Install load balancer
-apt-get -y install pound
-
-# Archive original config
-if [ ! -f /etc/pound/pound.cfg.original ]; then
-	cp -pr /etc/pound/pound.cfg /etc/pound/pound.cfg.original
-fi
-
-# Enable pound to start; see: https://help.ubuntu.com/community/Pound
-sed -i 's/startup=0/startup=1/' /etc/default/pound
-
-# Start the service; note that this uses init.d, not service
-/etc/init.d/pound start
+# Apache
+apt-get -y install apache2
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 apt-get install -y munin-node

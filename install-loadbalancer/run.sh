@@ -88,7 +88,7 @@ munin-node-configure --suggest
 set -e
 
 # Copy load balancer server config
-cp -pr $SCRIPTDIRECTORY/install-loadbalancer/cyclestreets-redirection-load-balancer.conf /etc/apache2/conf-enabled/cyclestreets-redirection-load-balancer.conf
+cp -pr $SCRIPTDIRECTORY/cyclestreets-redirection-load-balancer.conf /etc/apache2/conf-enabled/cyclestreets-redirection-load-balancer.conf
 service apache2 restart
 
 

@@ -89,6 +89,7 @@ set -e
 
 # Copy load balancer server config
 cp -pr $SCRIPTDIRECTORY/cyclestreets-redirection-load-balancer.conf /etc/apache2/conf-enabled/cyclestreets-redirection-load-balancer.conf
+a2enmod rewrite
 service apache2 restart
 
 

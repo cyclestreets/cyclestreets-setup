@@ -68,6 +68,9 @@ apt-get -y autoremove
 # Apache
 apt-get -y install apache2
 
+# PHP
+apt-get install -y php
+
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra

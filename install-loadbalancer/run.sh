@@ -71,8 +71,9 @@ apt-get -y install apache2
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
+apt-get install -y libwww-perl
 if [ ! -e /etc/munin/plugins/journeylinger ]; then
-	apt-get install -y python
+	apt-get install -y python3
 	ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
 	mkdir -p /websites/www/logs/
 	ln -s /var/log/apache2/access.log /websites/www/logs/localhost-access.log
@@ -82,7 +83,9 @@ fi
 munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart
 echo "Munin plugins enabled as follows:"
+set +e
 munin-node-configure --suggest
+set -e
 
 
 # Report completion

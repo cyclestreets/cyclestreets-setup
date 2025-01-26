@@ -95,6 +95,9 @@ cp -pr $SCRIPTDIRECTORY/cyclestreets-redirection-load-balancer.conf /etc/apache2
 a2enmod rewrite
 service apache2 restart
 
+# Copy load balancer implementation
+cp -pr /opt/configurations/loadbalancer/websites/www/content/.config.php /var/www/html/
+
 
 # Report completion
 echo "#	Installing load balancer completed"

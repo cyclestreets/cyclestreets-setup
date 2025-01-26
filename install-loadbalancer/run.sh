@@ -96,7 +96,7 @@ a2enmod rewrite
 service apache2 restart
 
 # Copy load balancer implementation
-cp -pr /opt/configurations/loadbalancer/websites/www/content/.config.php /var/www/html/
+ln -s /opt/configurations/loadbalancer/websites/www/content/.config.php /var/www/html/
 
 
 # Report completion

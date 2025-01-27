@@ -132,11 +132,14 @@ apt-get install -y apache2-utils
 apt-get install -y libcgi-fast-perl libapache2-mod-fcgid
 a2enmod fcgid
 apt-get install -y munin
+chown -R munin:www-data /var/lib/munin/cgi-tmp/
+chmod -R g+w /var/lib/munin/cgi-tmp/
 # Disable by default, as this will add to all VirtualHosts; instead, add the following to an Apache VirtualHost:
 #  Include /etc/apache2/conf-available/munin.conf
 #  Alias / /var/cache/munin/www/
 a2disconf munin
 service apache2 reload
+
 
 # Wordpress recommended dependency
 apt-get install -y php-intl

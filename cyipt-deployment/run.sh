@@ -78,6 +78,7 @@ source /opt/cyipt-deploy/run.sh
 apt-get install -y libcache-perl libcache-cache-perl
 # Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: http://stackoverflow.com/questions/20568836/cant-locate-dbi-pm and https://github.com/munin-monitoring/munin/issues/713
 apt-get install -y libdbi-perl libdbd-mysql-perl
+apt-get install -y libdbd-pg-perl
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
 apt-get install -y libwww-perl

@@ -72,6 +72,17 @@ fi
 # Install CyIPT website
 source /opt/cyipt-deploy/run.sh
 
+# Clone the ActDev UI repo
+if [ ! -d /var/www/actdev-ui ]; then
+        mkdir -p /var/www/actdev-ui/
+        chown cyclestreets.rollout /var/www/actdev-ui && chmod g+ws /var/www/actdev-ui
+        su --login cyclestreets -c "git clone git@github.com:cyipt/actdev-ui.git /var/www/actdev-ui"
+        su --login cyclestreets -c "git config -f /var/www/actdev-ui/.git/config core.sharedRepository group"
+fi
+
+# Install the ActDev website
+source /var/www/actdev-ui/install.sh
+
 
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html

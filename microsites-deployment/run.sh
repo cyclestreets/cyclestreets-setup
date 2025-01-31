@@ -119,7 +119,7 @@ apt-get install -y libwww-perl
 munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart
 echo "Munin plugins enabled as follows:"
-munin-node-configure --suggest
+munin-node-configure --suggest | true
 
 # Install firewall
 . ${SCRIPTDIRECTORY}/utility/installFirewall.sh

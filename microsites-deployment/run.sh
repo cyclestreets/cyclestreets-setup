@@ -104,6 +104,9 @@ a2enmod proxy_html
 a2enmod xml2enc
 a2enmod headers
 apt-get install -y libxml2-dev
+
+# Install certbot
+apt-get install -y certbot
 service apache2 restart
 
 

@@ -41,18 +41,6 @@ SCRIPTDIRECTORY=$DIR
 # Use this to remove the ../ to get the repository root; assumes the script is always down one level
 ScriptHome=$(readlink -f "${SCRIPTDIRECTORY}/..")
 
-# Define the location of the credentials file relative to script directory
-configFile=$ScriptHome/.config.sh
-
-# Generate your own credentials file by copying from .config.sh.template
-if [ ! -x $configFile ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file." 1>&2
-    exit 1
-fi
-
-# Load the credentials
-. $configFile
-
 # Announce starting
 echo "# CyIPT installation $(date)"
 

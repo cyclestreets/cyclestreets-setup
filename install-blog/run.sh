@@ -76,6 +76,12 @@ ${superMysql} -e "CREATE USER IF NOT EXISTS '${blogUsername}'@'localhost' IDENTI
 ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost';" >> ${setupLogFile}
 ${superMysql} -e "flush privileges;"
 
+# Wordpress CLI; see: https://wp-cli.org/
+if [ ! -f /usr/local/bin/wp ]; then
+	wget -O /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+	chmod +x /usr/local/bin/wp
+fi
+
 # Install Wordpress unattended
 #!# Replace with wp cli method
 if [ ! -f /websites/${blogMoniker}/content/index.php ]; then

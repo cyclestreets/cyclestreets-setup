@@ -62,10 +62,11 @@ source /opt/cyipt-deploy/run.sh
 
 # Clone the ActDev UI repo
 if [ ! -d /var/www/actdev-ui ]; then
-        mkdir -p /var/www/actdev-ui/
-        chown cyclestreets.rollout /var/www/actdev-ui && chmod g+ws /var/www/actdev-ui
-        su --login cyclestreets -c "git clone git@github.com:cyipt/actdev-ui.git /var/www/actdev-ui"
-        su --login cyclestreets -c "git config -f /var/www/actdev-ui/.git/config core.sharedRepository group"
+	mkdir -p /var/www/actdev-ui/
+	chown cyclestreets.rollout /var/www/actdev-ui && chmod g+ws /var/www/actdev-ui
+	su --login cyclestreets -c "git clone git@github.com:cyipt/actdev-ui.git /var/www/actdev-ui"
+	su --login cyclestreets -c "git config -f /var/www/actdev-ui/.git/config core.sharedRepository group"
+	su --login cyipt -c 'git config --global --add safe.directory /var/www/actdev-ui'
 fi
 
 # Install the ActDev website

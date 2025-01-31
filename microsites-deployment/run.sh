@@ -67,12 +67,12 @@ asCS="sudo -u ${username}"
 
 
 # Install mobile website
-mobilewebContentFolder=/websites/mobileweb/content
+mobilewebContentFolder=/websites/mobileweb/mobileweb
 mobilewebLogsFolder=/websites/www/logs
 . $ScriptHome/install-mobileweb/run.sh
 
 # Install Bikedata website
-bikedataContentFolder=/websites/bikedata/content
+bikedataContentFolder=/websites/bikedata/bikedata
 bikedataLogsFolder=/websites/www/logs
 . $ScriptHome/install-bikedata/run.sh
 

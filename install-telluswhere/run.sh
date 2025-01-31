@@ -80,7 +80,6 @@ chmod -R g+w "${telluswhereContentFolder}"
 cd "${telluswhereContentFolder}"
 
 # Create/update the repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
-# Note: repo is currently private so password will be requested if not already cached
 if [ ! -d "${telluswhereContentFolder}/.git" ]
 then
 	${asCS} git clone https://github.com/cyclestreets/telluswhere.git "${telluswhereContentFolder}/"
@@ -110,7 +109,7 @@ if [ ! -L /etc/apache2/sites-enabled/600-telluswhere.conf ]; then
 fi
 
 # Add database
-apt-get -y install mysql
+apt-get -y install mysql-server
 #!# The database user creation and setup are not yet automated; the application will create the structure on first run; see createDatabaseStructure
 
 # Reload apache

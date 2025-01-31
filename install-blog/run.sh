@@ -1,6 +1,6 @@
 #!/bin/bash
 # Script to install the CycleStreets blog on Ubuntu
-# Written for Ubuntu Server 16.04 LTS (View Ubuntu version using 'lsb_release -a')
+# Written for Ubuntu Server 22.04 LTS (View Ubuntu version using 'lsb_release -a')
 # This script is idempotent - it can be safely re-run without destroying existing data
 
 echo "#	CycleStreets blog installation $(date)"
@@ -64,15 +64,16 @@ fi;
 
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
-superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+superMysql="mysql -u root --password=${mysqlRootPassword}"
 
 # Create database
-${superMysql} -e "create database ${blogDatabasename};"
+${superMysql} -e "CREATE DATABASE IF NOT EXISTS ${blogDatabasename};"
 
 # Create database permissions
 # http://stackoverflow.com/questions/91805/what-database-privileges-does-a-wordpress-blog-really-need
 blogPermissions="select, insert, update, delete, alter, create, index, drop, create temporary tables"
-${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost' identified by '${blogPassword}';" >> ${setupLogFile}
+${superMysql} -e "CREATE USER IF NOT EXISTS '${blogUsername}'@'localhost' IDENTIFIED BY '${blogPassword}';" >> ${setupLogFile}
+${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUsername}'@'localhost';" >> ${setupLogFile}
 ${superMysql} -e "flush privileges;"
 
 # Install Wordpress unattended

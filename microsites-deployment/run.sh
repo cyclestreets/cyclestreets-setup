@@ -122,7 +122,7 @@ echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest | true
 
 # Install firewall
-. ${SCRIPTDIRECTORY}/utility/installFirewall.sh
+. $ScriptHome/utility/installFirewall.sh
 
 
 # Report completion

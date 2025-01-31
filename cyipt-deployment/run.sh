@@ -86,6 +86,8 @@ munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart
 echo "Munin plugins enabled as follows:"
 munin-node-configure --suggest | true
+ufw allow 4949
+ufw reload
 
 
 # Report completion

@@ -80,6 +80,7 @@ chmod -R g+w "${telluswhereContentFolder}"
 cd "${telluswhereContentFolder}"
 
 # Create/update the repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
+${asCS} git config --global --add safe.directory "${telluswhereContentFolder}"
 if [ ! -d "${telluswhereContentFolder}/.git" ]
 then
 	${asCS} git clone https://github.com/cyclestreets/telluswhere.git "${telluswhereContentFolder}/"

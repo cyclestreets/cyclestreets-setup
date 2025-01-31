@@ -14,14 +14,6 @@ fi
 # Bomb out if something goes wrong
 set -e
 
-### DEFAULTS ###
-
-# Credentials for the blog user (leave empty if not setting up a blog)
-blogMoniker=
-blogDatabasename=
-blogUsername=
-blogPassword=
-
 
 ### CREDENTIALS ###
 
@@ -84,6 +76,7 @@ ${superMysql} -e "grant ${blogPermissions} on ${blogDatabasename}.* to '${blogUs
 ${superMysql} -e "flush privileges;"
 
 # Install Wordpress unattended
+#!# Replace with wp cli method
 if [ ! -f /websites/${blogMoniker}/content/index.php ]; then
 	mkdir -p /websites/${blogMoniker}/content/
 	wget -P /tmp/ https://wordpress.org/latest.tar.gz

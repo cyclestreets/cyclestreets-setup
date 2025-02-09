@@ -64,7 +64,7 @@ fi;
 
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
-superMysql="mysql -u root --password=${mysqlRootPassword}"
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Create database
 ${superMysql} -e "CREATE DATABASE IF NOT EXISTS ${blogDatabasename};"

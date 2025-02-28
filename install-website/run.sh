@@ -119,9 +119,6 @@ cd ${websitesContentFolder}
 # ImageMagick is used to provide enhanced maplet drawing. It is optional - if not present gd is used instead.
 apt -y install php-json php-yaml php-zip imagemagick php-imagick
 
-# Install Composer packages
-composer install
-
 # Enable mod_deflate for Apache
 a2enmod deflate
 service apache2 restart
@@ -136,6 +133,9 @@ python3 -m pip install --upgrade pip
 
 # Python package for encoding coordinate lists
 python3 -m pip install polyline
+
+# Install Composer packages (not as super user)
+${asCS} composer install
 
 # Utilities
 echo "#	Some utilities"

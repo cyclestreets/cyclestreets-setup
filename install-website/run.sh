@@ -123,7 +123,7 @@ apt -y install php-json php-yaml php-zip imagemagick php-imagick
 composer install
 
 # Enable mod_deflate for Apache
-sudo a2enmod deflate
+a2enmod deflate
 service apache2 restart
 
 # Install Python
@@ -676,7 +676,7 @@ if [ -n "${hostPort}" ]; then
     hostPortwithColon=:$hostPort
 
     # Accommodate port forwarding, redirecting http from hostport to guest port
-    sudo iptables -t nat -I OUTPUT -p tcp -o lo --dport $hostPort -j REDIRECT --to-ports 80
+    iptables -t nat -I OUTPUT -p tcp -o lo --dport $hostPort -j REDIRECT --to-ports 80
 fi
 
 # Setup the configuration
@@ -874,7 +874,7 @@ if [ ! -L $routingEngineConfigFile ]; then
 fi
 
 # Compile the C++ module; see: https://github.com/cyclestreets/cyclestreets/wiki/Python-routing---starting-and-monitoring
-sudo apt -y install gcc g++ python3-dev make cmake doxygen graphviz
+apt -y install gcc g++ python3-dev make cmake doxygen graphviz
 if [ ! -e ${websitesContentFolder}/routingengine/astar_impl.so ]; then
 	echo "Building CycleStreets routing C++ module..."
 	cd "${websitesContentFolder}/routingengine/"
@@ -884,7 +884,7 @@ fi
 
 # Add Exim, so that mail will be sent, and add its configuration, but firstly backing up the original exim distribution config file if not already done
 # NB The config here is currently Debian/Ubuntu-specific
-sudo apt -y install exim4
+apt -y install exim4
 if [ ! -e /etc/exim4/update-exim4.conf.conf.original ]; then
     cp -pr /etc/exim4/update-exim4.conf.conf /etc/exim4/update-exim4.conf.conf.original
 fi
@@ -896,7 +896,7 @@ sed -i "s/dc_smarthost=.*/dc_smarthost='${dc_smarthost}'/" /etc/exim4/update-exi
 # NB These two are the same in any CycleStreets installation but different from the default Debian installation:
 sed -i "s/dc_other_hostnames=.*/dc_other_hostnames=''/" /etc/exim4/update-exim4.conf.conf
 sed -i "s/dc_hide_mailname=.*/dc_hide_mailname='true'/" /etc/exim4/update-exim4.conf.conf
-sudo systemctl restart exim4
+systemctl restart exim4
 
 
 # Install the cycle routing service
@@ -919,14 +919,14 @@ localRoutingStatus=$(systemctl status cyclestreets)
 # If it is not running an error value (ie not zero) is returned
 if [ $? -ne 0 ]; then
     # Start the service (using command that matches pattern setup in passwordless sudo)
-    sudo /bin/systemctl start cyclestreets
+    /bin/systemctl start cyclestreets
     echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 fi
 # Restore abandon-on-error
 set -e
 
 # Add the service to the system initialization, so that it will start on reboot
-sudo systemctl enable cyclestreets
+systemctl enable cyclestreets
 
 # Advise setting up
 if [ -n "${usingLocalhost}" ]; then

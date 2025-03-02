@@ -1,4 +1,7 @@
 [mysqld]
-local_infile=1
+local-infile=1
 [client]
-local_infile=1
+# Use the loose- prefix to avoid breaking other programs such as mysqldump if the variable is unknown to them; instead a warning is issued.
+# Only needed for client section.
+# https://dev.mysql.com/doc/refman/8.0/en/load-data-local-security.html
+loose-local-infile=1

@@ -10,7 +10,7 @@ SYNOPSIS
 OPTIONS
 	-h Show this message
 	-m Take an email address as an argument - for notifications when the build breaks or completes
-	-P POIs (places of interest) build - special option that stops after the import phase.
+	-P POIs (places of interest) build - special option that stops after the import phase, requires POIs compatible config file.
 	-q Suppress helpful messages, error messages are still produced
 	-r Removes the oldest routing edition
 

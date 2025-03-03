@@ -1,10 +1,12 @@
 # Munin Node, which should be installed after all other software; see: https://www.digitalocean.com/community/tutorials/how-to-install-the-munin-monitoring-tool-on-ubuntu-14-04
 # Include dependencies for Munin MySQL plugins; see: https://raymii.org/s/snippets/Munin-Fix-MySQL-Plugin-on-Ubuntu-12.04.html
 apt install -y libcache-perl libcache-cache-perl
+
 # Add libdbi-perl as otherwise /usr/share/munin/plugins/mysql_ suggest will show missing DBI.pm; see: http://stackoverflow.com/questions/20568836/cant-locate-dbi-pm and https://github.com/munin-monitoring/munin/issues/713
 apt install -y libdbi-perl libdbd-mysql-perl
-apt install -y munin-node
-apt install -y munin-plugins-extra
+
+# Munin
+apt install -y munin-node munin-plugins-extra
 
 # Symlink the cyclestreets charts, clearing away any old ones first
 rm -f /etc/munin/plugins/cyclestreets

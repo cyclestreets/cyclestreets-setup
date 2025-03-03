@@ -46,11 +46,11 @@ fi
 # Install the website
 ${ScriptHome}/install-website/run.sh
 
-# Install the import
-${ScriptHome}/install-import/run.sh
-
 # Munin
 ${ScriptHome}/utility/installMunin.sh
+
+# Install the import
+${ScriptHome}/install-import/run.sh
 
 # Confirm end of script
 echo -e "#	All now deployed $(date)"

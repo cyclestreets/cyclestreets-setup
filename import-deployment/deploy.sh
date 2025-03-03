@@ -49,6 +49,9 @@ ${ScriptHome}/install-website/run.sh
 # Install the import
 ${ScriptHome}/install-import/run.sh
 
+# Munin
+${ScriptHome}/utility/installMunin.sh
+
 # Confirm end of script
 echo -e "#	All now deployed $(date)"
 

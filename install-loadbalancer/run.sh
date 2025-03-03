@@ -75,6 +75,8 @@ apt-get install -y php
 apt-get install -y munin-node
 apt-get install -y munin-plugins-extra
 apt-get install -y libwww-perl
+
+# CS own munin chart: Journey Linger
 if [ ! -e /etc/munin/plugins/journeylinger ]; then
 	apt-get install -y python3
 	ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
@@ -82,6 +84,7 @@ if [ ! -e /etc/munin/plugins/journeylinger ]; then
 	ln -s /var/log/apache2/access.log /websites/www/logs/localhost-access.log
 	chmod o+rx /var/log/apache2/
 fi
+
 # See: http://munin-monitoring.org/wiki/munin-node-configure
 munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart

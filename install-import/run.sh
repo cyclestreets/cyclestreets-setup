@@ -338,17 +338,17 @@ done
 # Bearing Turn Pattern table download
 # The import system can generate this table, but it is quicker to obtain it as a download.
 # Skip if the table already exists
-if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'lib_bearingPatternDetent'" csArchive | grep lib_bearingPatternDetent  > /dev/null 2>&1
+if ! ${superMysql} --batch --skip-column-names -e "SHOW tables LIKE 'lib_bearingPatternDetent'" csExternal | grep lib_bearingPatternDetent  > /dev/null 2>&1
 then
     # Obtain the file, which is created using:
-    # mysqldump csArchive lib_bearingPatternDetent | bzip2 > bearingPatternDetent.sql.bz2
+    # mysqldump csExternal lib_bearingPatternDetent | bzip2 > bearingPatternDetent.sql.bz2
     bearingTableFile=bearingPatternDetent.sql.bz2
     echo "# Starting download of ${bearingTableFile} bearing data file to ${websitesBackupsFolder}"
     wget https://cyclestreets:${datapassword}@downloads.cyclestreets.net/${bearingTableFile} -O ${websitesBackupsFolder}/${bearingTableFile}
 
     # Unpack and remove file
-    echo "# Unpacking bearing pattern turn data file into archive db"
-    bunzip2 < ${websitesBackupsFolder}/${bearingTableFile} | ${superMysql} csArchive
+    echo "# Unpacking bearing pattern turn data file into external db"
+    bunzip2 < ${websitesBackupsFolder}/${bearingTableFile} | ${superMysql} csExternal
     rm ${websitesBackupsFolder}/${bearingTableFile}
 fi
 

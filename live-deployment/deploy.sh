@@ -45,7 +45,7 @@ a2enmod proxy_http
 systemctl restart apache2
 
 # Munin
-${ScriptHome}/utility/installMunin.sh
+. ${ScriptHome}/utility/installMunin.sh
 
 ## PhpMyAdmin
 # Note: as of 8.0.13 this can become a csv of addresses such as: 127.0.0.1,::1,dev.cyclestreets.net

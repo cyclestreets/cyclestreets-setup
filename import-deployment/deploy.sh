@@ -47,7 +47,7 @@ fi
 ${ScriptHome}/install-website/run.sh
 
 # Munin
-${ScriptHome}/utility/installMunin.sh
+. ${ScriptHome}/utility/installMunin.sh
 
 # Install the import
 ${ScriptHome}/install-import/run.sh

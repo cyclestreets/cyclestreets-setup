@@ -321,26 +321,31 @@ routingFolder=${websitesContentFolder}/data/routing
 neTarball=${resolvedEdition}.tar.gz
 neTarballMd5=${neTarball}.md5
 
-# Begin the file transfer
-vecho "Transferring the routing files from the import machine ${importHostname}"
+# Avoid the download for localhost
+if [ "${importHostname}" = 'localhost' ]; then
+	vecho "No need to download for ${importHostname}"
+	else
 
-#	Copy md5 file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarballMd5} $routingFolder > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-	# Avoid echo if possible as this generates cron emails
-	vecho "The import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarballMd5}\n#\tCopying to: ${routingFolder}."
-	exit 1
-fi
-#	Copy tarball file
-scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarball} $routingFolder > /dev/null 2>&1
-if [ $? -ne 0 ]; then
-	# Avoid echo if possible as this generates cron emails
-	vecho "The import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarball}\n#\tCopying to: ${routingFolder}."
-	exit 1
-fi
+		# Begin the file transfer
+		vecho "Transferring the routing files from the import machine ${importHostname}"
 
-#	Note that all files are downloaded
-vecho "File transfer stage complete"
+		#	Copy md5 file
+		scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarballMd5} $routingFolder > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			# Avoid echo if possible as this generates cron emails
+			vecho "The import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarballMd5}\n#\tCopying to: ${routingFolder}."
+			exit 1
+		fi
+		#	Copy tarball file
+		scp ${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarball} $routingFolder > /dev/null 2>&1
+		if [ $? -ne 0 ]; then
+			# Avoid echo if possible as this generates cron emails
+			vecho "The import machine file could not be retrieved from:\n#\t${portScp} ${username}@${importHostname}:${importMachineEditions}/${neTarball}\n#\tCopying to: ${routingFolder}."
+			exit 1
+		fi
+		#	Note that all files are downloaded
+		vecho "File transfer stage complete"
+fi
 
 
 

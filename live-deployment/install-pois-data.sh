@@ -323,7 +323,9 @@ neTarballMd5=${neTarball}.md5
 
 # Avoid the download for localhost
 if [ "${importHostname}" = 'localhost' ]; then
-	vecho "No need to download for ${importHostname}"
+	vecho "No need to download for ${importHostname}, instead copying the local tarball."
+	cp ${websitesContentFolder}/import/output/${neTarballMd5} $routingFolder
+	cp ${websitesContentFolder}/import/output/${neTarball} $routingFolder
 	else
 
 		# Begin the file transfer

@@ -6,7 +6,7 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	$0 -h -k
+	$0 -h -k [freshEdition]
 
 OPTIONS
 	-h Show this message
@@ -14,6 +14,7 @@ OPTIONS
 
 DESCRIPTION
 	This script switches route serving from a STALE edition to a FRESH edition, which is assumed to be the newest installed edition.
+	The freshEdition can be provided as an argument, if not then the newest non-active edition is selected.
 	These editions are served from ports 8998 and 8999.
 	Unless the -k option is set the stale edition is removed.
 EOF
@@ -119,16 +120,18 @@ fi
 # Check the supplied argument - if exactly one use it, else default to latest routing db
 if [ $# -eq 1 ]
 then
-	# !! Unexplored/untested branch
-	echo "# Abandoning becuase providing an edition is not supported."
-	#exit 1
-
     # Allocate that argument
     freshEdition=$1
 else
 
     # Determine latest edition (the -s suppresses the tabular output)
     freshEdition=$(${superMysql} -s cyclestreets<<<"select name from map_edition order by name desc limit 1;")
+fi
+
+# Check the format is routingYYMMDD
+if [[ ! "$freshEdition" =~ routing([0-9]{6}) ]]; then
+  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${freshEdition}."
+  exit 1
 fi
 
 # Ensure the latest edition has ordering 1 - which is used to distinguish the daily editions from other editions.
@@ -165,13 +168,6 @@ else
 	freshPort=8998
 	stalePort=8999
 fi
-
-# Check the format is routingYYMMDD
-if [[ ! "$freshEdition" =~ routing([0-9]{6}) ]]; then
-  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${freshEdition}."
-  exit 1
-fi
-
 
 ### Confirm existence of the routing import database and files
 
@@ -271,6 +267,7 @@ fi
 # Activate the fresh edition and deactivate the stale edition
 ${superMysql} cyclestreets -e "update map_edition set ordering = 1, url = '${freshRoutingUrl}', active = 'yes' where name = '${freshEdition}';";
 ${superMysql} cyclestreets -e "update map_edition set active = 'no' where name = '${staleEdition}';";
+${superMysql} cyclestreets -e "update map_config set routingDb = '${freshEdition}';";
 
 # Stop the stale service
 sudo ${staleRoutingServiceStop}

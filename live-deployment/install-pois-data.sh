@@ -23,6 +23,7 @@ OPTIONS
 ARGUMENTS
 	importHostname
 		A hostname eg machinename.cyclestreets.net, as provided else read from config.
+		This can be localhost to install the edition locally.
 
 	edition
 		The optional second argument can also be read from the config.
@@ -257,6 +258,10 @@ if [[ "${desiredEdition}" =~ routing([0-9]{6}) ]]; then
 
 	# It matches routingYYMMDD so use it directly
 	resolvedEdition=${desiredEdition}
+elif [ "${importHostname}" = 'localhost' ]; then
+	# Dereference the local alias to find the edition
+	resolvedEdition=$(readlink -f ${importMachineEditions}/${desiredEdition})
+	resolvedEdition=$(basename ${resolvedEdition})
 else
 	# Cases when the format is not routingYYMMDD
 	# Treat it as an alias and dereference to find the target edition

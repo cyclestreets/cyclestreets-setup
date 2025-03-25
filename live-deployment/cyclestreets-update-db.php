@@ -49,8 +49,13 @@ if (!$run) {
 	return true;
 }
 
-# Load the database credentials
+# Simulate partial apache context - as config file can expect that
 $_SERVER['SERVER_NAME'] = 'localhost';
+if (!isset ($_SERVER['QUERY_STRING'])) {$_SERVER['QUERY_STRING'] = '';}
+if (!isset ($_SERVER['REQUEST_URI']))  {$_SERVER['REQUEST_URI']  = '';}
+if (!function_exists ('apache_request_headers')) {function apache_request_headers () {}}
+
+# Load the database credentials
 require_once ('/websites/www/content/.config.php');
 
 # Connect to the database

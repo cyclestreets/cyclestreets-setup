@@ -821,6 +821,9 @@ if [ -n "${externalDb}" ]; then
 	# Remove the archive to save space
 	rm /tmp/${csExternalDataFile}
 
+	# Install railways pois
+	. ${ScriptHome}/install-railways/run.sh
+
 	# Report
 	echo "#	$(date)	Completed installation of external database"
     fi

@@ -169,8 +169,12 @@ fi
 # Report completion and next steps
 echo "#	$(date)	CycleStreets import has created a new edition: ${routingEdition}"
 echo "#	To prepare this data for serving locally, remotely or both:"
+echo "#	Routing builds:"
 echo "#	Locally  run: ${ScriptHome}/live-deployment/installLocalLatestEdition.sh"
-echo "#	Remotely run: ${username}@other:${ScriptHome}/live-deployment\$ ./install-routing-data.sh"
+echo "#	Remotely run: ${username}@other:${ScriptHome}\$ live-deployment/install-routing-data.sh"
+echo "#	POIs builds:"
+echo "#	Locally  run: ${ScriptHome}/live-deployment/install-pois-data.sh localhost"
+echo "#	Remotely run: ${username}@other:${ScriptHome}\$ live-deployment/install-pois-data.sh"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

@@ -202,7 +202,7 @@ if [ -n "$poisBuild" ]; then
 fi
 
 ## Install
-if live-deployment/installLocalLatestEdition.sh ${newEdition} ;
+if live-deployment/installLocalLatestEdition.sh ${newEdition} ${editionAlias} ;
 then
     vecho "#\t$(date)\tLocal install completed just fine."
 else

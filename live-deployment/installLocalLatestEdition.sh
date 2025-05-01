@@ -6,7 +6,7 @@ usage()
 {
     cat << EOF
 SYNOPSIS
-	installLocalLatestEdition.sh -h [edition]
+	installLocalLatestEdition.sh -h [edition] [alias]
 
 OPTIONS
 	-h Show this message
@@ -15,6 +15,9 @@ ARGUMENTS
 	[edition]
 		Optional routing edition of the form routingYYMMDD
 		If not provided the latest one is looked up from the importContentFolder.
+	[alias]
+		A name describing the regions covered by or purpos of this edition.
+		This is inherited from newbuild.sh when a symlink is used to link to a build .config.php file.
 
 DESCRIPTION
 	Used on a server that provides both the live and import deployments. I.e. usually a developer machine.
@@ -112,6 +115,13 @@ else
     latestEdition=`ls -1 ${importMachineEditions} | grep "^routing\([0-9]\)\{6\}$" | tail -n1`
 fi
 
+# Check for optional alias - using edition when not provided
+if [ -n "$2" ]; then
+    editionAlias=$2
+else
+    editionAlias=$latestEdition
+fi
+
 
 # Abandon if not found
 if [ -z "${latestEdition}" ]; then
@@ -176,7 +186,7 @@ if [ ! -L "${importMachineEditions}/${latestEdition}" ]; then
 fi
 
 # Add the new row to the map_edition table
-if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${latestEdition}')" cyclestreets
+if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${latestEdition}', '${editionAlias}')" cyclestreets
 then
     echo "#	There was a problem adding the new edition: ${latestEdition}. The import has not completed."
     exit 1

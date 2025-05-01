@@ -354,13 +354,14 @@ else
 	# Cases when the format is not routingYYMMDD
 	if [ ${desiredEdition} == "latest" ]; then
 
-	# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
-	resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} |  grep "^routing\([0-9]\)\{6\}$" | tail -n1`
+		# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
+		resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} |  grep "^routing\([0-9]\)\{6\}$" | tail -n1`
 
 	else
-	# Treat it as an alias and dereference to find the target edition
-	resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
-	resolvedEdition=$(basename ${resolvedEdition})
+		# Treat it as an alias and dereference to find the target edition
+		editionAlias=${desiredEdition}
+		resolvedEdition=$(ssh ${portSsh} ${username}@${importHostname} readlink -f ${importMachineEditions}/${desiredEdition})
+		resolvedEdition=$(basename ${resolvedEdition})
 	fi
 fi
 
@@ -659,8 +660,13 @@ fi
 
 ### Stage 7 - Finish
 
+# Default the alias to the resolved edition
+if [ -z "${editionAlias}" ]; then
+	editionAlias=$resolvedEdition
+fi
+
 # Add the new row to the map_edition table
-if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}')" cyclestreets
+if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}', '${editionAlias}')" cyclestreets
 then
 	echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}. The import install did not complete."
 	exit 1

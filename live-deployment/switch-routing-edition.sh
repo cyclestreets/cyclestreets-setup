@@ -254,7 +254,7 @@ if [ "${multipleEditions}" = yes ]; then
 
     # With multiple editions turned off the map_edition table is not read, and so can be prepared for the new state
     ${superMysql} cyclestreets -e "update map_edition set active = 'no'  where ordering > 1;";
-    ${superMysql} cyclestreets -e "update map_edition set active = 'yes' where name = '${newEdition}';";
+    ${superMysql} cyclestreets -e "update map_edition set active = 'yes' where routingDb = '${newEdition}';";
 fi
 
 

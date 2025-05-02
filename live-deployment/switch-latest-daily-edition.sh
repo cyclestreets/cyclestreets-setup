@@ -125,7 +125,7 @@ then
 else
 
     # Determine latest edition (the -s suppresses the tabular output)
-    freshEdition=$(${superMysql} -s cyclestreets<<<"select name from map_edition order by name desc limit 1;")
+    freshEdition=$(${superMysql} -s cyclestreets<<<"select routingDb from map_edition order by routingDb desc limit 1;")
 fi
 
 # Check the format is routingYYMMDD
@@ -135,10 +135,10 @@ if [[ ! "$freshEdition" =~ routing([0-9]{6}) ]]; then
 fi
 
 # Ensure the latest edition has ordering 1 - which is used to distinguish the daily editions from other editions.
-${superMysql} cyclestreets -e "update map_edition set ordering = 1 where name = '${freshEdition}';";
+${superMysql} cyclestreets -e "update map_edition set ordering = 1 where routingDb = '${freshEdition}';";
 
 # Determine the stale edition
-staleEdition=$(${superMysql} -s cyclestreets<<<"select name from map_edition where ordering = 1 and active = 'yes' order by name desc limit 1;")
+staleEdition=$(${superMysql} -s cyclestreets<<<"select routingDb from map_edition where ordering = 1 and active = 'yes' order by routingDb desc limit 1;")
 
 # Abandon if no stale edition
 if [ -z "${staleEdition}" ]; then
@@ -153,7 +153,7 @@ if [ "${freshEdition}" == "${staleEdition}" ]; then
 fi
 
 # Determine the port of the stale edition
-stalePort=$(${superMysql} -s cyclestreets<<<"select substring(regexp_substr(url, ':[0-9]+'), 2) port from map_edition where name = '${staleEdition}';")
+stalePort=$(${superMysql} -s cyclestreets<<<"select substring(regexp_substr(url, ':[0-9]+'), 2) port from map_edition where routingDb = '${staleEdition}';")
 
 # Abandon if no stale port
 if [ -z "${stalePort}" ]; then

@@ -9,7 +9,7 @@ usage()
 	cat << EOF
 
 SYNOPSIS
-	$0 -e -h -l -q -r -s -t -x -m email -p port [importHostname] [edition]
+	$0 -e -h -l -q -r -s -t -x -y -m email -p port [importHostname] [edition]
 
 OPTIONS
 	-e Do not install tables from the optional external db even if available.
@@ -22,6 +22,7 @@ OPTIONS
 	-s Skip switching to new edition, maintaining any currently served routing edition
 	-t Does a dry run showing the resolved options
 	-x Do not install the optional planet db even if available. It is mainly useful for debugging and inspecting routes.
+	-y Do not install the routingDb - useful when only the routing graph is needed e.g. to serve routes remotely
 
 ARGUMENTS
 	importHostname
@@ -67,6 +68,8 @@ removeOldest=
 truncateRoutingLog=
 # Default to switch to the new edition when this is empty
 skipSwitch=
+# Default to blank so that the routingDb is installed if available
+skipRoutingDb=
 # Default to blank so that the planet is installed if available
 skipPlanet=
 # Default to blank so that the external is installed if available
@@ -124,6 +127,10 @@ while getopts "ehlm:p:qrstx" option ; do
 	x)
 		# Set option to skip planet installation
 		skipPlanet=1
+		;;
+	y)
+		# Set option to skip planet installation
+		skipRoutingDb=1
 		;;
 	:)
 		# Missing expected argument
@@ -278,7 +285,9 @@ if [ -n "${testargs}" ]; then
 	echo "#	quietLongOption=${quietLongOption}";
 	echo "#	removeOldest=${removeOldest}";
 	echo "#	skipSwitch=${skipSwitch}";
+	echo "#	skipRoutingDb=${skipRoutingDb}";
 	echo "#	skipPlanet=${skipPlanet}";
+	echo "#	skipExternal=${skipExternal}";
 	echo "#	sshPort=${sshPort}";
 	echo "#	tableGzip=${tableGzip}";
 	echo "#	testargs=${testargs}";
@@ -500,58 +509,67 @@ rm -f ${neTarball} ${neTarballMd5}
 
 ### Stage 5 - create the routing database
 
-# Narrate
-vecho "Installing the routing database: ${resolvedEdition}"
-
 # Go to the edition folder
 cd ${newEditionFolder}
 
-#	Create the database (which will be empty for now) and set default collation
-${superMysql} -e "create database ${resolvedEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+# Optionally skip routingDb installation
+if [ -n "${skipRoutingDb}" ]; then
 
-#	Load table definisions
-${superMysql} ${resolvedEdition} < table/tableDefinitions.sql
+	# Narrate
+	vecho "Skipping install of the routing database: ${resolvedEdition}"
 
-# Folder from where mysql can read the data
-mysqlReadableFolder=${newEditionFolder}/table
+else
 
-# Handle secure-file-priv, if set
-# Use of set from comment by dorsh:
-# https://stackoverflow.com/a/9558954/225876
-# This puts the values of the two columns in $1 and $2
-set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
-secureFilePriv=$2
+	# Narrate
+	vecho "Installing the routing database: ${resolvedEdition}"
 
-# If there's a secure folder then move the tsv files there
-if [ -n "$secureFilePriv" ]; then
+	#	Create the database (which will be empty for now) and set default collation
+	${superMysql} -e "create database ${resolvedEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
 
-	# Secure readable location
-	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
+	#	Load table definisions
+	${superMysql} ${resolvedEdition} < table/tableDefinitions.sql
 
-	# Ensure it exists
-	mkdir -p ${mysqlReadableFolder}
+	# Folder from where mysql can read the data
+	mysqlReadableFolder=${newEditionFolder}/table
 
-	# Declare who (re-)created the folder
-	echo "Created by install-routing-data / tables around line 523 $(date)" >> ${mysqlReadableFolder}/colophon
+	# Handle secure-file-priv, if set
+	# Use of set from comment by dorsh:
+	# https://stackoverflow.com/a/9558954/225876
+	# This puts the values of the two columns in $1 and $2
+	set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
+	secureFilePriv=$2
 
-	# Move tsv files there
-	mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+	# If there's a secure folder then move the tsv files there
+	if [ -n "$secureFilePriv" ]; then
+
+		# Secure readable location
+		mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/table
+
+		# Ensure it exists
+		mkdir -p ${mysqlReadableFolder}
+
+		# Declare who (re-)created the folder
+		echo "Created by install-routing-data / tables around line 523 $(date)" >> ${mysqlReadableFolder}/colophon
+
+		# Move tsv files there
+		mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+	fi
+
+	#	Import the data in alphabetical order
+	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
+
+	#	Clean up
+	rm -r ${mysqlReadableFolder}
+
+	#	Load nearest point stored procedures
+	vecho "Loading nearestPoint technology"
+	${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
+
+	# Build the photo index
+	vecho "Building the photosEnRoute tables"
+	${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
+	${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 fi
-
-#	Import the data in alphabetical order
-find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
-
-#	Clean up
-rm -r ${mysqlReadableFolder}
-
-#	Load nearest point stored procedures
-vecho "Loading nearestPoint technology"
-${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/nearestPoint.sql
-
-# Build the photo index
-vecho "Building the photosEnRoute tables"
-${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 
 ### Stage 6 - create the planet database if provided
 ## First check whether it can be skipped and removed

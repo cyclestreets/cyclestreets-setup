@@ -85,7 +85,7 @@ importMachineEditions=/websites/www/import/output
 # Help for this BASH builtin: help getopts
 # An opening colon in the option-string switches to silent error reporting mode.
 # Colons after letters indicate that those options take an argument e.g. m takes an email address.
-while getopts "ehlm:p:qrstx" option ; do
+while getopts "ehlm:p:qrstxy" option ; do
 	case ${option} in
 		h) usage; exit ;;
 		e)
@@ -683,11 +683,14 @@ if [ -z "${editionAlias}" ]; then
 	editionAlias=$resolvedEdition
 fi
 
-# Add the new row to the map_edition table
-if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}', '${editionAlias}')" cyclestreets
-then
-	echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}. The import install did not complete."
-	exit 1
+# When the routingDb has been added
+if [ -z "${skipRoutingDb}" ]; then
+	# Add the new row to the map_edition table
+	if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}', '${editionAlias}')" cyclestreets
+	then
+		echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}, alias: ${editionAlias}. The import install did not complete."
+		exit 1
+	fi
 fi
 
 # Create a file that indicates the end of the script was reached - this can be tested for by the switching script

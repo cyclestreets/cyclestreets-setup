@@ -264,10 +264,8 @@ if [ "${locallyRunningEdition}" != "${freshEdition}" ]; then
 	exit 1
 fi
 
-# Activate the fresh edition and deactivate the stale edition
-${superMysql} cyclestreets -e "update map_edition set ordering = 1, url = '${freshRoutingUrl}', active = 'yes' where name = '${freshEdition}';";
-${superMysql} cyclestreets -e "update map_edition set active = 'no' where name = '${staleEdition}';";
-${superMysql} cyclestreets -e "update map_config set routingDb = '${freshEdition}';";
+# Switch editions in the database
+${superMysql} cyclestreets -e "call switchDailyEditions('${freshEdition}', '${freshRoutingUrl}', '${staleEdition}');";
 
 # Stop the stale service
 sudo ${staleRoutingServiceStop}

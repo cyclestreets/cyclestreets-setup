@@ -32,7 +32,7 @@ while getopts ":hk" option ; do
 	k)
 	    keepStale=1
 	   ;;
-	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
+	\?) echo "Invalid option: -$OPTARG" >&2 ; exit 1 ;;
     esac
 done
 
@@ -203,7 +203,7 @@ rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php
 rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php
 
 # Remove old JSON configuration
-freshServiceJsonConfig=${websitesContentFolder}/routingengine/.config.daily.${freshPort}.json
+freshServiceJsonConfig=${websitesContentFolder}/routingengine/.config.${freshPort}.json
 rm -f $freshServiceJsonConfig
 
 # Configure the fresh routing service to use the new edition
@@ -217,8 +217,8 @@ else
 fi
 
 # Bind service names
-freshService=cyclestreetsDaily${freshPort}
-staleService=cyclestreetsDaily${stalePort}
+freshService=cyclestreets${freshPort}
+staleService=cyclestreets${stalePort}
 
 # Routing service commands (using command that matches pattern setup in passwordless sudo)
 freshRoutingServiceRestart="/bin/systemctl restart ${freshService}"

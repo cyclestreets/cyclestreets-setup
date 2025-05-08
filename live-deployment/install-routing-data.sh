@@ -553,10 +553,10 @@ else
 
 		# Move tsv files there
 		mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
-
-		# Ensure readable
-		chmod a+r ${mysqlReadableFolder}/*.tsv
 	fi
+
+	# Ensure readable
+	chmod a+r ${mysqlReadableFolder}/*.tsv
 
 	#	Import the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
@@ -609,18 +609,21 @@ if [ -d ${newEditionFolder}/planet ]; then
 	# If there's a secure folder then move the tsv files there
 	if [ -n "$secureFilePriv" ]; then
 
-	# Secure readable location
-	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/planet
+		# Secure readable location
+		mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/planet
 
-	# Ensure it exists
-	mkdir -p ${mysqlReadableFolder}
+		# Ensure it exists
+		mkdir -p ${mysqlReadableFolder}
 
-	# Declare who (re-)created the folder
-	echo "Created by install-routing-data / planet database around line 589: $(date)" >> ${mysqlReadableFolder}/colophon
+		# Declare who (re-)created the folder
+		echo "Created by install-routing-data / planet database around line 589: $(date)" >> ${mysqlReadableFolder}/colophon
 
-	# Move tsv files there
-	mv ${newEditionFolder}/planet/*.tsv ${mysqlReadableFolder}
+		# Move tsv files there
+		mv ${newEditionFolder}/planet/*.tsv ${mysqlReadableFolder}
 	fi
+
+	# Ensure readable
+	chmod a+r ${mysqlReadableFolder}/*.tsv
 
 	#	Load the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${planetDb}
@@ -659,18 +662,21 @@ if [ -d ${newEditionFolder}/external ]; then
 	# If there's a secure folder then move the tsv files there
 	if [ -n "$secureFilePriv" ]; then
 
-	# Secure readable location
-	mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/external
+		# Secure readable location
+		mysqlReadableFolder=${secureFilePriv}/${resolvedEdition}/external
 
-	# Ensure it exists
-	mkdir -p ${mysqlReadableFolder}
+		# Ensure it exists
+		mkdir -p ${mysqlReadableFolder}
 
-	# Declare who (re-)created the folder
-	echo "Created by install-routing-data / external database around line 642: $(date)" >> ${mysqlReadableFolder}/colophon
+		# Declare who (re-)created the folder
+		echo "Created by install-routing-data / external database around line 642: $(date)" >> ${mysqlReadableFolder}/colophon
 
-	# Move tsv files there
-	mv ${newEditionFolder}/external/*.tsv ${mysqlReadableFolder}
+		# Move tsv files there
+		mv ${newEditionFolder}/external/*.tsv ${mysqlReadableFolder}
 	fi
+
+	# Ensure readable
+	chmod a+r ${mysqlReadableFolder}/*.tsv
 
 	#	Load the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${externalDb}

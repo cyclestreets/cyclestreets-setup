@@ -512,6 +512,13 @@ rm -f ${neTarball} ${neTarballMd5}
 # Go to the edition folder
 cd ${newEditionFolder}
 
+# Handle secure-file-priv, if set
+# Use of set from comment by dorsh:
+# https://stackoverflow.com/a/9558954/225876
+# This puts the values of the two columns in $1 and $2
+set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
+secureFilePriv=$2
+
 # Optionally skip routingDb installation
 if [ -n "${skipRoutingDb}" ]; then
 
@@ -531,13 +538,6 @@ else
 
 	# Folder from where mysql can read the data
 	mysqlReadableFolder=${newEditionFolder}/table
-
-	# Handle secure-file-priv, if set
-	# Use of set from comment by dorsh:
-	# https://stackoverflow.com/a/9558954/225876
-	# This puts the values of the two columns in $1 and $2
-	set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
-	secureFilePriv=$2
 
 	# If there's a secure folder then move the tsv files there
 	if [ -n "$secureFilePriv" ]; then
@@ -683,6 +683,11 @@ if [ -d ${newEditionFolder}/external ]; then
 
 	#	Clean up
 	rm -r ${mysqlReadableFolder}
+fi
+
+# Remove the folder - everything else should already have been removed
+if [ -n "$secureFilePriv" -a -n "${resolvedEdition}" ]; then
+	rmdir ${secureFilePriv}/${resolvedEdition}
 fi
 
 ### Stage 7 - Finish

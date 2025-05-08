@@ -54,18 +54,18 @@ cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets2
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets2
 
 # Alternate versions of the above
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreetsDaily8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreetsDaily8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreetsDaily8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreetsDaily8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreetsDaily8998
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets8998
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets8998
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets8998
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets8998
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets8998
 
 # Alternate versions of the above
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreetsDaily8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreetsDaily8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreetsDaily8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreetsDaily8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreetsDaily8999
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets8999
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets8999
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets8999
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets8999
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets8999
 
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql

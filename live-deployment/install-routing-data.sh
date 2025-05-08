@@ -553,6 +553,9 @@ else
 
 		# Move tsv files there
 		mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
+
+		# Ensure readable
+		chmod a+r ${mysqlReadableFolder}/*.tsv
 	fi
 
 	#	Import the data in alphabetical order

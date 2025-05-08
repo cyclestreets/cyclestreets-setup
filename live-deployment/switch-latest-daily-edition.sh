@@ -278,6 +278,11 @@ ${superMysql} ${freshEdition} -e "call indexPhotos(0);";
 if [ -z "${keepStale}" ]; then
     echo "#	$(date)	Stale edition ${staleEdition} will now be removed."
     live-deployment/remove-routing-edition.sh ${staleEdition}
+
+	# Remove old JSON configuration
+	staleServiceJsonConfig=${websitesContentFolder}/routingengine/.config.${stalePort}.json
+	rm -f $staleServiceJsonConfig
+
 else
     echo "#	$(date)	Previous edition ${staleEdition} is retained."
 fi

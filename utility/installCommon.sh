@@ -34,38 +34,16 @@ chmod 0600 /etc/cron.d/cyclestreets-update
 csSudoers=/etc/sudoers.d/cyclestreets
 if [ -n "${csSudoers}" -a ! -e "${csSudoers}" ]; then
 
-    # !! Potentially add more checks to the variables used in these sudoers expressions, such as ensuring the variables are full paths to the commands.
-
     # Create file that provides passwordless sudo access to the routing service - which needs root access to control running service
     # A number of other passwordless options are also included when operating in a variety of roles such as doing imports or running backup / restores.
+	# For guidance on this syntax, search for 'command name' in: man sudoers
+	# A wildcard * is used at the end to match any service name beginning with 'cyclestreets', e.g. cyclestreets@8998
     cat > ${csSudoers} << EOF
-# Permit cyclestreets user to control the routing service without a password
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets
-
-# Secondary versions of the above
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets2
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets2
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets2
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets2
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets2
-
-# Alternate versions of the above
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets8998
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets8998
-
-# Alternate versions of the above
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl --no-pager status cyclestreets8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets8999
-cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets8999
+# Permit cyclestreets user to control the routing services without a password
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl status cyclestreets*
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets*
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets*
+cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets*
 
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql

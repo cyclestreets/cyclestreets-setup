@@ -217,8 +217,8 @@ else
 fi
 
 # Bind service names
-freshService=cyclestreets${freshPort}
-staleService=cyclestreets${stalePort}
+freshService=cyclestreets@${freshPort}
+staleService=cyclestreets@${stalePort}
 
 # Routing service commands (using command that matches pattern setup in passwordless sudo)
 freshRoutingServiceRestart="/bin/systemctl restart ${freshService}"

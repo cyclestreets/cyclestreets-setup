@@ -494,7 +494,7 @@ if [ -z "${keepRoutingDuringUpdate}" ]; then
 	${superMysql} cyclestreets -e "call closeJourneyPlanner();";
 
 	# Cycle routing stop command (should match passwordless sudo entry)
-	routingServiceStop="/bin/systemctl stop cyclestreets"
+	routingServiceStop="/bin/systemctl stop cyclestreets@9000"
 
 	# Stop the routing service
 	sudo ${routingServiceStop}

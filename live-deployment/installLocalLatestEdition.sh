@@ -154,7 +154,7 @@ if [ -d ${websitesContentFolder}/data/routing/${latestEdition} ]; then
     echo "#		${websitesContentFolder}/data/routing/${latestEdition}"
     echo "#	Very old advice not checked recently:"
     echo "#		... but note that may not be necessary if a new import has just updated that location:"
-    echo "#		sudo /bin/systemctl start cyclestreets"
+    echo "#		sudo /bin/systemctl start cyclestreets@9000"
     echo "#		Then switch routing service use: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${latestEdition}"
     echo "#"
     echo "#	Carrying on regardless!"

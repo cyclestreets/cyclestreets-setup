@@ -915,7 +915,7 @@ systemctl link ${websitesContentFolder}/routingengine/cyclestreets@.service
 set +e
 
 # Get the status
-localRoutingStatus=$(systemctl status cyclestreets)
+localRoutingStatus=$(systemctl status cyclestreets@9000)
 # If it is not running an error value (ie not zero) is returned
 if [ $? -ne 0 ]; then
     # Start the service (using command that matches pattern setup in passwordless sudo)

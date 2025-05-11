@@ -904,14 +904,11 @@ systemctl restart exim4
 
 # Install the cycle routing service
 
-# Setup a symlink from the systemd folder, if it doesn't already exist
-routingServiceLocation=/etc/systemd/system/cyclestreets.service
-if [ ! -L ${routingServiceLocation} ]; then
-    ln -s ${websitesContentFolder}/routingengine/cyclestreets.service ${routingServiceLocation}
-fi
-
 # Ensure the relevant files are executable
 chmod ug+x ${websitesContentFolder}/routingengine/cyclestreets.py
+
+# Setup a symlink from the systemd folder, it does not error if the link already exists
+systemctl link ${websitesContentFolder}/routingengine/cyclestreets@.service
 
 # Check the local routing service
 # The status check produces an error if it is not running, so briefly turn off abandon-on-error to catch and report the problem.
@@ -922,14 +919,14 @@ localRoutingStatus=$(systemctl status cyclestreets)
 # If it is not running an error value (ie not zero) is returned
 if [ $? -ne 0 ]; then
     # Start the service (using command that matches pattern setup in passwordless sudo)
-    /bin/systemctl start cyclestreets
+    /bin/systemctl start cyclestreets@9000
     echo -e "\n# Follow the routing log using: tail -f ${websitesLogsFolder}/pythonAstarPort9000.log"
 fi
 # Restore abandon-on-error
 set -e
 
 # Add the service to the system initialization, so that it will start on reboot
-systemctl enable cyclestreets
+systemctl enable cyclestreets@9000
 
 # Advise setting up
 if [ -n "${usingLocalhost}" ]; then

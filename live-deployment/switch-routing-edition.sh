@@ -143,7 +143,7 @@ echo "#	Planning to switch to edition: ${newEdition}"
 getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
 # Cycle routing restart command (should match passwordless sudo entry)
-routingServiceRestart="/bin/systemctl restart cyclestreets"
+routingServiceRestart="/bin/systemctl restart cyclestreets@9000"
 
 # Note: use a path to check the status, rather than service which needs sudo
 localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
@@ -178,7 +178,7 @@ else
 
 	# Abandon unless a restart is forced
 	if [ -z "${forceRestart}" ]; then
-	    echo "#	Force a restart by setting the -f option, or using: sudo /bin/systemctl restart cyclestreets"
+	    echo "#	Force a restart by setting the -f option, or using: sudo /bin/systemctl restart cyclestreets@9000"
 	    exit 0
 	fi
     fi
@@ -279,7 +279,7 @@ fi
 ## Configure the routing engine to use the new edition
 
 # Remove any old JSON configuration
-jsonConfig=${websitesContentFolder}/routingengine/.config.json
+jsonConfig=${websitesContentFolder}/routingengine/.config.9000.json
 rm -f $jsonConfig
 
 # Configure the routing engine to use the new edition

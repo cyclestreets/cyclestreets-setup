@@ -870,7 +870,7 @@ fi
 
 
 # Routing service configuration if not already present
-routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.json
+routingEngineConfigFile=${websitesContentFolder}/routingengine/.config.9000.json
 if [ ! -L $routingEngineConfigFile ]; then
 	# Link to the JSON config for the basic routing db, as cyclestreets user
 	${asCS} ln -s ${websitesContentFolder}/data/routing/${sampleRoutingDb}/.config.json $routingEngineConfigFile

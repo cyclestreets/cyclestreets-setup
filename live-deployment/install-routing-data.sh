@@ -558,7 +558,7 @@ else
 	# Ensure readable
 	chmod a+r ${mysqlReadableFolder}/*.tsv
 
-	# Special sequence of commands to fast load these sometimes very tables from
+	# Special sequence of commands to fast load these sometimes very large tables from
 	# https://dev.mysql.com/doc/refman/8.4/en/optimizing-myisam-bulk-data-loading.html
 	# Passwordless sudo allows these to run
 	sudo mysqladmin --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf flush-tables
@@ -569,6 +569,7 @@ else
 	biggerBuffers="--myisam_sort_buffer_size=256M --key_buffer_size=512M --read_buffer_size=64M --write_buffer_size=64M"
 
 	# Turn off all indexes on the tables
+	# The sed removes the file extension.
 	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//'| sort | xargs ${sudoMyisamchk} --keys-used=0 -rq
 
 	#	Import the data in alphabetical order
@@ -576,6 +577,9 @@ else
 
 	# Restore indexes on the tables
 	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//'| sort | xargs ${sudoMyisamchk} ${biggerBuffers} -rq
+
+	# Flush again
+	sudo mysqladmin --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf flush-tables
 
 	#	Clean up
 	rm -r ${mysqlReadableFolder}

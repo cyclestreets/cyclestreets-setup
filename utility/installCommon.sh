@@ -45,6 +45,10 @@ cyclestreets ALL = (root) NOPASSWD: /bin/systemctl start cyclestreets*
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl stop cyclestreets*
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets*
 
+# Permits restoration of routingDb using fast load data followed by index build
+cyclestreets ALL = (root) NOPASSWD: /bin/mysqladmin
+cyclestreets ALL = (root) NOPASSWD: /bin/myisamchk
+
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql
 # Passwordless sudo to chown photomap files

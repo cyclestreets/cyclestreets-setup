@@ -168,8 +168,8 @@ else
 
     # Check empty response
     if [ -z "${currentRoutingEdition}" ]; then
-	echo "#	The current edition at ${localRoutingUrl} could not be determined."
-	echo "#	This can mean the routing service crashed, starting the new edition will be tried."
+		echo "#	The current edition at ${localRoutingUrl} could not be determined."
+		echo "#	This can mean the routing service crashed, starting the new edition will be tried."
     fi
 
     # Check if the newEdition is already being served

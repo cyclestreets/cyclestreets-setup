@@ -16,7 +16,7 @@ ARGUMENTS
 		Optional routing edition of the form routingYYMMDD
 		If not provided the latest one is looked up from the importContentFolder.
 	[alias]
-		A name describing the regions covered by or purpos of this edition.
+		A name describing the regions covered by or purpose of this edition.
 		This is inherited from newbuild.sh when a symlink is used to link to a build .config.php file.
 
 DESCRIPTION

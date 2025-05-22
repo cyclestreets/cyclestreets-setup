@@ -364,6 +364,7 @@ else
 	if [ ${desiredEdition} == "latest" ]; then
 
 		# Read the folder contents, one per line, sorted alphabetically, filtered to match routing editions, getting last one
+		# !! This assumes the edition is ready for download - and that may not be the case when it is still in preparation.
 		resolvedEdition=`ssh ${portSsh} ${username}@${importHostname} ls -1 ${importMachineEditions} |  grep "^routing\([0-9]\)\{6\}$" | tail -n1`
 
 	else

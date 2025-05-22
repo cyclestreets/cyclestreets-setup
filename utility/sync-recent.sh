@@ -28,6 +28,10 @@ $download $administratorEmail $server $folder ${dumpPrefix}_csBatch_jobs_servers
 
 if [ "$restorePhotomap" = true ]; then
 
+    # Avoid mkstemp errors by adding group writing permissions
+    # This command is setup for passwordless sudo
+    sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
+
     # Tolerate errors from rsync
     set +e
     rsync -rtO --cvs-exclude ${server}:${websitesContentFolder}/data/photomap ${websitesContentFolder}/data

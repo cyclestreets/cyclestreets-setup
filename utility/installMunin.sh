@@ -29,7 +29,7 @@ if [ -f /etc/munin/plugins/packetloss ]; then
 	echo 'user root'      >> /etc/munin/plugin-conf.d/munin-node
 fi
 
-# See: http://munin-monitoring.org/wiki/munin-node-configure
+# See: https://guide.munin-monitoring.org/en/latest/reference/munin-node-configure.html?highlight=configure
 munin-node-configure --suggest --shell | sh
 
 # Grant access to munin

@@ -85,7 +85,7 @@ if [ ! -e /etc/munin/plugins/journeylinger ]; then
 	chmod o+rx /var/log/apache2/
 fi
 
-# See: http://munin-monitoring.org/wiki/munin-node-configure
+# See: https://guide.munin-monitoring.org/en/latest/reference/munin-node-configure.html?highlight=configure
 munin-node-configure --suggest --shell | sh
 /etc/init.d/munin-node restart
 echo "Munin plugins enabled as follows:"

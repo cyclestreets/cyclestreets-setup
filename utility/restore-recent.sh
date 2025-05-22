@@ -8,6 +8,7 @@ folder=${websitesBackupsFolder}
 # Fix the ownership after the photomap rsync using the same fixups as applied by
 # fallback-deployment/install-website.sh - but that requires root user.
 echo "$(date --iso-8601=seconds)	Photomap ownership" >> ${setupLogFile}
+# This command is setup for passwordless sudo
 sudo ${SCRIPTDIRECTORY}/../utility/chownPhotomapWwwdata.sh ${websitesContentFolder}
 
 # Useful binding

@@ -561,7 +561,11 @@ else
 	# Special sequence of commands to fast load these sometimes very large tables from
 	# https://dev.mysql.com/doc/refman/8.4/en/optimizing-myisam-bulk-data-loading.html
 	# Passwordless sudo allows these to run
-	sudo mysqladmin --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf flush-tables
+
+	# Flush each table
+	# Apply specifically rather than a general flusth tables, which can be costly on a busy server
+	# The basename removes the .tsv from the filenames to get the table name through the complex string escaping.
+	find ${mysqlReadableFolder} -type f -name '*.tsv' -exec sh -c "${superMysql} ${resolvedEdition} -e \"flush table ${resolvedEdition}.\$(basename \"\$1\" \".tsv\")\"" sh {} \;
 
 	# Helpful bindings
 	mysqlFolder=/var/lib/mysql/
@@ -570,16 +574,16 @@ else
 
 	# Turn off all indexes on the tables
 	# The sed removes the file extension.
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//'| sort | xargs ${sudoMyisamchk} --keys-used=0 -rq
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//' | sort | xargs ${sudoMyisamchk} --keys-used=0 -rq
 
 	#	Import the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
 
 	# Restore indexes on the tables
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//'| sort | xargs ${sudoMyisamchk} ${biggerBuffers} -rq
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//' | sort | xargs ${sudoMyisamchk} ${biggerBuffers} -rq
 
 	# Flush again
-	sudo mysqladmin --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf flush-tables
+	find ${mysqlReadableFolder} -type f -name '*.tsv' -exec sh -c "${superMysql} ${resolvedEdition} -e \"flush table ${resolvedEdition}.\$(basename \"\$1\" \".tsv\")\"" sh {} \;
 
 	#	Clean up
 	rm -r ${mysqlReadableFolder}

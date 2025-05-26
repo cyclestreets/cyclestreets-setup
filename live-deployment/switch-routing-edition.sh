@@ -15,12 +15,15 @@ OPTIONS
 DESCRIPTION
 	newEdition
 		Names a routing database of the form routingYYMMDD, eg. routing151205
-		Defaults to the latest version avaialble.
+		Defaults to the latest version avaialble, but is a required argument if the server is using multiple editions.
 EOF
 }
 
 # Flag: Leave empty to avoid restarting if already serving the requested edition
 forceRestart=
+
+# Default port (this may become an optional parameter for the script)
+editionPort=9000
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
@@ -65,7 +68,7 @@ mkdir -p $lockdir
 ### DEFAULTS ###
 
 # An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
-# If a fallbackRoutingUrl is specified, it must already be serving routes for the new edition.
+# If a fallbackRoutingUrl is specified, it must already be serving routes for the new edition, this is checked.
 fallbackRoutingUrl=
 
 
@@ -111,15 +114,6 @@ if [ ! -d ${websitesContentFolder}/data/routing -o ! -d $websitesBackupsFolder ]
 	exit 1
 fi
 
-# Local routing server
-localRoutingUrl=http://localhost:9000/
-
-# Check a local routing server is configured
-if [ -z "${localRoutingUrl}" ]; then
-	echo "#	The local routing service is not specified."
-	exit 1
-fi
-
 # Useful binding
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
@@ -127,22 +121,62 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 ## Multiple editions - result will be yes or no
 multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1;")
-if [ "${multipleEditions}" = yes ]; then
-	echo "#	This server is running multiple routing editions, which is not supported by this switcher."
-	exit 1
-fi
 
 # Check the supplied argument - if exactly one use it, else default to latest routing db
-if [ $# -eq 1 ]
-then
+if [ $# -eq 1 ]; then
 
     # Allocate that argument
     newEdition=$1
 else
 
+    # Check required parameter in this mode
+    if [ "${multipleEditions}" = yes ]; then
+	echo "#	The newEdition parameter is required when the server is using multiple editions."
+	exit 1
+    fi
+
     # Determine latest edition (the -s suppresses the tabular output)
     newEdition=$(${superMysql} -s cyclestreets<<<"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME LIKE 'routing%' order by SCHEMA_NAME desc limit 1;")
 fi
+
+# Check the format is routingYYMMDD
+if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
+  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${newEdition}."
+  exit 1
+fi
+
+# Multiple editions setup
+if [ "${multipleEditions}" = yes ]; then
+
+    # Determine the alias for the suggested edition (the -s suppresses the tabular output)
+    newEditionAlias=$(${superMysql} -s cyclestreets<<<"select alias from map_edition where routingDb = '${newEdition}' limit 1;")
+
+    # How is the alias currently being served
+    oldEditionCondition="from map_edition where alias = '${newEditionAlias}' and active = 'yes' limit 1;"
+    oldEditionDb=$(${superMysql} -s cyclestreets<<<"select routingDb ${oldEditionCondition}")
+    oldEditionOrdering=$(${superMysql} -s cyclestreets<<<"select ordering ${oldEditionCondition}")
+    oldEditionPort=$(${superMysql} -s cyclestreets<<<"select substring(regexp_substr(url, ':[0-9]+'), 2) port ${oldEditionCondition}")
+    editionPort=${oldEditionPort}
+    echo "#	New edition alias: ${newEditionAlias}, Old: db: ${oldEditionDb} port: ${oldEditionPort} ordering: ${oldEditionOrdering}"
+
+    # Obtain temporary routing from this server
+    fallbackRoutingUrl=http://imports.cyclestreets.net:9000/
+
+    echo "#	This server is running multiple routing editions, which is not supported by this switcher. (Proceeding anyway during development.)"
+    #	exit 1
+fi
+
+
+# Local routing server
+localRoutingUrl=http://localhost:${editionPort}/
+
+# Check a local routing server is configured
+if [ -z "${localRoutingUrl}" ]; then
+	echo "#	The local routing service is not specified."
+	exit 1
+fi
+# Extract the date part of the routing database
+importDate=${BASH_REMATCH[1]}
 
 # Announce edition
 echo "#	Planning to switch to edition: ${newEdition}"
@@ -150,11 +184,8 @@ echo "#	Planning to switch to edition: ${newEdition}"
 # XML for the calls to get the routing edition
 getRoutingEditionXML="<?xml version=\"1.0\" encoding=\"utf-8\"?><methodCall><methodName>get_routing_edition</methodName></methodCall>"
 
-# Cycle routing restart command (should match passwordless sudo entry)
-routingServiceRestart="/bin/systemctl restart cyclestreets@9000"
-
 # Note: use a path to check the status, rather than service which needs sudo
-localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
+localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort${editionPort}_status.log)
 if [[ ! "$localRoutingStatus" =~ serving ]]
 then
   echo "#	Note: there is no current routing service. Switchover will proceed."
@@ -186,7 +217,7 @@ else
 
 	# Abandon unless a restart is forced
 	if [ -z "${forceRestart}" ]; then
-	    echo "#	Force a restart by setting the -f option, or using: sudo /bin/systemctl restart cyclestreets@9000"
+	    echo "#	Force a restart by setting the -f option, or using: sudo /bin/systemctl restart cyclestreets@${editionPort}"
 	    exit 0
 	fi
     fi
@@ -194,15 +225,6 @@ else
     # Report edition
     echo "#	Current edition: ${currentRoutingEdition}"
 fi
-
-# Check the format is routingYYMMDD
-if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
-  echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${newEdition}."
-  exit 1
-fi
-
-# Extract the date part of the routing database
-importDate=${BASH_REMATCH[1]}
 
 ### Confirm existence of the routing import database and files
 
@@ -257,10 +279,14 @@ fi
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
 # Use fallbackRoutingUrl which is available as previously checked
-if [ -n "${fallbackRoutingUrl}" ]; then
+if [ -n "${fallbackRoutingUrl}" -a "${multipleEditions}" = yes ]; then
 
     # Use the fallback server during switch over
-    ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' where id = 1;";
+    #${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' where id = 1;";
+    # Activate new edition
+    ${superMysql} cyclestreets -e "update map_edition set active = 'yes', ordering = ${oldEditionOrdering}, url = '${fallbackRoutingUrl}' where routingDb = '${newEdition}';";
+    # Deactivate the old edition
+    ${superMysql} cyclestreets -e "update map_edition set active = 'no' where routingDb = '${oldEditionDb}';";
     echo "#	Now using fallback routing service at: ${fallbackRoutingUrl}"
 
 else
@@ -270,11 +296,14 @@ else
     echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
 
+# Script runs to here - limit of development
+echo "#	Exit anyway ${fallbackRoutingEdition}"
+exit 1
 
 ## Configure the routing engine to use the new edition
 
 # Remove any old JSON configuration
-jsonConfig=${websitesContentFolder}/routingengine/.config.9000.json
+jsonConfig=${websitesContentFolder}/routingengine/.config.${editionPort}.json
 rm -f $jsonConfig
 
 # Configure the routing engine to use the new edition
@@ -292,11 +321,14 @@ fi
 rm -f ${websitesContentFolder}/data/tempgenerated/*.ridingSurfaceCache.php
 rm -f ${websitesContentFolder}/data/tempgenerated/*.routingFactorCache.php
 
+# Cycle routing restart command (should match passwordless sudo entry)
+routingServiceRestart="/bin/systemctl restart cyclestreets@${editionPort}"
+
 # Restart the routing service
 sudo ${routingServiceRestart}
 
 # Check the local routing service is currently serving (if it is not it will generate an error forcing this script to stop)
-localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
+localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort${editionPort}_status.log)
 
 echo "#	Initial status: ${localRoutingStatus}"
 
@@ -306,7 +338,7 @@ timewaited=0
 # !! This can loop forever - perhaps because in some situations (e.g a small test dataset) the start has been very quick.
 while [[ ! "$localRoutingStatus" =~ serving ]]; do
     sleep $sleeptime
-    localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort9000_status.log)
+    localRoutingStatus=$(cat ${websitesLogsFolder}/pythonAstarPort${editionPort}_status.log)
     (( timewaited += sleeptime ))		# Increment https://tldp.org/LDP/abs/html/arithexp.html
     echo "#	Status: ${localRoutingStatus}	Seconds waited: ${timewaited}"
     if [ $sleeptime -lt 60 ]; then		# Keep less than 60

@@ -124,6 +124,14 @@ fi
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
+
+## Multiple editions - result will be yes or no
+multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1;")
+if [ "${multipleEditions}" = yes ]; then
+	echo "#	This server is running multiple routing editions, which is not supported by this switcher."
+	exit 1
+fi
+
 # Check the supplied argument - if exactly one use it, else default to latest routing db
 if [ $# -eq 1 ]
 then
@@ -245,19 +253,6 @@ fi
 
 ### Do switch-over
 
-## Multiple editions - result will be yes or no
-multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1;")
-if [ "${multipleEditions}" = yes ]; then
-
-    # Turn off multiple editions for the switchover
-    ${superMysql} cyclestreets -e "update map_config set multipleEditions='no';";
-
-    # With multiple editions turned off the map_edition table is not read, and so can be prepared for the new state
-    ${superMysql} cyclestreets -e "update map_edition set active = 'no'  where ordering > 1;";
-    ${superMysql} cyclestreets -e "update map_edition set active = 'yes' where routingDb = '${newEdition}';";
-fi
-
-
 # Clear this cache - (whose rows relate to a specific routing edition)
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
@@ -330,9 +325,6 @@ fi
 
 # Switch the website to the local server and ensure the routingDb is also set
 ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' where id = 1;";
-
-# Restore the multiple editions state
-${superMysql} cyclestreets -e "update map_config set multipleEditions='${multipleEditions}';";
 
 # Re-open the journey planner
 ${superMysql} cyclestreets -e "call openJourneyPlanner();";

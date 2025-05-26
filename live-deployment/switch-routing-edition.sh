@@ -67,8 +67,7 @@ mkdir -p $lockdir
 
 ### DEFAULTS ###
 
-# An alternative machine that can provide routing services, especially during switch-routing-edition, should be full url including port, e.g. http://imports.cyclestreets.net:9000/
-# If a fallbackRoutingUrl is specified, it must already be serving routes for the new edition, this is checked.
+# Leave blank, this will only be used on servers delivering multiple routing editions
 fallbackRoutingUrl=
 
 
@@ -147,6 +146,7 @@ fi
 
 # Multiple editions setup
 if [ "${multipleEditions}" = yes ]; then
+    echo "#	This server is running multiple routing editions"
 
     # Determine the alias for the suggested edition (the -s suppresses the tabular output)
     newEditionAlias=$(${superMysql} -s cyclestreets<<<"select alias from map_edition where routingDb = '${newEdition}' limit 1;")
@@ -161,9 +161,6 @@ if [ "${multipleEditions}" = yes ]; then
 
     # Obtain temporary routing from this server
     fallbackRoutingUrl=http://imports.cyclestreets.net:9000/
-
-    echo "#	This server is running multiple routing editions, which is not supported by this switcher. (Proceeding anyway during development.)"
-    #	exit 1
 fi
 
 
@@ -282,7 +279,6 @@ ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 if [ -n "${fallbackRoutingUrl}" -a "${multipleEditions}" = yes ]; then
 
     # Use the fallback server during switch over
-    #${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${fallbackRoutingUrl}' where id = 1;";
     # Activate new edition
     ${superMysql} cyclestreets -e "update map_edition set active = 'yes', ordering = ${oldEditionOrdering}, url = '${fallbackRoutingUrl}' where routingDb = '${newEdition}';";
     # Deactivate the old edition
@@ -295,10 +291,6 @@ else
     ${superMysql} cyclestreets -e "call closeJourneyPlanner();";
     echo "#	As there is no fallback routing server the journey planner service has been closed for the duration of the switch over."
 fi
-
-# Script runs to here - limit of development
-echo "#	Exit anyway ${fallbackRoutingEdition}"
-exit 1
 
 ## Configure the routing engine to use the new edition
 
@@ -355,11 +347,18 @@ if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
 	exit 1
 fi
 
-# Switch the website to the local server and ensure the routingDb is also set
-${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' where id = 1;";
+if [ "${multipleEditions}" = yes ]; then
 
-# Re-open the journey planner
-${superMysql} cyclestreets -e "call openJourneyPlanner();";
+    # Use newly started local routing service
+    ${superMysql} cyclestreets -e "update map_edition set url = 'http://localhost:${editionPort}' where routingDb = '${newEdition}';";
+
+else
+    # Switch the website to the local server and ensure the routingDb is also set
+    ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' where id = 1;";
+
+    # Re-open the journey planner
+    ${superMysql} cyclestreets -e "call openJourneyPlanner();";
+fi
 
 
 ### Finishing
@@ -374,7 +373,7 @@ set -e
 
 # Tinkle the update
 # The account with userId = 2 is a general notification account so that message appears to come from CycleStreets
-${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${formattedDate}, details: http://cycle.st/journey/help/osmconversion/');";
+# ${superMysql} cyclestreets -e "insert tinkle (userId, tinkle) values (2, 'Routing data updated to ${formattedDate}, details: http://cycle.st/journey/help/osmconversion/');";
 
 # Report
 echo "#	$(date)	Completed switch to ${newEdition}"

@@ -161,9 +161,16 @@ if [[ ! "$removeEdition" =~ routing([0-9]{6}) ]]; then
   echo "#	The supplied argument must specify a routing edition of the form routingYYMMDD, but this was received: ${removeEdition}."
   exit 1
 fi
-
 # Extract the date part of the routing database
 editionDate=${BASH_REMATCH[1]}
+
+# Check whether this is an active edtion
+isActive=$(${superMysql} -s cyclestreets<<<"select active from map_edition where routingDb = '${removeEdition}' limit 1;")
+if [ "$isActive" = yes ]; then
+    echo "#	Abandoning becasue edition ${removeEdition} is registered as active."
+    exit 1
+fi
+
 
 # Note when edition does not have installed data (for instance when the import did not complete)
 if [ ! -d "${websitesContentFolder}/data/routing/${removeEdition}" ]; then

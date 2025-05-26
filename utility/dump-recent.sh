@@ -83,6 +83,12 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost -R --n
 #	Create md5 hash
 openssl dgst -md5 ${dump} > ${dump}.md5
 
+# 	Locations
+dump=${websitesBackupsFolder}/${dumpPrefix}_location_cyclestreets.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost cyclestreets map_location | gzip > ${dump}
+#	Create md5 hash
+openssl dgst -md5 ${dump} > ${dump}.md5
+
 
 ##	Batch routing db
 #	Only three key tables which contain client data need backing up

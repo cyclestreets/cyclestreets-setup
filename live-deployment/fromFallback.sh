@@ -92,12 +92,7 @@ dumpPrefix=fallback
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Restart the pseudoCron at today's date
-${superMysql} cyclestreets -e "update map_config set pseudoCron = curdate();";
-
-# Restore these cronjobs - note the timings of these should be the same as in the run.sh
-echo "#	$(date)	It is recommended to manually uncomment relevant cron jobs"
-#cat <(crontab -l) <(echo "4 1 * * * ${SCRIPTDIRECTORY}/../live-deployment/daily-dump.sh") | crontab -
-#cat <(crontab -l) <(echo "34 11 * * * ${SCRIPTDIRECTORY}/../live-deployment/install-routing-data.sh") | crontab -
+${superMysql} cyclestreets -e "call resetPseudoCron();";
 
 # Finish
 echo "#	$(date)	All done"

@@ -354,7 +354,8 @@ if [ "${multipleEditions}" = 1 ]; then
 
 else
     # Switch the website to the local server and ensure the routingDb is also set
-    ${superMysql} cyclestreets -e "update map_config set routingDb = '${newEdition}', routeServerUrl = '${localRoutingUrl}' where id = 1;";
+    ${superMysql} cyclestreets -e "call setRoutingDb('${newEdition}');";
+    ${superMysql} cyclestreets -e "call setRouteServerUrl('${localRoutingUrl}');";
 
     # Re-open the journey planner
     ${superMysql} cyclestreets -e "call openJourneyPlanner();";

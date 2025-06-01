@@ -118,8 +118,8 @@ fi
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 
-## Multiple editions - result will be yes or no
-multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1;")
+## Multiple editions - result will be 1 or 0
+multipleEditions=$(${superMysql} -s cyclestreets<<<"select getMultipleRoutingEditions();")
 
 # Check the supplied argument - if exactly one use it, else default to latest routing db
 if [ $# -eq 1 ]; then
@@ -129,7 +129,7 @@ if [ $# -eq 1 ]; then
 else
 
     # Check required parameter in this mode
-    if [ "${multipleEditions}" = yes ]; then
+    if [ "${multipleEditions}" = 1 ]; then
 	echo "#	The newEdition parameter is required when the server is using multiple editions."
 	exit 1
     fi
@@ -145,7 +145,7 @@ if [[ ! "$newEdition" =~ routing([0-9]{6}) ]]; then
 fi
 
 # Multiple editions setup
-if [ "${multipleEditions}" = yes ]; then
+if [ "${multipleEditions}" = 1 ]; then
     echo "#	This server is running multiple routing editions"
 
     # Determine the alias for the suggested edition (the -s suppresses the tabular output)
@@ -276,7 +276,7 @@ fi
 ${superMysql} cyclestreets -e "truncate map_nearestPointCache;";
 
 # Use fallbackRoutingUrl which is available as previously checked
-if [ -n "${fallbackRoutingUrl}" -a "${multipleEditions}" = yes ]; then
+if [ -n "${fallbackRoutingUrl}" -a "${multipleEditions}" = 1 ]; then
 
     # Use the fallback server during switch over
     # Activate new edition
@@ -347,7 +347,7 @@ if [ "${locallyRunningEdition}" != "${newEdition}" ]; then
 	exit 1
 fi
 
-if [ "${multipleEditions}" = yes ]; then
+if [ "${multipleEditions}" = 1 ]; then
 
     # Use newly started local routing service
     ${superMysql} cyclestreets -e "update map_edition set url = 'http://localhost:${editionPort}' where routingDb = '${newEdition}';";

@@ -110,9 +110,9 @@ fi
 # The defaults-extra-file is a positional argument which must come first.
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
-# Check using multiple editions #multipleEditions
-multipleEditions=$(${superMysql} -s cyclestreets<<<"select multipleEditions from map_config where id = 1 limit 1;")
-if [ ! "${multipleEditions}" == "yes" ]; then
+## Multiple editions - result will be 1 or 0
+multipleEditions=$(${superMysql} -s cyclestreets<<<"select getMultipleRoutingEditions();")
+if [ ! "${multipleEditions}" = 1 ]; then
 	echo "# Abandoning: this script only works with multiple routing editions."
 	exit 1
 fi

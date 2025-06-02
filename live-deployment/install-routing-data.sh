@@ -30,9 +30,11 @@ ARGUMENTS
 
 	edition
 		The optional second argument can also be read from the config.
-		It identifies either a dated routing edition of the form routingYYMMDD e.g. routing161012, or an alias.
+		It identifies either a dated routing edition of the form routingYYMMDD e.g. routing161012, an alias or other keyword.
 		If not specified, it defaults to 'latest', the edition on the host having the most recent date.
 		It can also name an alias that symlinks to a dated routing edition.
+		It can also be the value 'globalregion' which is translated into the oldest active edition alias,
+		and hence useful for fetching an update of that region.
 
 DESCRIPTION
 	Checks whether there's is a new edition of routing data on the importHostname.
@@ -337,6 +339,23 @@ if [ -z "${importHostname}" -o -z "${importMachineEditions}" ]; then
 	vecho "An import machine with an editions folder must be defined in order to run an import"
 	exit 1
 fi
+
+# Look for an updated global region
+if [ "${desiredEdition}" = "globalregion" ]; then
+
+    # Find the oldest global edition
+    nextEditionAlias=$(${superMysql} -s cyclestreets<<<"select oldestEditionAlias();")
+
+    # Check null
+    if [ -z "${nextEditionAlias}" -o "${nextEditionAlias}" = NULL ]; then
+	vecho "The next global region resolved as ${nextEditionAlias}, which is not valid."
+	exit 1
+    fi
+
+    # Set as desired
+    desiredEdition=${nextEditionAlias}
+fi
+
 
 ## Retrieve the routing definition file from the import machine
 # Tolerate errors

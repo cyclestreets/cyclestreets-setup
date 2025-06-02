@@ -332,6 +332,13 @@ fi
 
 ### Stage 2 - Resolve the desired routing edition
 
+# Useful bindings
+# The defaults-extra-file is a positional argument which must come first.
+superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+smysqlcheck="mysqlcheck --defaults-extra-file=${mySuperCredFile} -hlocalhost"
+
 # Ensure import machine and definition file variables has been defined
 if [ -z "${importHostname}" -o -z "${importMachineEditions}" ]; then
 
@@ -417,13 +424,6 @@ fi
 # Avoid echo if possible as this generates cron emails
 vecho "Resolved edition: ${resolvedEdition}"
 
-
-# Useful bindings
-# The defaults-extra-file is a positional argument which must come first.
-superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-superMysqlImport="mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-smysqlshow="mysqlshow --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-smysqlcheck="mysqlcheck --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Check to see if this routing database already exists
 if ${smysqlshow} | grep "\b${resolvedEdition}\b" > /dev/null 2>&1

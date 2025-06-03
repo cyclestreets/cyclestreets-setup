@@ -355,7 +355,7 @@ fi
 if [ "${multipleEditions}" = 1 ]; then
 
     # Use newly started local routing service
-    ${superMysql} cyclestreets -e "update map_edition set url = 'http://localhost:${editionPort}/' where routingDb = '${newEdition}';";
+    ${superMysql} cyclestreets -e "call setRoutingEditionUrl('${newEdition}', 'http://localhost:${editionPort}/');";
 
 else
     # Switch the website to the local server and ensure the routingDb is also set

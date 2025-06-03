@@ -158,7 +158,7 @@ if [ "${multipleEditions}" = 1 ]; then
     fi
 
     # How is the alias currently being served
-    oldEditionDb=$(${superMysql} -s cyclestreets<<<"select routingDb from map_edition where alias = '${newEditionAlias}' and active = 'yes' limit 1;")
+    oldEditionDb=$(${superMysql} -s cyclestreets<<<"select getRoutingDbFromActiveAlias('${newEditionAlias}');")
     oldEditionOrdering=$(${superMysql} -s cyclestreets<<<"select getEditionPriority('${oldEditionDb}');")
     oldEditionPort=$(${superMysql} -s cyclestreets<<<"select routingDb2port('${oldEditionDb}');")
     editionPort=${oldEditionPort}

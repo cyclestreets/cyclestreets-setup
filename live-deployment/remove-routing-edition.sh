@@ -165,8 +165,8 @@ fi
 editionDate=${BASH_REMATCH[1]}
 
 # Check whether this is an active edtion
-isActive=$(${superMysql} -s cyclestreets<<<"select active from map_edition where routingDb = '${removeEdition}' limit 1;")
-if [ "$isActive" = yes ]; then
+isActive=$(${superMysql} -s cyclestreets<<<"select isActiveEdition('${removeEdition}');")
+if [ "$isActive" = 1 ]; then
     echo "#	Abandoning becasue edition ${removeEdition} is registered as active."
     exit 1
 fi

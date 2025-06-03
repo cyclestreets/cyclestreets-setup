@@ -149,7 +149,13 @@ if [ "${multipleEditions}" = 1 ]; then
     echo "#	This server is running multiple routing editions"
 
     # Determine the alias for the suggested edition (the -s suppresses the tabular output)
-    newEditionAlias=$(${superMysql} -s cyclestreets<<<"select alias from map_edition where routingDb = '${newEdition}' limit 1;")
+    newEditionAlias=$(${superMysql} -s cyclestreets<<<"select routingDb2alias('${newEdition}');")
+
+    # Check
+    if [ -z "${newEditionAlias}" -o "${newEditionAlias}" = NULL ]; then
+	echo "#	The edition ${newEdition} translated to: ${newEditionAlias}, which is not a valid routing edition alias."
+	exit 1
+    fi
 
     # How is the alias currently being served
     oldEditionCondition="from map_edition where alias = '${newEditionAlias}' and active = 'yes' limit 1;"
@@ -350,7 +356,7 @@ fi
 if [ "${multipleEditions}" = 1 ]; then
 
     # Use newly started local routing service
-    ${superMysql} cyclestreets -e "update map_edition set url = 'http://localhost:${editionPort}' where routingDb = '${newEdition}';";
+    ${superMysql} cyclestreets -e "update map_edition set url = 'http://localhost:${editionPort}/' where routingDb = '${newEdition}';";
 
 else
     # Switch the website to the local server and ensure the routingDb is also set

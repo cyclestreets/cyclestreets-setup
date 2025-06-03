@@ -134,20 +134,20 @@ if [[ ! "$freshEdition" =~ routing([0-9]{6}) ]]; then
   exit 1
 fi
 
-# Ensure the latest edition has ordering 1 - which is used to distinguish the daily editions from other editions.
-${superMysql} cyclestreets -e "update map_edition set ordering = 1 where routingDb = '${freshEdition}';";
+# Ensure the latest edition has top priority - which is used to distinguish the daily editions from other editions.
+${superMysql} cyclestreets -e "call setTopPriorityRoutingDb('${freshEdition}');";
 
 # Determine the stale edition
 staleEdition=$(${superMysql} -s cyclestreets<<<"select getStaleEdition();")
 
 # Abandon if no stale edition
-if [ -z "${staleEdition}" ]; then
+if [ -z "${staleEdition}" -o "${staleEdition}" = NULL ]; then
 	echo "#	There is no stale edition: ${staleEdition}, so abandoning."
 	exit 1
 fi
 
 # Abandon if the two are the same
-if [ "${freshEdition}" == "${staleEdition}" ]; then
+if [ "${freshEdition}" = "${staleEdition}" ]; then
 	echo "#	The proposed edition: ${freshEdition} is the same as already running: ${staleEdition}, so abandoning"
 	exit 1
 fi
@@ -162,7 +162,7 @@ if [ -z "${stalePort}" ]; then
 fi
 
 # Choose ports
-if [ "${stalePort}" == "8998" ]; then
+if [ "${stalePort}" = "8998" ]; then
 	freshPort=8999
 else
 	freshPort=8998

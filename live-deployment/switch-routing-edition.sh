@@ -287,7 +287,7 @@ if [ -n "${fallbackRoutingUrl}" -a "${multipleEditions}" = 1 ]; then
     # Activate new edition
     ${superMysql} cyclestreets -e "update map_edition set active = 'yes', ordering = ${oldEditionOrdering}, url = '${fallbackRoutingUrl}' where routingDb = '${newEdition}';";
     # Deactivate the old edition
-    ${superMysql} cyclestreets -e "update map_edition set active = 'no' where routingDb = '${oldEditionDb}';";
+    ${superMysql} cyclestreets -e "call deactivateRoutingEdition('${oldEditionDb}');";
     echo "#	Now using fallback routing service at: ${fallbackRoutingUrl}"
 
 else

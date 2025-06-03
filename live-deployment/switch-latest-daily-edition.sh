@@ -125,7 +125,7 @@ then
 else
 
     # Determine latest edition (the -s suppresses the tabular output)
-    freshEdition=$(${superMysql} -s cyclestreets<<<"select routingDb from map_edition order by routingDb desc limit 1;")
+    freshEdition=$(${superMysql} -s cyclestreets<<<"select getLatestRegisteredEdition();")
 fi
 
 # Check the format is routingYYMMDD

@@ -138,7 +138,7 @@ fi
 ${superMysql} cyclestreets -e "update map_edition set ordering = 1 where routingDb = '${freshEdition}';";
 
 # Determine the stale edition
-staleEdition=$(${superMysql} -s cyclestreets<<<"select routingDb from map_edition where ordering = 1 and active = 'yes' order by routingDb desc limit 1;")
+staleEdition=$(${superMysql} -s cyclestreets<<<"select getStaleEdition();")
 
 # Abandon if no stale edition
 if [ -z "${staleEdition}" ]; then

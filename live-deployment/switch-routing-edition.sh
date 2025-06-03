@@ -161,7 +161,7 @@ if [ "${multipleEditions}" = 1 ]; then
     oldEditionCondition="from map_edition where alias = '${newEditionAlias}' and active = 'yes' limit 1;"
     oldEditionDb=$(${superMysql} -s cyclestreets<<<"select routingDb ${oldEditionCondition}")
     oldEditionOrdering=$(${superMysql} -s cyclestreets<<<"select ordering ${oldEditionCondition}")
-    oldEditionPort=$(${superMysql} -s cyclestreets<<<"select substring(regexp_substr(url, ':[0-9]+'), 2) port ${oldEditionCondition}")
+    oldEditionPort=$(${superMysql} -s cyclestreets<<<"select routingDb2port('${oldEditionDb}');")
     editionPort=${oldEditionPort}
     echo "#	New edition alias: ${newEditionAlias}, Old: db: ${oldEditionDb} port: ${oldEditionPort} ordering: ${oldEditionOrdering}"
 

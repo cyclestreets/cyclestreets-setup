@@ -286,7 +286,8 @@ if [ -n "${fallbackRoutingUrl}" -a "${multipleEditions}" = 1 ]; then
     # Use the fallback server during switch over
     # Activate new edition
     ${superMysql} cyclestreets -e "call setRoutingEditionUrl('${newEdition}', '${fallbackRoutingUrl}');";
-    ${superMysql} cyclestreets -e "update map_edition set active = 'yes', ordering = ${oldEditionOrdering} where routingDb = '${newEdition}';";
+    ${superMysql} cyclestreets -e "call setRoutingEditionPriority('${newEdition}', ${oldEditionOrdering});";
+    ${superMysql} cyclestreets -e "call activateRoutingEdition('${newEdition}');";
     # Deactivate the old edition
     ${superMysql} cyclestreets -e "call deactivateRoutingEdition('${oldEditionDb}');";
     echo "#	Now using fallback routing service at: ${fallbackRoutingUrl}"

@@ -185,7 +185,7 @@ if [ ! -L "${importMachineEditions}/${latestEdition}" ]; then
     ln -s ${websitesContentFolder}/data/routing/${latestEdition} ${importMachineEditions}/${latestEdition}
 fi
 
-# Add the new row to the map_edition table
+# Register the new edition
 if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${latestEdition}', '${editionAlias}')" cyclestreets
 then
     echo "#	There was a problem adding the new edition: ${latestEdition}. The import has not completed."

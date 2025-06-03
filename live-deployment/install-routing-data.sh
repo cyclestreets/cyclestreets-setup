@@ -742,7 +742,7 @@ fi
 
 # When the routingDb has been added
 if [ -z "${skipRoutingDb}" ]; then
-	# Add the new row to the map_edition table
+	# Register the edition
 	if ! ${superMysql} --batch --skip-column-names -e "call addNewEdition('${resolvedEdition}', '${editionAlias}')" cyclestreets
 	then
 		echo "#	$(date)	There was a problem adding the new edition: ${resolvedEdition}, alias: ${editionAlias}. The import install did not complete."

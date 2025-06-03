@@ -262,7 +262,7 @@ if [ -n "${importContentFolder}" -a -d ${importContentFolder}/output/ ]; then
     rm -f ${importContentFolder}/output/${removeEdition}.tar.gz.md5
 fi
 
-# Remove from the map_edition table
+# Unregister the edition
 if ! ${superMysql} --batch --skip-column-names -e "call removeOldEdition('${removeEdition}')" cyclestreets
 then
     echo "#	There was a problem removing the edition: ${removeEdition}."

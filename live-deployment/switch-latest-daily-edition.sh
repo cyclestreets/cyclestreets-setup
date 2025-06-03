@@ -153,7 +153,7 @@ if [ "${freshEdition}" == "${staleEdition}" ]; then
 fi
 
 # Determine the port of the stale edition
-stalePort=$(${superMysql} -s cyclestreets<<<"select substring(regexp_substr(url, ':[0-9]+'), 2) port from map_edition where routingDb = '${staleEdition}';")
+stalePort=$(${superMysql} -s cyclestreets<<<"select routingDb2port('${staleEdition}');")
 
 # Abandon if no stale port
 if [ -z "${stalePort}" ]; then

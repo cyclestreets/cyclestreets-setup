@@ -589,7 +589,7 @@ else
 	# Helpful bindings
 	mysqlFolder=/var/lib/mysql/
 	sudoMyisamchk="sudo myisamchk --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf"
-	biggerBuffers="--myisam_sort_buffer_size=512M --key_buffer_size=5G --read_buffer_size=256M --write_buffer_size=256M"
+	biggerBuffers="--myisam_sort_buffer_size=1G --key_buffer_size=12G --read_buffer_size=1G --write_buffer_size=1G"
 
 	# Turn off all indexes on the tables
 	# The sed removes the file extension.

@@ -614,7 +614,7 @@ else
 	# Build the photo index
 	vecho "Building the photosEnRoute tables"
 	${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-	${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
+#	${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
 fi
 
 ### Stage 6 - create the planet database if provided

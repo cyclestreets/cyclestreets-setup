@@ -272,7 +272,7 @@ sudo ${staleRoutingServiceStop}
 
 
 # Photos en route index
-${superMysql} ${freshEdition} -e "call indexPhotos(0);";
+#${superMysql} ${freshEdition} -e "call indexPhotos(0);";
 
 # Remove the stale edition
 if [ -z "${keepStale}" ]; then

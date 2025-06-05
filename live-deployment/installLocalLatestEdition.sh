@@ -170,7 +170,7 @@ ${superMysql} ${latestEdition} < ${websitesContentFolder}/documentation/schema/n
 # Build a limited photo index
 echo "#	$(date)	Building a limited photosEnRoute index"
 ${superMysql} ${latestEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
-${superMysql} ${latestEdition} -e "call indexPhotos(100);"
+#${superMysql} ${latestEdition} -e "call indexPhotos(100);"
 
 
 #	Report finding

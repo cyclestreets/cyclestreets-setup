@@ -258,6 +258,9 @@ fi
 # Remove from the import output (may only be a symlink from there)
 if [ -n "${importContentFolder}" -a -d ${importContentFolder}/output/ ]; then
     rm -rf ${importContentFolder}/output/${removeEdition}
+    rm -f ${importContentFolder}/output/${removeEdition}.tar.zst
+    rm -f ${importContentFolder}/output/${removeEdition}.tar.zst.md5
+    # Filenames older than [:]  8 Jun 2025
     rm -f ${importContentFolder}/output/${removeEdition}.tar.gz
     rm -f ${importContentFolder}/output/${removeEdition}.tar.gz.md5
 fi

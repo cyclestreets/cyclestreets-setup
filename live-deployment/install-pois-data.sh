@@ -320,7 +320,7 @@ fi
 
 # Useful bindings
 routingFolder=${websitesContentFolder}/data/routing
-neTarball=${resolvedEdition}.tar.gz
+neTarball=${resolvedEdition}.tar.zst
 neTarballMd5=${neTarball}.md5
 
 # Avoid the download for localhost

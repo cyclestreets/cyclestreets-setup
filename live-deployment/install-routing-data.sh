@@ -77,10 +77,6 @@ skipPlanet=
 # Default to blank so that the external is installed if available
 skipExternal=
 
-# Files
-tableGzip=table.tar.gz
-graphGzip=graph.tar.gz
-
 # Default to this hardwired location - as live installs cannot expect the config option: importContentFolder
 importMachineEditions=/websites/www/import/output
 
@@ -276,7 +272,6 @@ if [ -n "${testargs}" ]; then
 	echo "#	\$2=${2}";
 	echo "#	";
 	echo "#	desiredEdition=${desiredEdition}";
-	echo "#	graphGzip=${graphGzip}";
 	echo "#	importHostname=${importHostname}";
 	echo "#	importMachineEditions=${importMachineEditions}";
 	echo "#	keepRoutingDuringUpdate=${keepRoutingDuringUpdate}";
@@ -291,7 +286,6 @@ if [ -n "${testargs}" ]; then
 	echo "#	skipPlanet=${skipPlanet}";
 	echo "#	skipExternal=${skipExternal}";
 	echo "#	sshPort=${sshPort}";
-	echo "#	tableGzip=${tableGzip}";
 	echo "#	testargs=${testargs}";
 	echo "#	truncateRoutingLog=${truncateRoutingLog}";
 	echo "#	verbose=${verbose}";

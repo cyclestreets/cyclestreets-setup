@@ -50,9 +50,6 @@ verbose=1
 notifyEmail=
 sshPort=
 
-# Files
-tableGzip=table.tar.gz
-
 # Default to this hardwired location - as live installs cannot expect the config option: importContentFolder
 importMachineEditions=/websites/www/import/output
 

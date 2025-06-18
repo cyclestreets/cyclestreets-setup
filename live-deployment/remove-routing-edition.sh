@@ -167,8 +167,9 @@ editionDate=${BASH_REMATCH[1]}
 # Check whether this is an active edtion
 isActive=$(${superMysql} -s cyclestreets<<<"select isActiveEdition('${removeEdition}');")
 if [ "$isActive" = 1 ]; then
-    echo "#	Abandoning becasue edition ${removeEdition} is registered as active."
-    exit 1
+    echo "#	Abandoning without setting error, the edition ${removeEdition} is registered as active."
+    # Exit cleanly, not setting error status
+    exit 0
 fi
 
 

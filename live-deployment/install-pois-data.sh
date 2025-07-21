@@ -417,6 +417,9 @@ if [ -n "$secureFilePriv" ]; then
 	mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
 fi
 
+# Ensure readable
+chmod a+r ${mysqlReadableFolder}/*.tsv
+
 #	Import the data
 find ${mysqlReadableFolder} -name '*.tsv' -type f -print | xargs ${superMysqlImport} ${externalDb}
 

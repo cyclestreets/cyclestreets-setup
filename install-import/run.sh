@@ -218,6 +218,7 @@ then
 fi
 
 # Check Osmosis has been installed
+# https://wiki.openstreetmap.org/wiki/Osmosis
 # To force a reinstall delete the current installation:
 # rm -r /usr/local/bin/osmosis
 # rm -r "`readlink -f /usr/local/osmosis/current`"
@@ -227,7 +228,6 @@ osmosisVersion=0.48.3
 if [ ! -L /usr/local/bin/osmosis ]; then
 
     # Announce Osmosis installation
-    # !! Osmosis uses MySQL and that needs to be configured to use character_set_server=utf8 and collation_server=utf8_unicode_ci which is currently set up (machine wide) by website installation.
     echo "#	$(date)	CycleStreets / Osmosis installation"
 
     # Prepare the apt index

@@ -208,8 +208,7 @@ prompt=\\u@\\h [\\d]>\\_
 [mysqld]
 skip-log-bin
 
-# Use tables rather than files to log problems
-log_output=table
+# Slow query logging
 slow_query_log = ON
 long_query_time = 1
 

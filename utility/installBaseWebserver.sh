@@ -208,6 +208,10 @@ prompt=\\u@\\h [\\d]>\\_
 [mysqld]
 skip-log-bin
 
+# Default engine
+default-storage-engine=myisam
+default-tmp-storage-engine=myisam
+
 # Slow query logging
 slow_query_log = ON
 long_query_time = 1

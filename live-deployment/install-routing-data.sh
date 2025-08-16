@@ -544,7 +544,7 @@ else
 	vecho "Installing the routing database: ${resolvedEdition}"
 
 	#	Create the database (which will be empty for now) and set default collation
-	${superMysql} -e "create database ${resolvedEdition} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+	${superMysql} -e "create database ${resolvedEdition};"
 
 	#	Load table definisions
 	${superMysql} ${resolvedEdition} < table/tableDefinitions.sql
@@ -635,7 +635,7 @@ if [ -d ${newEditionFolder}/planet ]; then
 	cd ${newEditionFolder}
 
 	#	Create the database (which will be empty for now) and set default collation
-	${superMysql} -e "create database ${planetDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+	${superMysql} -e "create database ${planetDb};"
 
 	#	Load table definisions
 	${superMysql} ${planetDb} < planet/tableDefinitions.sql

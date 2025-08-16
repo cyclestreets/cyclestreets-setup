@@ -57,9 +57,9 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost ${samp
 #	Advise
 echo "#	Actions required next:"
 echo "#	End user will need to create a database and load the data into it using:"
-echo "mysql -e \"create database ${sampleRoutingDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;\""
+echo "mysql -e \"create database ${sampleRoutingDb};\""
 echo "gunzip < ${sampleRoutingDb}Project.sql.gz | mysql ${sampleRoutingDb}"
-echo "mysql -e \"create database ${samplePlanetDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;\""
+echo "mysql -e \"create database ${samplePlanetDb};\""
 echo "gunzip < ${samplePlanetDb}Project.sql.gz | mysql ${samplePlanetDb}"
 
 # Confirm end of script

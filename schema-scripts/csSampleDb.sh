@@ -52,7 +52,7 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 #	Create the new database
 ${superMysql} -e "drop database if exists ${sampleDb};"
-${superMysql} -e "create database ${sampleDb} default character set utf8mb4 default collate utf8mb4_unicode_ci;"
+${superMysql} -e "create database ${sampleDb};"
 
 #	Load a copy of the cyclestreets database into the new db
 gunzip < ${csBackup} | ${superMysql} ${sampleDb}

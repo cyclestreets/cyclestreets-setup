@@ -647,7 +647,7 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Create cyclestreets database
 echo "# Create cyclestreets database"
-${superMysql} -e "create database if not exists cyclestreets default character set utf8mb4 collate utf8mb4_unicode_ci;"
+${superMysql} -e "create database if not exists cyclestreets;"
 
 # Credentials for the website to access the database
 mysqlWebsiteUsername=website
@@ -836,7 +836,7 @@ if [ -n "${batchDb}" ] && ! ${superMysql} --batch --skip-column-names -e "SHOW D
 
     # Create batch database
     echo "#	Create ${batchDb} database"
-    ${superMysql} -e "create database if not exists ${batchDb} default character set utf8mb4 collate utf8mb4_unicode_ci;"
+    ${superMysql} -e "create database if not exists ${batchDb};"
 
     # Grants; note that the FILE privilege (which is not database-specific) is required so that table contents can be loaded from a file
     ${superMysql} -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, LOCK TABLES, CREATE VIEW on \`${batchDb}\` . * to '${mysqlWebsiteUsername}'@'localhost';"
@@ -855,7 +855,7 @@ if ! ${superMysql} --batch --skip-column-names -e "SHOW DATABASES LIKE '${sample
 then
     # Create sampleRoutingDb database
     echo "#	Create ${sampleRoutingDb} database"
-    ${superMysql} -e "create database if not exists ${sampleRoutingDb} default character set utf8mb4 collate utf8mb4_unicode_ci;"
+    ${superMysql} -e "create database if not exists ${sampleRoutingDb};"
 
     # Load data
     echo "#	Load ${sampleRoutingDb} data"

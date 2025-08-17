@@ -140,7 +140,7 @@ ${superMysql} < $SCRIPTDIRECTORY/osboundaryline.sql
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 echo "#	$(date)	Import GeoPackage into MySQL"
-ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco GEOMETRY_NAME=geometry
+ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco ENGINE=InnoDB -lco GEOMETRY_NAME=geometry
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"

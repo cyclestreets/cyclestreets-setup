@@ -2,7 +2,8 @@
 
 ```shell
 # user@machine$
-sudo /opt/cyclestreets-setup/install-osboundaryline/run.sh
+cd /opt/cyclestreets-setup/install-osboundaryline
+sudo ./run.sh
 ```
 
 https://osdatahub.os.uk/downloads/open/BoundaryLine

@@ -140,7 +140,7 @@ ${superMysql} < $SCRIPTDIRECTORY/osboundaryline.sql
 # Import gpkg data to MySQL
 # This imports all tables, and converts geometries to WGS84 (SRID=4326)
 echo "#	$(date)	Import GeoPackage into MySQL"
-ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco ENGINE=InnoDB -lco GEOMETRY_NAME=geometry
+ogr2ogr -progress -f MySQL MySQL:osboundaryline,user=root,password=$mysqlRootPassword $gpkgFile -t_srs EPSG:4326 -update -overwrite -lco ENGINE=InnoDB -lco GEOMETRY_NAME=geometry -lco ENGINE=InnoDB
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions (takes about an hour)"
@@ -174,7 +174,7 @@ echo "#	$(date)	Ordnance Survey of Ireland"
 # But is now copied from calling folder earlier in this script
 
 # Load into csExternal
-ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" $irelandFolder/$irelandFile -nln 'ireland_counties' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry
+ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" $irelandFolder/$irelandFile -nln 'ireland_counties' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -lco ENGINE=InnoDB
 
 # Convert SRID
 echo "#	$(date)	Convert to SRID zero to use MySQL spatial index and all spatial functions"
@@ -195,7 +195,7 @@ cd osni
 wget -O OSNI_Open_Data_-_Largescale_Boundaries_-_Local_Government_Districts_2012.geojson https://osni-spatialni.opendata.arcgis.com/datasets/eaa08860c50045deb8c4fdc7fa3dac87_2.geojson?outSR=%7B%22latestWkid%22%3A29902%2C%22wkid%22%3A29900%7D
 
 # Load into csExternal
-ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" OSNI_Open_Data_-_Largescale_Boundaries_-_Local_Government_Districts_2012.geojson -nln 'northern_ireland' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry
+ogr2ogr -progress -f MySQL "MySQL:csExternal,user=root,password=$mysqlRootPassword" OSNI_Open_Data_-_Largescale_Boundaries_-_Local_Government_Districts_2012.geojson -nln 'northern_ireland' -t_srs EPSG:4326 -update -overwrite -lco FID=id -lco GEOMETRY_NAME=geometry -lco ENGINE=InnoDB
 
 
 # Convert SRID

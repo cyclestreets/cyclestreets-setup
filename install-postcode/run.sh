@@ -1,5 +1,6 @@
 #!/bin/bash
 # Script to install CycleStreets Postcodes.
+# Does NOT need to be run as root
 usage()
 {
     cat << EOF
@@ -18,18 +19,13 @@ GET DATA
 Official
 --------
 (Source tends to move around see Alternative)
-Download the archived csv version of ONSPD data from:
-https://geoportal.statistics.gov.uk/datasets/ons-postcode-directory-november-2023
-
-On 11 Oct 2024 the most recent is Aug 2024 found via this search:
-https://geoportal.statistics.gov.uk/search?collection=Dataset&sort=-created&tags=all(PRD_ONSPD%2CAUG_2024)
-231MB download. The .csv is 1.4GB.
-
-Extract the .csv from the Data folder within the archive to ${onsFolder}/ONSdata.csv
+This searches for: ons postcode directory
+https://geoportal.statistics.gov.uk/search?q=ons%20postcode%20directory&sort=Date%20Created%7Ccreated%7Cdesc
+For Aug 2025 the .csv was 1.19GB. Save it to /import/ONSdata/ONSdata.csv
 
 Alternative
 -----------
-This is an alternative source of data, but latest is Nov-2022:
+This is an alternative source of data, latest is Aug-2025:
 http://parlvid.mysociety.org/os/
 
 EOF
@@ -55,12 +51,6 @@ shift $((OPTIND-1))
 
 
 echo "#	CycleStreets Postcode installation $(date)"
-
-# Ensure this script is run as root
-if [ "$(id -u)" != "0" ]; then
-    echo "#	This script must be run as root." 1>&2
-    exit 1
-fi
 
 # Bomb out if something goes wrong
 set -e
@@ -109,20 +99,20 @@ if [ ! -r ONSdata.csv ]; then
 The following contains dates that will obviously need updating for next time.
 
 cd ${onsFolder}
-wget http://parlvid.mysociety.org/os/ONSPD/2018-08.zip
+wget http://parlvid.mysociety.org/os/ONSPD/2025-08.zip
 
 # Extract this one file
-unzip 2018-08.zip Data/ONSPD_AUG_2018_UK.csv
-rm 2018-08.zip
+unzip 2025-08.zip Data/ONSPD_AUG_2025_UK.csv
+rm 2025-08.zip
 
 # Move it
-mv Data/ONSPD_AUG_2018_UK.csv ./ONSdata.csv
+mv Data/ONSPD_AUG_2025_UK.csv ./ONSdata.csv
 
 # Clear up (other folders Documents/ User\ Guide/ only necessary when everything was unzipped)
 rm -r Data/
 
 # Re-run this script
-sudo ${ScriptHome}/install-postcode/run.sh
+${ScriptHome}/install-postcode/run.sh
 ";
 	# Terminate the script
 	exit 1;
@@ -168,6 +158,7 @@ then
 fi
 
 # Load the table definitions
+echo "#	Loading the table definitions"
 ${superMysql} ${externalDb} < tableDefinitions.sql
 
 
@@ -175,17 +166,15 @@ ${superMysql} ${externalDb} < tableDefinitions.sql
 echo "#	Loading CSV file"
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege.
-# The --local option is needed in some situations.
-# May also need:
-# set global local_infile=true;
-mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\r\n" --ignore-lines=1 --local ${externalDb} ${onsFolder}/ONSdata.csv
+# -ignore is needed as the Aug 2025 contained duplicates for e.g KY7 5TA
+mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\n" --ignore-lines=1 --ignore  ${externalDb} ${onsFolder}/ONSdata.csv
 
 # NB Mysql equivalent is:
-## LOAD DATA INFILE '/websites/www/content/import/ONSdata/ONSdata.csv' INTO table csExternal.ONSdata FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\r\n' IGNORE 1 LINES;
+## load data infile '/websites/www/content/import/ONSdata/ONSdata.csv' ignore into table csExternal.ONSdata fields terminated by ',' optionally enclosed by '"' lines terminated by '\n' ignore 1 lines;
 ## SHOW WARNINGS;
 
 # Remove the data file
-rm ${onsFolder}/ONSdata.csv
+rm -f ${onsFolder}/ONSdata.csv
 
 # Tidy extracted data into postcode table
 echo "#	Creating new postcode table"

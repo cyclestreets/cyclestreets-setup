@@ -161,20 +161,46 @@ fi
 echo "#	Loading the table definitions"
 ${superMysql} ${externalDb} < tableDefinitions.sql
 
+# Handle secure-file-priv, if set
+# Use of set from comment by dorsh:
+# https://stackoverflow.com/a/9558954/225876
+# This puts the values of the two columns in $1 and $2
+set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
+secureFilePriv=$2
+
+# If there's a secure folder then move the csv file there
+if [ -n "$secureFilePriv" ]; then
+
+	# Secure readable location
+	mysqlReadableFolder=${secureFilePriv}
+
+	# Ensure it exists
+	mkdir -p ${mysqlReadableFolder}
+
+	# Move csv file there
+	mv ${onsFolder}/ONSdata.csv ${mysqlReadableFolder}
+
+	# Set path
+	ONSdataFile=${mysqlReadableFolder}/ONSdata.csv
+
+else
+	# Set path
+	ONSdataFile=${onsFolder}/ONSdata.csv
+fi
 
 # Narrative
 echo "#	Loading CSV file"
 
 # Load the CSV file. Need to use root as website doesn't have LOAD DATA privilege.
 # -ignore is needed as the Aug 2025 contained duplicates for e.g KY7 5TA
-mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\n" --ignore-lines=1 --ignore  ${externalDb} ${onsFolder}/ONSdata.csv
+mysqlimport --defaults-extra-file=${mySuperCredFile} -hlocalhost --fields-optionally-enclosed-by='"' --fields-terminated-by=',' --lines-terminated-by="\n" --ignore-lines=1 --ignore  ${externalDb} ${ONSdataFile}
 
 # NB Mysql equivalent is:
 ## load data infile '/websites/www/content/import/ONSdata/ONSdata.csv' ignore into table csExternal.ONSdata fields terminated by ',' optionally enclosed by '"' lines terminated by '\n' ignore 1 lines;
 ## SHOW WARNINGS;
 
 # Remove the data file
-rm -f ${onsFolder}/ONSdata.csv
+rm -f ${ONSdataFile}
 
 # Tidy extracted data into postcode table
 echo "#	Creating new postcode table"

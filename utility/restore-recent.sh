@@ -20,6 +20,7 @@ echo "$(date --iso-8601=seconds)	Replacing ${csFallbackDb} db" >> ${setupLogFile
 ${superMysql} -e "drop database if exists ${csFallbackDb};";
 ${superMysql} -e "create database ${csFallbackDb};";
 gunzip < /websites/www/backups/${dumpPrefix}_cyclestreets.sql.gz | ${superMysql} ${csFallbackDb}
+echo "$(date --iso-8601=seconds)	Replaced ${csFallbackDb} db" >> ${setupLogFile}
 
 #	Stop duplicated cronning from the backup machine
 ${superMysql} ${csFallbackDb} -e "update map_config set pseudoCron = null;";

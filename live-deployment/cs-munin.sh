@@ -65,30 +65,31 @@ fi
 
 # Outputs the config of this plugin
 output_config() {
-    echo "graph_title CycleStreets Usage"
-    echo "graph_category CycleStreets"
-    echo "itineraries.label Itineraries per 5 mins"
-    echo "journeys.label Journeys per 5 mins"
-    echo "failedJourneys.label Failed journeys per 5 mins"
-    echo "failedJourneys.warning 1"
-    echo "failedJourneys.critical 200"
-    echo "errors.label Errors per 5 mins"
-    echo "errors.warning 1"
-    echo "errors.critical 5"
+	echo "graph_title CycleStreets usage"
+	echo "graph_vlabel Count"
+	echo "graph_category cyclestreets"
+	echo "itineraries.label Itineraries per 5 mins"
+	echo "journeys.label Journeys per 5 mins"
+	echo "failedJourneys.label Failed journeys per 5 mins"
+	echo "failedJourneys.warning 1"
+	echo "failedJourneys.critical 200"
+	echo "errors.label Errors per 5 mins"
+	echo "errors.warning 1"
+	echo "errors.critical 5"
 }
 
 # Outputs the statistics
 output_values() {
-    printf "itineraries.value %d\n" $(number_of_itineraries)
-    printf "journeys.value %d\n" $(number_of_journeys)
-    printf "failedJourneys.value %d\n" $(number_of_failed_journeys)
-    printf "errors.value %d\n" $(number_of_errors)
+	printf "itineraries.value %d\n" $(number_of_itineraries)
+	printf "journeys.value %d\n" $(number_of_journeys)
+	printf "failedJourneys.value %d\n" $(number_of_failed_journeys)
+	printf "errors.value %d\n" $(number_of_errors)
 }
 
 # Explain arguments to this script
 output_usage() {
-    printf >&2 "%s - CycleStreets graphs\n" ${0##*/}
-    printf >&2 "Usage: %s [config]\n" ${0##*/}
+	printf >&2 "%s - CycleStreets graphs\n" ${0##*/}
+	printf >&2 "Usage: %s [config]\n" ${0##*/}
 }
 
 ## Internal functions that provide the statistics
@@ -99,26 +100,26 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # Number of itineraries in a five minute period
 number_of_itineraries() {
-    #${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";
-    python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countItinerariesLastFiveMinutes
+	#${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";
+	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countItinerariesLastFiveMinutes
 }
 
 # Number of journeys in a five minute period
 number_of_journeys() {
-    #${superMysql} cyclestreets -sNe "select countJourneysLastFiveMinutes()";
-    python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countJourneysLastFiveMinutes
+	#${superMysql} cyclestreets -sNe "select countJourneysLastFiveMinutes()";
+	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countJourneysLastFiveMinutes
 }
 
 # Number of journeys in a five minute period
 number_of_failed_journeys() {
-    #${superMysql} cyclestreets -sNe "select countFailedJourneysLastFiveMinutes()";
-    python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countFailedJourneysLastFiveMinutes
+	#${superMysql} cyclestreets -sNe "select countFailedJourneysLastFiveMinutes()";
+	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countFailedJourneysLastFiveMinutes
 }
 
 # Number of errors in a five minute period
 number_of_errors() {
-    #${superMysql} cyclestreets -sNe "select countErrorsLastFiveMinutes()";
-    python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countErrorsLastFiveMinutes
+	#${superMysql} cyclestreets -sNe "select countErrorsLastFiveMinutes()";
+	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countErrorsLastFiveMinutes
 }
 
 

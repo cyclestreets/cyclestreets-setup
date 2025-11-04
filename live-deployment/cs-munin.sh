@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script has ${placeholder} fields that are replaced by an installer script.
+#
+#
 #	Generates CycleStreets data for munin
 #
 # SYNOPSIS
@@ -30,34 +33,11 @@
 # https://wiki.cyclestreets.net/ServerMonitoring
 
 ### CREDENTIALS ###
-
-# Get the script directory see: http://stackoverflow.com/a/246128/180733
-# The multi-line method of geting the script directory is needed because this script is likely symlinked
-SOURCE="${BASH_SOURCE[0]}"
-DIR="$( dirname "$SOURCE" )"
-while [ -h "$SOURCE" ]
-do 
-  SOURCE="$(readlink "$SOURCE")"
-  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
-  DIR="$( cd -P "$( dirname "$SOURCE"  )" && pwd )"
-done
-DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-
-# Use this to remove the ../
-ScriptHome=$(readlink -f "${DIR}/..")
-
-# Name of the credentials file
-configFile=${ScriptHome}/.config.sh
-
-# Generate your own credentials file by copying from .config.sh.template
-if [ ! -x ${configFile} ]; then
-    echo "#	The config file, ${configFile}, does not exist or is not executable - copy your own based on the ${configFile}.template file."
-    exit 1
+# These should have already been loaded by an installing script
+if [ -z "${ScriptHome}" ]; then
+	echo "#	Munin/ journeylinger: ScriptHome is one of several placeholders that need replacing with values by the installer."
+	exit 1
 fi
-
-# Load the credentials
-. ${configFile}
-
 
 ## Main body of script
 

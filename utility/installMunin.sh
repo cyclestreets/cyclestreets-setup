@@ -8,11 +8,37 @@ apt install -y libdbi-perl libdbd-mysql-perl
 # Munin
 apt install -y munin-node munin-plugins-extra
 
-# Symlink the cyclestreets charts, clearing away any old ones first
-rm -f /etc/munin/plugins/cyclestreets
-ln -s /opt/cyclestreets-setup/live-deployment/cs-munin.sh /etc/munin/plugins/cyclestreets
-rm -f /etc/munin/plugins/journeylinger
-ln -s /opt/cyclestreets-setup/live-deployment/cs-munin-journeylinger.sh /etc/munin/plugins/journeylinger
+# Folders for munin plugin links and scripts
+pLinks=/etc/munin/plugins/
+pScripts=/usr/share/munin/plugins/
+
+## CycleStreets Usage plugin
+usageLink=${pLinks}cyclestreets
+usageScript=${pScripts}cyclestreets
+rm -f ${usageLink}
+cp ${ScriptHome}/live-deployment/cs-munin.sh ${usageScript}
+sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${usageScript}
+sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${usageScript}
+sed -i "s|\${apiHostHttps}|${apiHostHttps}|g" ${usageScript}
+sed -i "s|\${apiHostname}|${apiHostname}|g" ${usageScript}
+sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
+ln -s ${usageScript} ${usageLink}
+
+## CycleStreets Journey Linger plugin
+# If not provided use file based on hostname
+if [ -z "${journeysLog}" ]; then
+	journeysLog="${csHostname}-access.log"
+fi
+lingerLink=${pLinks}journeylinger
+lingerScript=${pScripts}journeylinger
+rm -f ${lingerLink}
+cp ${ScriptHome}/live-deployment/cs-munin-journeylinger.sh ${lingerScript}
+sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${lingerScript}
+sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${lingerScript}
+sed -i "s|\${websitesLogsFolder}|${websitesLogsFolder}|g" ${lingerScript}
+sed -i "s|\${journeysLog}|${journeysLog}|g" ${lingerScript}
+ln -s ${lingerScript} ${lingerLink}
+
 
 # Some specific Plugins
 if [ -f /etc/munin/plugins/dnsresponsetime ]; then

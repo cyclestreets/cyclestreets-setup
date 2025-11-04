@@ -24,6 +24,18 @@ sed -i "s|\${apiHostname}|${apiHostname}|g" ${usageScript}
 sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
 ln -s ${usageScript} ${usageLink}
 
+## Photomap Usage plugin
+usageLink=${pLinks}photomap
+usageScript=${pScripts}photomap
+rm -f ${usageLink}
+cp ${ScriptHome}/live-deployment/cs-munin-photomap.sh ${usageScript}
+sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${usageScript}
+sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${usageScript}
+sed -i "s|\${apiHostHttps}|${apiHostHttps}|g" ${usageScript}
+sed -i "s|\${apiHostname}|${apiHostname}|g" ${usageScript}
+sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
+ln -s ${usageScript} ${usageLink}
+
 ## CycleStreets Journey Linger plugin
 # If not provided use file based on hostname
 if [ -z "${journeysLog}" ]; then

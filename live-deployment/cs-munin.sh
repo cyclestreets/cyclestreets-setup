@@ -67,7 +67,7 @@ fi
 output_config() {
 	echo "graph_title CycleStreets usage"
 	echo "graph_vlabel Count"
-	echo "graph_category cyclestreets"
+	echo "graph_category cyclestreets"	# Category groups are all lower cased (not explicit in munin documentation), so do that here so that warning/critical css classes appear on overview page
 	echo "itineraries.label Itineraries per 5 mins"
 	echo "journeys.label Journeys per 5 mins"
 	echo "failedJourneys.label Failed journeys per 5 mins"

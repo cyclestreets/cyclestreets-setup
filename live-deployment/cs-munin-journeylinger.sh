@@ -66,7 +66,7 @@ fi
 # Outputs the config of this plugin
 output_config() {
     echo "graph_title CycleStreets Journey Linger"
-    echo "graph_category CycleStreets"
+    echo "graph_category cyclestreets"	# Category groups are all lower cased (not explicit in munin documentation), so do that here so that warning/critical css classes appear on overview page
     echo "graph_vlabel Milliseconds"
     echo "graph_info Performance of the CycleStreets journey API according to the apache access log."
     

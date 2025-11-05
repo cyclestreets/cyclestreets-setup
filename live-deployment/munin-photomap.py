@@ -32,6 +32,9 @@ def print_config():
 	# Category groups must be lower cased (not explicit in munin documentation) so that warning/critical indicators appear on overview page
 	print("graph_category cyclestreets")
 	print("photos.label Total photos")
+	print("videos.label Total videos")
+	print("placeholders.label Total placeholders")
+	print("locations.label Total locations")
 
 def getData():
 	# Needs server and api key as config
@@ -49,5 +52,8 @@ if len(sys.argv) > 1:
 else:
 	data = getData();
 	print("photos.value {}".format(data["usage"]["getTotalPhotos"]))
+	print("videos.value {}".format(data["usage"]["getTotalVideos"]))
+	print("placeholders.value {}".format(data["usage"]["getTotalPlaceholders"]))
+	print("locations.value {}".format(data["usage"]["getTotalLocations"]))
 
 # End of file

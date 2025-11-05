@@ -22,11 +22,9 @@ apiV2Url="${apiTransport}://${apiHostname}/v2/"
 usageLink=${pLinks}cyclestreets
 usageScript=${pScripts}cyclestreets
 rm -f ${usageLink}
-cp ${ScriptHome}/live-deployment/cs-munin.sh ${usageScript}
-sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${usageScript}
-sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${usageScript}
-sed -i "s|\${apiV2Url}|${apiV2Url}|g" ${usageScript}
-sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
+cp ${ScriptHome}/live-deployment/munin-cyclestreets.py ${usageScript}
+sed -i "s|%apiV2Url|${apiV2Url}|g" ${usageScript}
+sed -i "s|%apiKey|${testsApiKey}|g" ${usageScript}
 ln -s ${usageScript} ${usageLink}
 
 ## Photomap Usage plugin

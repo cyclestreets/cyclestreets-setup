@@ -33,11 +33,9 @@ ln -s ${usageScript} ${usageLink}
 usageLink=${pLinks}photomap
 usageScript=${pScripts}photomap
 rm -f ${usageLink}
-cp ${ScriptHome}/live-deployment/cs-munin-photomap.sh ${usageScript}
-sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${usageScript}
-sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${usageScript}
-sed -i "s|\${apiV2Url}|${apiV2Url}|g" ${usageScript}
-sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
+cp ${ScriptHome}/live-deployment/munin-photomap.py ${usageScript}
+sed -i "s|%apiV2Url|${apiV2Url}|g" ${usageScript}
+sed -i "s|%apiKey|${testsApiKey}|g" ${usageScript}
 ln -s ${usageScript} ${usageLink}
 
 ## CycleStreets Journey Linger plugin

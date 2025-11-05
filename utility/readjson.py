@@ -8,7 +8,7 @@ apikey = sys.argv[2]
 field = sys.argv[3]
 
 # Needs server and api key as config
-url = urlstub + "/v2/status?key=" + apikey + "&fields=usage"
+url = urlstub + "status?key=" + apikey + "&fields=usage"
 response = urllib.request.urlopen(url)
 data = json.loads(response.read())
 print(data["usage"][field])

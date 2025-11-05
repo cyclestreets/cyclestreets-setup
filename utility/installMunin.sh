@@ -44,11 +44,9 @@ fi
 lingerLink=${pLinks}journeylinger
 lingerScript=${pScripts}journeylinger
 rm -f ${lingerLink}
-cp ${ScriptHome}/live-deployment/cs-munin-journeylinger.sh ${lingerScript}
-sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${lingerScript}
-sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${lingerScript}
-sed -i "s|\${websitesLogsFolder}|${websitesLogsFolder}|g" ${lingerScript}
-sed -i "s|\${journeysLog}|${journeysLog}|g" ${lingerScript}
+cp ${ScriptHome}/live-deployment/munin-journeylinger.py ${lingerScript}
+sed -i "s|%ScriptHome|${ScriptHome}|g" ${lingerScript}
+sed -i "s|%journeysLog|${websitesLogsFolder}/${journeysLog}|g" ${lingerScript}
 ln -s ${lingerScript} ${lingerLink}
 
 

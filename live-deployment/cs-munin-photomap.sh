@@ -49,6 +49,8 @@ output_config() {
 	echo "graph_vlabel Count"
 	echo "graph_category cyclestreets"	# Category groups are all lower cased (not explicit in munin documentation), so do that here so that warning/critical css classes appear on overview page
 	echo "photos.label Total photos"
+	echo "photos.type DERIVE"
+	echo "photos.min 0"
 }
 
 # Outputs the statistics

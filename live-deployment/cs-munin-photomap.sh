@@ -73,7 +73,7 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # Number of photos in a five minute period
 number_of_photos() {
 	#${superMysql} cyclestreets -sNe "select getTotalPhotos()";
-	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} getTotalPhotos
+	python3 ${ScriptHome}/utility/readjson.py ${apiV2Url} ${testsApiKey} getTotalPhotos
 }
 
 

@@ -81,25 +81,25 @@ superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 # Number of itineraries in a five minute period
 number_of_itineraries() {
 	#${superMysql} cyclestreets -sNe "select countItinerariesLastFiveMinutes()";
-	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countItinerariesLastFiveMinutes
+	python3 ${ScriptHome}/utility/readjson.py ${apiV2Url} ${testsApiKey} countItinerariesLastFiveMinutes
 }
 
 # Number of journeys in a five minute period
 number_of_journeys() {
 	#${superMysql} cyclestreets -sNe "select countJourneysLastFiveMinutes()";
-	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countJourneysLastFiveMinutes
+	python3 ${ScriptHome}/utility/readjson.py ${apiV2Url} ${testsApiKey} countJourneysLastFiveMinutes
 }
 
 # Number of journeys in a five minute period
 number_of_failed_journeys() {
 	#${superMysql} cyclestreets -sNe "select countFailedJourneysLastFiveMinutes()";
-	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countFailedJourneysLastFiveMinutes
+	python3 ${ScriptHome}/utility/readjson.py ${apiV2Url} ${testsApiKey} countFailedJourneysLastFiveMinutes
 }
 
 # Number of errors in a five minute period
 number_of_errors() {
 	#${superMysql} cyclestreets -sNe "select countErrorsLastFiveMinutes()";
-	python3 ${ScriptHome}/utility/readjson.py http${apiHostHttps}://${apiHostname} ${testsApiKey} countErrorsLastFiveMinutes
+	python3 ${ScriptHome}/utility/readjson.py ${apiV2Url} ${testsApiKey} countErrorsLastFiveMinutes
 }
 
 

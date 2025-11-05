@@ -12,6 +12,12 @@ apt install -y munin-node munin-plugins-extra
 pLinks=/etc/munin/plugins/
 pScripts=/usr/share/munin/plugins/
 
+apiTransport=http
+if [ -n "${useSSL}" ]; then
+	apiTransport=https
+fi
+apiV2Url="${apiTransport}://${apiHostname}/v2/"
+
 ## CycleStreets Usage plugin
 usageLink=${pLinks}cyclestreets
 usageScript=${pScripts}cyclestreets
@@ -19,8 +25,7 @@ rm -f ${usageLink}
 cp ${ScriptHome}/live-deployment/cs-munin.sh ${usageScript}
 sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${usageScript}
 sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${usageScript}
-sed -i "s|\${apiHostHttps}|${apiHostHttps}|g" ${usageScript}
-sed -i "s|\${apiHostname}|${apiHostname}|g" ${usageScript}
+sed -i "s|\${apiV2Url}|${apiV2Url}|g" ${usageScript}
 sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
 ln -s ${usageScript} ${usageLink}
 
@@ -31,8 +36,7 @@ rm -f ${usageLink}
 cp ${ScriptHome}/live-deployment/cs-munin-photomap.sh ${usageScript}
 sed -i "s|\${ScriptHome}|${ScriptHome}|g" ${usageScript}
 sed -i "s|\${mySuperCredFile}|${mySuperCredFile}|g" ${usageScript}
-sed -i "s|\${apiHostHttps}|${apiHostHttps}|g" ${usageScript}
-sed -i "s|\${apiHostname}|${apiHostname}|g" ${usageScript}
+sed -i "s|\${apiV2Url}|${apiV2Url}|g" ${usageScript}
 sed -i "s|\${testsApiKey}|${testsApiKey}|g" ${usageScript}
 ln -s ${usageScript} ${usageLink}
 

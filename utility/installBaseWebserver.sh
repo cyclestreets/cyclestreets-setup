@@ -120,6 +120,11 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
+# Enable auto-updates; see: https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/ and https://askubuntu.com/a/993465
+apt-get install -y unattended-upgrades apt-listchanges
+dpkg-reconfigure --priority=high unattended-upgrades
+sudo unattended-upgrades --dry-run
+
 # Install basic utility software
 $packageInstall update-manager-core language-pack-en-base wget dnsutils man-db git nano bzip2 screen dos2unix rsync mlocate
 updatedb

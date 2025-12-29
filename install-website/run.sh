@@ -824,6 +824,9 @@ if [ -n "${externalDb}" ]; then
 	# Install railways pois
 	. ${ScriptHome}/install-railways/run.sh
 
+	# Install planning applications module requirements
+	. ${ScriptHome}/install-planningapplications/run.sh
+
 	# Report
 	echo "#	$(date)	Completed installation of external database"
     fi

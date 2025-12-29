@@ -1,2 +1,2 @@
-# Collisions data daily import; will update the date each day is cleared, at /websites/www/content/data/planningapplications/sync-from-planit-startdate.txt
+# Planning applications data daily import; will update the date each day is cleared, at /websites/www/content/data/planningapplications/sync-from-planit-startdate.txt
 30 1  * * *  cyclestreets  php /websites/www/content/cron.cli planningapplications import > /dev/null

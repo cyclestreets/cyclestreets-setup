@@ -42,7 +42,7 @@ wget -O casualties.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-ro
 wget -O vehicles.csv https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-vehicle-1979-latest-published-year.csv
 
 # Codings - obtain, convert to CSV, and amend headings
-wget -O codings.xlsx https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-road-safety-open-dataset-data-guide-2023.xlsx
+wget -O codings.xlsx https://data.dft.gov.uk/road-accidents-safety-data/dft-road-casualty-statistics-road-safety-open-dataset-data-guide-2024.xlsx
 ssconvert codings.xlsx codings.csv
 rm codings.xlsx
 sed -i.bak 1d codings.csv

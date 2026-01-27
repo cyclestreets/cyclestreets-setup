@@ -65,15 +65,11 @@ fi
 asCS="sudo -u ${username}"
 
 # Ensure that dependencies are present
-apt-get -y install apache2 php
+apt-get -y install apache2
 
-# Install path to content and go there
+# Install path to content, make it writable, and switch to it
 mkdir -p "${placefordContentFolder}"
-
-# Make the folder group writable
 chmod -R g+w "${placefordContentFolder}"
-
-# Switch to it
 cd "${placefordContentFolder}"
 
 # Create/update the repository, ensuring that the files are owned by the CycleStreets user (but the checkout should use the current user's account - see http://stackoverflow.com/a/4597929/180733 )
@@ -85,18 +81,15 @@ else
 	${asCS} git pull
 fi
 
-# Make the repository writable to avoid permissions problems when manually editing
-chmod -R g+w "${placefordContentFolder}"
-
 # Create the VirtualHost config if it doesn't exist, and write in the configuration, then enable
-vhConf=/etc/apache2/sites-available/placeford-subdomain.conf
+vhConf=/etc/apache2/sites-available/placeford.conf
 if [ ! -f ${vhConf} ]; then
-	cp -p .apache-vhost-subdomain.conf.template ${vhConf}
+	cp -p .apache-placeford.conf ${vhConf}
 	sed -i "s|/path/to/files|${placefordContentFolder}|g" ${vhConf}
 	sed -i "s|/path/to/logs|${placefordLogsFolder}|g" ${vhConf}
 fi
-if [ ! -L /etc/apache2/sites-enabled/930-placeford-subdomain.conf ]; then
-    ln -s ${vhConf} /etc/apache2/sites-enabled/930-placeford-subdomain.conf
+if [ ! -L /etc/apache2/sites-enabled/placeford.conf ]; then
+	a2ensite placeford
 fi
 
 # Reload apache

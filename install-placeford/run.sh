@@ -88,11 +88,7 @@ fi
 # Make the repository writable to avoid permissions problems when manually editing
 chmod -R g+w "${placefordContentFolder}"
 
-# Enable mod_proxy
-a2enmod proxy
-a2enmod proxy_http
-
-# Create the VirtualHost configs if they don't exist, and write in the configuration, then enable
+# Create the VirtualHost config if it doesn't exist, and write in the configuration, then enable
 vhConf=/etc/apache2/sites-available/placeford-subdomain.conf
 if [ ! -f ${vhConf} ]; then
 	cp -p .apache-vhost-subdomain.conf.template ${vhConf}
@@ -101,16 +97,6 @@ if [ ! -f ${vhConf} ]; then
 fi
 if [ ! -L /etc/apache2/sites-enabled/930-placeford-subdomain.conf ]; then
     ln -s ${vhConf} /etc/apache2/sites-enabled/930-placeford-subdomain.conf
-fi
-
-vhConf=/etc/apache2/sites-available/placeford-proxied.conf
-if [ ! -f ${vhConf} ]; then
-	cp -p .apache-vhost-proxied.conf.template ${vhConf}
-	sed -i "s|/path/to/files|${placefordContentFolder}|g" ${vhConf}
-	sed -i "s|/path/to/logs|${placefordLogsFolder}|g" ${vhConf}
-fi
-if [ ! -L /etc/apache2/sites-enabled/931-placeford-proxied.conf ]; then
-    ln -s ${vhConf} /etc/apache2/sites-enabled/931-placeford-proxied.conf
 fi
 
 # Reload apache

@@ -1,24 +1,24 @@
 #!/bin/bash
-# Script to search backwards through api access log for unique_id, with timeout.
+# Script to search backwards through API access log for a string, with timeout.
 usage()
 {
 	cat << EOF
 SYNOPSIS
-	$0 -h -s unique_id
+	$0 -h -s searchString
 
 OPTIONS
 	-h Show this message
-	-s If set searchs log defined by the secure, i.e. SSL virtual host.
+	-s If set searches log defined by the secure, i.e. SSL virtual host.
 
 DESCRIPTION
 	Searches backwards through access log defined by the Apache cyclestreets API virtual host.
-    The search looks for unique_id, with timeout of one second.
-	The unique_id is an option used by Apache to mark requests in an access log with a unique reference.
+    The search looks for the exact string match, with a timeout of one second.
+	The searchString is typically a unique_id which is an option used by Apache to mark requests in an access log with a unique reference.
 
 EOF
 }
 
-# String insert that identifies the secure log variant, if needed
+# Used to identify the secure log variant with a prefix, if needed
 secureLog=
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
@@ -53,7 +53,7 @@ if [ $# -ne 1 ]; then
 fi
 
 # Bind first argument
-uniqueId=$1
+searchString=$1
 
 ### CREDENTIALS ###
 
@@ -90,10 +90,10 @@ if [ "${apiHostname}" = "api.cyclestreets.net" ]; then
 fi
 
 # Debug
-#echo "(timeout 1 tac ${websitesLogsFolder}/${mainName}${secureLog}-access.log || : ) | grep -F -m1 ${uniqueId}"
+#echo "(timeout 1 tac ${websitesLogsFolder}/${mainName}${secureLog}-access.log || : ) | grep -F -m1 ${searchString}"
 
 # Search
-# Limit search time to one second, while searching backwards through the access log, return the first match with the unique id
-(timeout 1 tac ${websitesLogsFolder}/${mainName}${secureLog}-access.log || : ) | grep -F -m1 ${uniqueId}
+# Limit search time to one second, while searching backwards (using tac) through the access log, return the first match with the unique id
+(timeout 1 tac ${websitesLogsFolder}/${mainName}${secureLog}-access.log || : ) | grep -F -m1 ${searchString}
 
 # End of file

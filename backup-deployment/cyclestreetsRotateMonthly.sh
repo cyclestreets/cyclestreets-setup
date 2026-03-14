@@ -65,6 +65,7 @@ $rotateMonthly $folder www_csBatch_jobs_servers_threads.sql.gz
 #	Microsites
 folder=/websites/microsites/backup
 $rotateMonthly $folder microsites_websites.tar.bz2
+$rotateMonthly $folder microsites_allDatabases.sql.gz
 
 #	Cyclescape
 folder=/websites/cyclescape/backup

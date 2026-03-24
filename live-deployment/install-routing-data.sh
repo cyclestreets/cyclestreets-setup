@@ -488,7 +488,13 @@ set -e
 
 # Notify that an installation has begun
 if [ -n "${notifyEmail}" ]; then
-	echo "Routing edition installation from ${importHostname} is starting: this may lead to disk hiatus and concomitant notifications on the server ${csHostname} in about an hour." | mail -s "Import install has started on ${csHostname}" "${notifyEmail}"
+	# Use alias in notification when available
+	if [ -n "${nextEditionAlias}" ]; then
+		installingEdition=${nextEditionAlias}
+	else
+		installingEdition=${resolvedEdition}
+	fi
+	echo "Installation of routing edition ${installingEdition} from ${importHostname} is starting: this may lead to disk hiatus on and concomitant notifications from the server ${csHostname} in about an hour." | mail -s "Import install of ${installingEdition} has started on ${csHostname}" "${notifyEmail}"
 fi
 
 # Create the folder

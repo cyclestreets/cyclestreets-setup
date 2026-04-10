@@ -60,7 +60,9 @@ rotateWeekly=${SCRIPTDIRECTORY}/../utility/rotateWeekly.sh
 
 #	CycleStreets
 $rotateWeekly $folder www_cyclestreets.sql.gz
-$rotateWeekly $folder www_csBatch_jobs_servers_threads.sql.gz
+$rotateWeekly $folder www_schema_cyclestreets.sql.gz
+# Too big to keep for weekly backups:
+# $rotateWeekly $folder www_csBatch_jobs_servers_threads.sql.gz
 
 #	Microsites
 folder=/websites/microsites/backup

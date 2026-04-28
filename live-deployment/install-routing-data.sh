@@ -582,24 +582,25 @@ else
 	# Passwordless sudo allows these to run
 
 	# Flush each table
-	# Apply specifically rather than a general flusth tables, which can be costly on a busy server
+	# Apply specifically rather than a general flush tables, which can be costly on a busy server
 	# The basename removes the .tsv from the filenames to get the table name through the complex string escaping.
 	find ${mysqlReadableFolder} -type f -name '*.tsv' -exec sh -c "${superMysql} ${resolvedEdition} -e \"flush table ${resolvedEdition}.\$(basename \"\$1\" \".tsv\")\"" sh {} \;
 
 	# Helpful bindings
 	mysqlFolder=/var/lib/mysql/
-	sudoMyisamchk="sudo myisamchk --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf"
-	biggerBuffers="--myisam_sort_buffer_size=1G --key_buffer_size=12G --read_buffer_size=1G --write_buffer_size=1G"
+	# Use nice to make the process less favourable to the scheduler, keeping other processes more favourable on the live site
+	sudoMyisamchk="sudo nice myisamchk --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf"
+	biggerBuffers="--myisam_sort_buffer_size=5G --key_buffer_size=12G --read_buffer_size=5G --write_buffer_size=5G"
 
 	# Turn off all indexes on the tables
 	# The sed removes the file extension.
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//' | sort | xargs ${sudoMyisamchk} --keys-used=0 -rq
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//' | sort | xargs ${sudoMyisamchk} --keys-used=0
 
 	#	Import the data in alphabetical order
 	find ${mysqlReadableFolder} -name '*.tsv' -type f | sort | xargs ${superMysqlImport} ${resolvedEdition}
 
-	# Restore indexes on the tables
-	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//' | sort | xargs ${sudoMyisamchk} ${biggerBuffers} -rq
+	# Restore indexes on the tables, the quick option modifies only the index not the data
+	find ${mysqlReadableFolder} -name '*.tsv' -type f -printf "${mysqlFolder}${resolvedEdition}/%f\n" | sed 's/\.[^.]*$//' | sort | xargs ${sudoMyisamchk} ${biggerBuffers} --recover --quick
 
 	# Flush again
 	find ${mysqlReadableFolder} -type f -name '*.tsv' -exec sh -c "${superMysql} ${resolvedEdition} -e \"flush table ${resolvedEdition}.\$(basename \"\$1\" \".tsv\")\"" sh {} \;

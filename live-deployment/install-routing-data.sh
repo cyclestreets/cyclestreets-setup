@@ -127,7 +127,7 @@ while getopts "ehlm:p:qrstxy" option ; do
 		skipPlanet=1
 		;;
 	y)
-		# Set option to skip planet installation
+		# Set option to skip routing db installation
 		skipRoutingDb=1
 		;;
 	:)

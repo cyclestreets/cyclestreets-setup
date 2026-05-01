@@ -589,6 +589,7 @@ else
 	# Helpful bindings
 	mysqlFolder=/var/lib/mysql/
 	# Use nice to make the process less favourable to the scheduler, keeping other processes more favourable on the live site
+	# Requires passwordless sudo
 	sudoMyisamchk="sudo nice myisamchk --defaults-extra-file=/home/cyclestreets/.mySuperUserCredentials.cnf"
 	biggerBuffers="--myisam_sort_buffer_size=5G --key_buffer_size=12G --read_buffer_size=5G --write_buffer_size=5G"
 

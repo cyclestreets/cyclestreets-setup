@@ -60,7 +60,9 @@ rotateDaily=${SCRIPTDIRECTORY}/../utility/rotateDaily.sh
 
 #	Rotate
 $rotateDaily $folder www_cyclestreets.sql.gz
-$rotateDaily $folder www_csBatch_jobs_servers_threads.sql.gz
+$rotateDaily $folder www_schema_cyclestreets.sql.gz
+# Too big to keep for daily backups:
+# $rotateDaily $folder www_csBatch_jobs_servers_threads.sql.gz
 
 #	Microsites
 folder=/websites/microsites/backup

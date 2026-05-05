@@ -48,6 +48,8 @@ cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart cyclestreets*
 # Permits restoration of routingDb using fast load data followed by index build
 cyclestreets ALL = (root) NOPASSWD: /bin/mysqladmin
 cyclestreets ALL = (root) NOPASSWD: /bin/myisamchk
+cyclestreets ALL = (root) NOPASSWD: /usr/bin/nice myisamchk*
+cyclestreets ALL = (root) NOPASSWD: /bin/ls
 
 # Permit cyclestreets user to restart mysql, which is useful for resetting the configuration after an import run
 cyclestreets ALL = (root) NOPASSWD: /bin/systemctl restart mysql

@@ -28,8 +28,8 @@ ufw allow http
 ufw allow https
 
 # Munin-node, accessible only from dev
-ufw allow from 127.0.0.1 to any port 4949
-ufw allow from 46.235.226.213 to any port 4949
+ufw allow from 127.0.0.1 to any port 4949 comment 'Munin'
+ufw allow from 46.235.226.213 to any port 4949 comment 'Munin'
 
 # MySQL, if present
 if [ -d /var/lib/mysql/ ]; then
@@ -46,13 +46,12 @@ fi
 
 # Photon, if present
 if [ -d /opt/photon/ ]; then
-	ufw allow 2322
+	ufw allow from 127.0.0.1 to any port 2322 comment 'Photon'
 fi
 
-# Routing engine, if present
+# Routing engine, if present, specifying a range of possible ports
 if [ -d /websites/www/content/routingengine/ ]; then
-	ufw allow 9000		# Main
-	ufw allow 9001		# Secondary
+	ufw allow from 127.0.0.1 to any port 8998:9010 proto tcp comment 'CycleStreets routing service(s)'
 fi
 
 

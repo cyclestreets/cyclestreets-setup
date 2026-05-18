@@ -124,6 +124,13 @@ apt-get -y autoremove
 apt-get install -y clamav
 ps aux | grep clam
 
+# Fail2ban; see: https://www.linode.com/docs/guides/how-to-use-fail2ban-for-ssh-brute-force-protection/
+apt-get install -y fail2ban
+systemctl enable fail2ban.service
+cp -pr "${ScriptHome}/utility/fail2ban-jail.local" /etc/fail2ban/jail.local
+systemctl restart fail2ban.service
+fail2ban-client status sshd
+
 # Enable auto-updates; see: https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/ and https://askubuntu.com/a/993465
 apt-get install -y unattended-upgrades apt-listchanges
 dpkg-reconfigure --priority=high unattended-upgrades

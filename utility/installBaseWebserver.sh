@@ -120,6 +120,10 @@ apt-get -y upgrade
 apt-get -y dist-upgrade
 apt-get -y autoremove
 
+# Anti-virus
+apt-get install -y clamav
+ps aux | grep clam
+
 # Enable auto-updates; see: https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/ and https://askubuntu.com/a/993465
 apt-get install -y unattended-upgrades apt-listchanges
 dpkg-reconfigure --priority=high unattended-upgrades

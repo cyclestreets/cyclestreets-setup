@@ -18,7 +18,7 @@ set -e
 lockdir=/var/lock/cyclestreets
 mkdir -p $lockdir
 
-# Set a lock file; see: http://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock/7057385
+# Set a lock file; see: https://stackoverflow.com/questions/7057234/bash-flock-exit-if-cant-acquire-lock
 (
 	flock -n 9 || { echo '#	An installation is already running' ; exit 1; }
 

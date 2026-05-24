@@ -83,8 +83,8 @@ if [ ! -d /var/lib/mediawiki/extensions/Auth_remoteuser ]; then
 fi
 #if [ ! -f /etc/apache2/sites-available/wiki.conf ]; then
 #	cp -pr ${ScriptHome}/dev-deployment/wiki-apache.conf /etc/apache2/sites-available/wiki.conf
+#	a2ensite wiki
 #fi
-a2ensite wiki
 service apache2 restart
 
 # Add MySQL credentials

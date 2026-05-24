@@ -186,6 +186,7 @@ $packageInstall apache2
 a2enmod rewrite
 a2enmod headers
 a2enmod ssl
+a2enmod macro
 a2enmod unique_id
 
 # Install a catch-all VirtualHost in Apache to thwart firing of unauthorised CNAMEs at the machine

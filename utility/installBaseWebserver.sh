@@ -137,7 +137,7 @@ dpkg-reconfigure --priority=high unattended-upgrades
 unattended-upgrades --dry-run
 
 # Install basic utility software
-$packageInstall update-manager-core language-pack-en-base wget dnsutils man-db git nano bzip2 screen dos2unix rsync mlocate ncdu
+$packageInstall update-manager-core language-pack-en-base wget dnsutils man-db git nano bzip2 screen dos2unix rsync locate ncdu
 updatedb
 
 # Install Apache, PHP

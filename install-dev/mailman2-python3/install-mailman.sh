@@ -68,8 +68,10 @@ chmod -R a+rx,g+ws $prefix
 # Obtain distribution
 # See: https://github.com/jaredmauch/mailman2-python3/
 installDir=/tmp/mailman2-python3/
-apt-get install -y git
-git clone https://github.com/jaredmauch/mailman2-python3.git $installDir
+if [ ! -d $installDir ]; then
+	apt-get install -y git
+	git clone https://github.com/jaredmauch/mailman2-python3.git $installDir
+fi
 chown -R mailman $installDir
 
 # 3 Build and install Mailman

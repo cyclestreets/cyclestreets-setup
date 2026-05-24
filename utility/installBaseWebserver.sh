@@ -128,7 +128,7 @@ ps aux | grep clam
 apt-get install -y fail2ban
 systemctl enable fail2ban.service
 cp -pr "${ScriptHome}/utility/fail2ban-jail.local" /etc/fail2ban/jail.local
-systemctl restart fail2ban.service
+systemctl start fail2ban.service
 fail2ban-client status sshd
 
 # Enable auto-updates; see: https://www.cyberciti.biz/faq/set-up-automatic-unattended-updates-for-ubuntu-20-04/ and https://askubuntu.com/a/993465

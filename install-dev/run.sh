@@ -65,7 +65,7 @@ apt-get -y install apache2 php
 
 # Install mailman
 cd mailman
-./install-mailman.sh cyclestreets.net
+./install-mailman.sh lists.cyclestreets.net 'webmaster'@'cyclestreets.net'
 cd ../
 
 

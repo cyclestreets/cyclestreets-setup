@@ -115,9 +115,11 @@ service apache2 restart
 # Create SSL certificate, and enable the HTTPS (SSL) VirtualHost using this newly-created certificate
 set +e		# Allow this section to fail
 apt-get install -y certbot
-certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/lists/ --email $email -d $hostname
-sed -i "s/##//g" /etc/apache2/sites-available/lists.conf	# Uncomment the ## lines from the template
 a2enmod ssl
+certbot --agree-tos --no-eff-email certonly --keep-until-expiring --webroot -w /var/www/lists/ --email $email -d $hostname
+if [ -f "/etc/letsencrypt/live/${hostname}/fullchain.pem" ]; then
+	sed -i "s/##//g" /etc/apache2/sites-available/lists.conf	# Uncomment the ## lines from the template
+fi
 service apache2 restart
 set -e		# Revert to stop on fail
 

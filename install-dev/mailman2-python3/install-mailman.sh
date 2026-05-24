@@ -105,6 +105,7 @@ a2enmod rewrite cgid
 # Add HTTP VirtualHost
 cp -pr ./lists.conf /etc/apache2/sites-available/
 sed -i "s/lists.example.com/${hostname}/g" /etc/apache2/sites-available/lists.conf
+sed -i "s/webmaster@example.com/${email}/g" /etc/apache2/sites-available/lists.conf
 mkdir -p /var/www/lists/
 a2ensite lists
 service apache2 restart

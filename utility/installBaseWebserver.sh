@@ -175,9 +175,6 @@ fi
 # Disable MySQL password expiry system; see: http://stackoverflow.com/a/41552022
 mysql -u root -p${mysqlRootPassword} -e "SET GLOBAL default_password_lifetime = 0;"
 
-# Add performance monitoring for MySQL
-$packageInstall mytop
-
 # Install Apache (2.4)
 echo "#	Installing core webserver packages"
 $packageInstall apache2

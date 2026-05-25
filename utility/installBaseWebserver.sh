@@ -121,7 +121,12 @@ apt-get -y dist-upgrade
 apt-get -y autoremove
 
 # Anti-virus
-apt-get install -y clamav
+apt-get install -y clamav clamav-freshclam clamav-daemon
+service clamav-freshclam stop
+freshclam
+service clamav-freshclam start
+systemctl enable clamav-daemon
+service clamav-daemon start
 ps aux | grep clam
 
 # Fail2ban; see: https://www.linode.com/docs/guides/how-to-use-fail2ban-for-ssh-brute-force-protection/

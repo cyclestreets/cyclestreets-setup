@@ -76,8 +76,8 @@ chown -R mailman $installDir
 
 # 3 Build and install Mailman
 # 3.1 Run configure
-# Build, first adding prerequisites
-apt-get install -y python3-dnspython python3-pip python3-legacy-cgi python3-html2text gettext
+# Build, first adding build/runtime dependencies
+apt-get install -y python3-dnspython python3-pip python3-legacy-cgi python3-html2text gettext python3-bsddb3
 # NB The following can be added, but it will be more self-explanatory to add these in $prefix/Mailman/mm_cfg.py: " --with-mailhost=$hostname --with-urlhost=$hostname"
 cd $installDir
 sudo -H -u mailman bash -c "./configure --prefix=$prefix --with-mail-gid=Debian-exim --with-cgi-gid=www-data"

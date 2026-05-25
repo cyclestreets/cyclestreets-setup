@@ -125,6 +125,7 @@ apt-get install -y clamav clamav-freshclam clamav-daemon
 service clamav-freshclam stop
 freshclam
 service clamav-freshclam start
+systemctl enable clamav-freshclam
 systemctl enable clamav-daemon
 service clamav-daemon start
 ps aux | grep clam

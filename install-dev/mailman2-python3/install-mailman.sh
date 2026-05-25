@@ -129,7 +129,7 @@ set -e		# Revert to stop on fail
 # NB This uses split configuration
 # Copy in Mailman files for Exim4
 cp -pr ./04_exim4-config_mailman /etc/exim4/conf.d/main/
-sed -i "s/example.com/${hostname}/g" /etc/exim4/conf.d/main/04_exim4-config_mailman
+sed -i "s/lists.example.com/${hostname}/g" /etc/exim4/conf.d/main/04_exim4-config_mailman
 cp -pr ./40_exim4-config_mailman /etc/exim4/conf.d/transport/
 cp -pr ./101_exim4-config_mailman /etc/exim4/conf.d/router/
 # Set dc_use_split_config to true, and ensure dc_other_hostnames has the new listserver hostname

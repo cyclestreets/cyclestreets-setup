@@ -44,6 +44,11 @@ if [ -f /etc/aliases ]; then
 	fi
 fi
 
+# Incoming list mail processing
+if [ -d /var/lib/mailman/ ]; then
+	ufw allow 25
+fi
+
 # Photon, if present
 if [ -d /opt/photon/ ]; then
 	ufw allow from 127.0.0.1 to any port 2322 comment 'Photon'

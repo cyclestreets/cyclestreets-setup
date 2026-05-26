@@ -441,11 +441,9 @@ if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
 	${htaccessApi}
 
 	# Certificates
-	# http://billpatrianakos.me/blog/2014/04/04/installing-comodo-positive-ssl-certs-on-apache-and-openssl/
 	SSLEngine on
-	SSLCertificateFile      /etc/apache2/sslcerts/STAR_cyclestreets_net.crt
-	SSLCertificateKeyFile   /etc/apache2/sslcerts/STAR_cyclestreets_net.key
-	SSLCACertificateFile    /etc/apache2/sslcerts/STAR_cyclestreets_net.ca-bundle
+	SSLCertificateFile		${useSSL}/fullchain.pem
+	SSLCertificateKeyFile	${useSSL}/privkey.pem
 
 ${locahostSpecialCase}
 ${phpAssertions}

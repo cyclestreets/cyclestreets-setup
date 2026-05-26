@@ -142,8 +142,12 @@ apt-get install -y unattended-upgrades apt-listchanges
 dpkg-reconfigure --priority=high unattended-upgrades
 unattended-upgrades --dry-run
 
-# Install basic utility software
+# Basic utility software
+echo "#	Installing basic utility software"
 $packageInstall update-manager-core language-pack-en-base wget bind9-dnsutils man-db git nano bzip2 screen dos2unix rsync locate ncdu
+
+echo "#	Update file name database"
+# If this breaks, e.g. because of large number of files in photomap folders try: ulimit -n 1000000
 updatedb
 
 # Install Apache, PHP

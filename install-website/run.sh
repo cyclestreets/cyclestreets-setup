@@ -380,10 +380,7 @@ if [ ! -r ${csVirtualHostFile} ]; then
 <VirtualHost *:80>
 
 	# Available URL(s)
-	# Note: ServerName should not use wildcards; use ServerAlias for that.
-	ServerName cyclestreets.net
-	ServerAlias *.cyclestreets.net
-	ServerAlias ${csHostname}
+	ServerName ${csHostname}
 
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}-access.log combined
@@ -429,10 +426,7 @@ if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
 <VirtualHost *:443>
 
 	# Available URL(s)
-	# Note: ServerName should not use wildcards; use ServerAlias for that.
-	ServerName cyclestreets.net
-	ServerAlias *.cyclestreets.net
-	ServerAlias ${csHostname}
+	ServerName ${csHostname}
 
 	# Logging
 	CustomLog /websites/www/logs/${csHostname}_ssl-access.log combined
@@ -519,9 +513,7 @@ if [ -z "${apiSameHost}" -a ! -r ${apiVirtualHostFile} ]; then
 <VirtualHost *:80>
 
 	# Available URL(s)
-	# Note: ServerName should not use wildcards; use ServerAlias for that.
-	ServerName api.cyclestreets.net
-	ServerAlias ${apiHostname}
+	ServerName ${apiHostname}
 
 	# Logging
 	CustomLog /websites/www/logs/${apiHostname}-access.log combined
@@ -559,9 +551,7 @@ if [ -n "${useSSL}" -a -n "${apiSSLVirtualHostFile}" ]; then
 <VirtualHost *:443>
 
 	# Available URL(s)
-	# Note: ServerName should not use wildcards; use ServerAlias for that.
-	ServerName api.cyclestreets.net
-	ServerAlias ${apiHostname}
+	ServerName ${apiHostname}
 
 	# Logging
 	CustomLog /websites/www/logs/${apiHostname}_ssl-access.log combined

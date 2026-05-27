@@ -76,10 +76,11 @@ cd ${ScriptHome}/install-dev/mailman2-python3/
 cd ../
 
 # Wiki, using Wikimedia
+# See: https://www.mediawiki.org/wiki/Extension:Auth_remoteuser
 apt-get update
 apt-get install -y mediawiki
 if [ ! -d /var/lib/mediawiki/extensions/Auth_remoteuser ]; then
-	git clone https://github.com/wikimedia/mediawiki-extensions-Auth_remoteuser.git /var/lib/mediawiki/extensions/Auth_remoteuser
+	git clone -b REL1_43 https://github.com/wikimedia/mediawiki-extensions-Auth_remoteuser.git /var/lib/mediawiki/extensions/Auth_remoteuser
 fi
 #if [ ! -f /etc/apache2/sites-available/wiki.conf ]; then
 #	cp -pr ${ScriptHome}/dev-deployment/wiki-apache.conf /etc/apache2/sites-available/wiki.conf

@@ -112,11 +112,13 @@ currentApiV2Url=$(${superMysql} -NB cyclestreets -e "select apiV2Url from map_co
 
 # Restore recent data
 . ${SCRIPTDIRECTORY}/../utility/sync-recent.sh
+echo "$(date --iso-8601=seconds)	Data files synced" >> ${setupLogFile}
 . ${SCRIPTDIRECTORY}/../utility/restore-recent.sh
+echo "$(date --iso-8601=seconds)	Database restored" >> ${setupLogFile}
 
 #	Discard route batch files that are exactly 7 days old
 #	!! Consider moving this to restore-recent.sh - deleting the files after they have been applied to the database.
-if [ "$restoreRecentRoutes" = true ]; then
+if [ "$restoreRecentRoutes" = true -a -n "${batchRoutes}" -a "${folder}" ]; then
     find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}" -type f -mtime 7 -delete
     find ${folder}/recentroutes -maxdepth 1 -name "${batchRoutes}.md5" -type f -mtime 7 -delete
 fi

@@ -8,6 +8,12 @@ apt install -y libdbi-perl libdbd-mysql-perl
 # Munin
 apt install -y munin-node munin-plugins-extra
 
+# Enable drawing
+apt-get install -y libcgi-fast-perl libapache2-mod-fcgid
+a2enmod cgid
+mkdir -p /var/lib/munin/cgi-tmp/munin-cgi-graph/
+chown www-data /var/lib/munin/cgi-tmp/munin-cgi-graph/
+
 # Folders for munin plugin links and scripts
 pLinks=/etc/munin/plugins/
 pScripts=/usr/share/munin/plugins/

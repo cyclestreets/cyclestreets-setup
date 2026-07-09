@@ -90,6 +90,13 @@ mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost cycles
 openssl dgst -md5 ${dump} > ${dump}.md5
 
 
+# 	Api keys
+dump=${websitesBackupsFolder}/${dumpPrefix}_apikeys_cyclestreets.sql.gz
+mysqldump --defaults-extra-file=${mySuperCredFile} --hex-blob -hlocalhost cyclestreets map_apikeys | gzip > ${dump}
+#	Create md5 hash
+openssl dgst -md5 ${dump} > ${dump}.md5
+
+
 ##	Batch routing db
 #	Only three key tables which contain client data need backing up
 dump=${websitesBackupsFolder}/${dumpPrefix}_csBatch_jobs_servers_threads.sql.gz

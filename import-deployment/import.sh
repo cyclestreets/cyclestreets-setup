@@ -126,7 +126,11 @@ if [ -d ${importMachineEditions}/${likelyEdition} -o -L ${importMachineEditions}
 	echo "#	Abandoning - use force option to override"
 	exit 1
     else
-	echo "#	Continuing due to force option"
+		echo "#	Continuing due to force option"
+		# Stop default routing (available via passwordless sudo)
+		sudo /bin/systemctl stop cyclestreets@9000
+		# Remove, keeping planet database
+		${ScriptHome}/live-deployment/remove-routing-edition.sh -s ${likelyEdition}
     fi
 fi
 

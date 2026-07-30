@@ -12,6 +12,7 @@ SYNOPSIS
 OPTIONS
 	-h Show this message
 	-q Suppress narrative messages, error messages are still produced
+	-s Save planet database (allows for faster rebuilding of a routing edition during development)
 
 DESCRIPTION
 	routingEdition
@@ -26,20 +27,26 @@ EOF
 # Controls echoed output default to on
 verbose=1
 
+# By default (empty string) the planet database is removed
+savePlanet=
+
 # Minimum number of existing editions to keep
 keepEditions=3
 
 # http://wiki.bash-hackers.org/howto/getopts_tutorial
 # See install-routing-data for best example of using this
-while getopts "hq" option ; do
+while getopts "hqs" option ; do
     case ${option} in
         h) usage; exit ;;
         q)
-	    # Set quiet mode and proceed
-	    # Turn off verbose messages by setting this variable to the empty string
-	    verbose=
-	    ;;
-	\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
+			# Set quiet mode and proceed
+			# Turn off verbose messages by setting this variable to the empty string
+			verbose=
+			;;
+        s)
+			savePlanet=1
+			;;
+		\?) echo "Invalid option: -$OPTARG" >&2 ; exit ;;
     esac
 done
 
@@ -247,9 +254,9 @@ set -e
 
 # Drop the routing and planet databases
 ${superMysql} cyclestreets -e "drop database if exists ${removeEdition};";
-${superMysql} cyclestreets -e "drop database if exists planet${editionDate};";
-# Retain the following line until all instances have been removed
-${superMysql} cyclestreets -e "drop database if exists planetExtractOSM${editionDate};";
+if [ -z "${savePlanet}" ]; then
+	${superMysql} cyclestreets -e "drop database if exists planet${editionDate};";
+fi
 
 # Remove the routing folder without generating any prompts or warnings
 if [ -n "${websitesContentFolder}" -a -d ${websitesContentFolder}/data/routing/ ]; then

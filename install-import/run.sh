@@ -35,10 +35,15 @@ datapassword=
 # Elevation datasources - add to list (source must be present on downloads server) or comment out if not wanted
 elevationDatasources=(
 #	'alos.tar.bz2'
-#	'prague.tar.bz2'
-	'osterrain50.tar.bz2'
-#	'srtm.tar.bz2'
 #	'aster.tar.bz2'
+#	'bdalti75.tar.bz2'
+#	'jaxa.tar.bz2'
+	'osterrain50.tar.bz2'
+#	'prague.tar.bz2'
+#	'saopaulo.tar.bz2'
+#	'srtm.tar.bz2'
+#	'srtm_1arcsec_global.tar.bz2'
+#	'usgsned.tar.bz2'
 )
 
 # Archive db

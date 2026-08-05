@@ -500,8 +500,8 @@ fi
 # Create the folder
 mkdir -p ${newEditionFolder}
 
-# Declare who (re-)created the folder
-echo "Created by install-routing-data around line 464: $(date)" >> ${newEditionFolder}/colophon
+# Declare who (re-)created the folder (this gets overwritten by subsequent unpacking of the tarball)
+echo "Created by install-routing-data around line ${LINENO}: $(date)" >> ${newEditionFolder}/colophon
 
 ### Pre stage 4: Close system to routing and stop the existing routing service
 if [ -z "${keepRoutingDuringUpdate}" ]; then
@@ -568,7 +568,7 @@ else
 		mkdir -p ${mysqlReadableFolder}
 
 		# Declare who (re-)created the folder
-		echo "Created by install-routing-data / tables around line 523 $(date)" >> ${mysqlReadableFolder}/colophon
+		echo "Created by install-routing-data / tables around line ${LINENO} $(date)" >> ${mysqlReadableFolder}/colophon
 
 		# Move tsv files there
 		mv ${newEditionFolder}/table/*.tsv ${mysqlReadableFolder}
@@ -661,7 +661,7 @@ if [ -d ${newEditionFolder}/planet ]; then
 		mkdir -p ${mysqlReadableFolder}
 
 		# Declare who (re-)created the folder
-		echo "Created by install-routing-data / planet database around line 589: $(date)" >> ${mysqlReadableFolder}/colophon
+		echo "Created by install-routing-data / planet database around line ${LINENO}: $(date)" >> ${mysqlReadableFolder}/colophon
 
 		# Move tsv files there
 		mv ${newEditionFolder}/planet/*.tsv ${mysqlReadableFolder}
@@ -714,7 +714,7 @@ if [ -d ${newEditionFolder}/external ]; then
 		mkdir -p ${mysqlReadableFolder}
 
 		# Declare who (re-)created the folder
-		echo "Created by install-routing-data / external database around line 642: $(date)" >> ${mysqlReadableFolder}/colophon
+		echo "Created by install-routing-data / external database around line ${LINENO}: $(date)" >> ${mysqlReadableFolder}/colophon
 
 		# Move tsv files there
 		mv ${newEditionFolder}/external/*.tsv ${mysqlReadableFolder}

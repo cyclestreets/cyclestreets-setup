@@ -617,6 +617,10 @@ else
 	vecho "Building the photosEnRoute tables"
 	${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/photosEnRoute.sql
 #	${superMysql} ${resolvedEdition} -e "call indexPhotos(0);"
+
+	#	Load general views
+	vecho "Loading general views"
+	${superMysql} ${resolvedEdition} < ${websitesContentFolder}/documentation/schema/generalViews.sql
 fi
 
 ### Stage 6 - create the planet database if provided

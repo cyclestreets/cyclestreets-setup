@@ -1,3 +1,3 @@
 # Update site regularly from Git, and run any database migrations
-0,15,30,45 *  * * *  cyclestreets  cd /websites/www/content/ && git pull --quiet && yarn install --frozen-lockfile --ignore-scripts --ignore-engines --silent && composer install -n -q
+0,15,30,45 *  * * *  cyclestreets  cd /websites/www/content/ && git pull --quiet && yarn install --frozen-lockfile --ignore-scripts --ignore-engines --silent 2> >(grep -v '\(DEP0169\|trace-deprecation\|Ignored scripts due to flag\)' 1>&2) && composer install -n -q
 0,15,30,45 *  * * *  cyclestreets  php /opt/cyclestreets-setup/live-deployment/cyclestreets-update-db.php

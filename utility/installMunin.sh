@@ -24,6 +24,10 @@ if [ -n "${useSSL}" ]; then
 fi
 apiV2Url="${apiTransport}://${apiHostname}/v2/"
 
+### CycleStreets Plugins
+## !! Inclusion of these should be controlled by a parameeter.
+##    They are not needed for instance on the dev machine.
+
 ## CycleStreets Usage plugin
 usageLink=${pLinks}cyclestreets
 usageScript=${pScripts}cyclestreets
@@ -72,7 +76,24 @@ if [ -f /etc/munin/plugins/packetloss ]; then
 fi
 
 # See: https://guide.munin-monitoring.org/en/latest/reference/munin-node-configure.html?highlight=configure
-munin-node-configure --suggest --shell | sh
+munin-node-configure --suggest --remove-also --shell | sh
+
+# !! It is worth reviwing the plugins from time to time as some of them may stop working.
+# Thee following are typically not needed or don't show useful info:
+#cd /etc/munin/plugins/
+#
+# The impi_* plugins started timing out after some sort of update which made them no longer work.
+# That stopped other plugins from running in time, leading to charts with missing data.
+# So they were removed:
+#rm ipmi_fans ipmi_power ipmi_temp
+#
+# Unused mysql features
+#rm mysql_qcache mysql_qcache_mem
+#rm mysql_replication
+#rm mysql_binlog_groupcommit
+#rm mysql_bin_relay_log
+#
+# Restart munin-node afterwards.
 
 # Grant access to munin
 if [ -n "${allowMunin}" ]; then
@@ -81,5 +102,5 @@ fi
 
 systemctl restart munin-node
 echo "Munin plugins enabled as follows:"
-munin-node-configure --suggest | true
+munin-node-configure
 # If this doesn't seem to result in output, check this log file: `tail -f /var/log/munin/munin-node.log`

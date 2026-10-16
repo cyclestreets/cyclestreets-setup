@@ -768,7 +768,9 @@ if [ -z "${skipSwitch}" ]; then
 	${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}
 
 	# Run the tests, writing this summary
-	summaryFile=${websitesLogsFolder}/install_test_results_${resolvedEdition}.txt
+	resultsFolder=${websitesLogsFolder}/install_test_results
+	mkdir -p ${resultsFolder}
+	summaryFile=${resultsFolder}/${resolvedEdition}.txt
 	. /opt/cyclestreets-setup/utility/runTests.sh
 else
 	vecho "Switch to the new edition using: ${ScriptHome}/live-deployment/switch-routing-edition.sh ${resolvedEdition}"

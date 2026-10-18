@@ -4,6 +4,13 @@
 #	The arguments are:
 #	1. folder relative to root (not slash terminated) e.g. /websites/cyclescape/backup
 #	2. name of the archive file e.g. cyclescapeShared.tar.bz2
+#	3. all files beginning with the name are copied e.g. the *.md5 files
+# Abandon on empty arguments
+if [ -z "$1" -o  -z "$2" ]; then
+	echo "$(date) Empty arguments to $0"
+	exit 1
+fi
+
 
 folder=$1
 archive=$2
@@ -18,6 +25,6 @@ mkdir -p ${monthlyFolder}
 touch ${monthlyFolder}
 
 #	Copy the backup to that folder
-cp -p ${folder}/${archive} ${monthlyFolder}
+cp -p ${folder}/${archive}* ${monthlyFolder}
 
 # End of file

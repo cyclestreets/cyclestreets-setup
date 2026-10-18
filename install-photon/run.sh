@@ -20,10 +20,12 @@
 #
 # 4. Set VERSION
 #
+# 5. Set photonDatabase
+#
 
 ### Stage 1 - general setup
 
-echo "#	CycleStreets: install Photon geocoder"
+echo "#	$(date) CycleStreets: install Photon geocoder"
 
 # Ensure this script is run as root
 if [ "$(id -u)" != "0" ]; then
@@ -81,7 +83,7 @@ apt-get -y autoremove
 asCS="sudo -u ${username}"
 
 # Announce starting
-echo "# Photon geocoder installation $(date)"
+echo "# $(date) Photon geocoder installation"
 
 
 ## Main body
@@ -91,8 +93,11 @@ echo "# Photon geocoder installation $(date)"
 # https://photon.komoot.io/
 
 
-# Photon requires Java
-apt-get -y install default-jre
+# Photon requires Java 21+
+# At ubuntu jammy this won't work:
+# apt-get -y install default-jre
+# ... so use
+apt-get -y install openjdk-21-jre
 
 # Set up installation directory
 mkdir -p /opt/photon/
@@ -100,20 +105,26 @@ chown $username /opt/photon/
 cd /opt/photon/
 
 # Get the latest distribution
-VERSION='0.4.3'
+VERSION='1.3.0'
 if [ ! -f "/opt/photon/photon-${VERSION}.jar" ]; then
 	$asCs wget "https://github.com/komoot/photon/releases/download/${VERSION}/photon-${VERSION}.jar"
 fi
 
 # Get the latest data
+photonDatabase=photon-db-planet-1.0-latest
 apt-get -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
 	# Note: twice that amount of space is needed because of the tar extract phase
-	echo "Downloading compiled data file (at December 2023 this is 73GB and unpacks to 161GB, so twice this free space is needed)"
-	$asCS wget https://download1.graphhopper.com/public/photon-db-latest.tar.bz2
-	$asCS pbzip2 -d photon-db-latest.tar.bz2
+	echo "# $(date) Downloading compiled data file (at October 2026 this is 94B and unpacks to 390GB"
+	$asCS wget https://download1.graphhopper.com/public/${photonDatabase}.tar.bz2.md5
+	$asCS wget https://download1.graphhopper.com/public/${photonDatabase}.tar.bz2
+	echo "# Check md5"
+	$asCS md5sum -c ${photonDatabase}.tar.bz2.md5
+	echo "# $(date) Parallel uncompressing database file"
+	$asCS pbzip2 -d ${photonDatabase}.tar.bz2
 	# Makes a copy as it extracts, so doubling the space requirement
-	$asCS tar vxf photon-db-latest.tar
+	echo "# $(date) Unpacking photon database"
+	$asCS tar vxf ${photonDatabase}.tar
 fi
 
 # Install init.d service; this essentially runs `java -jar photon-${VERSION}.jar`
@@ -128,12 +139,12 @@ fi
 sudo update-rc.d photon defaults
 
 # Start the service
-service photon start
-echo "Photon started using: service photon start"
+systemctl start photon
+echo "# $(date) Photon started"
 
 
 # Report completion
-echo "#	Installing Photon geocoder completed"
+echo "#	$(date) Installing Photon geocoder completed"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

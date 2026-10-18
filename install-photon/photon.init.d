@@ -13,7 +13,7 @@
 
 
 version=DOWNLOADED_VERSION_HERE
-cmd="java -jar photon-${version}.jar"
+cmd="java -jar photon-${version}.jar serve"
 dir="/opt/photon/"
 user="root"
 name="photon"

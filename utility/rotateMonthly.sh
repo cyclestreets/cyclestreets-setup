@@ -28,4 +28,12 @@ touch ${monthlyFolder}
 #	Copy the backup to that folder
 cp -p ${folder}/${archive}* ${monthlyFolder}
 
+
+# Clearout rotations more than ~3 months old, use 100 days for simplicity.
+find ${folder}/rotation/monthly -mtime +100 -type f -delete
+
+# Remove empty folders
+find ${folder}/rotation/monthly -depth -mindepth 1 -type d -empty -delete
+
+
 # End of file

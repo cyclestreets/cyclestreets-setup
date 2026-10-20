@@ -523,7 +523,7 @@ fi
 vecho "Unpack the tarball"
 tar xf ${neTarball}
 
-#	Clean up the compressed TSV data
+#	Clear out the compressed TSV data
 rm -f ${neTarball} ${neTarballMd5}
 
 ### Stage 5 - create the routing database

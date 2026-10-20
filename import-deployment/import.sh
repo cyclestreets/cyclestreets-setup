@@ -18,7 +18,7 @@ ARGUMENTS
 		Configuration file
 
 DESCRIPTION
-	Script for building new routing edition - but see also newbuild.sh which is a wrapper for this script.
+	Script for building new routing edition - but see also ../newbuild.sh which is a wrapper for this script.
 	Optional force argument is used to overwrite existing routing edition - which is convenient during development testing.
 
 EOF
@@ -174,7 +174,7 @@ fi
 echo "#	$(date)	CycleStreets import has created a new edition: ${routingEdition}"
 echo "#	To prepare this data for serving locally, remotely or both:"
 echo "#	Routing builds:"
-echo "#	Locally  run: ${ScriptHome}/live-deployment/installLocalLatestEdition.sh"
+echo "#	Locally  run: ${ScriptHome}/live-deployment/installBuiltEditionLocally.sh"
 echo "#	Remotely run: ${username}@other:${ScriptHome}\$ live-deployment/install-routing-data.sh"
 echo "#	POIs builds:"
 echo "#	Locally  run: ${ScriptHome}/live-deployment/install-pois-data.sh localhost"

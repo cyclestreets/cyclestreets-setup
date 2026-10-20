@@ -28,12 +28,19 @@ touch ${monthlyFolder}
 #	Copy the backup to that folder
 cp -p ${folder}/${archive}* ${monthlyFolder}
 
+# Count the subfolders
+# Note this count includes the folder itself
+count="$(find ${folder}/rotation/monthly -maxdepth 1 -type d -print| wc -l)"
 
-# Clearout rotations more than ~3 months old, use 100 days for simplicity.
-find ${folder}/rotation/monthly -mtime +100 -type f -delete
+# Run the clearout when there are more than three proper subfolders
+if [ "${count}" -g4 4 ]; then
 
-# Remove empty folders
-find ${folder}/rotation/monthly -depth -mindepth 1 -type d -empty -delete
+	# Clearout rotations more than ~3 months old, use 100 days for simplicity.
+	find ${folder}/rotation/monthly -mtime +100 -type f -delete
 
+	# Remove empty folders
+	find ${folder}/rotation/monthly -depth -mindepth 1 -type d -empty -delete
+
+fi
 
 # End of file

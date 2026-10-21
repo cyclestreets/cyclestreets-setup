@@ -361,11 +361,8 @@ fi
 echo "#	$(date)	Fetching dependencies"
 $packageInstall libboost-dev cmake gcc g++ python3-dev python3-pip make doxygen graphviz
 
-# Upgrade pip
-python3 -m pip install --upgrade pip
-
 # Python package for encoding coordinate lists
-python3 -m pip install polyline
+$packageInstall python3-polyline
 
 # Build bridges
 cd ${importContentFolder}/graph

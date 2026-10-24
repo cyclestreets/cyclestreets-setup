@@ -235,68 +235,46 @@ fi
 # Used to tune assertions directives in the virtualhosts if needed, initialize as empty.
 phpAssertions=
 
-# Controlling Assertions in PHP
-# These comments relate to the setting of zend.assertions, mentioned in:
-# https://www.php.net/manual/en/ini.core.php
-# By default the value of this setting is 1 according to the manual, but in practice
-# it comes up as -1 in fresh installations on Ubuntu 18.x and 20.x.
-# This is an unusal setting in that if it is -1 or 1 it cannot be changed at runtime or by Apache configuration.
-# The de facto default of -1 means that php code inside assert() code is not compiled, i.e. that assertions are ignored,
-# and that PHP is running in a production mode.
-# Therefore if a development mode is required this setting has to be changed to 0 or 1 in the php.ini system.
-# The model used here is to set it to 0 in the php.ini via a cyclestreets.ini module, and then set it to 1 in the virtualhosts.
-# Session lifetime settings are also included at this level as it has never worked having them in the Apache configuration.
+# cyclestreets.ini module
+# Created when either assertions or longer php sessions are required
 if [ -n "${runtimePhpAssertions}" -o -n "${longerPhpSessions}" ]; then
 
     # Configure php with a .ini module having this name
     phpModule=cyclestreets
 
-    # Get php version as e.g. 7.4
+    # Get php version as e.g. 8.3
     phpMajorMinorVersion=$(php -v | grep -Po '(?<=PHP )([0-9].[0-9])')
     if [ -z "${phpMajorMinorVersion}" ]; then
-	echo "# PHP configuration: Cannot determine the PHP version, abandoning the installation."
-	exit 1
+		echo "# PHP configuration: Cannot determine the PHP version, abandoning the installation."
+		exit 1
     fi
 
     # Write / replace the module file
     phpModulesPath=/etc/php/${phpMajorMinorVersion}/mods-available
     if [ ! -d $phpModulesPath ]; then
-	echo "# PHP configuration: Cannot locate the modules directory expected at ${phpModulesPath}, abandoning the installation."
-	exit 1
+		echo "# PHP configuration: Cannot locate the modules directory expected at ${phpModulesPath}, abandoning the installation."
+		exit 1
     fi
     phpConfigFile=${phpModulesPath}/${phpModule}.ini
     if [ -e  ${phpConfigFile} ]; then
-	rm ${phpConfigFile}
+		rm ${phpConfigFile}
     fi
     touch ${phpConfigFile}
 
+
     # Append assertions settings
     if [ -n "${runtimePhpAssertions}" ]; then
-	cat >> ${phpConfigFile} <<EOF
+		cat >> ${phpConfigFile} <<EOF
 [Assertion]
-; Set to zero to permit runtime control of php assertions
-zend.assertions = 0
+zend.assertions = 1
 EOF
-
-	# The read can return non zero even though it has not errored so temporarily turn off stop on error
-	set +e
-
-	# Bind multi-line string for use in both main and api virtualhost configurations.
-	# IFS is a special shell variable that stands for Internal Field Separator; look for it in man bash
-	IFS='' read -r -d '' phpAssertions <<"EOF"
-
-	# Assertions - turn on for development mode
-	# Changing the first setting will only work when it has been initialized to 0 by the php.ini system.
-	php_admin_value zend.assertions  1
-EOF
-	# Resume stop on error
-	set -e
 
     fi
 
     # Append sessions settings
+	# Session lifetime settings are also put here as they has don't work from the virtual host context.
     if [ -n "${longerPhpSessions}" ]; then
-	cat >> ${phpConfigFile} <<EOF
+		cat >> ${phpConfigFile} <<EOF
 [Session]
 ; Php session - allow users to stay logged in to the website for up to 24 hours
 session.gc_maxlifetime = 86400
@@ -395,7 +373,6 @@ ${redirectHttps}
 	${htaccessApi}
 
 ${locahostSpecialCase}
-${phpAssertions}
 </VirtualHost>
 EOF
 
@@ -446,7 +423,6 @@ if [ -n "${useSSL}" -a -n "${csSSLVirtualHostFile}" ]; then
 	SSLCertificateKeyFile	${useSSL}/privkey.pem
 
 ${locahostSpecialCase}
-${phpAssertions}
 </VirtualHost>
 EOF
 

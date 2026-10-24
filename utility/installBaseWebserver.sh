@@ -196,6 +196,21 @@ a2enmod ssl
 a2enmod macro
 a2enmod unique_id
 
+# Add mod_maxminddb; see: https://github.com/maxmind/mod_maxminddb and https://dev.maxmind.com/geoip/updating-databases/
+apt-get install -y software-properties-common
+add-apt-repository -y ppa:maxmind/ppa
+apt-get install -y libmaxminddb0 libmaxminddb-dev mmdb-bin apache2-dev
+wget -O /tmp/mod_maxminddb-1.3.0.tar.gz https://github.com/maxmind/mod_maxminddb/releases/download/1.3.0/mod_maxminddb-1.3.0.tar.gz
+tar -xzf /tmp/mod_maxminddb-1.3.0.tar.gz -C /tmp/
+cd /tmp/mod_maxminddb-1.3.0/
+./configure
+make install
+a2enmod maxminddb
+cd -
+service apache2 restart
+apt-get install -y geoipupdate
+geoipupdate
+
 # Install a catch-all VirtualHost in Apache to thwart firing of unauthorised CNAMEs at the machine
 if [ ! -f /etc/apache2/sites-available/catchall.conf ]; then
 	cp -pr ${ScriptHome}/utility/catchall.conf /etc/apache2/sites-available/

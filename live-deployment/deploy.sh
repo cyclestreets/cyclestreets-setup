@@ -83,7 +83,7 @@ if [ -n "${devHostname}" ]; then
     # Useful binding
     # The defaults-extra-file is a positional argument which must come first.
     superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
-    ${superMysql} -e "drop user if exists 'root'@'${devHostname}';create user 'root'@'${devHostname}' identified with mysql_native_password by '${mysqlRootPassword}';grant all privileges on *.* to 'root'@'${devHostname}' with grant option;flush privileges;"
+    ${superMysql} -e "drop user if exists 'root'@'${devHostname}';create user 'root'@'${devHostname}' identified with caching_sha2_password by '${mysqlRootPassword}';grant all privileges on *.* to 'root'@'${devHostname}' with grant option;flush privileges;"
 fi
 
 # Install firewall

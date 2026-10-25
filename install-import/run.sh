@@ -232,8 +232,8 @@ fi
 osmosisVersion=0.48.3
 if [ ! -L /usr/local/bin/osmosis ]; then
 
-    # Announce Osmosis installation
-    echo "#	$(date)	CycleStreets / Osmosis installation"
+	# Announce Osmosis installation
+	echo "#	$(date)	CycleStreets / Osmosis installation"
 
     # Prepare the apt index
     $packageUpdate > /dev/null
@@ -241,36 +241,36 @@ if [ ! -L /usr/local/bin/osmosis ]; then
     # Osmosis requires java
     $packageInstall default-jre
 
-    # Create folder
-    mkdir -p /usr/local/osmosis
+	# Create folder
+	mkdir -p /usr/local/osmosis
 
-    # wget the latest to here
-    if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
-	wget -O /usr/local/osmosis/osmosis-latest.tgz https://github.com/openstreetmap/osmosis/releases/download/${osmosisVersion}/osmosis-${osmosisVersion}.tgz
-    fi
+	# wget the latest to here
+	if [ ! -e /usr/local/osmosis/osmosis-latest.tgz ]; then
+		wget -O /usr/local/osmosis/osmosis-latest.tgz https://github.com/openstreetmap/osmosis/releases/download/${osmosisVersion}/osmosis-${osmosisVersion}.tgz
+	fi
 
-    # Create a folder for the new version
-    mkdir -p /usr/local/osmosis/osmosis-${osmosisVersion}
+	# Create a folder for the new version
+	mkdir -p /usr/local/osmosis/osmosis-${osmosisVersion}
 
-    # Unpack into it
-    tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-${osmosisVersion}
+	# Unpack into it
+	tar xzf /usr/local/osmosis/osmosis-latest.tgz -C /usr/local/osmosis/osmosis-${osmosisVersion}
 
-    # Remove the download archive
-    rm -f /usr/local/osmosis/osmosis-latest.tgz
+	# Remove the download archive
+	rm -f /usr/local/osmosis/osmosis-latest.tgz
 
-    # Repoint current to the new version
-    rm -f /usr/local/osmosis/current
+	# Repoint current to the new version
+	rm -f /usr/local/osmosis/current
 
-    # Whatever the version number is here
-    ln -s /usr/local/osmosis/osmosis-${osmosisVersion} /usr/local/osmosis/current
+	# Whatever the version number is here
+	ln -s /usr/local/osmosis/osmosis-${osmosisVersion} /usr/local/osmosis/current
 
-    # This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
-    if [ ! -L /usr/local/bin/osmosis ]; then
-	ln -s /usr/local/osmosis/current/bin/osmosis /usr/local/bin/osmosis
-    fi
+	# This last bit only needs to be done first time round, not for upgrades. It keeps the binary pointing to the current osmosis.
+	if [ ! -L /usr/local/bin/osmosis ]; then
+		ln -s /usr/local/osmosis/current/bin/osmosis /usr/local/bin/osmosis
+	fi
 
-    # Announce completion
-    echo "#	Completed installation of osmosis"
+	# Announce completion
+	echo "#	Completed installation of osmosis"
 fi
 
 # Osmosis config file
@@ -288,7 +288,7 @@ echo "#	Grants"
 superMysql="mysql --defaults-extra-file=${mySuperCredFile} -hlocalhost"
 
 # The grant is relative to localhost as it will be the apache server that authenticates against the local mysql.
-${superMysql} -e "create user if not exists '${mysqlImportUsername}'@'localhost' identified with mysql_native_password by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"
+${superMysql} -e "create user if not exists '${mysqlImportUsername}'@'localhost' identified with caching_sha2_password by '${mysqlImportPassword}' with max_queries_per_hour 0 max_connections_per_hour 0 max_updates_per_hour 0 max_user_connections 0;"
 ${superMysql} -e "grant select, reload, file, super, lock tables, event, trigger on * . * to '${mysqlImportUsername}'@'localhost';"
 
 # Useful binding

@@ -94,10 +94,7 @@ echo "# $(date) Photon geocoder installation"
 
 
 # Photon requires Java 21+
-# At ubuntu jammy this won't work:
-# apt-get -y install default-jre
-# ... so use
-apt-get -y install openjdk-21-jre
+apt-get -y install default-jre
 
 # Set up installation directory
 mkdir -p /opt/photon/
@@ -111,17 +108,22 @@ if [ ! -f "/opt/photon/photon-${VERSION}.jar" ]; then
 fi
 
 # Get the latest data
+# https://download1.graphhopper.com/public/
 photonDatabase=photon-db-planet-1.0-latest
 apt-get -y install pbzip2
 if [ ! -d /opt/photon/photon_data ]; then
-	# Note: twice that amount of space is needed because of the tar extract phase
+
 	echo "# $(date) Downloading compiled data file (at October 2026 this is 94B and unpacks to 390GB"
 	$asCS wget https://download1.graphhopper.com/public/${photonDatabase}.tar.bz2.md5
 	$asCS wget https://download1.graphhopper.com/public/${photonDatabase}.tar.bz2
+
 	echo "# Check md5"
 	$asCS md5sum -c ${photonDatabase}.tar.bz2.md5
+
 	echo "# $(date) Parallel uncompressing database file"
+	# The compressed file is deleted afterwards
 	$asCS pbzip2 -d ${photonDatabase}.tar.bz2
+
 	# Makes a copy as it extracts, so doubling the space requirement
 	echo "# $(date) Unpacking photon database"
 	$asCS tar vxf ${photonDatabase}.tar

@@ -182,7 +182,7 @@ fi
 
 # Note when edition does not have installed data (for instance when the import did not complete)
 if [ ! -d "${websitesContentFolder}/data/routing/${removeEdition}" ]; then
-  echo "#	Note: the editon to remove: ${removeEdition} does not have a routing graph folder."
+  echo "#	Note: the edition to remove: ${removeEdition} does not have a routing graph folder."
 fi
 
 

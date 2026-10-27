@@ -22,6 +22,16 @@
 #
 # 5. Set photonDatabase
 #
+# 6. Check enough disk space
+#		Size		Total				What
+#		+60GB		 60GB				Planet .tar.bs2 download
+#		+91GB		151GB				Parallel unpacks to .tar
+#		-61GB		 91GB				Deletes the .tar.bz2
+#		+91GB		182GB	<- Max		Parallel unpacks to .tar
+#		-91GB		 91GB				Delete the .tar
+#	These estimates for October 2026.
+#	Max space used is aprroximately 3x download size.
+
 
 ### Stage 1 - general setup
 
@@ -127,6 +137,10 @@ if [ ! -d /opt/photon/photon_data ]; then
 	# Makes a copy as it extracts, so doubling the space requirement
 	echo "# $(date) Unpacking photon database"
 	$asCS tar vxf ${photonDatabase}.tar
+
+	# Clean up
+	echo "# $(date) Clean up: deleting the .tar to free space"
+	rm -f ${photonDatabase}.tar ${photonDatabase}.tar.bz2.md5
 fi
 
 # Install init.d service; this essentially runs `java -jar photon-${VERSION}.jar`
@@ -142,11 +156,11 @@ sudo update-rc.d photon defaults
 
 # Start the service
 systemctl start photon
-echo "# $(date) Photon started"
+echo "#	$(date) Photon service started"
 
 
 # Report completion
-echo "#	$(date) Installing Photon geocoder completed"
+echo "#	$(date) Installation of Photon geocoder service completed"
 
 # Remove the lock file - ${0##*/} extracts the script's basename
 ) 9>$lockdir/${0##*/}

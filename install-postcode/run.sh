@@ -169,32 +169,8 @@ fi
 #echo "#	Loading the table definitions"
 ${superMysql} ${externalDb} < tableDefinitions.sql
 
-# Handle secure-file-priv, if set
-# Use of set from comment by dorsh:
-# https://stackoverflow.com/a/9558954/225876
-# This puts the values of the two columns in $1 and $2
-set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
-secureFilePriv=$2
-
-# If there's a secure folder then move the csv file there
-if [ -n "$secureFilePriv" ]; then
-
-	# Secure readable location
-	mysqlReadableFolder=${secureFilePriv}
-
-	# Ensure it exists
-	mkdir -p ${mysqlReadableFolder}
-
-	# Move csv file there
-	mv ${onsFolder}/${dataFilename} ${mysqlReadableFolder}
-
-	# Set path
-	ONSdataFile=${mysqlReadableFolder}/${dataFilename}
-
-else
-	# Set path
-	ONSdataFile=${onsFolder}/${dataFilename}
-fi
+# Set path
+ONSdataFile=${onsFolder}/${dataFilename}
 dataLines=$(wc -l < ${ONSdataFile})
 echo -e "#	The data file has: ${dataLines} lines."
 
@@ -315,7 +291,8 @@ columnDefinitionsCsv=$(IFS=, ; echo "${columnDefinitionsList[*]}")
 unset columnDefinitionsList
 
 # Temporary file to contain only the essential columns
-temp_selectData_file=${onsFolder}/tmp_selectData.csv
+temp_dataFilename=tmp_selectData.csv
+temp_selectData_file=${onsFolder}/${temp_dataFilename}
 
 # The MySQL import command uses the filename minus extension as the basis for the table name like this:
 tableName=$(basename ${temp_selectData_file} .csv)
@@ -338,6 +315,33 @@ ${superMysql} \
 # The ordering of the fields does not change from the source file.
 echo "#	Creating temporary CSV file from essential columns"
 cut --delimiter=, --fields=${selectFieldNumbersSortedCsv} ${ONSdataFile} > ${temp_selectData_file}
+
+
+# Handle secure-file-priv, if set
+# Use of set from comment by dorsh:
+# https://stackoverflow.com/a/9558954/225876
+# This puts the values of the two columns in $1 and $2
+set $(${superMysql} --batch --skip-column-names --silent -e "show variables like 'secure_file_priv'")
+secureFilePriv=$2
+
+# If there's a secure folder then move the csv file there
+if [ -n "$secureFilePriv" ]; then
+
+	# Secure readable location
+	mysqlReadableFolder=${secureFilePriv}
+
+	# Ensure it exists
+	mkdir -p ${mysqlReadableFolder}
+
+	# Move csv file there
+	mv ${temp_selectData_file} ${mysqlReadableFolder}
+
+	# Set path
+	temp_selectData_file=${mysqlReadableFolder}/${temp_dataFilename}
+fi
+unset secureFilePriv
+
+
 
 echo "#	Loading CSV file"
 

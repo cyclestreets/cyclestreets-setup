@@ -196,6 +196,9 @@ a2enmod ssl
 a2enmod macro
 a2enmod unique_id
 
+# Add JA4 module
+. $ScriptHome/utility/installModja4.sh
+
 # Add mod_maxminddb; see: https://github.com/maxmind/mod_maxminddb and https://dev.maxmind.com/geoip/updating-databases/
 apt-get install -y software-properties-common
 add-apt-repository -y ppa:maxmind/ppa

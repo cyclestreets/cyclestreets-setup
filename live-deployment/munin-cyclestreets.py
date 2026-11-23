@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-#	CycleStreets monitoring data for munin
+#	CycleStreets monitoring data for munin rate of Planned Journeys
 #
 # SYNOPSIS
 # 	munin-run cyclestreets [config]

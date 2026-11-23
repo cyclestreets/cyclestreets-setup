@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-#	CycleStreets monitoring data for munin
+#	CycleStreets monitoring data for munin count of Photomap items
 #
 # SYNOPSIS
 # 	munin-run photomap [config]

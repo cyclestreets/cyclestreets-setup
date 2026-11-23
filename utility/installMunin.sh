@@ -46,6 +46,15 @@ sed -i "s|%apiV2Url|${apiV2Url}|g" ${usageScript}
 sed -i "s|%apiKey|${testsApiKey}|g" ${usageScript}
 ln -s ${usageScript} ${usageLink}
 
+## Photomap rate Usage plugin
+usageLink=${pLinks}photomap-rate
+usageScript=${pScripts}photomap-rate
+rm -f ${usageLink}
+cp ${ScriptHome}/live-deployment/munin-photomap-rate.py ${usageScript}
+sed -i "s|%apiV2Url|${apiV2Url}|g" ${usageScript}
+sed -i "s|%apiKey|${testsApiKey}|g" ${usageScript}
+ln -s ${usageScript} ${usageLink}
+
 ## CycleStreets Journey Linger plugin
 # If not provided use file based on hostname
 if [ -z "${journeysLog}" ]; then

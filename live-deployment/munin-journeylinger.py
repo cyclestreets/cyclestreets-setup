@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-#	CycleStreets monitoring data for munin
+#	CycleStreets monitoring data for munin latency for Journey Planning
 #
 # SYNOPSIS
 # 	munin-run journeylinger [config]

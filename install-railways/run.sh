@@ -13,6 +13,9 @@ OPTIONS
 DESCRIPTION
 	Downloads and installs or updates the table of GB railway stations from the Office of the Rail Regulator.
 	Table: csExternal.map_poi_railwaystations
+	Supposedly new data is available at the end of March each year but may only appear on the following link months later, the publication date is not shown:
+	https://dataportal.orr.gov.uk/statistics/infrastructure-and-environment/rail-infrastructure-and-assets/table-6329-station-attributes-for-all-mainline-stations/
+	As the format of the data varies the fields in the stations table may need updating.
 
 EOF
 }
